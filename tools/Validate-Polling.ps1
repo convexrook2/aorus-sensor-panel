@@ -43,8 +43,8 @@ try {
         $tasks=if($startup){'desktopicon,startup'}else{'desktopicon'}
         Write-Host ('Updating the existing installed panel to '+$packageVersion+'; preserving the startup option.')
         $arguments='/SILENT /SP- /NORESTART /ALLUSERS /DIR="'+(Split-Path $production)+'" /TASKS="'+$tasks+'" /LOG="'+(Join-Path $projectRoot 'artifacts\installer\polling-upgrade.log')+'"'
-        $install=Start-Process $installer -ArgumentList $arguments -WindowStyle Normal -Wait -PassThru
-        if($install.ExitCode -ne 0) {throw 'Polling upgrade installer failed.'}
+        $install=Start-Process $installer -Verb RunAs -ArgumentList $arguments -WindowStyle Normal -Wait -PassThru
+        if($install.ExitCode -ne 0) {throw ('Polling upgrade installer failed with exit code '+$install.ExitCode+'.')}
         if((Get-Item -LiteralPath $production).VersionInfo.FileVersion -ne ($packageVersion+'.0')) {throw 'Installed version mismatch.'}
         if($packageManifest.SelfContained -eq $false -and (Test-Path -LiteralPath (Join-Path (Split-Path $production) 'coreclr.dll'))) {throw 'Legacy private runtime was not removed.'}
         $check=Start-Process $production -ArgumentList '--check-mapping' -WindowStyle Normal -Wait -PassThru

@@ -9,7 +9,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>../Assets/Branding/AorusFanMade.ico</ApplicationIcon>
-    <Version>1.0.3</Version>
+    <Version>1.0.5</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <SelfContained>false</SelfContained>
     <RuntimeFrameworkVersion>10.0.0</RuntimeFrameworkVersion>
@@ -32,5 +32,9 @@
   <Target Name="CopyFrameViewBridge" AfterTargets="Build">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\SensorCollector\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\NvidiaFrameViewBridge.dll"
           DestinationFolder="$(TargetDir)" />
+  </Target>
+  <Target Name="PublishFrameViewBridge" AfterTargets="Publish">
+    <Copy SourceFiles="$(TargetDir)NvidiaFrameViewBridge.dll"
+          DestinationFolder="$(PublishDir)" />
   </Target>
 </Project>

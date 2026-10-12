@@ -46,6 +46,7 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
     public static int Check()
     {
         PanelPreferences.CheckDisplaySelection();
+        DisplayRecovery.Check();
         PanelLayout.Check();
         if (PanelPreferences.ValidPollingInterval(500) != 500 || PanelPreferences.ValidPollingInterval(5000) != 5000 ||
             PanelPreferences.ValidPollingInterval(499) != 1000 || PanelPreferences.ValidPollingInterval(5001) != 1000 ||

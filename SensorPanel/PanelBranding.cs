@@ -43,7 +43,7 @@ internal sealed class PanelTray : IDisposable
         void Restore() => window.ShowPanel();
         menu.Items.Add("Show panel", null, (_, _) => window.Dispatcher.Invoke(Restore));
         menu.Items.Add("Fit to display", null, (_, _) => window.Dispatcher.Invoke(window.FitToDisplay));
-        menu.Items.Add("Hide to tray", null, (_, _) => window.Dispatcher.Invoke(window.Hide));
+        menu.Items.Add("Hide to tray", null, (_, _) => window.Dispatcher.Invoke(window.HidePanel));
         menu.Items.Add("Open README", null, (_, _) => window.Dispatcher.Invoke(PanelBranding.ShowReadme));
         menu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         menu.Items.Add("Exit", null, (_, _) => window.Dispatcher.Invoke(window.Close));

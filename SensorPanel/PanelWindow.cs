@@ -34,6 +34,8 @@ internal sealed class PanelWindow : Window
     private PendingUpdate? pendingUpdate;
     private sealed record PendingUpdate(Snapshot Snapshot, RuntimeStats Statistics);
     private readonly DispatcherTimer clock;
+    private readonly DispatcherTimer displayRefresh;
+    private DisplayRecovery? displayRecovery;
     private ArtworkAnimation? artworkAnimation;
     private PanelTray? tray;
     private readonly string? previewPath, capturePath;
@@ -71,6 +73,8 @@ internal sealed class PanelWindow : Window
         KeyDown += (_, e) => { if (e.Key == Key.F11) ToggleFit(); else if (e.Key == Key.Escape && fit) ToggleFit(); };
         ContextMenu = BuildMenu();
         clock = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background, (_, _) => Tick(), Dispatcher);
+        displayRefresh = new DispatcherTimer(DispatcherPriority.ContextIdle) { Interval = TimeSpan.FromMilliseconds(300) };
+        displayRefresh.Tick += (_, _) => { displayRefresh.Stop(); RefreshConnectedDisplay(); };
         SourceInitialized += (_, _) =>
         {
             PlaceInitialDisplay();
@@ -87,7 +91,7 @@ internal sealed class PanelWindow : Window
         };
         Closed += (_, _) =>
         {
-            closing = true; benchmark?.Dispose(); tray?.Dispose(); clock.Stop(); artworkAnimation?.Dispose(); cancellation.Cancel();
+            closing = true; benchmark?.Dispose(); tray?.Dispose(); clock.Stop(); displayRefresh.Stop(); artworkAnimation?.Dispose(); cancellation.Cancel();
             worker?.Join(TimeSpan.FromSeconds(3));
             if (latest is not null) SaveSnapshot(latest);
             cancellation.Dispose(); pollingChanged.Dispose();
@@ -185,19 +189,25 @@ internal sealed class PanelWindow : Window
     {
         var menu = new ContextMenu();
         var displays = new MenuItem { Header = "Move to display" };
-        displays.SubmenuOpened += (_, _) =>
+        // WPF cannot open an empty submenu. Populate before it is displayed,
+        // rather than waiting for SubmenuOpened on an item without children.
+        menu.Opened += (_, _) =>
         {
             displays.Items.Clear();
             foreach (var target in Displays.List())
             {
                 var item = new MenuItem { Header = $"{target.Name} · {target.Width}×{target.Height}" };
-                item.Click += (_, _) => { display = target; PanelPreferences.Save(target,fit); Displays.Place(this, target, fit); };
+                item.Click += (_, _) =>
+                {
+                    display = target; displayRecovery?.Select(target);
+                    PanelPreferences.Save(target,fit); ShowPanel();
+                };
                 displays.Items.Add(item);
             }
         };
         menu.Items.Add(displays);
         var fpsApplications = new MenuItem { Header = "FPS game" };
-        fpsApplications.SubmenuOpened += (_, _) =>
+        menu.Opened += (_, _) =>
         {
             fpsApplications.Items.Clear();
             var automatic = new MenuItem { Header = "Automatic · running games", IsCheckable = true, IsChecked = selectedFpsPid == 0 };
@@ -254,7 +264,7 @@ internal sealed class PanelWindow : Window
         var readme = new MenuItem { Header = "Open README" };
         readme.Click += (_, _) => PanelBranding.ShowReadme(); menu.Items.Add(readme);
         var hide = new MenuItem { Header = "Hide to tray" };
-        hide.Click += (_, _) => Hide(); menu.Items.Add(hide);
+        hide.Click += (_, _) => HidePanel(); menu.Items.Add(hide);
         var startup = new MenuItem { Header = "Start with Windows", IsCheckable = true };
         menu.Opened += (_, _) => startup.IsChecked = ScheduledStartup.IsEnabled();
         startup.Click += (_, _) =>
@@ -278,6 +288,7 @@ internal sealed class PanelWindow : Window
         if (previewPath is null)
             fit = PanelPreferences.AutomaticFit(display);
         hideInitially = previewPath is null && !PanelPreferences.ShowInitially(display);
+        if (display is not null) displayRecovery = new(display);
         if (display is not null) Displays.Place(this, display, fit,previewSize);
     }
 
@@ -398,6 +409,9 @@ internal sealed class PanelWindow : Window
 
     private void Tick()
     {
+        // Some drivers announce display change before enumeration is ready.
+        // Retry only while the selected monitor is missing.
+        if (displayRecovery?.Waiting == true) RefreshConnectedDisplay();
         text["date"].Text = DateTime.Now.ToString("HH:mm  MM/dd/yyyy", CultureInfo.InvariantCulture);
         var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
         text["uptime"].Text = $"{(int)uptime.TotalHours:00}:{uptime.Minutes:00}";
@@ -435,8 +449,7 @@ internal sealed class PanelWindow : Window
     private void ResolveDisplay()
     {
         var displays = Displays.List();
-        display = display is null ? PanelPreferences.Preferred(displays)
-            : PanelPreferences.SelectDisplay(displays, display.MonitorId, display.Name);
+        display = displayRecovery is null ? PanelPreferences.Preferred(displays) : displayRecovery.Connected(displays);
     }
 
     private void SetFit(bool value)
@@ -444,6 +457,7 @@ internal sealed class PanelWindow : Window
         ResolveDisplay();
         if (display is null) { text["status"].Text = "No connected display found"; return; }
         fit = value;
+        displayRecovery?.Select(display);
         PanelPreferences.Save(display,fit);
         WindowState = WindowState.Normal;
         Displays.Place(this, display, fit);
@@ -459,12 +473,21 @@ internal sealed class PanelWindow : Window
     internal void ShowPanel()
     {
         ResolveDisplay();
+        if (display is null) { text["status"].Text = "Selected display is disconnected"; return; }
+        displayRecovery?.Select(display);
         WindowState = WindowState.Normal;
         if (display is not null) Displays.Place(this, display, fit);
         Show();
         if (display is not null) Displays.Place(this, display, fit);
         Activate(); // Only explicit Show/Fit requests activate the panel.
         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
+    }
+
+    internal void HidePanel()
+    {
+        displayRecovery?.HideByUser();
+        Hide();
+        SaveDisplayState();
     }
 
     private static Stretch ScalingStretch(string mode) => mode switch { "Fill"=>Stretch.UniformToFill, "Stretch"=>Stretch.Fill, _=>Stretch.Uniform };
@@ -485,16 +508,28 @@ internal sealed class PanelWindow : Window
     }
     private nint DisplayMessage(nint hwnd,int message,nint wParam,nint lParam,ref bool handled)
     {
-        if (message==0x007E) Dispatcher.BeginInvoke(() =>
-        {
-            if (closing) return;
-            bool wasSecondary=display is { Primary:false };
-            ResolveDisplay();
-            if (display is null) { Hide(); return; }
-            if (fit && wasSecondary && display.Primary) { fit=false; Hide(); }
-            Displays.Place(this,display,fit);
-        });
+        if (message==0x007E) { displayRefresh.Stop(); displayRefresh.Start(); }
         return 0;
+    }
+
+    private void RefreshConnectedDisplay()
+    {
+        if (closing || displayRecovery is null) return;
+        var result = displayRecovery.Refresh(Displays.List(), IsVisible);
+        if (result.Display is null)
+        {
+            Hide(); // Preserve selected display and fit, without saving a fallback.
+            SaveDisplayState();
+            return;
+        }
+        display = result.Display;
+        Displays.Place(this,display,fit,previewSize);
+        if (result.Show)
+        {
+            Show(); // Automatic reconnection does not activate the window.
+            Displays.Place(this,display,fit,previewSize);
+        }
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
     }
 
     private void Capture(string path)

@@ -20,7 +20,7 @@ try {
     if ($check.ExitCode -ne 0) { throw 'Panel mapping/resource checks failed.' }
     dotnet publish '.\SensorPanel\SensorPanel.csproj' -c Package -r win-x64 --self-contained false -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o $packageRoot
     if ($LASTEXITCODE -ne 0) { throw 'Shared-runtime publication failed.' }
-    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','README.txt')) {
+    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','NvidiaFrameViewBridge.dll','README.txt')) {
         if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $required))) { throw ('Missing packaged dependency: ' + $required) }
     }
     foreach ($excluded in @('coreclr.dll','hostfxr.dll','hostpolicy.dll','System.Private.CoreLib.dll','PresentationFramework.dll','wpfgfx_cor3.dll')) {
@@ -33,6 +33,8 @@ try {
     }
     if ((Get-ArtifactHash (Join-Path $packageRoot 'PresentMon-2.6.0-x64.exe')) -ne 'B2A706BC6AD475749E3B7E3409263AA1E6906D45BDCF993F6DBC0F660188F1AF') { throw 'PresentMon release digest mismatch.' }
     & '.\tools\Package-Notices.ps1' -PackageRoot $packageRoot
+    & (Join-Path $packageRoot 'SensorCollector.exe') --self-test
+    if ($LASTEXITCODE -ne 0) { throw 'Published collector/native bridge checks failed.' }
     $packageCheck = Start-Process (Join-Path $packageRoot 'SensorPanel.exe') -ArgumentList '--check-mapping' -WindowStyle Normal -Wait -PassThru
     if ($packageCheck.ExitCode -ne 0) { throw 'Published resource/mapping check failed.' }
     $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
