@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
 $manifest = Get-Content -LiteralPath '.\artifacts\installer\package-manifest.json' -Raw | ConvertFrom-Json
-if ($manifest.Version -ne '1.0.2' -or $manifest.SelfContained -ne $false) { throw 'Build v1.0.2 shared-runtime package first.' }
+if ($manifest.SelfContained -ne $false) { throw 'Build the shared-runtime package first.' }
 $userKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{1B7C308F-694A-4C92-8C95-218009316F78}_is1'
 if (Test-Path -LiteralPath $userKey) { throw 'Preserve existing per-user installation; isolated test cannot run.' }
 $production = Join-Path $env:ProgramFiles 'AORUS Sensor Panel FAN MADE'
@@ -14,7 +14,7 @@ $beforeTask = $scheduler.GetFolder('\').GetTask($taskName).Xml
 $target = [IO.Path]::GetFullPath((Join-Path $projectRoot ('artifacts\shared-install-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))))
 if (-not $target.StartsWith($projectRoot+'\artifacts\shared-install-', [StringComparison]::OrdinalIgnoreCase)) { throw 'Unsafe isolated test path.' }
 New-Item -ItemType Directory -Path $target | Out-Null
-foreach ($legacy in @('coreclr.dll','hostfxr.dll')) { Copy-Item -LiteralPath (Join-Path $production $legacy) -Destination (Join-Path $target $legacy) }
+foreach ($legacy in @('coreclr.dll','hostfxr.dll')) { Set-Content -LiteralPath (Join-Path $target $legacy) -Value 'Owned legacy cleanup test fixture, not executable' }
 Write-Host 'Isolated per-user install: no shortcuts/startup, no live panel, production installation preserved.'
 $arguments = '/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /SP- /NORESTART /NOICONS /TASKS="" /DIR="'+$target+'" /LOG="'+(Join-Path $target 'install-test.log')+'"'
 $install = Start-Process $manifest.Installer -ArgumentList $arguments -Wait -PassThru

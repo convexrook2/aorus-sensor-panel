@@ -45,6 +45,8 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
     // mixing the AMD integrated GPU with NVIDIA, or using board CPU as Tctl/Tdie.
     public static int Check()
     {
+        PanelPreferences.CheckDisplaySelection();
+        PanelLayout.Check();
         if (PanelPreferences.ValidPollingInterval(500) != 500 || PanelPreferences.ValidPollingInterval(5000) != 5000 ||
             PanelPreferences.ValidPollingInterval(499) != 1000 || PanelPreferences.ValidPollingInterval(5001) != 1000 ||
             PanelWindow.PollingWaitMilliseconds(1000, 30) != 970 || PanelWindow.PollingWaitMilliseconds(500, 700) != 0)

@@ -53,7 +53,8 @@ try {
     $files = @(Get-ChildItem -LiteralPath $packageRoot -File -Recurse | ForEach-Object {
         [pscustomobject]@{Path=$_.FullName.Substring($packageRoot.Length+1);Bytes=$_.Length;SHA256=(Get-ArtifactHash $_.FullName)}
     })
-    [pscustomobject]@{Version='1.0.2';CreatedAt=(Get-Date).ToString('o');Architecture='win-x64';SelfContained=$false;SharedRuntime='Microsoft .NET 10 Desktop Runtime (x64), stable 10.0.x';Canvas='1024x576';PackageRoot=$packageRoot;PackageBytes=($files | Measure-Object Bytes -Sum).Sum;Installer=$installer;InstallerBytes=(Get-Item -LiteralPath $installer).Length;InstallerSHA256=(Get-ArtifactHash $installer);Files=$files} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath '.\artifacts\installer\package-manifest.json' -Encoding UTF8
+    $version = ([xml](Get-Content -LiteralPath '.\SensorPanel\SensorPanel.csproj' -Raw)).Project.PropertyGroup.Version
+    [pscustomobject]@{Version=$version;CreatedAt=(Get-Date).ToString('o');Architecture='win-x64';SelfContained=$false;SharedRuntime='Microsoft .NET 10 Desktop Runtime (x64), stable 10.0.x';Canvas='Adaptive: landscape / wide strip / portrait';PackageRoot=$packageRoot;PackageBytes=($files | Measure-Object Bytes -Sum).Sum;Installer=$installer;InstallerBytes=(Get-Item -LiteralPath $installer).Length;InstallerSHA256=(Get-ArtifactHash $installer);Files=$files} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath '.\artifacts\installer\package-manifest.json' -Encoding UTF8
     Write-Host ('Single installer ready: ' + $installer)
     Write-Host 'Build/source/published-resource checks passed. Native UI and install round-trip validation follows.'
 } catch { Write-Host ($_ | Out-String) -ForegroundColor Red; throw }

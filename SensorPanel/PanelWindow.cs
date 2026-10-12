@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Windows.Interop;
 using SensorCollector;
 
 namespace SensorPanel;
@@ -15,6 +16,9 @@ namespace SensorPanel;
 internal sealed class PanelWindow : Window
 {
     private readonly Canvas board = new() { Width = 1024, Height = 576, Background = new SolidColorBrush(Color.FromRgb(228, 228, 228)) };
+    private readonly Viewbox viewport = new();
+    private PanelLayout? panelLayout;
+    private string layoutMode = PanelPreferences.Layout;
     private readonly Dictionary<string, TextBlock> text = new();
     private readonly Dictionary<string, double> maxima = new();
     private readonly TemperatureGauge cpuGauge = new(), gpuGauge = new();
@@ -33,18 +37,22 @@ internal sealed class PanelWindow : Window
     private ArtworkAnimation? artworkAnimation;
     private PanelTray? tray;
     private readonly string? previewPath, capturePath;
+    private readonly Size? previewSize;
+    private readonly bool sensorPreview;
     private Thread? worker;
     private Snapshot? latest;
     private DateTimeOffset lastReceived;
     private DisplayInfo? display;
     private bool fit, closing, captured, stale;
+    private bool hideInitially;
     private int samples;
     private int selectedFpsPid;
     private readonly GameDiscovery fpsGames = new();
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true };
 
-    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false)
+    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false, Size? previewSize = null, bool sensorPreview = false)
     {
+        this.previewSize=previewSize; this.sensorPreview=sensorPreview;
         this.benchmarkPolling = benchmarkPolling;
         selectedFpsPid = fpsPid;
         this.previewPath = previewPath; this.capturePath = capturePath;
@@ -53,15 +61,30 @@ internal sealed class PanelWindow : Window
         Icon = PanelBranding.WindowIcon;
         Width = 1024; Height = 576; MinWidth = 640; MinHeight = 360;
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.NoResize;
+        WindowStartupLocation = WindowStartupLocation.Manual;
         Background = Brushes.Black; Topmost = false; ShowActivated = false;
-        Content = new Viewbox { Stretch = Stretch.Uniform, Child = board };
+        viewport.Stretch = ScalingStretch(PanelPreferences.Scaling); viewport.Child = board; Content = viewport;
         BuildLayout();
+        SizeChanged += (_, _) => UpdatePanelLayout();
+        DpiChanged += (_, _) => { if (fit && display is not null) Dispatcher.BeginInvoke(() => Displays.Place(this, display, true)); };
         board.MouseLeftButtonDown += (_, e) => { if (e.ClickCount == 2) ToggleFit(); else if (!fit) DragMove(); };
         KeyDown += (_, e) => { if (e.Key == Key.F11) ToggleFit(); else if (e.Key == Key.Escape && fit) ToggleFit(); };
         ContextMenu = BuildMenu();
         clock = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background, (_, _) => Tick(), Dispatcher);
-        SourceInitialized += (_, _) => PlaceInitialDisplay();
-        Loaded += (_, _) => { tray = new PanelTray(this); Start(); };
+        SourceInitialized += (_, _) =>
+        {
+            PlaceInitialDisplay();
+            HwndSource.FromHwnd(new WindowInteropHelper(this).Handle)?.AddHook(DisplayMessage);
+        };
+        Loaded += (_, _) =>
+        {
+            // WPF can apply its initial size after SourceInitialized placement.
+            // Reapply native monitor bounds after that initial layout completes.
+            if (display is not null) Displays.Place(this, display, fit,previewSize);
+            UpdatePanelLayout();
+            tray = new PanelTray(this); Start();
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
+        };
         Closed += (_, _) =>
         {
             closing = true; benchmark?.Dispose(); tray?.Dispose(); clock.Stop(); artworkAnimation?.Dispose(); cancellation.Cancel();
@@ -155,18 +178,23 @@ internal sealed class PanelWindow : Window
         Label("download", "—", 674, 512, 28, 327);
         Label("status", "Starting sensors…", 220, 556, 10, 470, color: Artwork.Gray);
         Label("controls", "Right-click for display controls", 745, 556, 10, 184, color: Artwork.Gray);
+        panelLayout = new(board,text,leftArt,rightArt,brandArt);
     }
 
     private ContextMenu BuildMenu()
     {
         var menu = new ContextMenu();
         var displays = new MenuItem { Header = "Move to display" };
-        foreach (var target in Displays.List())
+        displays.SubmenuOpened += (_, _) =>
         {
-            var item = new MenuItem { Header = $"{target.Name} · {target.Width}×{target.Height}" };
-            item.Click += (_, _) => { display = target; PanelPreferences.Save(target); Displays.Place(this, target, fit); };
-            displays.Items.Add(item);
-        }
+            displays.Items.Clear();
+            foreach (var target in Displays.List())
+            {
+                var item = new MenuItem { Header = $"{target.Name} · {target.Width}×{target.Height}" };
+                item.Click += (_, _) => { display = target; PanelPreferences.Save(target,fit); Displays.Place(this, target, fit); };
+                displays.Items.Add(item);
+            }
+        };
         menu.Items.Add(displays);
         var fpsApplications = new MenuItem { Header = "FPS game" };
         fpsApplications.SubmenuOpened += (_, _) =>
@@ -184,7 +212,26 @@ internal sealed class PanelWindow : Window
             }
         };
         menu.Items.Add(fpsApplications);
-        var full = new MenuItem { Header = "Fit display (F11)" }; full.Click += (_, _) => ToggleFit(); menu.Items.Add(full);
+        var full = new MenuItem { Header = "Fit to display" }; full.Click += (_, _) => FitToDisplay(); menu.Items.Add(full);
+        var restore = new MenuItem { Header = "Restore window size" }; restore.Click += (_, _) => SetFit(false); menu.Items.Add(restore);
+        var layout = new MenuItem { Header = "Layout" };
+        foreach (var choice in new[] { ("Auto","Automatic · screen aspect ratio"),("Classic","Classic · 16:9"),("Wide","Wide sensor strip"),("Portrait","Portrait · stacked sensors") })
+        {
+            var item = new MenuItem { Header=choice.Item2, IsCheckable=true };
+            layout.SubmenuOpened += (_,_) => item.IsChecked=layoutMode==choice.Item1;
+            item.Click += (_,_) => { layoutMode=choice.Item1; PanelPreferences.SaveLayout(layoutMode); UpdatePanelLayout(); };
+            layout.Items.Add(item);
+        }
+        menu.Items.Add(layout);
+        var scaling = new MenuItem { Header = "Scale artwork" };
+        foreach (var choice in new[] { ("Fit","Fit · preserve proportions"),("Fill","Fill · crop outer edges"),("Stretch","Stretch · no borders") })
+        {
+            var item = new MenuItem { Header=choice.Item2, IsCheckable=true };
+            scaling.SubmenuOpened += (_,_) => item.IsChecked=viewport.Stretch==ScalingStretch(choice.Item1);
+            item.Click += (_,_) => { viewport.Stretch=ScalingStretch(choice.Item1); PanelPreferences.SaveScaling(choice.Item1); };
+            scaling.Items.Add(item);
+        }
+        menu.Items.Add(scaling);
         var top = new MenuItem { Header = "Always on top", IsCheckable = true, IsChecked = Topmost };
         top.Click += (_, _) => Topmost = top.IsChecked; menu.Items.Add(top);
         var animate = new MenuItem { Header = "Animate AORUS artwork", IsCheckable = true, IsChecked = true };
@@ -224,17 +271,19 @@ internal sealed class PanelWindow : Window
     private void PlaceInitialDisplay()
     {
         var displays = Displays.List();
-        display = previewPath is not null ? displays.FirstOrDefault(d => d.Primary) : PanelPreferences.Preferred(displays);
+        display = previewPath is not null && !sensorPreview ? displays.FirstOrDefault(d => d.Primary) : PanelPreferences.Preferred(displays);
+        if (sensorPreview && display is not { Primary:false }) throw new InvalidOperationException("A secondary screen is required for sensor-display preview; the primary workspace will not be used.");
         // Automatic fullscreen is limited to the actual attached sensor display.
         // A missing/primary match must never cover the owner's working screen.
         if (previewPath is null)
-            fit = display is { Primary: false } && display.MonitorId.Contains("EXAMPLE-SECONDARY", StringComparison.OrdinalIgnoreCase);
-        if (display is not null) Displays.Place(this, display, fit);
+            fit = PanelPreferences.AutomaticFit(display);
+        hideInitially = previewPath is null && !PanelPreferences.ShowInitially(display);
+        if (display is not null) Displays.Place(this, display, fit,previewSize);
     }
 
     private void Start()
     {
-        if (previewPath is null && !fit) Hide();
+        if (hideInitially) Hide();
         Tick();
         _ = LoadArtwork();
         if (previewPath is not null)
@@ -380,14 +429,78 @@ internal sealed class PanelWindow : Window
 
     private void ToggleFit()
     {
-        if (display is null) return;
-        fit = !fit; Displays.Place(this, display, fit);
+        SetFit(!fit);
+    }
+
+    private void ResolveDisplay()
+    {
+        var displays = Displays.List();
+        display = display is null ? PanelPreferences.Preferred(displays)
+            : PanelPreferences.SelectDisplay(displays, display.MonitorId, display.Name);
+    }
+
+    private void SetFit(bool value)
+    {
+        ResolveDisplay();
+        if (display is null) { text["status"].Text = "No connected display found"; return; }
+        fit = value;
+        PanelPreferences.Save(display,fit);
+        WindowState = WindowState.Normal;
+        Displays.Place(this, display, fit);
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
+    }
+
+    internal void FitToDisplay()
+    {
+        SetFit(true);
+        ShowPanel();
+    }
+
+    internal void ShowPanel()
+    {
+        ResolveDisplay();
+        WindowState = WindowState.Normal;
+        if (display is not null) Displays.Place(this, display, fit);
+        Show();
+        if (display is not null) Displays.Place(this, display, fit);
+        Activate(); // Only explicit Show/Fit requests activate the panel.
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
+    }
+
+    private static Stretch ScalingStretch(string mode) => mode switch { "Fill"=>Stretch.UniformToFill, "Stretch"=>Stretch.Fill, _=>Stretch.Uniform };
+    private void UpdatePanelLayout()
+    {
+        if (ActualWidth>0 && ActualHeight>0) panelLayout?.Apply(ActualWidth/ActualHeight,layoutMode);
+    }
+    private void SaveDisplayState()
+    {
+        if (closing) return;
+        var bounds=Displays.CurrentBounds(this);
+        File.WriteAllText(Path.Combine(PanelPaths.Artifacts,"panel-display-state.json"),JsonSerializer.Serialize(new
+        {
+            Version=typeof(App).Assembly.GetName().Version?.ToString(), Preview=previewPath is not null,
+            Display=display, Bounds=bounds, Fit=fit, FitsTarget=display is not null && bounds==Displays.Placement(display,true),
+            Dpi=Displays.Dpi(this), Layout=panelLayout?.Mode, Scaling=viewport.Stretch.ToString(), Visible=IsVisible
+        },JsonOptions));
+    }
+    private nint DisplayMessage(nint hwnd,int message,nint wParam,nint lParam,ref bool handled)
+    {
+        if (message==0x007E) Dispatcher.BeginInvoke(() =>
+        {
+            if (closing) return;
+            bool wasSecondary=display is { Primary:false };
+            ResolveDisplay();
+            if (display is null) { Hide(); return; }
+            if (fit && wasSecondary && display.Primary) { fit=false; Hide(); }
+            Displays.Place(this,display,fit);
+        });
+        return 0;
     }
 
     private void Capture(string path)
     {
         board.UpdateLayout();
-        var bitmap = new RenderTargetBitmap(1024, 576, 96, 96, PixelFormats.Pbgra32);
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(board.Width), (int)Math.Ceiling(board.Height), 96, 96, PixelFormats.Pbgra32);
         bitmap.Render(board);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
@@ -399,7 +512,7 @@ internal sealed class PanelWindow : Window
             SocialIcons = false
         }, JsonOptions));
         File.WriteAllText(Path.Combine(PanelPaths.Artifacts, "panel-render-info.txt"),
-            $"Rendered visible WPF canvas: 1024x576 (16:9). Saved {path}\nFonts:\n" +
+            $"Rendered WPF canvas: {board.Width:0}x{board.Height:0}; layout {panelLayout?.Mode}. Saved {path}\nFonts:\n" +
             string.Join("\n", Fonts.GetFontFamilies(new Uri("pack://application:,,,/"), "./Aorus/Fonts/").Select(f => f.Source)));
     }
 

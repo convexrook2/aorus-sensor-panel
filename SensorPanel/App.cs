@@ -12,7 +12,15 @@ internal static class App
     {
         try
         {
+            // WPF hosts the window; WinForms supplies only the tray. Configure
+            // process DPI before either framework creates an HWND.
+            System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.PerMonitorV2);
             if (args.Contains("--check-mapping")) { CheckArtworkPackage(); return PanelMetrics.Check(); }
+            if (args.Contains("--check-displays"))
+            {
+                File.WriteAllText(Path.Combine(PanelPaths.Artifacts,"display-check.json"),System.Text.Json.JsonSerializer.Serialize(Displays.List()));
+                return 0;
+            }
             string? preview = Argument(args, "--preview");
             string? capture = Argument(args, "--capture");
             if (preview is null && !args.Contains("--readme") && !args.Contains("--remove-install-startup") && !IsElevated())
@@ -45,7 +53,17 @@ internal static class App
             int fpsPidIndex = Array.IndexOf(args, "--fps-pid");
             int fpsPid = fpsPidIndex >= 0 ? int.Parse(args[fpsPidIndex + 1]) : 0;
             if (fpsPid < 0) throw new ArgumentException("FPS PID must be nonnegative.");
-            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling")));
+            Size? previewSize=null;
+            int sizeIndex=Array.IndexOf(args,"--preview-size");
+            if (sizeIndex>=0)
+            {
+                if (preview is null || sizeIndex+1>=args.Length) throw new ArgumentException("--preview-size requires --preview and WIDTHxHEIGHT.");
+                var dimensions=args[sizeIndex+1].Split('x');
+                if (dimensions.Length!=2 || !int.TryParse(dimensions[0],out int width) || !int.TryParse(dimensions[1],out int height) || width<1 || height<1 || width>8192 || height>8192)
+                    throw new ArgumentException("Preview dimensions must be 1–8192 pixels.");
+                previewSize=new Size(width,height);
+            }
+            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview")));
         }
         catch (Exception ex)
         {
