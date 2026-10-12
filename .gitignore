@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+artifacts/
+.vs/
+.idea/
+*.user
+*.suo
+.env
+.env.*
+!.env.example
+
+# Copied Rainmeter/HWiNFO utilities are not used by the standalone panel.
+Assets/AORUS/@Resources/HWiNFOSharedMemoryViewer.exe
+Assets/AORUS/@Resources/RedistrutablePlugin/
