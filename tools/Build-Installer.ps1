@@ -6,7 +6,7 @@ function Get-ArtifactHash([string]$Path) {
     try { [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-','') }
     finally { $sha.Dispose(); $stream.Dispose() }
 }
-$packageRoot = Join-Path $projectRoot 'artifacts\package-win-x64'
+$packageRoot = Join-Path $projectRoot ('artifacts\package-win-x64-shared-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
 $outputRoot = Join-Path $projectRoot 'artifacts\installer'
 New-Item -ItemType Directory -Path $packageRoot,$outputRoot -Force | Out-Null
 Start-Transcript -Path '.\artifacts\installer-build.txt' -Force
@@ -18,10 +18,18 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Collector checks failed.' }
     $check = Start-Process '.\SensorPanel\bin\Package\net10.0-windows\SensorPanel.exe' -ArgumentList '--check-mapping' -WindowStyle Normal -Wait -PassThru
     if ($check.ExitCode -ne 0) { throw 'Panel mapping/resource checks failed.' }
-    dotnet publish '.\SensorPanel\SensorPanel.csproj' -c Package -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o $packageRoot
-    if ($LASTEXITCODE -ne 0) { throw 'Self-contained publication failed.' }
-    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','coreclr.dll','wpfgfx_cor3.dll','PresentMon-2.6.0-x64.exe','README.txt')) {
+    dotnet publish '.\SensorPanel\SensorPanel.csproj' -c Package -r win-x64 --self-contained false -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o $packageRoot
+    if ($LASTEXITCODE -ne 0) { throw 'Shared-runtime publication failed.' }
+    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','README.txt')) {
         if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $required))) { throw ('Missing packaged dependency: ' + $required) }
+    }
+    foreach ($excluded in @('coreclr.dll','hostfxr.dll','hostpolicy.dll','System.Private.CoreLib.dll','PresentationFramework.dll','wpfgfx_cor3.dll')) {
+        if (Test-Path -LiteralPath (Join-Path $packageRoot $excluded)) { throw ('A private runtime was unexpectedly published: ' + $excluded) }
+    }
+    $runtimeConfig = Get-Content -LiteralPath (Join-Path $packageRoot 'SensorPanel.runtimeconfig.json') -Raw | ConvertFrom-Json
+    if ($runtimeConfig.runtimeOptions.includedFrameworks -or $runtimeConfig.runtimeOptions.rollForward -ne 'LatestPatch') { throw 'Expected shared runtime with compatible patch roll-forward.' }
+    foreach ($framework in @('Microsoft.NETCore.App','Microsoft.WindowsDesktop.App')) {
+        if (-not ($runtimeConfig.runtimeOptions.frameworks | Where-Object { $_.name -eq $framework -and $_.version -eq '10.0.0' })) { throw ('Shared runtime requirement mismatch: ' + $framework) }
     }
     if ((Get-ArtifactHash (Join-Path $packageRoot 'PresentMon-2.6.0-x64.exe')) -ne 'B2A706BC6AD475749E3B7E3409263AA1E6906D45BDCF993F6DBC0F660188F1AF') { throw 'PresentMon release digest mismatch.' }
     & '.\tools\Package-Notices.ps1' -PackageRoot $packageRoot
@@ -29,13 +37,23 @@ try {
     if ($packageCheck.ExitCode -ne 0) { throw 'Published resource/mapping check failed.' }
     $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
     if (-not (Test-Path -LiteralPath $compiler)) { throw 'Inno Setup compiler is unavailable.' }
-    & $compiler ('/DPackageRoot=' + $packageRoot) ('/DOutputRoot=' + $outputRoot) '.\Packaging\SensorPanel.iss'
+    # Delete only recorded v1.0.0/1.0.1 package files absent from the new package.
+    # Exact paths are scoped to {app}; the shared system runtime is never touched.
+    $cleanupLines = @(foreach ($relative in Get-Content -LiteralPath '.\Packaging\LegacySelfContainedFiles.txt') {
+        if ($relative.StartsWith('#') -or [string]::IsNullOrWhiteSpace($relative)) { continue }
+        if ($relative -match '["{}:*?]' -or [IO.Path]::IsPathRooted($relative) -or ($relative.Split('\') -contains '..')) { throw 'Unsafe legacy cleanup path.' }
+        if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $relative))) { 'Type: files; Name: "{app}\' + $relative + '"' }
+    })
+    # Keep compiler input outside the installed package.
+    $cleanupPath = Join-Path $outputRoot 'LegacyCleanup.iss'
+    $cleanupLines | Set-Content -LiteralPath $cleanupPath -Encoding UTF8
+    & $compiler ('/DPackageRoot=' + $packageRoot) ('/DOutputRoot=' + $outputRoot) ('/DUpgradeCleanup=' + $cleanupPath) '.\Packaging\SensorPanel.iss'
     if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed.' }
     $installer = Join-Path $outputRoot 'AORUS-Sensor-Panel-FAN-MADE-Setup.exe'
     $files = @(Get-ChildItem -LiteralPath $packageRoot -File -Recurse | ForEach-Object {
         [pscustomobject]@{Path=$_.FullName.Substring($packageRoot.Length+1);Bytes=$_.Length;SHA256=(Get-ArtifactHash $_.FullName)}
     })
-    [pscustomobject]@{Version='1.0.1';CreatedAt=(Get-Date).ToString('o');Architecture='win-x64';SelfContained=$true;Canvas='1024x576';Installer=$installer;InstallerBytes=(Get-Item -LiteralPath $installer).Length;InstallerSHA256=(Get-ArtifactHash $installer);Files=$files} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath '.\artifacts\installer\package-manifest.json' -Encoding UTF8
+    [pscustomobject]@{Version='1.0.2';CreatedAt=(Get-Date).ToString('o');Architecture='win-x64';SelfContained=$false;SharedRuntime='Microsoft .NET 10 Desktop Runtime (x64), stable 10.0.x';Canvas='1024x576';PackageRoot=$packageRoot;PackageBytes=($files | Measure-Object Bytes -Sum).Sum;Installer=$installer;InstallerBytes=(Get-Item -LiteralPath $installer).Length;InstallerSHA256=(Get-ArtifactHash $installer);Files=$files} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath '.\artifacts\installer\package-manifest.json' -Encoding UTF8
     Write-Host ('Single installer ready: ' + $installer)
     Write-Host 'Build/source/published-resource checks passed. Native UI and install round-trip validation follows.'
 } catch { Write-Host ($_ | Out-String) -ForegroundColor Red; throw }

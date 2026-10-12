@@ -9,7 +9,7 @@ $lines.Add('AORUS SENSOR PANEL - FAN MADE / THIRD-PARTY NOTICES')
 $lines.Add('Independent project. GIGABYTE/AORUS trademarks and supplied artwork belong to their owners. No endorsement is claimed.')
 $lines.Add('The unmodified LibreHardwareMonitor 0.9.6 library is MPL-2.0; corresponding source: https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/tree/v0.9.6')
 $lines.Add('PresentMon 2.6.0: MIT; source https://github.com/GameTechDev/PresentMon/tree/v2.6.0 ; full license in PresentMon-LICENSE.txt.')
-$lines.Add('.NET runtime: Microsoft, MIT; source https://github.com/dotnet/runtime and https://github.com/dotnet/wpf. Runtime notices are included in Licenses.')
+$lines.Add('.NET Desktop Runtime: installed separately and shared; it is not bundled in this package. Microsoft source: https://github.com/dotnet/runtime and https://github.com/dotnet/wpf.')
 foreach ($library in $deps.libraries.PSObject.Properties | Where-Object {$_.Value.type -eq 'package'}) {
     $parts = $library.Name.Split('/'); $id = $parts[0]; $version = $parts[1]
     $directory = Join-Path $env:USERPROFILE ('.nuget\packages\' + $id.ToLowerInvariant() + '\' + $version)

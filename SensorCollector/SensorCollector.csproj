@@ -5,6 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
+    <SelfContained>false</SelfContained>
+    <RuntimeFrameworkVersion>10.0.0</RuntimeFrameworkVersion>
+    <RollForward>LatestPatch</RollForward>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
