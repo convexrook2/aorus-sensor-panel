@@ -64,7 +64,7 @@ internal sealed class PanelWindow : Window
         Width = 1024; Height = 576; MinWidth = 640; MinHeight = 360;
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.NoResize;
         WindowStartupLocation = WindowStartupLocation.Manual;
-        Background = Brushes.Black; Topmost = false; ShowActivated = false;
+        Background = Brushes.Black; Topmost = false; ShowActivated = false; ShowInTaskbar = false;
         viewport.Stretch = ScalingStretch(PanelPreferences.Scaling); viewport.Child = board; Content = viewport;
         BuildLayout();
         SizeChanged += (_, _) => UpdatePanelLayout();
@@ -503,7 +503,8 @@ internal sealed class PanelWindow : Window
         {
             Version=typeof(App).Assembly.GetName().Version?.ToString(), Preview=previewPath is not null,
             Display=display, Bounds=bounds, Fit=fit, FitsTarget=display is not null && bounds==Displays.Placement(display,true),
-            Dpi=Displays.Dpi(this), Layout=panelLayout?.Mode, Scaling=viewport.Stretch.ToString(), Visible=IsVisible
+            Dpi=Displays.Dpi(this), Layout=panelLayout?.Mode, Scaling=viewport.Stretch.ToString(), Visible=IsVisible,
+            ShowInTaskbar, TrayIconVisible=tray?.Visible ?? false
         },JsonOptions));
     }
     private nint DisplayMessage(nint hwnd,int message,nint wParam,nint lParam,ref bool handled)

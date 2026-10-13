@@ -31,6 +31,9 @@ internal static class Displays
 
     public static void Place(Window window, DisplayInfo display, bool fit, Size? previewSize = null)
     {
+        // A dedicated fullscreen sensor display is controlled through the tray.
+        // Apply this before placement so a taskbar-style change cannot move it.
+        window.ShowInTaskbar = !(fit && !display.Primary);
         var bounds = Placement(display, fit);
         if (previewSize is { } size)
         {

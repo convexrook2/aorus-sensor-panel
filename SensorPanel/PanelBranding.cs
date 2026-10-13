@@ -37,6 +37,7 @@ internal sealed class PanelTray : IDisposable
     private readonly System.Windows.Forms.NotifyIcon icon;
     private readonly System.Drawing.Icon artwork;
     private readonly System.Windows.Forms.ContextMenuStrip menu = new();
+    internal bool Visible => icon.Visible;
     public PanelTray(PanelWindow window)
     {
         artwork = PanelBranding.TrayIcon();
