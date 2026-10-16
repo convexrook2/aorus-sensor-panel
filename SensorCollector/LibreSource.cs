@@ -141,8 +141,7 @@ internal sealed class LibreSource : IDisposable
     internal static Reading Decode(string id, string name, float? value, string unit, DateTimeOffset retrievedAt)
     {
         bool available = value.HasValue && float.IsFinite(value.Value);
-        // Actual board rail labels/scaling and Ryzen VID decoding need tracing:
-        // live samples showed +0.82V -> 1.86V and core VID -> 0.14V.
+        // Board rail labels/scaling and requested VID require verified mappings.
         bool voltage = unit == "V";
         return new($"libre{id}", name, available ? value : null, unit, Source,
             !available ? "unavailable" : voltage ? "unmapped" : "ok",

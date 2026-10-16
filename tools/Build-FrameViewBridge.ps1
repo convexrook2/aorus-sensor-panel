@@ -1,8 +1,22 @@
-param([Parameter(Mandatory=$true)][string]$OutputDirectory)
+param(
+    [Parameter(Mandatory=$true)][string]$OutputDirectory,
+    [string]$FrameViewSdkDirectory = $env:FRAMEVIEW_SDK_PATH,
+    [string]$VcEnvironmentPath = $env:VCVARS64_PATH
+)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
-$frameViewSdk = 'C:\Program Files\NVIDIA Corporation\FrameViewSDK\SDK\Public_Release'
-$vcEnvironment = 'C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat'
+if ([string]::IsNullOrWhiteSpace($FrameViewSdkDirectory)) {
+    $FrameViewSdkDirectory = Join-Path $env:ProgramFiles 'NVIDIA Corporation\FrameViewSDK\SDK\Public_Release'
+}
+if ([string]::IsNullOrWhiteSpace($VcEnvironmentPath)) {
+    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+    if (-not (Test-Path -LiteralPath $vswhere)) { throw 'Install Visual Studio C++ build tools or set VCVARS64_PATH.' }
+    $vsInstallation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($vsInstallation)) { throw 'No Visual Studio installation with x64 C++ build tools was found.' }
+    $VcEnvironmentPath = Join-Path $vsInstallation 'VC\Auxiliary\Build\vcvars64.bat'
+}
+$frameViewSdk = (Resolve-Path -LiteralPath $FrameViewSdkDirectory).Path
+$vcEnvironment = (Resolve-Path -LiteralPath $VcEnvironmentPath).Path
 $nativeOutput = [IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Path $nativeOutput -Force | Out-Null
 $sourcePath = Join-Path $projectRoot 'SensorCollector\Native\FrameViewBridge.cpp'

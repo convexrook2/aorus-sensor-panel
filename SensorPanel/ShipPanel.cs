@@ -107,7 +107,9 @@ internal sealed class ShipPanel : Canvas
         }
         else Put(this, new ShipArtwork(theme, true) { Opacity=.7 }, new(plan.Sidebar.X+4, plan.Sidebar.Y+36, plan.Sidebar.Width-8, plan.Sidebar.Height-76));
         Put(this, Label(vessel.Faction, portrait ? 13 : 19, theme.Accent, true), new(plan.Sidebar.X+10, plan.Sidebar.Y+12, plan.Sidebar.Width-20, 24));
-        Put(this, Label(ShipPortrait.Supports(theme.ShipId) ? "ORIGINAL COLOURS" : "SHIP BLUEPRINT", portrait ? 7 : 9, theme.Muted),
+        var modelStatus=Label(ShipPortrait.Supports(theme.ShipId) ? "ORIGINAL COLOURS" : theme.ShipId=="Razorback" ? "2D · 3D MODEL NOT INCLUDED" : "SHIP BLUEPRINT", portrait ? 7 : 9, theme.Muted);
+        if(theme.ShipId=="Razorback") modelStatus.ToolTip="This theme currently uses flat artwork. The requested 3D model is not bundled; this is not a loading error.";
+        Put(this, modelStatus,
             new(plan.Sidebar.X+8, plan.Sidebar.Bottom-28, plan.Sidebar.Width-16, 18));
         shipChoices=new ComboBox {
             FontSize=portrait ? 8 : 10, Foreground=theme.Foreground, Background=theme.Surface, BorderBrush=theme.Divider,

@@ -11,6 +11,7 @@ $outputRoot = Join-Path $projectRoot 'artifacts\installer'
 New-Item -ItemType Directory -Path $packageRoot,$outputRoot -Force | Out-Null
 Start-Transcript -Path '.\artifacts\installer-build.txt' -Force
 try {
+    & '.\tools\Check-PublicContent.ps1'
     & '.\tools\Build-Branding.ps1'
     dotnet build '.\SensorPanel\SensorPanel.csproj' -c Package
     if ($LASTEXITCODE -ne 0) { throw 'Package build failed.' }

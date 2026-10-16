@@ -32,19 +32,18 @@ internal static class PanelPreferences
     {
         if (display is not { Primary: false }) return false;
         var saved = Load();
-        bool selected = (!string.IsNullOrEmpty(saved.MonitorId) && string.Equals(saved.MonitorId, display.MonitorId, StringComparison.OrdinalIgnoreCase))
-            || (!string.IsNullOrEmpty(saved.DisplayName) && string.Equals(saved.DisplayName, display.Name, StringComparison.OrdinalIgnoreCase));
-        return selected && saved.FitDisplay.HasValue ? saved.FitDisplay.Value
-            : display.MonitorId.Contains("EXAMPLE-SECONDARY", StringComparison.OrdinalIgnoreCase);
+        return ShouldFit(display,saved.MonitorId,saved.DisplayName,saved.FitDisplay);
     }
     public static bool ShowInitially(DisplayInfo? display)
     {
-        if (display is null) return false;
         var saved = Load();
-        return display.MonitorId.Contains("EXAMPLE-SECONDARY", StringComparison.OrdinalIgnoreCase)
-            || (!string.IsNullOrWhiteSpace(saved.MonitorId) && string.Equals(saved.MonitorId,display.MonitorId,StringComparison.OrdinalIgnoreCase))
-            || (!string.IsNullOrWhiteSpace(saved.DisplayName) && string.Equals(saved.DisplayName,display.Name,StringComparison.OrdinalIgnoreCase));
+        return ShouldShow(display,saved.MonitorId,saved.DisplayName);
     }
+    internal static bool ShouldShow(DisplayInfo? display,string savedId,string savedName) => display is not null &&
+        ((!string.IsNullOrWhiteSpace(savedId) && string.Equals(savedId,display.MonitorId,StringComparison.OrdinalIgnoreCase))
+        || (!string.IsNullOrWhiteSpace(savedName) && string.Equals(savedName,display.Name,StringComparison.OrdinalIgnoreCase)));
+    internal static bool ShouldFit(DisplayInfo? display,string savedId,string savedName,bool? fit) => display is { Primary:false }
+        && ShouldShow(display,savedId,savedName) && fit==true;
     internal static int ValidPollingInterval(int value) => value is >= 500 and <= 5000 ? value : 1000;
     private static void Write(Preferences value)
     {
@@ -68,8 +67,7 @@ internal static class PanelPreferences
             ? displays.FirstOrDefault(d => string.Equals(d.MonitorId, savedMonitorId, StringComparison.OrdinalIgnoreCase)) : null)
             ?? (!string.IsNullOrWhiteSpace(savedName)
                 ? displays.FirstOrDefault(d => string.Equals(d.Name, savedName, StringComparison.OrdinalIgnoreCase)) : null);
-        return saved ?? displays.FirstOrDefault(d => d.MonitorId.Contains("EXAMPLE-SECONDARY", StringComparison.OrdinalIgnoreCase))
-            ?? displays.FirstOrDefault(d => !d.Primary) ?? displays.FirstOrDefault();
+        return saved ?? displays.FirstOrDefault(d => !d.Primary) ?? displays.FirstOrDefault();
     }
     internal static void CheckDisplaySelection()
     {
@@ -78,10 +76,12 @@ internal static class PanelPreferences
         DisplayInfo[] screens = [primary, sensor];
         if (SelectDisplay(screens, "", "") != sensor ||
             SelectDisplay(screens, "removed-monitor", "removed-display") != sensor ||
-            SelectDisplay(screens, "display\\EXAMPLE-SECONDARY", "") != sensor ||
+            SelectDisplay(screens, "display\\example-secondary", "") != sensor ||
             SelectDisplay(screens, primary.MonitorId, "") != primary ||
             SelectDisplay([primary], sensor.MonitorId, sensor.Name) != primary ||
-            SelectDisplay([], "", "") is not null)
+            SelectDisplay([], "", "") is not null || ShouldShow(sensor,"","") || ShouldFit(sensor,"","",true)
+            || !ShouldShow(sensor,sensor.MonitorId,"") || !ShouldFit(sensor,sensor.MonitorId,"",true)
+            || ShouldFit(primary,primary.MonitorId,"",true) || ShouldFit(sensor,sensor.MonitorId,"",false))
             throw new InvalidOperationException("Empty/stale preferences must fall back to an available display while respecting an explicit connected selection.");
     }
     public static void Save(DisplayInfo display, bool? fit = null)

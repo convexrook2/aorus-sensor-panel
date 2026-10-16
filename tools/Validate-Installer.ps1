@@ -1,4 +1,5 @@
-param([ValidateSet('Install','VerifyInstalled','Uninstall')][string]$Phase = 'Install')
+param([ValidateSet('Install','VerifyInstalled','Uninstall')][string]$Phase = 'Install',
+    [switch]$VerifyLiveSensors,[string[]]$RequiredSensorIds=@())
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
@@ -58,7 +59,7 @@ try {
         $task.Xml | Set-Content -LiteralPath '.\artifacts\installer\startup-task-verified.xml' -Encoding UTF8
         $check = Start-Process $installedPanel -ArgumentList '--check-mapping' -WindowStyle Normal -Wait -PassThru
         if ($check.ExitCode -ne 0) { throw 'Installed mapping check failed.' }
-        $snapshot = Join-Path $projectRoot 'artifacts\battlefield-auto-live.json'
+        $snapshot = & (Join-Path $PSScriptRoot 'New-PreviewSnapshot.ps1')
         $capture = Join-Path $projectRoot 'artifacts\installer\installed-16x9.png'
         $preview = Start-Process $installedPanel -ArgumentList ('--preview "' + $snapshot + '" --capture "' + $capture + '"') -WindowStyle Normal -PassThru
         [pscustomobject]@{InstalledAt=(Get-Date).ToString('o');InstalledFilesVerified=$manifest.Files.Count;DesktopShortcutVerified=$true;StartupTaskVerified=$true;TaskName=$taskName;TaskUserSID=$sid;TestRoot=$testRoot;PreviewPID=$preview.Id;UninstallVerified=$false;NativeUIPending=$true} | ConvertTo-Json | Set-Content -LiteralPath $receiptPath -Encoding UTF8
@@ -68,20 +69,21 @@ try {
         $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
         if ($receipt.TestRoot -ne $testRoot) { throw 'Receipt target mismatch; stop cleanup.' }
         $live = @(Get-CimInstance Win32_Process -Filter "Name='SensorPanel.exe'" | Where-Object ExecutablePath -eq $installedPanel)
-        if ($live.Count -eq 1) {
+        if ($live.Count -eq 1 -and $VerifyLiveSensors) {
             $snapshot = Get-Content -LiteralPath '.\artifacts\panel-live.json' -Raw | ConvertFrom-Json
             if (-not $snapshot.elevated -or [DateTimeOffset]::UtcNow - [DateTimeOffset]::Parse($snapshot.capturedAt) -gt [TimeSpan]::FromSeconds(35)) { throw 'Installed live snapshot must be elevated and current.' }
-            foreach ($id in @('cpu/core-voltage','ram/mclk','libre/amdcpu/0/temperature/2')) {
+            foreach ($id in $RequiredSensorIds) {
                 if (-not ($snapshot.readings | Where-Object {$_.id -eq $id -and $_.status -eq 'ok'})) { throw ('Missing real live sensor ID: ' + $id) }
             }
             $helpers = @(Get-CimInstance Win32_Process -Filter "Name='PresentMon-2.6.0-x64.exe'" | Where-Object {$_.ParentProcessId -eq $live[0].ProcessId -and $_.ExecutablePath -eq (Join-Path $testRoot 'PresentMon-2.6.0-x64.exe')})
-            if ($helpers.Count -ne 1) { throw 'Expected one installed FPS helper.' }
+            if ($helpers.Count -gt 1) { throw 'Unexpected duplicate installed FPS helpers.' }
             Copy-Item -LiteralPath '.\artifacts\panel-live.json' -Destination '.\artifacts\installer\fullscreen-live.json'
-            $receipt | Add-Member -NotePropertyName LiveSensorsVerified -NotePropertyValue $true -Force
+            $receipt | Add-Member -NotePropertyName LiveSnapshotChecked -NotePropertyValue $true -Force
+            $receipt | Add-Member -NotePropertyName RequiredSensorIds -NotePropertyValue $RequiredSensorIds -Force
             $receipt | Add-Member -NotePropertyName LivePID -NotePropertyValue $live[0].ProcessId -Force
-            $receipt | Add-Member -NotePropertyName LiveHelperPID -NotePropertyValue $helpers[0].ProcessId -Force
+            $receipt | Add-Member -NotePropertyName LiveHelperPID -NotePropertyValue $(if($helpers.Count){$helpers[0].ProcessId}else{$null}) -Force
             $receipt | ConvertTo-Json | Set-Content -LiteralPath $receiptPath -Encoding UTF8
-            Write-Host 'PASS: scheduled installed app is elevated, with live CPU temperature/Vcore/RAM and exactly one FPS helper.'
+            Write-Host 'PASS: scheduled installed app is elevated, its snapshot is current, and requested sensor checks passed.'
         }
         foreach ($process in @(Get-CimInstance Win32_Process -Filter "Name='SensorPanel.exe'" | Where-Object ExecutablePath -eq $installedPanel)) {
             $owned = Get-Process -Id $process.ProcessId

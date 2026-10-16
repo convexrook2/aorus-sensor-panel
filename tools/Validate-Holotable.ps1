@@ -1,8 +1,10 @@
-param([switch]$Package)
+param([switch]$Package,[string]$SnapshotPath)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
 New-Item -ItemType Directory -Path artifacts -Force | Out-Null
+if(-not $SnapshotPath){$SnapshotPath=& (Join-Path $PSScriptRoot 'New-PreviewSnapshot.ps1')}
+$SnapshotPath=(Resolve-Path -LiteralPath $SnapshotPath).Path
 Start-Transcript -Path artifacts\holotable-validation.txt -Force
 try {
     Write-Host 'Build, mapping/resource checks, then visible saved-data previews on the secondary sensor display. No installation or live collector.'
@@ -14,7 +16,7 @@ try {
     foreach ($size in @('1280x720', '1920x480', '480x800')) {
         $report = Join-Path $projectRoot ('artifacts\theme-previews\' + $size + '\navigation-check.json')
         $before = Get-Date
-        $preview = Start-Process -FilePath $executable -ArgumentList @('--preview', ('"' + (Join-Path $projectRoot 'artifacts\panel-live.json') + '"'), '--sensor-preview', '--preview-size', $size, '--preview-theme', 'Rocinante', '--preview-check-ships') -PassThru
+        $preview = Start-Process -FilePath $executable -ArgumentList @('--preview', ('"' + $SnapshotPath + '"'), '--sensor-preview', '--preview-size', $size, '--preview-theme', 'Rocinante', '--preview-check-ships') -PassThru
         if (-not $preview.WaitForExit(180000)) { $preview.Kill(); throw "Visible preview timed out: $size" }
         if ($preview.ExitCode -ne 0 -or -not (Test-Path -LiteralPath $report) -or (Get-Item -LiteralPath $report).LastWriteTime -lt $before) { throw "Preview failed: $size. See artifacts\theme-check-error.txt." }
         $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json

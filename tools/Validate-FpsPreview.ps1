@@ -1,3 +1,4 @@
+param([string]$GameProcessName)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
@@ -17,9 +18,9 @@ try {
     $check = Start-Process $panel -ArgumentList '--check-mapping' -WindowStyle Normal -Wait -PassThru
     if ($check.ExitCode -ne 0) { throw 'Panel checks failed.' }
     Get-Content .\artifacts\panel-mapping-check.txt
-    $game = Get-Process -Name 'Le Mans Ultimate' -ErrorAction SilentlyContinue | Select-Object -First 1
+    $game = if ($GameProcessName) { Get-Process -Name $GameProcessName -ErrorAction SilentlyContinue | Select-Object -First 1 } else { $null }
     if ($game) {
-        Write-Host ('Testing initialized NVIDIA public SDK for Le Mans Ultimate PID ' + $game.Id + '. No elevation or service changes.')
+        Write-Host ('Testing initialized NVIDIA public SDK for the selected game PID ' + $game.Id + '. No elevation or service changes.')
         & $collector --frameview --fps-pid $game.Id --count 3 --out .\artifacts\fps-nvidia-initialized.json
         Write-Host 'Eight live Windows ETW FPS samples for the same game PID; foreground switching cannot change the target.'
         & $collector --presentmon --fps-pid $game.Id --count 8 --out .\artifacts\fps-windows-direct.json

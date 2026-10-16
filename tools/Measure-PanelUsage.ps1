@@ -1,3 +1,4 @@
+param([string[]]$GameProcessNames = @())
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
@@ -78,7 +79,7 @@ try {
     })
     $report = [pscustomobject]@{
         StartedAt=$started.ToString('o'); CompletedAt=(Get-Date).ToString('o'); LogicalProcessors=$logicalProcessors
-        GamesAtEnd=@(Get-CimInstance Win32_Process | Where-Object Name -in @('bf6.exe','Le Mans Ultimate.exe') | Select-Object Name,ProcessId)
+        GamesAtEnd=@(Get-CimInstance Win32_Process | Where-Object Name -in $GameProcessNames | Select-Object Name,ProcessId)
         Summary=$summary
         PanelCombined=[pscustomobject]@{
             CPUAveragePercent=($combined | Measure-Object CPUPercent -Average).Average
