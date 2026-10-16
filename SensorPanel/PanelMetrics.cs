@@ -48,6 +48,9 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
         PanelPreferences.CheckDisplaySelection();
         DisplayRecovery.Check();
         PanelLayout.Check();
+        ShipPanel.Check();
+        Holotable.CheckResources();
+        PanelTheme.Check();
         if (PanelPreferences.ValidPollingInterval(500) != 500 || PanelPreferences.ValidPollingInterval(5000) != 5000 ||
             PanelPreferences.ValidPollingInterval(499) != 1000 || PanelPreferences.ValidPollingInterval(5001) != 1000 ||
             PanelWindow.PollingWaitMilliseconds(1000, 30) != 970 || PanelWindow.PollingWaitMilliseconds(500, 700) != 0)

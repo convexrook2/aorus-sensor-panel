@@ -1,0 +1,79 @@
+[
+  {
+    "Ship": "Rocinante",
+    "File": "Rocinante.jpg",
+    "Artist": "MikeMac999 (wallpaper renderer; underlying model attribution not established)",
+    "Source": "https://www.reddit.com/r/TheExpanse/comments/fgfmau/rocinante_wallpaper_for_iphone_11_s10/",
+    "ImageUrl": null,
+    "Type": "Perspective wireframe wallpaper",
+    "SHA256": "41A97FCC3AE1897265E8BE9121C6249B34B9E44FB0E8E470C3448AE10E8DB20C",
+    "CopiedUnchanged": true,
+    "Rights": "Artwork remains the property of its respective owners. No ownership or open-source license is claimed for these images."
+  },
+  {
+    "Ship": "Donnager",
+    "File": "Donnager.jpg",
+    "Artist": "Ryan Begemann (Mallacore)",
+    "Source": "https://www.reddit.com/r/TheExpanse/comments/ta7mwf/",
+    "ImageUrl": "https://preview.redd.it/8xobfxthzcm81.jpg?width=2000&format=pjpg&auto=webp&s=ce715e15737a1eea8f58c84d7d0aaaadd50f4c76",
+    "Type": "Blueprint-style orthographic line drawing",
+    "SHA256": "2EC04328D919380EBC91B6B4D92E8AF30BC85B072FE200D621A507D111D6486C",
+    "CopiedUnchanged": true,
+    "Rights": "Artwork remains the property of its respective owners. No ownership or open-source license is claimed for these images."
+  },
+  {
+    "Ship": "Truman",
+    "File": "Truman.jpg",
+    "Artist": "Ryan Begemann (Mallacore)",
+    "Source": "https://www.reddit.com/r/TheExpanse/comments/ta7mwf/",
+    "ImageUrl": "https://preview.redd.it/gyznvxthzcm81.jpg?width=2000&format=pjpg&auto=webp&s=c2a28b3b1ba6beb50486ae1b44cdca1773dc6150",
+    "Type": "Blueprint-style orthographic line drawing",
+    "SHA256": "D3E7ACDF5B23B53A812C1B07FD41EAAB7D9FFC759830DCA9CE604881D5A2A188",
+    "CopiedUnchanged": true,
+    "Rights": "Artwork remains the property of its respective owners. No ownership or open-source license is claimed for these images."
+  },
+  {
+    "Ship": "Tynan",
+    "File": "Tynan.jpg",
+    "Artist": "Frank Yang",
+    "Source": "https://frankyang.artstation.com/projects/3oAAeo",
+    "ImageUrl": "https://cdnb.artstation.com/p/assets/images/images/026/662/121/4k/frank-yang-nf-tynan-ext-04.jpg?1589380225",
+    "Type": "Production concept painting",
+    "SHA256": "4B4D9865739959EC6E342391621011A9D2C937A63DAAFC09CAB855DC9C67C6CF",
+    "CopiedUnchanged": true,
+    "Rights": "Artwork remains the property of its respective owners. No ownership or open-source license is claimed for these images."
+  },
+  {
+    "Ship": "Razorback",
+    "File": "Razorback.jpg",
+    "Artist": "Ryan Begemann (Mallacore)",
+    "Source": "https://www.reddit.com/r/TheExpanse/comments/ta7mwf/",
+    "ImageUrl": "https://preview.redd.it/xohpjwthzcm81.jpg?width=2000&format=pjpg&auto=webp&s=6deaade1d3cda140682604c565439c16d9610bb6",
+    "Type": "Blueprint-style orthographic line drawing",
+    "SHA256": "143C1DC62F86D9CD0FB4D8D6EB699679D7DC1D1186A0945386B07313FC96421F",
+    "CopiedUnchanged": true,
+    "Rights": "Artwork remains the property of its respective owners. No ownership or open-source license is claimed for these images."
+  },
+  {
+    "Ship": "Morrigan",
+    "File": "Morrigan.jpg",
+    "Artist": "Ryan Begemann (Mallacore)",
+    "Source": "https://www.reddit.com/r/TheExpanse/comments/ts4tfm/",
+    "ImageUrl": "https://preview.redd.it/776incg5fiq81.jpg?width=2000&format=pjpg&auto=webp&s=5dbcc37b7e209e87234b7247a5d144c8abc513bd",
+    "Type": "Blueprint-style orthographic line drawing",
+    "SHA256": "A121DBA26CB589A5A4BDF75D2C5CF52B224744746E22C04D486D13912F197F19",
+    "CopiedUnchanged": true,
+    "Rights": "Artwork remains the property of its respective owners. No ownership or open-source license is claimed for these images."
+  },
+  {
+    "Ship": "Dropship",
+    "File": "Dropship.jpg",
+    "Artist": "Ryan Begemann (Mallacore)",
+    "Source": "https://www.reddit.com/r/TheExpanse/comments/ts4tfm/",
+    "ImageUrl": "https://preview.redd.it/w2yjlvf5fiq81.jpg?width=2000&format=pjpg&auto=webp&s=03b2fdf434323a8bde3b62f79d9e1bad9d6233cc",
+    "Type": "Blueprint-style orthographic line drawing",
+    "SHA256": "7F5AF5DFF559D4D7D493C68C0B90CC36CAB32D9C9CBCDFC9294FC95BA3E5AAA0",
+    "CopiedUnchanged": true,
+    "Rights": "Artwork remains the property of its respective owners. No ownership or open-source license is claimed for these images."
+  }
+]

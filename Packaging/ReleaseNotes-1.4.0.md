@@ -1,0 +1,7 @@
+Adds themes for all seven collected ships: Rocinante, Donnager, Truman, Tynan, Razorback, Morrigan and Dropship. Each uses one ship cropped directly from the original image as a faded background across the entire app, behind translucent sensor cards. The ship rotates to suit landscape, wide and portrait displays without distortion. Each theme has its own palette and console treatment.
+
+The original image files remain unchanged; native cropping, neutral colouring and fading happen in the renderer. Source blueprint lines remain within the artwork, with no extra console or graph grid. Rocinante uses the MikeMac999 wireframe wallpaper; the five blueprint sheets are by Ryan Begemann; Tynan uses Frank Yang's production concept painting. The artwork/source record is included as Ship-Artwork-Sources.json.
+
+Existing MCRN, UNN and Belter selections become Donnager, Truman and Tynan without changing their saved theme IDs. The other eleven themes remain available. Theme switching keeps sensor readings, peaks, unavailable states, polling and display preferences. Cropped artwork decodes once at background resolution and is cached; no new animation timer or runtime is added.
+
+Requires the shared Microsoft .NET 10 Desktop Runtime (Windows x64, stable 10.0.x), existing PawnIO 2.2+ for CPU/motherboard readings, and the installed NVIDIA driver for GPU readings. Independent FAN MADE project; artwork and show/AORUS names belong to their respective owners.

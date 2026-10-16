@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate holographic sensor panel",
+      "type": "shell",
+      "command": "& './tools/Validate-Holotable.ps1'",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

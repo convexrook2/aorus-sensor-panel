@@ -6,7 +6,8 @@ namespace SensorPanel;
 internal static class PanelPreferences
 {
     private sealed record Preferences(string DisplayName = "", string MonitorId = "", int PollingIntervalMs = 1000,
-        bool? FitDisplay = null, string Layout = "Auto", string Scaling = "Fit");
+        bool? FitDisplay = null, string Layout = "Auto", string Scaling = "Fit", string Theme = "Classic", bool HolographicMotion = true,
+        bool ReadoutPulse = false, bool GaugeTransitions = true);
     private static string FilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "X890Sensor", "settings.json");
     private static Preferences Load()
     {
@@ -17,6 +18,14 @@ internal static class PanelPreferences
     public static int PollingInterval => ValidPollingInterval(Load().PollingIntervalMs);
     public static string Layout => Load().Layout;
     public static string Scaling => Load().Scaling;
+    public static string Theme => PanelTheme.Resolve(Load().Theme).Id;
+    public static bool HolographicMotion => Load().HolographicMotion;
+    public static bool ReadoutPulse => Load().ReadoutPulse;
+    public static bool GaugeTransitions => Load().GaugeTransitions;
+    public static void SaveHolographicMotion(bool enabled) => Write(Load() with { HolographicMotion = enabled });
+    public static void SaveReadoutPulse(bool enabled) => Write(Load() with { ReadoutPulse = enabled });
+    public static void SaveGaugeTransitions(bool enabled) => Write(Load() with { GaugeTransitions = enabled });
+    public static void SaveTheme(string theme) => Write(Load() with { Theme = PanelTheme.Resolve(theme).Id });
     public static void SaveLayout(string layout) => Write(Load() with { Layout = layout });
     public static void SaveScaling(string scaling) => Write(Load() with { Scaling = scaling });
     public static bool AutomaticFit(DisplayInfo? display)

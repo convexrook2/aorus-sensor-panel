@@ -23,6 +23,18 @@ internal static class App
             }
             string? preview = Argument(args, "--preview");
             string? capture = Argument(args, "--capture");
+            int themeIndex = Array.IndexOf(args, "--preview-theme");
+            string? previewTheme = null;
+            if (themeIndex >= 0)
+            {
+                if (preview is null || themeIndex + 1 >= args.Length || !PanelTheme.All.Any(t => t.Id == args[themeIndex + 1]))
+                    throw new ArgumentException("--preview-theme requires --preview and a supported theme ID: " + string.Join(", ", PanelTheme.All.Select(t => t.Id)));
+                previewTheme = args[themeIndex + 1];
+            }
+            bool checkThemes = args.Contains("--preview-check-themes");
+            bool checkShips = args.Contains("--preview-check-ships");
+            if ((checkThemes || checkShips) && (preview is null || !args.Contains("--sensor-preview")))
+                throw new ArgumentException("--preview-check-themes requires a saved preview and the secondary sensor display.");
             if (preview is null && !args.Contains("--readme") && !args.Contains("--remove-install-startup") && !IsElevated())
             {
                 var launch = new ProcessStartInfo(Environment.ProcessPath ?? throw new InvalidOperationException("Cannot resolve the app executable.")) { UseShellExecute = true, Verb = "runas" };
@@ -63,7 +75,7 @@ internal static class App
                     throw new ArgumentException("Preview dimensions must be 1–8192 pixels.");
                 previewSize=new Size(width,height);
             }
-            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview")));
+            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips));
         }
         catch (Exception ex)
         {
@@ -95,6 +107,8 @@ internal static class App
         var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var entries = reader.GetEnumerator();
         while (entries.MoveNext()) names.Add(Uri.UnescapeDataString((string)entries.Key));
+        if (!names.Contains("settingsstyles.baml"))
+            throw new InvalidOperationException("The themed settings styles are missing from the panel resource package.");
         foreach (string folder in new[] { "l", "r" })
             for (int frame = 0; frame < 175; frame++)
                 if (!names.Contains($"aorus/animations/{folder}/comp {frame}.png"))

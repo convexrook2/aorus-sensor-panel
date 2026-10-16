@@ -20,7 +20,7 @@ try {
     if ($check.ExitCode -ne 0) { throw 'Panel mapping/resource checks failed.' }
     dotnet publish '.\SensorPanel\SensorPanel.csproj' -c Package -r win-x64 --self-contained false -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o $packageRoot
     if ($LASTEXITCODE -ne 0) { throw 'Shared-runtime publication failed.' }
-    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','NvidiaFrameViewBridge.dll','README.txt')) {
+    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','NvidiaFrameViewBridge.dll','README.txt','Holotable-Model-Credits.txt')) {
         if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $required))) { throw ('Missing packaged dependency: ' + $required) }
     }
     foreach ($excluded in @('coreclr.dll','hostfxr.dll','hostpolicy.dll','System.Private.CoreLib.dll','PresentationFramework.dll','wpfgfx_cor3.dll')) {

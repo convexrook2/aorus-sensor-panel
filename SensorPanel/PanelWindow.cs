@@ -18,7 +18,18 @@ internal sealed class PanelWindow : Window
     private readonly Canvas board = new() { Width = 1024, Height = 576, Background = new SolidColorBrush(Color.FromRgb(228, 228, 228)) };
     private readonly Viewbox viewport = new();
     private PanelLayout? panelLayout;
+    private ShipPanel? shipPanel;
+    private bool animateArtwork = true;
+    private bool holographicMotion = PanelPreferences.HolographicMotion;
+    private bool readoutPulse = PanelPreferences.ReadoutPulse;
+    private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
+    private MenuItem? animationCommand;
+    private PanelSettings? settings;
     private string layoutMode = PanelPreferences.Layout;
+    private PanelTheme theme = PanelTheme.Resolve(PanelPreferences.Theme);
+    private readonly Dictionary<TextBlock, bool> mutedLabels = new();
+    private readonly List<Border> dividers = new();
+    private readonly List<(Image Image, string Path, ImageSource Original)> themeImages = new();
     private readonly Dictionary<string, TextBlock> text = new();
     private readonly Dictionary<string, double> maxima = new();
     private readonly TemperatureGauge cpuGauge = new(), gpuGauge = new();
@@ -52,12 +63,13 @@ internal sealed class PanelWindow : Window
     private readonly GameDiscovery fpsGames = new();
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true };
 
-    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false, Size? previewSize = null, bool sensorPreview = false)
+    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false, Size? previewSize = null, bool sensorPreview = false, string? previewTheme = null, bool checkThemes = false, bool checkShips = false)
     {
         this.previewSize=previewSize; this.sensorPreview=sensorPreview;
         this.benchmarkPolling = benchmarkPolling;
         selectedFpsPid = fpsPid;
         this.previewPath = previewPath; this.capturePath = capturePath;
+        if (previewTheme is not null) theme = PanelTheme.Resolve(previewTheme);
         fit = previewPath is null;
         Title = PanelBranding.Name;
         Icon = PanelBranding.WindowIcon;
@@ -65,13 +77,37 @@ internal sealed class PanelWindow : Window
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.NoResize;
         WindowStartupLocation = WindowStartupLocation.Manual;
         Background = Brushes.Black; Topmost = false; ShowActivated = false; ShowInTaskbar = false;
-        viewport.Stretch = ScalingStretch(PanelPreferences.Scaling); viewport.Child = board; Content = viewport;
+        viewport.Stretch = ScalingStretch(PanelPreferences.Scaling); viewport.Child = board;
+        var surface = new Grid(); surface.Children.Add(viewport); Content = surface;
         BuildLayout();
+        foreach (string key in new[] { "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax" }) text[key] = new TextBlock { Text = "—" };
+        shipPanel = new(text);
+        shipPanel.ShipSelectionRequested += ship =>
+        {
+            theme=PanelTheme.All.Single(choice=>choice.ShipId==ship);
+            if (previewPath is null) PanelPreferences.SaveTheme(theme.Id);
+            ApplyTheme(); SaveDisplayState();
+        };
+        shipPanel.NavigationChanged += () => { if (IsLoaded) SaveDisplayState(); };
+        ApplyTheme();
         SizeChanged += (_, _) => UpdatePanelLayout();
         DpiChanged += (_, _) => { if (fit && display is not null) Dispatcher.BeginInvoke(() => Displays.Place(this, display, true)); };
-        board.MouseLeftButtonDown += (_, e) => { if (e.ClickCount == 2) ToggleFit(); else if (!fit) DragMove(); };
-        KeyDown += (_, e) => { if (e.Key == Key.F11) ToggleFit(); else if (e.Key == Key.Escape && fit) ToggleFit(); };
+        viewport.MouseLeftButtonDown += (_, e) => { if (e.ClickCount == 2) ToggleFit(); else if (!fit) DragMove(); };
+        KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape && shipPanel?.HolotableOpen == true) { shipPanel.CloseHolotable(); e.Handled = true; }
+            else if (e.Key == Key.Escape && settings?.IsOpen == true) { settings.Close(); e.Handled = true; }
+            else if (e.Key == Key.F11) ToggleFit(); else if (e.Key == Key.Escape && fit) ToggleFit();
+        };
         ContextMenu = BuildMenu();
+        settings = new PanelSettings(this, viewport, ContextMenu, () => theme);
+        surface.Children.Add(settings.Overlay);
+        ContextMenuOpening += (_, e) => { e.Handled = true; settings.Open(); };
+        PreviewMouseDown += (_, e) =>
+        {
+            if (settings.IsOpen && !settings.IsPointerOver) { settings.Close(); e.Handled = true; }
+        };
+        Deactivated += (_, _) => { if (settings.IsOpen) settings.Close(); };
         clock = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background, (_, _) => Tick(), Dispatcher);
         displayRefresh = new DispatcherTimer(DispatcherPriority.ContextIdle) { Interval = TimeSpan.FromMilliseconds(300) };
         displayRefresh.Tick += (_, _) => { displayRefresh.Stop(); RefreshConnectedDisplay(); };
@@ -89,6 +125,7 @@ internal sealed class PanelWindow : Window
             tray = new PanelTray(this); Start();
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
         };
+        if (checkThemes || checkShips) ContentRendered += async (_, _) => await CheckThemeNavigation(checkShips);
         Closed += (_, _) =>
         {
             closing = true; benchmark?.Dispose(); tray?.Dispose(); clock.Stop(); displayRefresh.Stop(); artworkAnimation?.Dispose(); cancellation.Cancel();
@@ -182,6 +219,7 @@ internal sealed class PanelWindow : Window
         Label("download", "—", 674, 512, 28, 327);
         Label("status", "Starting sensors…", 220, 556, 10, 470, color: Artwork.Gray);
         Label("controls", "Right-click for display controls", 745, 556, 10, 184, color: Artwork.Gray);
+        text["controls"].Text = "Settings ⚙ · right-click";
         panelLayout = new(board,text,leftArt,rightArt,brandArt);
     }
 
@@ -233,6 +271,20 @@ internal sealed class PanelWindow : Window
             layout.Items.Add(item);
         }
         menu.Items.Add(layout);
+        var themes = new MenuItem { Header = "Theme" };
+        foreach (var choice in PanelTheme.All)
+        {
+            var item = new MenuItem { Header = choice.Name, IsCheckable = true };
+            themes.SubmenuOpened += (_, _) => item.IsChecked = theme.Id == choice.Id;
+            item.Click += (_, _) =>
+            {
+                theme = choice;
+                if (previewPath is null) PanelPreferences.SaveTheme(theme.Id);
+                ApplyTheme(); SaveDisplayState();
+            };
+            themes.Items.Add(item);
+        }
+        menu.Items.Add(themes);
         var scaling = new MenuItem { Header = "Scale artwork" };
         foreach (var choice in new[] { ("Fit","Fit · preserve proportions"),("Fill","Fill · crop outer edges"),("Stretch","Stretch · no borders") })
         {
@@ -244,9 +296,36 @@ internal sealed class PanelWindow : Window
         menu.Items.Add(scaling);
         var top = new MenuItem { Header = "Always on top", IsCheckable = true, IsChecked = Topmost };
         top.Click += (_, _) => Topmost = top.IsChecked; menu.Items.Add(top);
-        var animate = new MenuItem { Header = "Animate AORUS artwork", IsCheckable = true, IsChecked = true };
-        animate.Click += (_, _) => { if (artworkAnimation is not null) artworkAnimation.Enabled = animate.IsChecked; };
+        var animate = animationCommand = new MenuItem { Header = "Animate AORUS artwork", IsCheckable = true, IsChecked = true };
+        animate.Click += (_, _) => { animateArtwork = animate.IsChecked; if (artworkAnimation is not null) artworkAnimation.Enabled = animateArtwork && !theme.ShipConsole; };
+        menu.Opened += (_, _) => animate.IsEnabled = !theme.ShipConsole;
         menu.Items.Add(animate);
+        var readoutEffects = new MenuItem { Header = "Sensor readouts" };
+        var pulse = new MenuItem { Header = "Pulse changed numbers", IsCheckable = true, IsChecked = readoutPulse };
+        pulse.Click += (_, _) =>
+        {
+            readoutPulse=pulse.IsChecked; shipPanel?.SetReadoutEffects(readoutPulse,gaugeTransitions);
+            if (previewPath is null) PanelPreferences.SaveReadoutPulse(readoutPulse);
+            SaveDisplayState();
+        };
+        var smooth = new MenuItem { Header = "Smooth temperature rings", IsCheckable = true, IsChecked = gaugeTransitions };
+        smooth.Click += (_, _) =>
+        {
+            gaugeTransitions=smooth.IsChecked; shipPanel?.SetReadoutEffects(readoutPulse,gaugeTransitions);
+            if (previewPath is null) PanelPreferences.SaveGaugeTransitions(gaugeTransitions);
+            SaveDisplayState();
+        };
+        readoutEffects.Items.Add(pulse); readoutEffects.Items.Add(smooth); menu.Items.Add(readoutEffects);
+        var holographic = new MenuItem { Header = "Holographic display" };
+        var holoMotion = new MenuItem { Header = "Projection motion and ship rotation", IsCheckable = true, IsChecked = holographicMotion };
+        holoMotion.Click += (_, _) =>
+        {
+            holographicMotion=holoMotion.IsChecked; shipPanel?.SetMotion(holographicMotion);
+            if (previewPath is null) PanelPreferences.SaveHolographicMotion(holographicMotion);
+            SaveDisplayState();
+        };
+        menu.Opened += (_, _) => readoutEffects.IsEnabled=holographic.IsEnabled=theme.ShipConsole;
+        holographic.Items.Add(holoMotion); menu.Items.Add(holographic);
         var polling = new MenuItem { Header = "Sensor polling interval" };
         menu.Opened += (_, _) => polling.Header = $"Sensor polling · {Volatile.Read(ref pollingIntervalMs)} ms";
         foreach (int interval in new[] { 500, 1000, 2000, 5000 })
@@ -373,6 +452,11 @@ internal sealed class PanelWindow : Window
         cpuGauge.Update(metrics.CpuTemperature, Peak("cpuTemperature", metrics.CpuTemperature));
         double? gpuTemperature = metrics.Gpu("temperature"), gpuPower = metrics.Gpu("power"), gpuClock = metrics.Gpu("graphics-clock");
         gpuGauge.Update(gpuTemperature, Peak("gpuTemperature", gpuTemperature));
+        text["cpuTemperature"].Text = Number(metrics.CpuTemperature, "°C");
+        text["cpuTemperatureMax"].Text = Number(metrics.CpuTemperature.HasValue ? maxima.GetValueOrDefault("cpuTemperature") : null, "°C");
+        text["gpuTemperature"].Text = Number(gpuTemperature, "°C");
+        text["gpuTemperatureMax"].Text = Number(gpuTemperature.HasValue ? maxima.GetValueOrDefault("gpuTemperature") : null, "°C");
+        shipPanel?.Feed(metrics.CpuTemperature, gpuTemperature, metrics.CpuClock, gpuClock);
         text["gpuPower"].Text = Number(gpuPower, "W");
         text["gpuPowerMax"].Text = "max: " + Number(Peak("gpuPower", gpuPower), "W");
         text["gpuUsage"].Text = Number(metrics.Gpu("utilization"), "%", "0.0");
@@ -422,7 +506,7 @@ internal sealed class PanelWindow : Window
     private void Clear(string message)
     {
         stale = true;
-        foreach (string key in new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuUsage", "gpuClock", "gpuMemory", "memory", "memoryClock", "memoryClockNotice", "fps", "upload", "download" }) text[key].Text = "—";
+        foreach (string key in new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuUsage", "gpuClock", "gpuMemory", "memory", "memoryClock", "memoryClockNotice", "fps", "upload", "download", "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax" }) text[key].Text = "—";
         text["voltageNotice"].Text = "Unavailable";
         text["fpsNotice"].Text = "No frame data";
         text["fpsApplication"].Text = "";
@@ -431,6 +515,7 @@ internal sealed class PanelWindow : Window
         cpuGauge.Update(null, null); gpuGauge.Update(null, null);
         cpuBar.Update(null); gpuBar.Update(null); memoryBar.Update(null);
         cpuGraph.Add(null); gpuGraph.Add(null);
+        shipPanel?.Feed(null, null, null, null);
         text["status"].Text = message;
     }
 
@@ -489,11 +574,54 @@ internal sealed class PanelWindow : Window
         Hide();
         SaveDisplayState();
     }
+    internal void ShowSettings()
+    {
+        ShowPanel();
+        if (IsVisible) settings?.Open();
+    }
 
     private static Stretch ScalingStretch(string mode) => mode switch { "Fill"=>Stretch.UniformToFill, "Stretch"=>Stretch.Fill, _=>Stretch.Uniform };
     private void UpdatePanelLayout()
     {
         if (ActualWidth>0 && ActualHeight>0) panelLayout?.Apply(ActualWidth/ActualHeight,layoutMode);
+        if (theme.ShipConsole) shipPanel?.Configure(theme, ActualWidth > 0 && ActualHeight > 0 ? ActualWidth / ActualHeight : 16.0 / 9, layoutMode);
+        ApplyFanMadeColor();
+    }
+    private void ApplyFanMadeColor()
+    {
+        if (text.TryGetValue("fanMade", out var label)) label.Foreground = panelLayout?.Mode == "Portrait" ? theme.Foreground : Brushes.White;
+    }
+    private void ApplyTheme()
+    {
+        if (shipPanel is not null)
+        {
+            if (theme.ShipConsole) shipPanel.Configure(theme, ActualWidth > 0 && ActualHeight > 0 ? ActualWidth / ActualHeight : 16.0 / 9, layoutMode);
+            viewport.Child = theme.ShipConsole ? shipPanel : board;
+            shipPanel.SetMotion(holographicMotion && theme.ShipConsole);
+            shipPanel.SetReadoutEffects(readoutPulse,gaugeTransitions);
+        }
+        if (artworkAnimation is not null) artworkAnimation.Enabled = animateArtwork && !theme.ShipConsole;
+        if (animationCommand is not null) animationCommand.IsEnabled = !theme.ShipConsole;
+        board.Background = theme.Backdrop;
+        foreach (var pair in mutedLabels) pair.Key.Foreground = pair.Value ? theme.Muted : theme.Foreground;
+        text["boardName"].Foreground = theme.Header;
+        ApplyFanMadeColor();
+        foreach (var divider in dividers) divider.Background = theme.Divider;
+        foreach (var entry in themeImages)
+        {
+            if (theme.Classic) { entry.Image.Source = entry.Original; continue; }
+            var brush = entry.Path.Contains("ULrate") || entry.Path.Contains("DLrate") ? theme.Accent
+                : entry.Path.Contains("Icons/") ? theme.Muted
+                : entry.Path.Contains("TopBar") || entry.Path.Contains("BottomBar") ? theme.Chrome : theme.Divider;
+            var drawing = new DrawingGroup { OpacityMask = new ImageBrush(entry.Original) { Stretch = Stretch.Fill } };
+            drawing.Children.Add(new GeometryDrawing(brush, null, new RectangleGeometry(new Rect(0, 0, 1, 1))));
+            drawing.Freeze(); entry.Image.Source = new DrawingImage(drawing);
+        }
+        var gpuTheme = theme.ForGpu();
+        cpuGauge.ApplyTheme(theme); gpuGauge.ApplyTheme(gpuTheme);
+        cpuGraph.ApplyTheme(theme); gpuGraph.ApplyTheme(gpuTheme);
+        cpuBar.ApplyTheme(theme); gpuBar.ApplyTheme(gpuTheme); memoryBar.ApplyTheme(theme);
+        settings?.ApplyTheme();
     }
     private void SaveDisplayState()
     {
@@ -503,8 +631,12 @@ internal sealed class PanelWindow : Window
         {
             Version=typeof(App).Assembly.GetName().Version?.ToString(), Preview=previewPath is not null,
             Display=display, Bounds=bounds, Fit=fit, FitsTarget=display is not null && bounds==Displays.Placement(display,true),
-            Dpi=Displays.Dpi(this), Layout=panelLayout?.Mode, Scaling=viewport.Stretch.ToString(), Visible=IsVisible,
-            ShowInTaskbar, TrayIconVisible=tray?.Visible ?? false
+            Dpi=Displays.Dpi(this), Layout=theme.ShipConsole ? shipPanel?.Mode : panelLayout?.Mode, Renderer=theme.ShipConsole ? "ShipConsole" : "Aorus", Scaling=viewport.Stretch.ToString(), Visible=IsVisible,
+            ShowInTaskbar, TrayIconVisible=tray?.Visible ?? false, Theme=theme.Id, SettingsOpen=settings?.IsOpen ?? false,
+            HolographicMotion=holographicMotion, ReadoutPulse=readoutPulse, GaugeTransitions=gaugeTransitions,
+            RotatingShipInLeftPanel=theme.ShipConsole && ShipPortrait.Supports(theme.ShipId),
+            NavigationFocus=theme.ShipConsole ? shipPanel?.NavigationFocus : null,
+            HolotableOpen=shipPanel?.HolotableOpen ?? false
         },JsonOptions));
     }
     private nint DisplayMessage(nint hwnd,int message,nint wParam,nint lParam,ref bool handled)
@@ -535,9 +667,10 @@ internal sealed class PanelWindow : Window
 
     private void Capture(string path)
     {
-        board.UpdateLayout();
-        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(board.Width), (int)Math.Ceiling(board.Height), 96, 96, PixelFormats.Pbgra32);
-        bitmap.Render(board);
+        FrameworkElement target = theme.ShipConsole ? shipPanel! : board;
+        target.UpdateLayout();
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(target.Width), (int)Math.Ceiling(target.Height), 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(target);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         using var stream = File.Create(path); encoder.Save(stream);
@@ -548,8 +681,103 @@ internal sealed class PanelWindow : Window
             SocialIcons = false
         }, JsonOptions));
         File.WriteAllText(Path.Combine(PanelPaths.Artifacts, "panel-render-info.txt"),
-            $"Rendered WPF canvas: {board.Width:0}x{board.Height:0}; layout {panelLayout?.Mode}. Saved {path}\nFonts:\n" +
+            $"Rendered WPF canvas: {target.Width:0}x{target.Height:0}; layout {(theme.ShipConsole ? shipPanel?.Mode : panelLayout?.Mode)}. Saved {path}\nFonts:\n" +
             string.Join("\n", Fonts.GetFontFamilies(new Uri("pack://application:,,,/"), "./Aorus/Fonts/").Select(f => f.Source)));
+    }
+
+    private async Task CheckThemeNavigation(bool shipOnly)
+    {
+        try
+        {
+            var baseline = new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuClock", "gpuMemory", "memoryClock", "fps" }
+                .ToDictionary(key => key, key => text[key].Text);
+            var baselineMaxima = maxima.ToDictionary(pair => pair.Key, pair => pair.Value);
+            var choices = shipOnly ? PanelTheme.All.Where(t => t.ShipConsole).Append(PanelTheme.Resolve("Dark")).ToArray() : PanelTheme.All.ToArray();
+            string output = Path.Combine(PanelPaths.Artifacts, "theme-previews", previewSize is { } size ? $"{size.Width:0}x{size.Height:0}" : "default");
+            Directory.CreateDirectory(output);
+            async Task SavePreview(string name)
+            {
+                await Task.Delay(900); UpdateLayout();
+                if (theme.ShipConsole) shipPanel!.CheckBindings();
+                if (settings!.IsOpen && !new Rect(0, 0, ActualWidth, ActualHeight).Contains(settings.Bounds))
+                    throw new InvalidOperationException("Settings overlay left the visible window.");
+                var bitmap = new RenderTargetBitmap((int)Math.Ceiling(ActualWidth), (int)Math.Ceiling(ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                bitmap.Render((Visual)Content);
+                var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                using var stream = File.Create(Path.Combine(output, name + ".png")); encoder.Save(stream);
+            }
+            settings!.Open(); settings.SelectVisibleOption("Theme");
+            foreach (var choice in choices)
+            {
+                settings.SelectVisibleOption(choice.Name);
+                await SavePreview(choice.Id.ToLowerInvariant() + "-settings");
+                if (theme != choice || baseline.Any(pair => text[pair.Key].Text != pair.Value)
+                    || maxima.Count != baselineMaxima.Count || baselineMaxima.Any(pair => maxima[pair.Key] != pair.Value))
+                    throw new InvalidOperationException("Theme selection changed a sensor value or failed to apply.");
+                settings.NavigateBack();
+                if (animationCommand!.IsEnabled != !choice.ShipConsole)
+                    throw new InvalidOperationException("Artwork animation availability did not follow the selected renderer.");
+                await SavePreview(choice.Id.ToLowerInvariant() + "-settings-root");
+                settings.Close(); await SavePreview(choice.Id.ToLowerInvariant());
+                if (choice.ShipConsole)
+                {
+                    string expected=choice.ShipId switch { "Rocinante"=>"Tycho", "Donnager"=>"Callisto", "Truman"=>"Earth", "Tynan"=>"Medina", "Razorback"=>"Earth", "Morrigan" or "Dropship" or "Epstein"=>"Mars", _=>throw new InvalidOperationException("Missing ship navigation check.") };
+                    if (shipPanel!.NavigationFocus!=expected) throw new InvalidOperationException("Ship selection focused the wrong planet or station.");
+                    shipPanel!.CheckSeparateEffects(); await SavePreview(choice.Id.ToLowerInvariant()+"-projection");
+                }
+                settings.Open();
+                settings.SelectVisibleOption("Theme");
+            }
+            settings.SelectVisibleOption(PanelTheme.Resolve("Rocinante").Name);
+            settings.Close();
+            foreach (var route in new[] { ("Donnager","Callisto"), ("Tynan","Medina"), ("Epstein","Mars"), ("Razorback","Earth"), ("Rocinante","Tycho") })
+            {
+                shipPanel!.SelectShip(route.Item1);
+                await Task.Delay(100);
+                if (theme.ShipId!=route.Item1 || shipPanel.NavigationFocus!=route.Item2 || baseline.Any(pair=>text[pair.Key].Text!=pair.Value)
+                    || maxima.Count!=baselineMaxima.Count || baselineMaxima.Any(pair=>maxima[pair.Key]!=pair.Value))
+                    throw new InvalidOperationException("The ship selector did not update navigation independently of sensor values.");
+                shipPanel.CheckBindings();
+            }
+            var savedSnapshot = latest!;
+            Clear("Preview: unavailable sensor check");
+            await Task.Delay(100);
+            shipPanel!.CheckBindings();
+            if (text["cpuTemperature"].Text != "—" || text["gpuTemperature"].Text != "—")
+                throw new InvalidOperationException("Unavailable temperatures remained visible on the ship console.");
+            Apply(savedSnapshot, new(null, null, null, "Saved snapshot"));
+            await Task.Delay(100);
+            shipPanel.CheckBindings();
+            if (baseline.Any(pair => text[pair.Key].Text != pair.Value))
+                throw new InvalidOperationException("Restoring readings after an unavailable sample failed.");
+            settings.Open(); settings.SelectVisibleOption("Sensor readouts");
+            await SavePreview("sensor-readout-controls"); settings.NavigateBack();
+            settings.SelectVisibleOption("Holographic display");
+            await SavePreview("holographic-controls"); settings.NavigateBack();
+            settings.SelectVisibleOption("Theme");
+            settings.SelectVisibleOption(choices[^1].Name);
+            settings.NavigateBack();
+            foreach (string group in new[] { "Move to display", "Layout", "Scale artwork", $"Sensor polling · {pollingIntervalMs} ms" })
+            {
+                settings.SelectVisibleOption(group); await Task.Delay(100); settings.NavigateBack();
+            }
+            settings.Close();
+            File.WriteAllText(Path.Combine(output, "navigation-check.json"), JsonSerializer.Serialize(new
+            {
+                Version = typeof(App).Assembly.GetName().Version?.ToString(),
+                Passed = true, Themes = choices.Select(t => t.Id), SensorValuesPreserved = true, MaximaPreserved = true, ShipBindingsChecked = true, UnavailableBindingsChecked = true, AnimationStateChecked = true,
+                SettingsWithinWindow = true, Display = display, Preview = true, ShipArtworkMode = "RotatingLeftStrip",
+                ReadoutEffectsIndependent = true, ShipRotationBoundsChecked = true, OriginalShipMaterialsChecked = true,
+                HolographicNumbersOnDashboard = true, ShipInLeftPanel = true,
+                SolarSystemChecked = true, ShipNavigationFocusChecked = true, ShipSelectorChecked = true
+            }, JsonOptions));
+            Close();
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText(Path.Combine(PanelPaths.Artifacts, "theme-check-error.txt"), ex.ToString());
+            Close(); Application.Current.Shutdown(1);
+        }
     }
 
     private static void SaveSnapshot(Snapshot snapshot)
@@ -569,6 +797,7 @@ internal sealed class PanelWindow : Window
         var label = new TextBlock { Text = value, FontFamily = title ? Artwork.Title : Artwork.Body,
             FontWeight = title ? FontWeights.Normal : FontWeights.SemiBold, FontSize = size,
             Width = width, Foreground = color ?? Brushes.Black, TextTrimming = TextTrimming.CharacterEllipsis };
+        mutedLabels[label] = ReferenceEquals(color, Artwork.Gray);
         text[key] = label; Add(label, x, y); return label;
     }
     private async Task LoadArtwork()
@@ -579,8 +808,12 @@ internal sealed class PanelWindow : Window
     private Image Picture(string path, double x, double y, double width, double height)
     {
         var image = new Image { Source = Artwork.Load(path), Width = width, Height = height, Stretch = Stretch.Fill };
+        if (path.StartsWith("Images/", StringComparison.Ordinal)) themeImages.Add((image, path, image.Source));
         Add(image, x, y); return image;
     }
     private void Add(UIElement element, double x, double y)
-    { Canvas.SetLeft(element, x); Canvas.SetTop(element, y); board.Children.Add(element); }
+    {
+        if (element is Border divider) dividers.Add(divider);
+        Canvas.SetLeft(element, x); Canvas.SetTop(element, y); board.Children.Add(element);
+    }
 }

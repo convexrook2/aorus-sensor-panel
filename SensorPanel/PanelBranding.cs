@@ -43,6 +43,7 @@ internal sealed class PanelTray : IDisposable
         artwork = PanelBranding.TrayIcon();
         void Restore() => window.ShowPanel();
         menu.Items.Add("Show panel", null, (_, _) => window.Dispatcher.Invoke(Restore));
+        menu.Items.Add("Open settings", null, (_, _) => window.Dispatcher.Invoke(window.ShowSettings));
         menu.Items.Add("Fit to display", null, (_, _) => window.Dispatcher.Invoke(window.FitToDisplay));
         menu.Items.Add("Hide to tray", null, (_, _) => window.Dispatcher.Invoke(window.HidePanel));
         menu.Items.Add("Open README", null, (_, _) => window.Dispatcher.Invoke(PanelBranding.ShowReadme));

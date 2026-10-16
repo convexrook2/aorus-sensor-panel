@@ -1,0 +1,46 @@
+MCRN Tachi [Expanse TV Show] by Jakub.Vildomec
+https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf
+https://sketchfab.com/Jakub.Vildomec
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+https://creativecommons.org/licenses/by/4.0/
+Author's description: model based on concept art by Ryan Dening.
+
+Downloaded through the author's enabled Sketchfab download on 2026-10-15.
+Changes: static scene transforms baked into vertex positions; centered and
+uniformly scaled. Original base-colour textures, UVs, normals, material groups
+and emissive colours are retained. Unsupported PBR shader maps and animations
+are omitted. The viewer can switch between original colours and faction lighting.
+Conversion script: tools/Convert-HoloScene.py. No recreated ship geometry.
+
+MCRN Donnager (The Expanse), MCRN Dropship (The Expanse), Epstein's Yacht (The Expanse)
+Original artist: Chris Kuhn. Shared by owlstraw (@strawfinch).
+https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28
+https://sketchfab.com/3d-models/mcrn-dropship-the-expanse-1f26e13076a740cd99ec3d0f556dc479
+https://sketchfab.com/3d-models/epsteins-yacht-the-expanse-137498e7aabb47dfaee3fe2652fadefa
+https://sketchfab.com/strawfinch
+Sketchfab download license: Creative Commons Attribution 4.0 International.
+https://creativecommons.org/licenses/by/4.0/
+Their descriptions also credit Chris Kuhn and state CC0. This package retains
+both artist and uploader credits and observes the displayed CC BY terms.
+Downloaded through the enabled Sketchfab downloads on 2026-10-15.
+Changes: same static mesh extraction and original-material handling as above, plus
+offline vertex clustering and removal of collapsed/duplicate triangles to keep
+each model below 150,000 rendered triangles. Original base-colour textures retained.
+
+Truman Class by mohamedhussien
+https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e
+https://sketchfab.com/mohamedhussien
+Creative Commons Attribution 4.0 International (CC BY 4.0).
+https://creativecommons.org/licenses/by/4.0/
+Downloaded through the artist's enabled download (1k GLB) on 2026-10-15.
+Changes: static transforms and uniform normalization; original colour/emissive
+maps, UVs and normals retained; offline vertex clustering within each material
+and surface direction reduces rendering below 150,000 triangles. WPF materials
+approximate the source PBR lighting; this is not the Sketchfab shader renderer.
+
+Epstein's Yacht also uses a static render of the original model as its faded
+console backdrop. These are fan recreations of ships/classes from the TV series,
+not official production meshes. No custom ship designs or fleet charts included.
+
+This independent FAN MADE project is not affiliated with The Expanse,
+its creators, GIGABYTE, AORUS or the model artist.
