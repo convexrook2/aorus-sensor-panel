@@ -24,6 +24,9 @@ try {
     foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','PresentMon-2.6.0-x890-compat-x64.exe','PresentMon-COMPAT-NOTICES.txt','NvidiaFrameViewBridge.dll','README.txt','Holotable-Model-Credits.txt','SolarNavigation\CREDITS.txt','SolarNavigation\models\eros.fnm','SolarNavigation\models\phoebe.fnm','SolarNavigation\models\tycho.fnm','SolarNavigation\models\medina.fnm','SolarNavigation\models\solgate.fnm')) {
         if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $required))) { throw ('Missing packaged dependency: ' + $required) }
     }
+    foreach ($requiredNavigation in @('nasa-horizons.json.gz','nasa-checkpoints.json','textures\earth_night.jpg','textures\europa.jpg')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $packageRoot ('SolarNavigation\'+$requiredNavigation)))) { throw ('Missing NASA/lighting asset: '+$requiredNavigation) }
+    }
     foreach ($excluded in @('coreclr.dll','hostfxr.dll','hostpolicy.dll','System.Private.CoreLib.dll','PresentationFramework.dll','wpfgfx_cor3.dll')) {
         if (Test-Path -LiteralPath (Join-Path $packageRoot $excluded)) { throw ('A private runtime was unexpectedly published: ' + $excluded) }
     }

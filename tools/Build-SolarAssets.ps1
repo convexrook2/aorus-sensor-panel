@@ -9,7 +9,7 @@ try {
         try { npm ci --ignore-scripts --no-audit --no-fund; if($LASTEXITCODE -ne 0){throw 'Asset exporter dependency restore failed.'} }
         finally { Pop-Location }
     }
-    $taskTextures=@('sun.jpg','mercury.jpg','venus.jpg','earth.jpg','earth_clouds.jpg','moon.jpg','mars.jpg','ceres.jpg','jupiter.jpg','io.jpg','ganymede.jpg','callisto.jpg','saturn.jpg','saturn_ring.png','uranus.jpg','neptune.jpg')
+    $taskTextures=@('sun.jpg','mercury.jpg','venus.jpg','earth.jpg','earth_clouds.jpg','earth_night.jpg','moon.jpg','mars.jpg','ceres.jpg','jupiter.jpg','io.jpg','europa.jpg','ganymede.jpg','callisto.jpg','saturn.jpg','saturn_ring.png','uranus.jpg','neptune.jpg')
     foreach($taskFile in $taskTextures) {
         Copy-Item -LiteralPath ('NavigationWeb/public/textures/'+$taskFile) -Destination ('Assets/SolarNavigation/textures/'+$taskFile)
     }

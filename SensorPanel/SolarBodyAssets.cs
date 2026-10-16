@@ -49,7 +49,7 @@ internal static class SolarBodyAssets
         if (!sources.ContainsKey(relative)) sources.Add(relative, Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))));
         return path;
     }
-    private static BitmapImage Bitmap(string file)
+    internal static BitmapImage Bitmap(string file)
     {
         var bitmap = new BitmapImage(); bitmap.BeginInit(); bitmap.UriSource = new Uri(Asset("textures/" + file));
         bitmap.CacheOption = BitmapCacheOption.OnLoad; bitmap.DecodePixelWidth = 2048; bitmap.EndInit(); bitmap.Freeze();
@@ -134,7 +134,7 @@ internal static class SolarBodyAssets
         }
     }
 
-    private static MeshGeometry3D Sphere()
+    internal static MeshGeometry3D Sphere()
     {
         const int slices = 96, stacks = 48; var mesh = new MeshGeometry3D();
         for (int y = 0; y <= stacks; y++) for (int x = 0; x <= slices; x++)
@@ -165,7 +165,7 @@ internal static class SolarBodyAssets
         foreach (var model in cache.Values)
             if (!model.IsFrozen || model.Children.OfType<GeometryModel3D>().Any(p => p.Geometry is not MeshGeometry3D m || !m.IsFrozen || m.Positions.Count > 20000 || m.TriangleIndices.Count > 60000))
                 throw new InvalidOperationException("A solar asset exceeds the native render budget.");
-        if (!sources.ContainsKey("textures/earth.jpg") || !sources.ContainsKey("textures/saturn_ring.png") || !sources.ContainsKey("models/eros.fnm") || cache.Count != 19)
+        if (!sources.ContainsKey("textures/earth_night.jpg") || !sources.ContainsKey("textures/earth.jpg") || !sources.ContainsKey("textures/saturn_ring.png") || !sources.ContainsKey("models/eros.fnm") || cache.Count != 20)
             throw new InvalidOperationException("The schematic is missing its detailed assets.");
         return new { NativeModels = cache.Count, SourceFiles = sources, OriginalErosTriangles = cache["Eros"].Children.OfType<GeometryModel3D>().Sum(m => ((MeshGeometry3D)m.Geometry).TriangleIndices.Count / 3), Source = "Belter Charts ba86075477fc529294a5e51cb4e1b0d183ff893a", StationGeometry = "Retained original panel models" };
     }

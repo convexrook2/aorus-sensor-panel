@@ -11,7 +11,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>../Assets/Branding/AorusFanMade.ico</ApplicationIcon>
-    <Version>1.8.3</Version>
+    <Version>1.8.4</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <SelfContained>false</SelfContained>
     <RollForward>LatestPatch</RollForward>
@@ -30,6 +30,8 @@
     <Content Include="../Packaging/README.txt" Link="README.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/Expanse/README.md" Link="Expanse-Media-Guide.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/SolarNavigation/textures/*" Link="SolarNavigation/textures/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../Assets/SolarNavigation/nasa-horizons.json.gz" Link="SolarNavigation/nasa-horizons.json.gz" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../Assets/SolarNavigation/nasa-checkpoints.json" Link="SolarNavigation/nasa-checkpoints.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/SolarNavigation/models/eros.fnm;../Assets/SolarNavigation/models/phoebe.fnm;../Assets/SolarNavigation/models/tycho.fnm;../Assets/SolarNavigation/models/medina.fnm;../Assets/SolarNavigation/models/solgate.fnm" Link="SolarNavigation/models/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/SolarNavigation/*.txt;../Assets/SolarNavigation/*.md" Link="SolarNavigation/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/Ships/sources.json" Link="Ship-Artwork-Sources.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />

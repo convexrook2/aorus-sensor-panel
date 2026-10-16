@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.8.3 | Windows x64
+Version 1.8.4 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -83,14 +83,22 @@ https://github.com/convexrook2/aorus-sensor-panel/blob/main/Assets/Expanse/READM
 The ship selector changes the theme and focuses a documented series
 association. The original SOL / NAVIGATION diagram is restored: drag to rotate,
 wheel to zoom, choose a destination and press Home or RESET for the whole system.
-Belter Charts supplies detailed Sun/planet textures, the Earth cloud layer,
+Belter Charts supplies detailed Sun/planet textures, Earth clouds/night lights,
 Saturn ring strip and irregular Eros/Phoebe meshes. Native WPF renders them.
-This original diagram is explicitly SCHEMATIC / NOT TO SCALE. Model shapes
-are retained; display sizes, orbit spacing, positions and motion are illustrative.
+SCHEMATIC retains enlarged bodies and readable spacing. TRUE SCALE uses physical
+radii and NASA/JPL Horizons positions, with an AU/km bar and navigation markers
+for tiny bodies. Moon motion follows hourly parent-relative NASA vectors;
+planet samples are daily. The local data covers 2026-10-01 to 2027-10-01.
+The footer shows simulated UTC and the clock speed (default: 6 hours/second).
+It loops within that range; there is no live NASA connection. PAUSED stops the
+orbital clock. Body spin is decorative. Earth day/night lighting, atmosphere
+rims and a brighter two-layer Sun corona run locally, independently of sensors.
 Tycho is a mobile Belt station. The fixed Sol gate is outside Uranus, about
 2 AU beyond its orbit. Medina is in the separately labelled Ring Space inset,
 distinct from the alien central station. Animation pauses when hidden or motion
-is disabled and runs at up to 20 fps. See SolarNavigation/CREDITS.txt.
+is disabled. Body names appear only on hover; the destination list keeps the
+selected name. True-scale zoom skips off-screen and sub-pixel meshes and clips
+orbit trails before drawing. See SolarNavigation/CREDITS.txt.
 Decorative animation is not sensor data.
 
 Rocinante/Tachi, Donnager, Truman, Epstein's Yacht and the MCRN dropship have
@@ -100,8 +108,9 @@ Tynan and Morrigan use flat artwork. The Sketchfab Razorback is a visual referen
 no mesh or texture was extracted from that page. The original v1 remains preserved.
 
 Bundled meshes retain original colour textures and markings; native WPF
-lighting approximates their source materials. Ship/map motion is capped at
-20 fps for ships and 30 fps for navigation, separately from collection. Credits: Holotable-Model-Credits.txt and
+lighting approximates their source materials. Ship and idle map animation are
+capped at 20 updates/second; camera movement uses up to 60 and detaches its
+render callback afterward, separately from collection. Credits: Holotable-Model-Credits.txt and
 Ship-Artwork-Sources.json.
 
 START WITH WINDOWS

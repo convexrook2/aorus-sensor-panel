@@ -118,7 +118,7 @@ internal sealed class ShipPanel : Canvas
         selectedShip=sceneShip;
         var navigation=ExpanseNavigation.ForShip(selectedShip);
         projection.FocusBody(navigation.Body,reuseProjection);
-        projection.ToolTip=navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source;
+        projection.SetContext(navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source);
         var vessel = ShipProfile.Resolve(selectedShip ?? throw new InvalidOperationException("A ship console needs its vessel profile."));
         string title = theme.Showcase ? "THE EXPANSE" : vessel.Name;
         heading = Label(title, portrait ? 15 : 18, theme.Header, true);
@@ -199,7 +199,7 @@ internal sealed class ShipPanel : Canvas
         if (shipChoices is not null)
             shipChoices.SelectedItem=shipChoices.Items.OfType<ComboBoxItem>().Single(item=>item.Tag is ShipProfile ship && ship.Id==vessel.Id);
         projection?.FocusBody(navigation.Body,true);
-        if (projection is not null) projection.ToolTip=navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source;
+        projection?.SetContext(navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source);
         ShowcaseChanged?.Invoke();
     }
 

@@ -964,12 +964,39 @@ internal sealed class PanelWindow : Window
                 SaveVisual(view, view.ActualWidth, view.ActualHeight, Path.Combine(output, body.ToLowerInvariant() + "-diagram.png"));
                 captures.Add(new { Body = body, State = state });
             }
+            var moonPasses = new List<object>();
+            foreach (bool nearSide in new[] { false, true })
+            {
+                var pass = view.ShowJupiterPass(nearSide); await Task.Delay(600); UpdateLayout();
+                string passName = nearSide ? "jupiter-front-transit" : "jupiter-back-occultation";
+                SaveVisual(view, view.ActualWidth, view.ActualHeight, Path.Combine(output, passName + ".png"));
+                moonPasses.Add(pass);
+            }
+            view.SetTrueScale(true);
+            foreach (string body in new[] { "Sun", "Earth", "Luna", "Jupiter", "Saturn", "Medina" })
+            {
+                view.FocusBody(body, false); await Task.Delay(400); UpdateLayout();
+                var state = view.Diagnose();
+                if (!state.GetProperty("toScale").GetBoolean() || state.GetProperty("schematic").GetBoolean()
+                    || !state.GetProperty("nasaDataAvailable").GetBoolean() || state.GetProperty("labelOverlaps").GetInt32() != 0)
+                    throw new InvalidOperationException("True-scale native projection failed: " + body);
+                if (state.GetProperty("maximumPathCoordinate").GetDouble() > Math.Max(view.ActualWidth, view.ActualHeight) + 1
+                    || state.GetProperty("attachedModels").GetInt32() >= 20)
+                    throw new InvalidOperationException("True-scale geometry escaped the view or retained every mesh: " + body);
+                SaveVisual(view, view.ActualWidth, view.ActualHeight, Path.Combine(output, body.ToLowerInvariant() + "-true-scale.png"));
+                captures.Add(new { Body = body, State = state });
+            }
+            view.SetTrueScale(false);
             long stopped = view.Diagnose().GetProperty("frameCount").GetInt64(); await Task.Delay(700);
             if (view.Diagnose().GetProperty("frameCount").GetInt64() != stopped) throw new InvalidOperationException("Navigation kept animating with motion disabled.");
             view.FocusBody("Earth", false); view.SetMotion(true); await Task.Delay(600);
+            var moonBefore = view.Diagnose().GetProperty("moonPositions").GetRawText();
             long before = view.Diagnose().GetProperty("frameCount").GetInt64(); await Task.Delay(2300);
             long rendered = view.Diagnose().GetProperty("frameCount").GetInt64() - before;
             if (SystemParameters.ClientAreaAnimation && (rendered < 10 || rendered > 60)) throw new InvalidOperationException("Native diagram frame budget or animation failed.");
+            if (SystemParameters.ClientAreaAnimation && moonBefore == view.Diagnose().GetProperty("moonPositions").GetRawText())
+                throw new InvalidOperationException("Visible native moon motion did not advance.");
+            SaveVisual(view, view.ActualWidth, view.ActualHeight, Path.Combine(output, "earth-lit-animated.png"));
             view.Visibility = Visibility.Hidden; await Task.Delay(400);
             long hidden = view.Diagnose().GetProperty("frameCount").GetInt64(); await Task.Delay(500);
             if (view.MotionActive || view.Diagnose().GetProperty("frameCount").GetInt64() != hidden) throw new InvalidOperationException("Hidden navigation remained active.");
@@ -982,7 +1009,10 @@ internal sealed class PanelWindow : Window
             File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(new
             {
                 Passed = true, OriginalSolNavigationDiagram = true, NativeWpfModels = true, OfflineAssets = true,
-                ScaleExplicitlySchematic = true, GateOutsideUranus = true, MedinaInSeparateRingSpaceInset = true,
+                SchematicAndTrueScaleModes = true, NasaVectorUnitsAndMoonParentsChecked = true, MoonMotionAdvanced = true,
+                OffscreenAndSubpixelMeshesDetached = true, PhysicalTrailsClippedBeforeDrawing = true,
+                EarthNightLights = true, SolarPointLightAndCorona = true, GateOutsideUranus = true, MedinaInSeparateRingSpaceInset = true,
+                JupiterFrontTransitAndBackOccultationChecked = true, JupiterMoonPasses = moonPasses,
                 MotionDisabledStopsAnimation = true, HiddenAnimationStops = true, SensorValuesPreserved = true, MaximaPreserved = true,
                 Assets = assetChecks, RenderedFramesIn2300ms = rendered, Captures = captures
             }, JsonOptions));

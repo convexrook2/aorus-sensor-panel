@@ -108,10 +108,20 @@ The ship selector changes the theme and focuses a documented series
 association. The original **SOL / NAVIGATION** diagram is restored: drag to
 rotate, wheel to zoom, choose a destination by clicking or using its list,
 and press **Home** or **RESET** for the whole system. Belter Charts supplies
-the detailed Sun/planet texture maps, Earth cloud layer, Saturn ring strip,
+the detailed Sun/planet texture maps, Earth clouds/night lights, Saturn ring strip,
 and irregular Eros/Phoebe meshes. Native WPF renders these assets locally.
-The original diagram is explicitly schematic, **not to scale**; models keep
-their shapes while display sizes and orbit spacing aid readability.
+**SCHEMATIC** retains enlarged bodies and readable orbit spacing. **TRUE SCALE**
+uses physical radii and NASA/JPL Horizons vectors, an AU/km bar and small
+selection markers. Parent-relative moon trajectories are sampled hourly;
+planet/small-body trajectories are sampled daily. Data is bundled for
+2026-10-01 to 2027-10-01, with a visible simulated UTC clock and selectable
+speed (default: six hours per second). The clock loops within that range;
+the panel makes no NASA network requests. Earth night lights, atmosphere rims
+and two soft Sun corona layers restore Belter's lighting detail locally.
+Body names appear only on hover; the destination list keeps the selected name.
+True-scale zoom skips off-screen and sub-pixel meshes and clips orbit trails
+before drawing. Camera movement follows rendering at up to 60 updates/second;
+idle orbital animation remains capped at 20 and pauses when hidden or disabled.
 Tycho's mobile Belt position is approximate; the fixed Sol gate is shown
 outside Uranus. Medina retains its separate Ring Space inset, distinct from
 the alien central station. See [navigation scope and credits](SensorPanel/SolarSystem.md).
