@@ -2,8 +2,8 @@ namespace SensorCollector;
 
 public sealed record FpsApplication(int ProcessId, string Name, double FramesPerSecond);
 
-// Called under PresentMonSource's gate. Discovery comes from measured present
-// events, so storefront membership and executable paths do not gate capture.
+// Called under PresentMonSource's gate. Frame capture stays independent from
+// game eligibility, so switching games never restarts the working ETW helper.
 internal sealed class PresentMonFrames
 {
     internal sealed record Frame(string Application, int Pid, string SwapChain, double QpcMs, double DisplayMs);
@@ -43,6 +43,13 @@ internal sealed class PresentMonFrames
         if (applications.Any(a => a.ProcessId == previous)) return previous;
         return streams.Values.Where(q => q.Count >= 2).OrderByDescending(q => q.Count)
             .Select(q => q.Last().Pid).FirstOrDefault();
+    }
+
+    internal FpsApplication[] Games(IReadOnlyList<RunningGame> running, double now)
+    {
+        var names = running.ToDictionary(game => game.ProcessId, game => game.Name);
+        return Applications(now).Where(app => names.ContainsKey(app.ProcessId))
+            .Select(app => app with { Name = names[app.ProcessId] }).ToArray();
     }
 
     internal Frame[] Read(int pid, double now)

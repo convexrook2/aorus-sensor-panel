@@ -12,61 +12,51 @@ public sealed class PresentMonSource : IDisposable
     private readonly object gate = new();
     private readonly CancellationTokenSource cancellation = new();
     private readonly PresentMonFrames frames = new();
-    private readonly DesktopFrameWindow desktopFrames = new();
+    private readonly GameDiscovery gameDiscovery = new();
+    private RunningGame[] runningGames = [];
     private readonly Thread worker;
     private int requestedPid;
-    private string diagnostic = "Waiting for application display events.";
-    private string selectionDetail = "Automatic application selection.";
+    private string diagnostic = "Waiting for game frame events.";
+    private string selectionDetail = "Automatic game selection.";
     private string selectedName = "";
     private string failureState = "no-data";
     private Process? helper;
     private readonly string sessionName = $"X890Panel-{Environment.ProcessId}-{Guid.NewGuid():N}";
-    private int previousApplicationPid;
+    private int previousGamePid;
     private bool disposed;
     private bool runtimeFrames;
 
     public PresentMonSource(int processId = 0)
     {
-        requestedPid = processId;
+        requestedPid = Math.Max(0, processId);
         worker = new Thread(Capture) { IsBackground = true, Name = "Windows FPS events" };
         worker.Start();
     }
 
-    public int ProcessId { get => Volatile.Read(ref requestedPid); set => Volatile.Write(ref requestedPid, Math.Max(-1, value)); }
+    public int ProcessId { get => Volatile.Read(ref requestedPid); set => Volatile.Write(ref requestedPid, Math.Max(0, value)); }
     public FpsApplication[] Applications
     {
-        get { lock (gate) {
-            double now = QpcMs;
-            var applications = frames.Applications(now);
-            var desktop = desktopFrames.Read(now);
-            return desktop is { } sample ? applications.Append(new FpsApplication(-1, "Windows desktop (DWM)", sample.Fps)).ToArray() : applications;
-        } }
+        get { lock (gate) return frames.Games(runningGames, QpcMs); }
     }
     private static double QpcMs => Stopwatch.GetTimestamp() * 1000.0 / Stopwatch.Frequency;
 
     public (List<Reading> Readings, SourceStatus Status) Read()
     {
         GetWindowThreadProcessId(GetForegroundWindow(), out uint foreground);
+        var running = gameDiscovery.Running().ToArray();
         lock (gate)
         {
             double qpcMs = QpcMs;
-            int pid = ProcessId;
-            if (pid == 0)
-            {
-                pid = frames.Select((int)foreground, previousApplicationPid, qpcMs);
-                previousApplicationPid = pid;
-                selectionDetail = "Automatic: foreground presenting application; retain the previous active app stream; otherwise busiest app stream, then Windows desktop composition.";
-            }
-            else selectionDetail = $"Explicit PID override {pid}.";
-            if (pid == Environment.ProcessId) pid = 0;
-            if (pid == -1 || (ProcessId == 0 && pid == 0))
-            {
-                var desktop = ReadDesktop(qpcMs);
-                if (desktop.HasValue) return desktop.Value;
-                if (pid == -1) { selectedName = "Windows desktop (DWM)"; return Missing("no-data", "Waiting for Windows desktop composition frame events."); }
-            }
-            selectedName = frames.Applications(qpcMs).FirstOrDefault(a => a.ProcessId == pid)?.Name ?? (pid > 0 ? $"PID {pid}" : "");
-            if (pid == 0) return Missing("no-data", diagnostic + " No application display stream is available.");
+            runningGames = running;
+            int requested = ProcessId;
+            var game = GameDiscovery.Select(running, (int)foreground, previousGamePid, requested);
+            int pid = game?.ProcessId ?? 0;
+            previousGamePid = pid;
+            selectedName = game?.Name ?? "";
+            selectionDetail = game is null
+                ? (requested > 0 ? $"Selected PID {requested} is not a recognized running game. " : "No recognized game is running. ") + gameDiscovery.Diagnostic
+                : $"{(requested > 0 ? "Pinned" : "Automatically selected")} {game.Name}; {game.Source}; executable {game.Executable}. Desktop focus retains the running game; desktop and ordinary app FPS are excluded.";
+            if (pid == 0) return Missing("no-game", selectionDetail);
             var selected = frames.Read(pid, qpcMs);
             if (selected.Length == 0) return Missing(failureState, $"Waiting for PID {pid} display events. {diagnostic} {selectionDetail}");
             var newest = selected.Last();
@@ -76,17 +66,8 @@ public sealed class PresentMonSource : IDisposable
             string measurement = runtimeFrames ? "application-present FPS (successful runtime presents; not displayed FPS)" : "displayed FPS";
             string intervalColumn = runtimeFrames ? "msBetweenPresents" : "MsBetweenDisplayChange";
             string detail = $"{newest.Application}, PID {pid}, swap chain {newest.SwapChain}; {measurement} = 1000 × {selected.Length} / sum of {intervalColumn} over the latest one-second event window. NA/zero intervals and panel frames excluded. Windows ETW via portable PresentMon; busiest swap chain selected for this PID. {selectionDetail}";
-            return ([new($"presentmon/{pid}/{newest.SwapChain}/fps", newest.Application, fps, "FPS", SourceName, "ok", detail, SampledAt: sampledAt)], new(SourceName, "available", detail));
+            return ([new($"presentmon/{pid}/{newest.SwapChain}/fps", selectedName, fps, "FPS", SourceName, "ok", detail, SampledAt: sampledAt)], new(SourceName, "available", detail));
         }
-    }
-
-    private (List<Reading> Readings, SourceStatus Status)? ReadDesktop(double now)
-    {
-        if (desktopFrames.Read(now) is not { } sample) return null;
-        selectedName = "Windows desktop (DWM)";
-        string detail = $"Desktop composition FPS from Microsoft-Windows-Dwm-Core CurrentFrameId events (451), DWM PID {sample.Pid}, current Windows session; {sample.Count} observed unique composition frames over the latest one-second event window. FPS counts received frame intervals, without filling missing frame IDs. This is session-wide desktop composition, not a particular application's FPS or confirmed display scan-out, and is not derived from monitor Hz. External ETW in the existing PresentMon session. {selectionDetail}";
-        return ([new("presentmon/desktop/fps", selectedName, sample.Fps, "FPS", SourceName, "ok", detail,
-            SampledAt: DateTimeOffset.UtcNow.AddMilliseconds(-(now - sample.Time)))], new(SourceName, "available", detail));
     }
 
     private void Capture()
@@ -101,37 +82,17 @@ public sealed class PresentMonSource : IDisposable
             {
                 var start = new ProcessStartInfo(executable) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
                 foreach (string argument in new[] { "--session_name", sessionName, "--output_stdout", "--no_console_stats", "--qpc_time_ms", "--no_track_input", "--no_track_gpu", "--exclude", "SensorPanel.exe" }) start.ArgumentList.Add(argument);
-                if (runtimeFrames) { start.ArgumentList.Add("--v1_metrics"); start.ArgumentList.Add("--no_track_display"); start.ArgumentList.Add("--desktop_frames"); }
+                if (runtimeFrames) { start.ArgumentList.Add("--v1_metrics"); start.ArgumentList.Add("--no_track_display"); }
                 using var process = Process.Start(start) ?? throw new InvalidOperationException("PresentMon did not start.");
                 lock (gate) helper = process;
                 if (cancellation.IsCancellationRequested) RequestStop(process);
                 // One external ETW session observes every presenting application.
                 var errors = process.StandardError.ReadToEndAsync();
                 Dictionary<string, int>? columns = null;
-                uint currentSession = (uint)Process.GetCurrentProcess().SessionId;
-                int checkedDesktopPid = 0; bool desktopInSession = false;
-                double nextDesktopSessionCheck = 0;
                 string? line;
                 while ((line = process.StandardOutput.ReadLine()) is not null)
                 {
                     if (cancellation.IsCancellationRequested) continue;
-                    if (line.StartsWith("#X890DesktopFrame,", StringComparison.Ordinal))
-                    {
-                        if (DesktopFrameWindow.TryParse(line, out int desktopPid, out ulong frameId, out double desktopStamp))
-                        {
-                            if (checkedDesktopPid != desktopPid || (!desktopInSession && QpcMs >= nextDesktopSessionCheck)) {
-                                checkedDesktopPid = desktopPid;
-                                nextDesktopSessionCheck = QpcMs + 1000;
-                                try { using var dwm = Process.GetProcessById(desktopPid); desktopInSession = dwm.SessionId == currentSession; }
-                                catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { desktopInSession = false; }
-                            }
-                            lock (gate) {
-                                double now = QpcMs;
-                                if (desktopInSession) desktopFrames.Add(desktopPid, frameId, desktopStamp, now);
-                            }
-                        }
-                        continue;
-                    }
                     if (line.StartsWith("Application,", StringComparison.Ordinal))
                     {
                         columns = Csv(line).Select((name, index) => (name, index)).ToDictionary(x => x.name, x => x.index, StringComparer.OrdinalIgnoreCase);

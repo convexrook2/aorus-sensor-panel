@@ -81,6 +81,12 @@ the app restarts.
 
 ### The Expanse main theme
 
+Ship consoles emphasize larger sensor readouts and a smaller theme heading.
+The CPU card shows measured CCD hotspot temperature where supported. The
+**BOARD & COOLING** strip separates board temperatures, CPU FAN/CPU OPT/pump
+RPM and NVIDIA fan duty. Fan duty is a percentage, not RPM. Actor captions,
+unidentified-crew placeholders and the inactive "ORIGINAL COLOURS" label are removed.
+
 Choose **Settings → Theme → The Expanse** for a space showcase that cycles
 through all eight existing ships. **Settings → Expanse showcase** controls
 automatic cycling, with a default interval of 45 seconds and choices from
@@ -142,13 +148,14 @@ and [Rocinante UI](https://rhys.artstation.com/projects/q9Am1L).
 | RAM clock | Live MCLK on supported CPU layouts; DDR transfer rate is twice MCLK. SMBIOS configured speed is not substituted for a live reading. |
 | NVIDIA GPU temperature, power, usage and clocks | NVML from the installed NVIDIA driver, subject to each device's supported fields. |
 | CPU usage, memory use, uptime and network traffic | Windows APIs/counters. |
-| FPS | External Windows ETW/PresentMon for supported presenting applications, plus actual DWM desktop composition events when no app stream is active. The FPS source menu identifies apps versus Windows desktop (DWM). No injected hooks or game-memory access. |
+| FPS | External Windows ETW/PresentMon for recognized running games. The FPS source menu lists games only. No desktop fallback, injected hooks or game-memory access. |
 
-Automatic FPS selection discovers supported app streams directly from frame
-events, follows the foreground presenting app, and retains an active stream
-while the panel has focus. With no app stream it uses Windows desktop (DWM)
-composition events, identified separately from app FPS. Steam membership is not
-required. FPS is not monitor refresh rate and may differ from an in-game counter.
+Automatic FPS selection uses the local Steam game catalog, follows the foreground
+recognized game, and retains that running game while another application has
+focus. Tools, ordinary applications and desktop composition are excluded. With
+no recognized game running, FPS is unavailable and the source shows No game.
+The compatibility reader measures successful game-present cadence, not confirmed
+displayed frames or monitor refresh rate; it may differ from an in-game counter.
 Capture uses external Windows ETW; no game injection or anti-cheat bypass is used.
 
 Failed, missing or stale measurements remain unavailable. Fan/header labels

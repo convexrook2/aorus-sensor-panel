@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.8.2 | Windows x64
+Version 1.8.3 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -112,6 +112,10 @@ installed. It runs after sign-in. Disable it in the panel menu or rerun Setup
 with the option unchecked.
 
 READING SOURCES
+Ship consoles use larger temperature/sensor readouts and a compact theme title.
+CCD HOTSPOT replaces the voltage-source notice where supported. BOARD & COOLING
+shows board temperatures, CPU FAN/CPU OPT/pump RPM and GPU fan duty where available.
+The GPU fan percentage is not an RPM reading. Missing/stale values remain unavailable.
 Hardware names: Windows SMBIOS/WMI and driver identity, not artwork labels.
 CPU temperature/power/clocks and board temperatures/fans: embedded
 LibreHardwareMonitor and existing PawnIO, subject to hardware/access checks.
@@ -122,19 +126,18 @@ RAM clock: live MCLK on supported CPU layouts. DDR transfer rate is twice MCLK.
 SMBIOS configured speed is not substituted for a live reading.
 NVIDIA GPU temperature/power/usage/clocks: NVML from the installed driver.
 CPU usage, memory use, uptime and network traffic: Windows APIs/counters.
-FPS: external Windows ETW/PresentMon observes supported presenting applications,
-including games and desktop apps. The compatibility reader measures successful
+FPS: external Windows ETW/PresentMon monitors recognized running games.
+The compatibility reader measures successful
 application-present cadence, not confirmed displayed frames or monitor refresh
-rate. Automatic follows the foreground presenting app; FPS source can pin
-a process. With no active app stream, Automatic uses measured Windows desktop
-(DWM) composition frame events from the same ETW session. FPS source can also
-select the desktop explicitly. This desktop rate is not a per-app or scan-out
-rate. No injected hook or game-memory reader is used.
+rate. Automatic follows the foreground recognized game; FPS source can pin
+a game. Desktop composition and ordinary applications are excluded.
+No injected hook or game-memory reader is used.
 
-Automatic FPS selection discovers app streams from measured frame events,
-without a Steam/game catalogue requirement. With no active app stream it selects
-Windows desktop (DWM). Capture remains external ETW, without game injection or
-an anti-cheat bypass. A pinned app retains its own availability status.
+Automatic FPS selection uses the local Steam game catalog and retains the
+running game while another application has focus. With no recognized game
+running, FPS is unavailable and its source shows No game. Capture remains
+external ETW, without game injection or an anti-cheat bypass. A pinned game
+retains its own availability status and cannot fall back to desktop/app FPS.
 
 TROUBLESHOOTING
 Missing CPU/board readings: check administrator access and PawnIO. Hardware

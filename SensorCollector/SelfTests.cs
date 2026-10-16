@@ -112,6 +112,22 @@ internal static class SelfTests
             GameDiscovery.Select([second], 999, 101)?.ProcessId != 202 ||
             GameDiscovery.Select([], 999, 101) is not null)
             throw new Exception("Game focus, desktop focus, game exit, and no-game selection contracts failed.");
+        if (GameDiscovery.Select([first, second], 202, 101, 101)?.ProcessId != 101 ||
+            GameDiscovery.Select([first, second], 202, 101, 999) is not null ||
+            GameDiscovery.Select([], 999, 101, 101) is not null)
+            throw new Exception("Pinning must accept only a recognized running game and clear after it exits.");
+        var frames = new PresentMonFrames();
+        foreach (var app in new[] { (101, "game-a.exe"), (202, "game-b.exe"), (303, "browser.exe"), (404, "dwm.exe"), (505, "ChatGPT.exe") })
+        {
+            frames.Add(new(app.Item2, app.Item1, "0x1", 100, 10), 110);
+            frames.Add(new(app.Item2, app.Item1, "0x1", 110, 10), 110);
+        }
+        var eligible = frames.Games([first, second], 110);
+        if (eligible.Length != 2 || eligible.Single(a => a.ProcessId == 101).Name != "Game A" ||
+            eligible.Single(a => a.ProcessId == 202).Name != "Game B" ||
+            frames.Games([second], 110).Any(a => a.ProcessId != 202) || frames.Games([], 110).Length != 0 ||
+            frames.Games([first, second], 3111).Length != 0)
+            throw new Exception("FPS menu must expose fresh recognized games with their names, excluding desktop/apps and exited games.");
         InstalledGame[] installed = [new("Game A", @"C:\Games\A", "Steam game")];
         if (GameDiscovery.Match(@"C:\Games\A\Game.exe", installed) is null ||
             GameDiscovery.Match(@"C:\Games\A2\Game.exe", installed) is not null ||

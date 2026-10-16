@@ -24,7 +24,8 @@ internal sealed class ShipPanel : Canvas
     private Grid? shipMedia;
     private ExpanseBackdrop? showcaseBackdrop;
     private ExpanseCrew? showcaseCrew;
-    private TextBlock? heading, subtitle, faction, modelStatus, contextLabel, mediaCredit;
+    private TextBlock? heading, faction, mediaCredit;
+    private Rect sidebarBounds;
     private SolarSystemView? projection;
     private ComboBox? shipChoices;
     private string? selectedShip;
@@ -62,19 +63,19 @@ internal sealed class ShipPanel : Canvas
             : aspect >= 2.5 ? "Wide" : aspect < 0.9 ? "Portrait" : "Landscape";
         if (mode == "Portrait")
         {
-            double height = Math.Max(1120, 512 / aspect), mapHeight=height-860;
-            return new(mode, 512, height, new(8, 100, 104, height - 142), new(126, 100, 368, 210), new(126, 320, 368, 210),
-                new(126, 552+mapHeight, 368, 94), new(126, 656+mapHeight, 368, 94), new(126, height-94, 368, 50), new(126,540,368,mapHeight));
+            double height = Math.Max(1120, 512 / aspect);
+            return new(mode, 512, height, new(8, 84, 104, height - 124), new(126, 84, 368, 240), new(126, 336, 368, 240),
+                new(126, height-332, 368, 84), new(126, height-236, 368, 84), new(126, height-140, 368, 112), new(126,588,368,height-936));
         }
         if (mode == "Wide")
         {
-            double height = Math.Max(540, 1920 / aspect), small = (height - 176) / 2;
-            return new(mode, 1920, height, new(18, 96, 194, height - 160), new(228, 96, 548, 210),
-                new(792, 96, 548, 210), new(1356, 96, 546, small), new(1356, 112 + small, 546, small), new(228, height - 52, 1674, 28), new(228,318,1112,height-382));
+            double height = Math.Max(540, 1920 / aspect), small = (height - 198) / 2;
+            return new(mode, 1920, height, new(18, 72, 194, height - 112), new(228, 72, 548, 246),
+                new(792, 72, 548, 246), new(1356, 72, 546, small), new(1356, 84 + small, 546, small), new(228, height - 94, 1674, 68), new(228,332,1112,height-430));
         }
         double h = layout == "Classic" ? 720 : Math.Max(720, 1280 / aspect);
-        return new(mode, 1280, h, new(18, 110, 208, h - 154), new(244, 110, 498, 210), new(760, 110, 498, 210),
-            new(244, h-160, 498, 94), new(760, h-160, 498, 94), new(244, h-54, 1014, 28), new(244,332,1014,h-504));
+        return new(mode, 1280, h, new(18, 72, 208, h - 112), new(244, 72, 498, 246), new(760, 72, 498, 246),
+            new(244, h-188, 498, 84), new(760, h-188, 498, 84), new(244, h-94, 1014, 68), new(244,332,1014,h-536));
     }
 
     public void Configure(PanelTheme theme, double aspect, string layout)
@@ -96,7 +97,7 @@ internal sealed class ShipPanel : Canvas
         showcaseBackdrop=null;
         showcaseCrew?.SetMotion(false);
         showcaseCrew=null;
-        heading=subtitle=faction=modelStatus=contextLabel=mediaCredit=null;
+        heading=faction=mediaCredit=null; sidebarBounds=plan.Sidebar;
         Children.Clear(); bound.Clear(); Width = plan.Width; Height = plan.Height; Background = theme.Backdrop;
         if (theme.Showcase)
         {
@@ -120,32 +121,23 @@ internal sealed class ShipPanel : Canvas
         projection.ToolTip=navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source;
         var vessel = ShipProfile.Resolve(selectedShip ?? throw new InvalidOperationException("A ship console needs its vessel profile."));
         string title = theme.Showcase ? "THE EXPANSE" : vessel.Name;
-        heading = Label(title, portrait ? 26 : 38, theme.Header, true);
+        heading = Label(title, portrait ? 15 : 18, theme.Header, true);
         if (theme.Showcase) heading.ToolTip=vessel.Name+" · "+vessel.Role;
-        Put(this, heading, new(bodyX, 16, plan.Width-bodyX-(portrait ? 18 : 260), 46));
-        Put(this, Bind("date", 15, theme.Muted), new(portrait ? bodyX : plan.Width - 245, portrait ? 56 : 25, 224, 24));
-        if (!portrait && Mode != "Wide")
-        {
-            subtitle=Label(SceneSubtitle(vessel,theme.Showcase),12,theme.Muted);
-            Put(this, subtitle, new(bodyX+3, 68, plan.Width-bodyX-24, 20));
-        }
-        Put(this, Bind("boardName", portrait ? 11 : 13, theme.Muted),
-            new(bodyX, portrait ? 79 : Mode == "Wide" ? 69 : 88, plan.Width-bodyX-18, 18));
+        Put(this, heading, new(bodyX, 14, plan.Width-bodyX-(portrait ? 18 : 260), 26));
+        Put(this, Bind("date", portrait ? 12 : 14, theme.Muted), new(portrait ? bodyX : plan.Width - 230, portrait ? 40 : 17, 214, 22));
+        Put(this, Bind("boardName", portrait ? 10 : 12, theme.Muted),
+            new(bodyX, portrait ? 63 : 43, plan.Width-bodyX-18, 18));
         Put(this, new Border { Background=theme.Chrome, Opacity=.32, CornerRadius=new CornerRadius(10) }, plan.Sidebar);
         shipMedia=new Grid { ClipToBounds=true, IsHitTestVisible=false };
-        double crewReserve=theme.Showcase ? 175 : 0;
-        Put(this,shipMedia,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-76-crewReserve)));
+        Put(this,shipMedia,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-64)));
         if (theme.Showcase)
         {
             showcaseCrew=new ExpanseCrew();
             showcaseCrew.SetMotion(motion);
-            Put(this,showcaseCrew,new(plan.Sidebar.X+8,plan.Sidebar.Bottom-175,plan.Sidebar.Width-16,portrait ? 142 : 145));
+            Put(this,showcaseCrew,new(plan.Sidebar.X+8,plan.Sidebar.Bottom-150,plan.Sidebar.Width-16,132));
         }
         faction=Label(vessel.Faction,portrait ? 13 : 19,theme.Accent,true);
         Put(this, faction, new(plan.Sidebar.X+10, plan.Sidebar.Y+12, plan.Sidebar.Width-20, 24));
-        modelStatus=Label("",portrait ? 7 : 9,theme.Muted);
-        Put(this, modelStatus,
-            new(plan.Sidebar.X+8, plan.Sidebar.Bottom-28, plan.Sidebar.Width-16, 18));
         shipChoices=new ComboBox {
             FontSize=portrait ? 8 : 10, Foreground=theme.Foreground, Background=theme.Surface, BorderBrush=theme.Divider,
             ToolTip="Select a ship to focus its associated planet or station", MaxDropDownHeight=240 };
@@ -164,14 +156,9 @@ internal sealed class ShipPanel : Canvas
             ShipSelectionRequested?.Invoke(choice.Id);
         };
         Put(this,shipChoices,new(plan.Sidebar.X+5,plan.Sidebar.Y-34,plan.Sidebar.Width-10,26));
-        contextLabel=Label(navigation.Relation+" · "+navigation.Place,portrait ? 8 : 10,theme.Muted);
-        Put(this,contextLabel,new(plan.Navigation.X+8,plan.Navigation.Y-12,plan.Navigation.Width-16,14));
         Hardware(plan.Cpu, theme, false); Hardware(plan.Gpu, theme.ForGpu(), true);
         SmallCard(plan.Memory, theme, false); SmallCard(plan.Network, theme.ForGpu(), true);
-        var board = MakeCard(plan.Board, theme);
-        var boardText = Bind("boardSensors", portrait ? 11 : 13, theme.Muted);
-        boardText.TextWrapping = TextWrapping.Wrap;
-        Put(board, boardText, new(10, 5, plan.Board.Width - 20, plan.Board.Height - 6));
+        CoolingCard(plan.Board, theme);
         Put(this, Bind("status", portrait ? 9 : 11, theme.Muted), new(20, plan.Height - 22, plan.Width - 160, 18));
         Put(this, Label("FAN MADE", 10, theme.Muted), new(plan.Width - 116, plan.Height - 23, 92, 18));
         if (!portrait)
@@ -185,14 +172,11 @@ internal sealed class ShipPanel : Canvas
         SetReadoutEffects(readoutPulse, gaugeTransitions); SetMotion(motion);
     }
 
-    private static string SceneSubtitle(ShipProfile vessel,bool showcase) => showcase
-        ? vessel.Name+"  /  "+ExpanseMedia.ForShip(vessel.Id).Scene : vessel.Role+"  /  SENSOR PROJECTION";
-
     public void RefreshShowcaseMedia()
     {
         if (activeTheme?.Showcase != true || selectedShip is null) return;
         showcaseBackdrop?.Reload(selectedShip); showcaseCrew?.Show(selectedShip);
-        if (subtitle is not null) subtitle.Text=SceneSubtitle(ShipProfile.Resolve(selectedShip),true);
+        FitShipMedia();
         if (mediaCredit is not null)
         {
             var scene=ExpanseMedia.ForShip(selectedShip);
@@ -210,9 +194,7 @@ internal sealed class ShipPanel : Canvas
         if (selectedShip==vessel.Id) return;
         CloseHolotable(); selectedShip=vessel.Id;
         if (heading is not null) heading.ToolTip=vessel.Name+" · "+vessel.Role;
-        if (subtitle is not null) subtitle.Text=SceneSubtitle(vessel,true);
         var navigation=ExpanseNavigation.ForShip(vessel.Id);
-        if (contextLabel is not null) contextLabel.Text=navigation.Relation+" · "+navigation.Place;
         UpdateSceneMedia(vessel,true);
         if (shipChoices is not null)
             shipChoices.SelectedItem=shipChoices.Items.OfType<ComboBoxItem>().Single(item=>item.Tag is ShipProfile ship && ship.Id==vessel.Id);
@@ -235,12 +217,6 @@ internal sealed class ShipPanel : Canvas
         }
         else shipMedia.Children.Add(new ShipArtwork(activeTheme with { ShipId=vessel.Id },true) { Opacity=.7 });
         if (faction is not null) faction.Text=vessel.Faction;
-        if (modelStatus is not null)
-        {
-            modelStatus.Text=model ? vessel.Id=="Razorback" ? "RAZORBACK V2 · 3D" : "ORIGINAL COLOURS" : "SHIP BLUEPRINT";
-            modelStatus.ToolTip=vessel.Id=="Razorback"
-                ? "Your v2 model, reshaped using the existing orthographic blueprint." : null;
-        }
         if (mediaCredit is not null)
         {
             mediaCredit.Text=activeTheme.Showcase ? "LOCAL SCENE PACK / FAN MADE" : model ? "MODEL  /  "+Holotable.ModelCredit(vessel.Id) : "ARTWORK  /  "+vessel.Artist;
@@ -252,6 +228,7 @@ internal sealed class ShipPanel : Canvas
         }
         showcaseBackdrop?.Show(vessel.Id);
         showcaseCrew?.Show(vessel.Id);
+        FitShipMedia();
         if (fade && motion && IsLoaded && IsVisible && SystemParameters.ClientAreaAnimation)
         {
             var transition=new DoubleAnimation(.35,1,TimeSpan.FromMilliseconds(450)) { FillBehavior=FillBehavior.Stop };
@@ -260,53 +237,71 @@ internal sealed class ShipPanel : Canvas
         }
     }
 
+    private void FitShipMedia()
+    {
+        if (shipMedia is not null)
+            shipMedia.Height=Math.Max(80,sidebarBounds.Height-64-(showcaseCrew?.HasImage == true ? 146 : 0));
+    }
+
     private void Hardware(Rect bounds, PanelTheme theme, bool gpu)
     {
         var card = MakeCard(bounds, theme);
-        bool compact = bounds.Height < 260;
-        Put(card, Label(gpu ? "02  /  GRAPHICS ARRAY" : "01  /  PROCESSOR CORE", 11, theme.Accent, true), new(17, 12, bounds.Width - 34, 18));
-        Put(card, Bind(gpu ? "gpuName" : "cpuName", compact ? 15 : 19, theme.Foreground), new(17, 35, bounds.Width - 34, 28));
-        double dialSize = compact ? 118 : 154;
+        bool narrow = bounds.Width < 420;
+        Put(card, Label(gpu ? "02  /  GPU" : "01  /  CPU", 10, theme.Accent, true), new(17, 12, bounds.Width - 34, 17));
+        Put(card, Bind(gpu ? "gpuName" : "cpuName", narrow ? 14 : 16, theme.Foreground), new(17, 34, bounds.Width - 34, 26));
+        double dialSize = narrow ? 144 : 164;
         var host = new Viewbox { Child = gpu ? gpuDial : cpuDial, Stretch = Stretch.Uniform };
-        Put(card, host, new(12, compact ? 64 : 82, dialSize, dialSize));
-        double x = dialSize + 31, y = compact ? 67 : 85, width = (bounds.Width - x - 14) / 2;
-        double row = compact ? 44 : 62;
+        Put(card, host, new(narrow ? 5 : 10, 70, dialSize, dialSize));
+        double x = dialSize + (narrow ? 14 : 25), y = 72, width = (bounds.Width - x - 14) / 2;
+        double row = 53;
         var fields = gpu
             ? new[] { ("LOAD", "gpuUsage", ""), ("POWER", "gpuPower", ""), ("CLOCK", "gpuClock", ""), ("FPS", "fps", ""), ("VRAM CLOCK", "gpuMemory", " MHz"), ("POWER PEAK", "gpuPowerMax", "") }
-            : new[] { ("LOAD", "cpuUsage", ""), ("POWER", "cpuPower", ""), ("CLOCK", "cpuClock", " MHz"), ("VCORE", "voltage", ""), ("POWER PEAK", "cpuPowerMax", ""), ("VOLTAGE SOURCE", "voltageNotice", "") };
+            : new[] { ("LOAD", "cpuUsage", ""), ("POWER", "cpuPower", ""), ("CLOCK", "cpuClock", " MHz"), ("VCORE", "voltage", ""), ("POWER PEAK", "cpuPowerMax", ""), ("CCD HOTSPOT", "cpuCcdMax", "") };
         for (int i = 0; i < fields.Length; i++)
-            Metric(card, fields[i].Item1, fields[i].Item2, fields[i].Item3, new(x + (i % 2) * width, y + (i / 2) * row, width - 5, row - 4), theme, compact ? 19 : 25);
-        if (!compact)
-        {
-            var graph = gpu ? gpuGraph : cpuGraph;
-            Put(card, graph, new(18, bounds.Height - 40, bounds.Width - 36, 26));
-        }
+            Metric(card, fields[i].Item1, fields[i].Item2, fields[i].Item3, new(x + (i % 2) * width, y + (i / 2) * row, width - 5, row - 4), theme, fields[i].Item2 == "fps" ? 34 : narrow ? 25 : 27);
     }
 
     private void SmallCard(Rect bounds, PanelTheme theme, bool network)
     {
         var card = MakeCard(bounds, theme);
         bool compact = bounds.Height < 120;
-        Put(card, Label(network ? "04  /  NETWORK LINK" : "03  /  MEMORY & SESSION", 11, theme.Accent, true), new(17, 11, bounds.Width - 34, 20));
+        Put(card, Label(network ? "04  /  NETWORK" : "03  /  MEMORY", 10, theme.Accent, true), new(17, 9, bounds.Width - 34, 18));
         var fields = network ? new[] { ("UPLOAD", "upload"), ("DOWNLOAD", "download"), ("FPS SOURCE", "fpsApplication") }
             : new[] { ("MEMORY LOAD", "memory"), ("RAM CLOCK", "memoryClock"), ("UPTIME", "uptime") };
         double width = (bounds.Width - 34) / 3;
         for (int i = 0; i < fields.Length; i++)
-            Metric(card, fields[i].Item1, fields[i].Item2, "", new(17 + i * width, compact ? 39 : 55, width - 8, compact ? 43 : 65), theme, compact ? 19 : 27);
+            Metric(card, fields[i].Item1, fields[i].Item2, "", new(17 + i * width, compact ? 31 : 55, width - 8, compact ? 45 : 65), theme, compact ? 22 : 29);
         if (!compact)
             Put(card, Bind(network ? "fpsNotice" : "memoryClockNotice", 11, theme.Muted), new(17, bounds.Height - 26, bounds.Width - 34, 19));
+    }
+
+    private void CoolingCard(Rect bounds, PanelTheme theme)
+    {
+        var card = MakeCard(bounds, theme);
+        bool narrow = bounds.Width < 500;
+        Put(card, Label("05  /  BOARD & COOLING", 9, theme.Accent, true), new(17, 6, bounds.Width-34, 15));
+        var fields = new[] { ("SYSTEM", "boardSystem"), ("PCH", "boardPch"), ("VRM MOS", "boardVrm"),
+            ("CPU FAN", "cpuFan"), ("CPU OPT", "cpuOptionalFan"), ("PUMP", "boardPump"), ("GPU FAN", "gpuFan") };
+        int columns = narrow ? 4 : fields.Length;
+        double width = (bounds.Width-34)/columns;
+        for (int i=0; i<fields.Length; i++)
+        {
+            double x=17+(i%columns)*width, y=24+(i/columns)*41;
+            if (i%columns>0) Put(card,new Border { Background=theme.Divider, Opacity=.6 },new(x-7,y,1,34));
+            Metric(card,fields[i].Item1,fields[i].Item2,"",new(x,y,width-12,39),theme,narrow ? 18 : 22);
+        }
     }
 
     private Canvas MakeCard(Rect bounds, PanelTheme theme)
     {
         var card = new Canvas { ClipToBounds = true };
         Put(this, card, bounds);
-        // An open projection plane rather than an opaque dashboard tile.
+        // Dark sensor planes keep the numbers legible over scene imagery.
         var plane=new StreamGeometry();
         using (var path=plane.Open()) { path.BeginFigure(new Point(8,0),true,true); path.PolyLineTo(new Point[] {new(bounds.Width-12,0),new(bounds.Width,bounds.Height-8),new(0,bounds.Height)},true,false); }
         plane.Freeze();
-        var wash=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)170 : (byte)42,theme.Surface.Color.R,theme.Surface.Color.G,theme.Surface.Color.B)); wash.Freeze();
-        card.Children.Add(new System.Windows.Shapes.Path { Data=plane, Fill=wash, Stroke=theme.Divider, StrokeThickness=.6, Opacity=.72, IsHitTestVisible=false });
+        var wash=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)218 : (byte)42,theme.Surface.Color.R,theme.Surface.Color.G,theme.Surface.Color.B)); wash.Freeze();
+        card.Children.Add(new System.Windows.Shapes.Path { Data=plane, Fill=wash, Stroke=theme.Divider, StrokeThickness=.6, Opacity=theme.Showcase ? .92 : .72, IsHitTestVisible=false });
         Put(card, new Border { Background=theme.Accent, Opacity=.8 }, new(8,0,Math.Min(56,bounds.Width/4),1));
         return card;
     }
@@ -315,8 +310,9 @@ internal sealed class ShipPanel : Canvas
         Put(card, Label(caption, 9, theme.Muted), new(bounds.X, bounds.Y, bounds.Width, 15));
         Brush ink = key.Contains("Power", StringComparison.OrdinalIgnoreCase) || key == "voltage" ? Brushes.LightSalmon
             : key == "fps" || key == "download" ? Brushes.Aquamarine
-            : key is "voltageNotice" or "fpsApplication" or "uptime" ? theme.Foreground : theme.Accent;
+            : key is "fpsApplication" or "uptime" ? theme.Foreground : theme.Accent;
         var value = Bind(key, size, ink, suffix);
+        if (key == "fps") value.FontWeight=FontWeights.SemiBold;
         value.FontFamily = theme.ConsoleStyle is "Mars" or "Belt" or "Patrol" or "Landing" ? new FontFamily("Consolas") : new FontFamily("Segoe UI");
         var host = new Viewbox { Child = value, Stretch = Stretch.Uniform, StretchDirection = StretchDirection.DownOnly,
             HorizontalAlignment = HorizontalAlignment.Left };
@@ -431,12 +427,12 @@ internal sealed class ConsoleDial : Canvas
     {
         readingSource = reading; maximumSource = maximum;
         Width = Height = 160;
-        var value = new HoloReadout(theme.Accent, PanelPreferences.ReadoutPulse) { FontFamily = new FontFamily("Segoe UI"), FontSize = 34, FontWeight = FontWeights.SemiBold, TextAlignment = TextAlignment.Center };
+        var value = new HoloReadout(theme.Accent, PanelPreferences.ReadoutPulse) { FontFamily = new FontFamily("Segoe UI"), FontSize = 44, FontWeight = FontWeights.SemiBold, TextAlignment = TextAlignment.Center };
         value.SetBinding(TextBlock.TextProperty, new Binding(nameof(TextBlock.Text)) { Source = reading, NotifyOnTargetUpdated = true });
         var max = new TextBlock { FontFamily = new FontFamily("Consolas"), FontSize = 11, TextAlignment = TextAlignment.Center };
         max.SetBinding(TextBlock.TextProperty, new Binding(nameof(TextBlock.Text)) { Source = maximum, StringFormat = "PEAK {0}" });
-        SetLeft(value, 10); SetTop(value, 52); value.Width = 140; Children.Add(value);
-        SetLeft(max, 8); SetTop(max, 100); max.Width = 144; Children.Add(max);
+        SetLeft(value, 6); SetTop(value, 47); value.Width = 148; Children.Add(value);
+        SetLeft(max, 8); SetTop(max, 107); max.Width = 144; Children.Add(max);
         IsVisibleChanged += (_, _) => { if (!IsVisible) Settle(); };
         Unloaded += (_, _) => Settle();
     }

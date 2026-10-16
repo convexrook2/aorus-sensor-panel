@@ -40,7 +40,11 @@ public sealed class GameDiscovery
     }
 
     public static RunningGame? Select(IReadOnlyList<RunningGame> running, int foregroundPid, int previousPid)
-        => running.FirstOrDefault(g => g.ProcessId == foregroundPid)
+        => Select(running, foregroundPid, previousPid, 0);
+
+    public static RunningGame? Select(IReadOnlyList<RunningGame> running, int foregroundPid, int previousPid, int requestedPid)
+        => requestedPid > 0 ? running.FirstOrDefault(g => g.ProcessId == requestedPid)
+        : running.FirstOrDefault(g => g.ProcessId == foregroundPid)
         ?? running.FirstOrDefault(g => g.ProcessId == previousPid)
         ?? running.OrderByDescending(g => g.StartedAt).ThenBy(g => g.ProcessId).FirstOrDefault();
 

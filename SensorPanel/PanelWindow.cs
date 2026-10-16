@@ -85,7 +85,7 @@ internal sealed class PanelWindow : Window
         viewport.Stretch = ScalingStretch(PanelPreferences.Scaling); viewport.Child = board;
         var surface = new Grid(); surface.Children.Add(viewport); Content = surface;
         BuildLayout();
-        foreach (string key in new[] { "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax" }) text[key] = new TextBlock { Text = "—" };
+        foreach (string key in new[] { "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax", "cpuCcdMax", "boardSystem", "boardPch", "boardVrm", "cpuFan", "cpuOptionalFan", "boardPump", "gpuFan" }) text[key] = new TextBlock { Text = "—" };
         shipPanel = new(text);
         shipPanel.ShipSelectionRequested += ship =>
         {
@@ -209,7 +209,7 @@ internal sealed class PanelWindow : Window
         Label("fps", "—", 644, 160, 40, 89);
         Label("fpsNotice", "Unavailable", 644, 209, 13, 89, color: Artwork.Gray);
         Label("fpsApplication", "", 644, 231, 11, 89, color: Artwork.Gray);
-        text["fps"].ToolTip = "External Windows ETW/PresentMon FPS. Automatic selects a presenting app, then Windows desktop composition when no app stream is active. Choose FPS source to pin an app or the desktop. This is measured frame activity, not monitor refresh rate.";
+        text["fps"].ToolTip = "External Windows ETW/PresentMon game FPS. Automatic follows the foreground recognized game and retains it while another app has focus. Choose FPS source to pin a game. No desktop or ordinary app fallback; no injected hooks.";
         Label("gpuPowerLabel", "GPU Power", 744, 119, 18, 115, color: Artwork.Gray);
         Label("gpuPower", "—", 744, 160, 40, 115);
         Label("gpuPowerMax", "max: —", 744, 209, 16, 115, color: Artwork.Gray);
@@ -274,13 +274,13 @@ internal sealed class PanelWindow : Window
         menu.Opened += (_, _) =>
         {
             fpsApplications.Items.Clear();
-            var automatic = new MenuItem { Header = "Automatic · apps / Windows desktop", IsCheckable = true, IsChecked = selectedFpsPid == 0 };
+            var automatic = new MenuItem { Header = "Automatic · games only", IsCheckable = true, IsChecked = selectedFpsPid == 0 };
             automatic.Click += (_, _) => Volatile.Write(ref selectedFpsPid, 0);
             fpsApplications.Items.Add(automatic);
             foreach (var game in Volatile.Read(ref this.fpsApplications))
             {
                 int pid = game.ProcessId;
-                string caption = pid == -1 ? $"{game.Name} · {game.FramesPerSecond:0} FPS" : $"{game.Name} · PID {pid} · {game.FramesPerSecond:0} FPS";
+                string caption = $"{game.Name} · PID {pid} · {game.FramesPerSecond:0} FPS";
                 var item = new MenuItem { Header = caption, IsCheckable = true, IsChecked = selectedFpsPid == pid };
                 item.Click += (_, _) => Volatile.Write(ref selectedFpsPid, pid);
                 fpsApplications.Items.Add(item);
@@ -523,6 +523,8 @@ internal sealed class PanelWindow : Window
         double? gpuTemperature = metrics.Gpu("temperature"), gpuPower = metrics.Gpu("power"), gpuClock = metrics.Gpu("graphics-clock");
         gpuGauge.Update(gpuTemperature, Peak("gpuTemperature", gpuTemperature));
         text["cpuTemperature"].Text = Number(metrics.CpuTemperature, "°C");
+        text["cpuCcdMax"].Text = Number(metrics.CpuCcdMax, "°C");
+        text["cpuCcdMax"].ToolTip = "Hottest measured CPU CCD (Tdie). " + snapshot.Readings.FirstOrDefault(r => r.Id == "libre/amdcpu/0/temperature/5")?.Name;
         text["cpuTemperatureMax"].Text = Number(metrics.CpuTemperature.HasValue ? maxima.GetValueOrDefault("cpuTemperature") : null, "°C");
         text["gpuTemperature"].Text = Number(gpuTemperature, "°C");
         text["gpuTemperatureMax"].Text = Number(gpuTemperature.HasValue ? maxima.GetValueOrDefault("gpuTemperature") : null, "°C");
@@ -538,7 +540,7 @@ internal sealed class PanelWindow : Window
             : snapshot.Sources.FirstOrDefault(s => s.Source == PresentMonSource.SourceName)?.Status == "access-denied" ? "Trace denied"
             : snapshot.Sources.FirstOrDefault(s => s.Source == FrameViewSource.SourceName)?.Status == "service-stopped" ? "Service off" : "No frame data";
         text["fps"].ToolTip = metrics.FpsDetail;
-        text["fpsApplication"].Text = metrics.FpsApplication ?? "";
+        text["fpsApplication"].Text = metrics.FpsApplication ?? (snapshot.Sources.Any(s => s.Source == PresentMonSource.SourceName && s.Status == "no-game") ? "No game" : "");
         text["fpsApplication"].ToolTip = metrics.FpsDetail;
         text["memoryClock"].Text = Number(metrics.MemoryClock, "MHz");
         text["memoryClock"].FontSize = 27;
@@ -547,6 +549,17 @@ internal sealed class PanelWindow : Window
         cpuBar.Update(metrics.CpuUsage); gpuBar.Update(metrics.Gpu("utilization"));
         cpuGraph.Add(metrics.CpuClock); gpuGraph.Add(gpuClock);
         text["boardSensors"].Text = $"BOARD   System {Number(metrics.BoardSystem, "°C")}    PCH {Number(metrics.BoardPch, "°C")}    VRM MOS {Number(metrics.BoardVrm, "°C")}    Pump {Number(metrics.BoardPump, "RPM")}";
+        text["boardSystem"].Text = Number(metrics.BoardSystem, "°C");
+        text["boardPch"].Text = Number(metrics.BoardPch, "°C");
+        text["boardVrm"].Text = Number(metrics.BoardVrm, "°C");
+        text["cpuFan"].Text = Number(metrics.CpuFan, "RPM");
+        text["cpuOptionalFan"].Text = Number(metrics.CpuOptionalFan, "RPM");
+        text["boardPump"].Text = Number(metrics.BoardPump, "RPM");
+        text["gpuFan"].Text = Number(metrics.Gpu("fan"), "%");
+        text["cpuFan"].ToolTip = "CPU FAN motherboard header. Physical fan brand has not been identified.";
+        text["cpuOptionalFan"].ToolTip = "CPU OPT motherboard header. Physical fan brand has not been identified.";
+        text["boardPump"].ToolTip = "System Fan #5 / Pump motherboard header; upstream board mapping.";
+        text["gpuFan"].ToolTip = "NVIDIA-reported fan duty percentage; not an RPM measurement.";
         text["memory"].Text = Number(statistics.MemoryUsage, "%", "0.0"); memoryBar.Update(statistics.MemoryUsage);
         text["upload"].Text = Rate(statistics.UploadBytes); text["download"].Text = Rate(statistics.DownloadBytes);
         text["upload"].ToolTip = text["download"].ToolTip = $"Network adapter: {statistics.NetworkName}";
@@ -576,7 +589,7 @@ internal sealed class PanelWindow : Window
     private void Clear(string message)
     {
         stale = true;
-        foreach (string key in new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuUsage", "gpuClock", "gpuMemory", "memory", "memoryClock", "memoryClockNotice", "fps", "upload", "download", "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax" }) text[key].Text = "—";
+        foreach (string key in new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuUsage", "gpuClock", "gpuMemory", "memory", "memoryClock", "memoryClockNotice", "fps", "upload", "download", "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax", "cpuCcdMax", "boardSystem", "boardPch", "boardVrm", "cpuFan", "cpuOptionalFan", "boardPump", "gpuFan" }) text[key].Text = "—";
         text["voltageNotice"].Text = "Unavailable";
         text["fpsNotice"].Text = "No frame data";
         text["fpsApplication"].Text = "";
@@ -787,7 +800,7 @@ internal sealed class PanelWindow : Window
     {
         try
         {
-            var baseline = new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuClock", "gpuMemory", "memoryClock", "fps" }
+            var baseline = new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuClock", "gpuMemory", "memoryClock", "fps", "cpuCcdMax", "boardSystem", "boardPch", "boardVrm", "cpuFan", "cpuOptionalFan", "boardPump", "gpuFan" }
                 .ToDictionary(key => key, key => text[key].Text);
             var baselineMaxima = maxima.ToDictionary(pair => pair.Key, pair => pair.Value);
             bool showcaseChecked = false;
@@ -886,8 +899,8 @@ internal sealed class PanelWindow : Window
             Clear("Preview: unavailable sensor check");
             await Task.Delay(100);
             shipPanel!.CheckBindings();
-            if (text["cpuTemperature"].Text != "—" || text["gpuTemperature"].Text != "—")
-                throw new InvalidOperationException("Unavailable temperatures remained visible on the ship console.");
+            if (new[] { "cpuTemperature", "gpuTemperature", "cpuCcdMax", "boardSystem", "boardPch", "boardVrm", "cpuFan", "cpuOptionalFan", "boardPump", "gpuFan" }.Any(key => text[key].Text != "—"))
+                throw new InvalidOperationException("Unavailable temperatures or cooling readings remained visible on the ship console.");
             Apply(savedSnapshot, new(null, null, null, "Saved snapshot"));
             await Task.Delay(100);
             shipPanel.CheckBindings();

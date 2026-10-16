@@ -85,48 +85,15 @@ internal sealed class ExpanseBackdrop : Grid
 internal sealed class ExpanseCrew : Grid
 {
     private readonly Image portrait = new() { Stretch = Stretch.UniformToFill };
-    private readonly TextBlock character = new(), actor = new();
-    private readonly TextBlock association = new() { FontSize = 7, Foreground = Brushes.LightSkyBlue, TextWrapping = TextWrapping.Wrap };
-    private readonly TextBlock initials = new() { FontSize = 30, Foreground = Brushes.LightBlue, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
     private readonly Grid photo = new() { ClipToBounds = true, Background = new SolidColorBrush(Color.FromArgb(100, 10, 27, 39)) };
-    private readonly StackPanel names = new() { Margin = new Thickness(7, 3, 3, 0), VerticalAlignment = VerticalAlignment.Center };
-    private bool compact;
     private bool motion = true;
     internal bool HasImage => portrait.Source is not null;
     public ExpanseCrew()
     {
         ClipToBounds = true; IsHitTestVisible = false;
-        ColumnDefinitions.Add(new() { Width = new GridLength(84) });
-        ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-        photo.Children.Add(initials); photo.Children.Add(portrait);
+        photo.Children.Add(portrait);
         photo.Children.Add(new Rectangle { Fill = new LinearGradientBrush(Colors.Transparent, Color.FromArgb(200, 3, 10, 17), 90) });
         Children.Add(photo);
-        names.Children.Add(association);
-        character.FontSize = 11; character.Foreground = Brushes.White; character.TextWrapping = TextWrapping.Wrap;
-        actor.FontSize = 9; actor.Foreground = Brushes.LightSteelBlue; actor.TextWrapping = TextWrapping.Wrap;
-        names.Children.Add(character); names.Children.Add(actor); SetColumn(names, 1); Children.Add(names);
-        SizeChanged += (_, _) =>
-        {
-            bool next = ActualWidth < 130;
-            if (next == compact) return;
-            compact = next; ColumnDefinitions.Clear(); RowDefinitions.Clear();
-            if (compact)
-            {
-                RowDefinitions.Add(new() { Height = new GridLength(1, GridUnitType.Star) });
-                RowDefinitions.Add(new() { Height = GridLength.Auto });
-                SetColumn(names, 0); SetRow(names, 1); portrait.Stretch = Stretch.Uniform;
-                character.FontSize = 9; actor.FontSize = 8;
-                names.VerticalAlignment = VerticalAlignment.Top; names.Margin = new Thickness(2, 2, 2, 0);
-            }
-            else
-            {
-                ColumnDefinitions.Add(new() { Width = new GridLength(84) });
-                ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-                SetColumn(names, 1); SetRow(names, 0); portrait.Stretch = Stretch.UniformToFill;
-                character.FontSize = 11; actor.FontSize = 9;
-                names.VerticalAlignment = VerticalAlignment.Center; names.Margin = new Thickness(7, 3, 3, 0);
-            }
-        };
         Unloaded += (_, _) => { portrait.BeginAnimation(OpacityProperty, null); portrait.Opacity = 1; };
         IsVisibleChanged += (_, _) => { if (!IsVisible) Settle(); };
     }
@@ -137,13 +104,8 @@ internal sealed class ExpanseCrew : Grid
         var scene = ExpanseMedia.ForShip(ship);
         portrait.BeginAnimation(OpacityProperty, null); portrait.Opacity = 1;
         portrait.Source = ExpanseMedia.Image(scene.Portrait, 350);
-        association.Text = scene.Association;
-        bool named = !string.IsNullOrWhiteSpace(scene.Character);
-        character.Text = named ? scene.Character : ShipProfile.Resolve(ship).Name;
-        actor.Text = named ? scene.Actor : "No named crew verified";
-        initials.FontSize = named ? 30 : 20;
-        initials.Text = named ? string.Concat(scene.Character.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(word => word[0]).Take(2)) : ShipProfile.Resolve(ship).Faction;
-        ToolTip = scene.Character + " / " + scene.Actor + "\n" + scene.Credit + "\n" + scene.Source;
+        Visibility = HasImage ? Visibility.Visible : Visibility.Collapsed;
+        ToolTip = scene.Character + "\n" + scene.Credit + "\n" + scene.Source;
         if (motion && IsVisible && SystemParameters.ClientAreaAnimation)
         {
             var fade = new DoubleAnimation(.25, 1, TimeSpan.FromSeconds(1)); Timeline.SetDesiredFrameRate(fade, 20);

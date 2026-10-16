@@ -12,6 +12,7 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
         .Replace("NVIDIA ", "", StringComparison.Ordinal) ?? "NVIDIA GPU";
 
     public double? CpuTemperature => Read("libre/amdcpu/0/temperature/2");
+    public double? CpuCcdMax => Read("libre/amdcpu/0/temperature/5");
     public double? CpuPower => Read("libre/amdcpu/0/power/0");
     public double? CpuVoltage => Read("cpu/core-voltage");
     public double? CpuClock => Read("libre/amdcpu/0/clock/1");
@@ -21,13 +22,16 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
     private Reading? FpsReading => snapshot.Readings.FirstOrDefault(r => r.Source == PresentMonSource.SourceName)
         ?? snapshot.Readings.FirstOrDefault(r => r.Source == FrameViewSource.SourceName);
     public string? FpsId => FpsReading?.Id;
-    public string? FpsApplication => FpsReading is not null && FpsReading.Name.Length > 0 ? Path.GetFileNameWithoutExtension(FpsReading.Name) : null;
+    public string? FpsApplication => FpsReading is { Name.Length: > 0 } reading
+        ? reading.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? Path.GetFileNameWithoutExtension(reading.Name) : reading.Name : null;
     public double? Fps => FpsId is null ? null : Read(FpsId);
-    public string FpsDetail => FpsReading?.Detail ?? "Windows ETW/PresentMon FPS; select an application from the right-click menu.";
+    public string FpsDetail => FpsReading?.Detail ?? "Windows ETW/PresentMon game FPS; select a game from the right-click menu.";
     public double? Gpu(string suffix) => gpuPrefix is null ? null : Read(gpuPrefix + suffix);
     public double? BoardSystem => Read("libre/lpc/it8696e/0/temperature/0");
     public double? BoardPch => Read("libre/lpc/it8696e/0/temperature/1");
     public double? BoardVrm => Read("libre/lpc/it8696e/0/temperature/4");
+    public double? CpuFan => Read("libre/lpc/it8696e/0/fan/0");
+    public double? CpuOptionalFan => Read("libre/lpc/it8696e/0/fan/4");
     public double? BoardPump => Read("libre/lpc/it87952e/0/fan/0");
 
     private double? Read(string id)
@@ -79,6 +83,22 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
         var staleReading = readings[0] with { SampledAt = now.AddSeconds(-6) };
         if (new PanelMetrics(snapshot with { Readings = [staleReading] }, now).CpuTemperature is not null)
             throw new Exception("Fresh snapshots must not hide stale individual readings.");
+        var cooling = new Reading[]
+        {
+            new("libre/amdcpu/0/temperature/5", "CCDs Max (Tdie)", 52, "°C", "libre", "ok", SampledAt: now),
+            new("libre/lpc/it8696e/0/fan/0", "CPU Fan", 660, "RPM", "libre", "ok", SampledAt: now),
+            new("libre/lpc/it8696e/0/fan/4", "CPU Optional Fan", 1180, "RPM", "libre", "ok", SampledAt: now),
+            new("libre/lpc/it87952e/0/fan/0", "System Fan #5 / Pump", 3070, "RPM", "libre", "ok", SampledAt: now)
+        };
+        var coolingMetrics = new PanelMetrics(snapshot with { Readings = cooling }, now);
+        if (coolingMetrics.CpuCcdMax != 52 || coolingMetrics.CpuFan != 660 || coolingMetrics.CpuOptionalFan != 1180 || coolingMetrics.BoardPump != 3070)
+            throw new Exception("CCD hotspot and motherboard cooling header mappings failed.");
+        foreach (var unavailable in new[] { Array.Empty<Reading>(), cooling.Select(r => r with { Status = "unavailable" }).ToArray(), cooling.Select(r => r with { SampledAt = now.AddSeconds(-6) }).ToArray() })
+        {
+            var missing = new PanelMetrics(snapshot with { Readings = unavailable }, now);
+            if (missing.CpuCcdMax is not null || missing.CpuFan is not null || missing.CpuOptionalFan is not null || missing.BoardPump is not null)
+                throw new Exception("Missing, failed or stale cooling readings must clear instead of being inferred.");
+        }
         var memory = new Reading("ram/mclk", "MCLK", 2994, "MHz", "UMC", "ok", SampledAt: now);
         var rate = memory with { Id = "ram/data-rate", Value = 5988, Unit = "MT/s" };
         var fps = new Reading("frameview/1/2/fps", "Application FPS", 123, "FPS", FrameViewSource.SourceName, "ok", SampledAt: now);
@@ -90,6 +110,9 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
         if (new PanelMetrics(snapshot with { Readings = [fps, windowsFps] }, now).Fps != 159 ||
             new PanelMetrics(snapshot with { Readings = [windowsFps with { SampledAt = now.AddSeconds(-6) }] }, now).Fps is not null)
             throw new Exception("Windows display FPS must retain its source and reject stale data.");
+        if (new PanelMetrics(snapshot with { Readings = [windowsFps] }, now).FpsApplication != "Game" ||
+            new PanelMetrics(snapshot with { Readings = [windowsFps with { Name = "Game.Name 2" }] }, now).FpsApplication != "Game.Name 2")
+            throw new Exception("FPS source must preserve catalog game names and trim only executable extensions.");
         var measuredVoltage = new Reading("cpu/core-voltage", "Measured Vcore", 1.323, "V", "AMD SVI3", "ok", SampledAt: now);
         var requestedVid = measuredVoltage with { Id = "cpu/core-vid", Value = 1.346 };
         var boardVoltage = measuredVoltage with { Id = "libre/lpc/it87952e/0/voltage/0", Value = 1.837, Status = "unmapped" };
@@ -98,7 +121,7 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
             new PanelMetrics(snapshot with { Readings = [measuredVoltage with { Status = "unavailable" }] }, now).CpuVoltage is not null)
             throw new Exception("Vcore must use measured CPU rail telemetry, never requested VID or an unverified motherboard rail.");
         File.WriteAllText(Path.Combine(PanelPaths.Artifacts, "panel-mapping-check.txt"),
-            "PASS: CPU package/NVIDIA identity, RAM MHz/MT/s mapping, FPS mapping, stale snapshots/readings, and reported failures.\n");
+            "PASS: CPU package/CCD hotspot, NVIDIA identity, motherboard cooling headers, RAM MHz/MT/s mapping, FPS mapping, stale snapshots/readings, and reported failures.\n");
         return 0;
     }
 }

@@ -5,6 +5,13 @@ if(-not $Path){$Path=Join-Path $projectRoot 'artifacts/synthetic-preview.json'}
 $now=[DateTimeOffset]::UtcNow.ToString('o')
 $readings=@(
     @('libre/amdcpu/0/temperature/2','Example CPU package',54,'°C','Synthetic'),
+    @('libre/amdcpu/0/temperature/5','Example CCD hotspot',48,'°C','Synthetic'),
+    @('libre/lpc/it8696e/0/temperature/0','Example system temperature',34,'°C','Synthetic'),
+    @('libre/lpc/it8696e/0/temperature/1','Example PCH temperature',45,'°C','Synthetic'),
+    @('libre/lpc/it8696e/0/temperature/4','Example VRM temperature',51,'°C','Synthetic'),
+    @('libre/lpc/it8696e/0/fan/0','Example CPU fan header',660,'RPM','Synthetic'),
+    @('libre/lpc/it8696e/0/fan/4','Example CPU optional fan header',1180,'RPM','Synthetic'),
+    @('libre/lpc/it87952e/0/fan/0','Example pump header',3070,'RPM','Synthetic'),
     @('libre/amdcpu/0/power/0','Example CPU power',65,'W','Synthetic'),
     @('libre/amdcpu/0/clock/1','Example CPU clock',4200,'MHz','Synthetic'),
     @('cpu/utilization','Example CPU utilization',17,'%','Synthetic'),
@@ -14,6 +21,7 @@ $readings=@(
     @('nvidia/GPU-example/temperature','NVIDIA Example GPU: Temperature',45,'°C','NVIDIA NVML'),
     @('nvidia/GPU-example/power','NVIDIA Example GPU: Power',85,'W','NVIDIA NVML'),
     @('nvidia/GPU-example/utilization','NVIDIA Example GPU: Utilization',24,'%','NVIDIA NVML'),
+    @('nvidia/GPU-example/fan','NVIDIA Example GPU: Fan duty',37,'%','NVIDIA NVML'),
     @('nvidia/GPU-example/graphics-clock','NVIDIA Example GPU: Graphics clock',1800,'MHz','NVIDIA NVML'),
     @('nvidia/GPU-example/memory-clock','NVIDIA Example GPU: Memory clock',7000,'MHz','NVIDIA NVML')
 )|ForEach-Object {[ordered]@{id=$_[0];name=$_[1];value=$_[2];unit=$_[3];source=$_[4];status='ok';sampledAt=$now;detail='Fictional presentation fixture; not a hardware measurement.'}}
