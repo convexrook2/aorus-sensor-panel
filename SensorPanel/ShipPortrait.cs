@@ -16,7 +16,7 @@ internal sealed class ShipPortrait : Grid
     private static readonly IReadOnlyDictionary<string, PortraitPose> poses = new Dictionary<string, PortraitPose>
     {
         ["Rocinante"] = new(1), ["Donnager"] = new(1), ["Dropship"] = new(1),
-        ["Truman"] = new(-1), ["Epstein"] = new(-1)
+        ["Truman"] = new(-1), ["Epstein"] = new(-1), ["Razorback"] = new(1)
     };
     private readonly OrthographicCamera camera = new(new(0, 0, 6), new(0, 0, -6), new(0, 1, 0), 2);
     private readonly AxisAngleRotation3D yaw = new(new(0, 1, 0), -28);
@@ -125,8 +125,9 @@ internal sealed class ShipPortrait : Grid
 
     internal void Check()
     {
-        if (poses.Count != 5 || poses["Rocinante"].NosePolarity != 1 || poses["Donnager"].NosePolarity != 1
+        if (poses.Count != 6 || poses["Rocinante"].NosePolarity != 1 || poses["Donnager"].NosePolarity != 1
             || poses["Dropship"].NosePolarity != 1 || poses["Truman"].NosePolarity != -1 || poses["Epstein"].NosePolarity != -1
+            || poses["Razorback"].NosePolarity != 1
             || (portraitNose - new Vector3D(0, 1, 0)).Length > 1e-8)
             throw new InvalidOperationException("Portrait pose must retain the verified per-ship nose/engine polarity.");
         if (uprightBounds.SizeY + 1e-8 < Math.Max(uprightBounds.SizeX, uprightBounds.SizeZ)

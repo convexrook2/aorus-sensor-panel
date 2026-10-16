@@ -32,6 +32,8 @@ internal static class SelfTests
             throw new Exception("DDR5 clock decoding must reject missing registers/BCLK and keep MHz separate from MT/s.");
         FrameViewSource.CheckAbi();
         CheckAutomaticGames();
+        CheckPresentingApplications();
+        CheckDesktopFrames();
         if (Svi3Source.TableSize(0x621202) != 0x994 || Svi3Source.TableSize(0x620205) != 0x994 || Svi3Source.TableSize(0x621201) != 0 ||
             Svi3Source.Decode("cpu/core-voltage", "Vcore", 0, 0, time, "test").Value is not null ||
             Svi3Source.Decode("cpu/core-voltage", "Vcore", float.NaN, 0, time, "test").Value is not null)
@@ -43,6 +45,62 @@ internal static class SelfTests
             throw new Exception("Displayed FPS must average frame durations, reject NA/zero intervals, and preserve quoted CSV fields.");
         Console.WriteLine("PASS: sensor contracts, voltage quarantine, DDR5 ratio/BCLK and FrameView x64 ABI/sample validation.");
         return 0;
+    }
+
+    private static void CheckDesktopFrames()
+    {
+        if (!DesktopFrameWindow.TryParse("#X890DesktopFrame,4,12,99,12345000,10000000", out int pid, out ulong id, out double time) ||
+            pid != 4 || id != 99 || time != 1234.5 ||
+            DesktopFrameWindow.TryParse("#X890DesktopFrame,4,12,99,12345000,0", out _, out _, out _) ||
+            DesktopFrameWindow.TryParse("#X890DesktopFrame,4,12,99,12345000,10000000,extra", out _, out _, out _))
+            throw new Exception("Desktop protocol must validate its schema and normalize raw QPC using its measured frequency.");
+        var desktop = new DesktopFrameWindow();
+        desktop.Add(4, 10, 100, 100); desktop.Add(4, 11, 110, 110); desktop.Add(4, 99, 120, 120);
+        desktop.Add(4, 99, 121, 121); desktop.Add(4, 98, 122, 122); desktop.Add(4, 100, 130, 129);
+        var reading = desktop.Read(130);
+        if (reading is null || reading.Value.Fps != 100 || reading.Value.Count != 3 || desktop.Read(3121) is not null)
+            throw new Exception("Desktop FPS must count observed unique events, not missing frame IDs; reject duplicate, reversed, future and stale events.");
+        desktop.Add(8, 1, 200, 200);
+        if (desktop.Read(200) is not null) throw new Exception("A restarted DWM process must establish a fresh frame window.");
+        desktop.Add(8, 2, 220, 220);
+        if (desktop.Read(220)?.Fps != 50) throw new Exception("Restarted DWM must use only its new frame observations.");
+        desktop.Add(8, 1, 4000, 4000); desktop.Add(8, 2, 4020, 4020);
+        if (desktop.Read(4020)?.Fps != 50) throw new Exception("After a stale gap, a reset DWM frame ID must establish a fresh window.");
+        Console.WriteLine("PASS: desktop QPC protocol, observed-event rate, gap/duplicate/stale rejection and DWM restart.");
+    }
+
+    private static void CheckPresentingApplications()
+    {
+        var csv = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            { ["QPCTime"] = "114984.3518042", ["msBetweenPresents"] = "6.25" };
+        string Field(string key) => csv.GetValueOrDefault(key, "");
+        if (!PresentMonSource.TryFrameTime(Field, true, out double stamp, out double interval) ||
+            Math.Abs(stamp - 114984351.8042) > .001 || interval != 6.25 ||
+            PresentMonSource.TryFrameTime(Field, false, out _, out _))
+            throw new Exception("PresentMon v1 QPC seconds must be converted to milliseconds, and runtime FPS must not be labelled displayed FPS.");
+        csv.Clear(); csv["CPUStartQPCTimeInMs"] = "114984351.8042"; csv["MsBetweenDisplayChange"] = "5";
+        if (!PresentMonSource.TryFrameTime(Field, false, out stamp, out interval) || interval != 5 ||
+            Math.Abs(stamp - 114984351.8042) > .001)
+            throw new Exception("PresentMon display intervals and QPC milliseconds must preserve their units.");
+        csv["MsBetweenDisplayChange"] = "NA";
+        if (PresentMonSource.TryFrameTime(Field, false, out _, out _)) throw new Exception("Unavailable intervals cannot become FPS.");
+        var frames = new PresentMonFrames();
+        frames.Add(new("browser.exe", 101, "0x1", 100, 10), 100);
+        frames.Add(new("browser.exe", 101, "0x1", 110, 10), 110);
+        frames.Add(new("editor.exe", 202, "0x1", 100, 20), 110);
+        frames.Add(new("editor.exe", 202, "0x1", 120, 20), 120);
+        if (frames.Applications(120).Length != 2 || frames.Applications(120).Single(a => a.ProcessId == 101).FramesPerSecond != 100 ||
+            frames.Applications(120).Single(a => a.ProcessId == 202).FramesPerSecond != 50 || frames.Select(202, 101, 120) != 202 ||
+            frames.Select(999, 101, 120) != 101 || frames.Read(101, 120).Length != 2 ||
+            PresentMonSource.AverageFps(frames.Read(202, 120).Select(f => f.DisplayMs)) != 50)
+            throw new Exception("All presenting apps must be discovered, selected by focus, and separated by PID even with identical swap-chain addresses.");
+        frames.Add(new("browser.exe", 101, "0x1", 110, 10), 120);
+        frames.Add(new("bad.exe", 303, "0x1", 120, double.NaN), 120);
+        frames.Add(new("bad.exe", 303, "0x1", 121, 5), 120);
+        if (frames.Read(101, 120).Length != 2 || frames.Applications(120).Length != 2 ||
+            frames.Applications(3121).Length != 0 || frames.Select(101, 202, 3121) != 0)
+            throw new Exception("Duplicate, malformed, future and stale display events must not become FPS or active applications.");
+        Console.WriteLine("PASS: presenting app discovery, focus retention, PID isolation and invalid/stale frame rejection.");
     }
 
     private static void CheckAutomaticGames()

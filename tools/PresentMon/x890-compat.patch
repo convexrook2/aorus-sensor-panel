@@ -1,0 +1,393 @@
+diff --git a/PresentData/ETW/Microsoft_Windows_DXGI.h b/PresentData/ETW/Microsoft_Windows_DXGI.h
+index 21e41a2..3ec3331 100644
+--- a/PresentData/ETW/Microsoft_Windows_DXGI.h
++++ b/PresentData/ETW/Microsoft_Windows_DXGI.h
+@@ -43,6 +43,8 @@ EVENT_DESCRIPTOR_DECL(PresentMultiplaneOverlay_Start, 0x0037, 0x00, 0x10, 0x00,
+ EVENT_DESCRIPTOR_DECL(PresentMultiplaneOverlay_Stop , 0x0038, 0x00, 0x10, 0x00, 0x02, 0x000e, 0x8000000000000002)
+ EVENT_DESCRIPTOR_DECL(Present_Start                 , 0x002a, 0x00, 0x10, 0x00, 0x01, 0x0009, 0x8000000000000002)
+ EVENT_DESCRIPTOR_DECL(Present_Stop                  , 0x002b, 0x00, 0x10, 0x00, 0x02, 0x0009, 0x8000000000000002)
++EVENT_DESCRIPTOR_DECL(LoggingPresent_Start          , 0x00b2, 0x00, 0x11, 0x00, 0x01, 0x0050, 0x4000000000000000)
++EVENT_DESCRIPTOR_DECL(LoggingPresent_Stop           , 0x00b3, 0x00, 0x11, 0x00, 0x02, 0x0050, 0x4000000000000000)
+ EVENT_DESCRIPTOR_DECL(ResizeBuffers_Start           , 0x002d, 0x00, 0x10, 0x00, 0x01, 0x0005, 0x8000000000000002);
+ EVENT_DESCRIPTOR_DECL(SwapChain_Start               , 0x000a, 0x00, 0x10, 0x00, 0x01, 0x0002, 0x8000000000000001);
+ 
+diff --git a/PresentData/ETW/Microsoft_Windows_Dwm_Core.h b/PresentData/ETW/Microsoft_Windows_Dwm_Core.h
+index ac2a215..747ac1f 100644
+--- a/PresentData/ETW/Microsoft_Windows_Dwm_Core.h
++++ b/PresentData/ETW/Microsoft_Windows_Dwm_Core.h
+@@ -58,6 +58,7 @@ enum class Channel : uint8_t {
+ EVENT_DESCRIPTOR_DECL(MILEVENT_MEDIA_UCE_PROCESSPRESENTHISTORY_GetPresentHistory_Info, 0x0040, 0x00, 0x10, 0x05, 0x00, 0x003f, 0x8000000000000001);
+ EVENT_DESCRIPTOR_DECL(SCHEDULE_PRESENT_Start                                         , 0x000f, 0x00, 0x10, 0x04, 0x01, 0x000d, 0x8000000000000080);
+ EVENT_DESCRIPTOR_DECL(SCHEDULE_SURFACEUPDATE_Info                                    , 0x00c4, 0x00, 0x10, 0x04, 0x00, 0x007f, 0x8000000000000080);
++EVENT_DESCRIPTOR_DECL(CurrentFrameId_Info                                            , 0x01c3, 0x00, 0x10, 0x04, 0x00, 0x0154, 0x8000000000000009);
+ 
+ // These events added manually:
+ EVENT_DESCRIPTOR_DECL(FlipChain_Complete                                             , 0x0046, 0x00, 0x00, 0x00, 0x00, 0x0000, 0x0000000000000000);
+diff --git a/PresentData/PresentMonTraceConsumer.cpp b/PresentData/PresentMonTraceConsumer.cpp
+index c49df7b..cd5c50b 100644
+--- a/PresentData/PresentMonTraceConsumer.cpp
++++ b/PresentData/PresentMonTraceConsumer.cpp
+@@ -387,7 +387,37 @@ void PMTraceConsumer::HandleD3D12Event(EVENT_RECORD* pEventRecord)
+ void PMTraceConsumer::HandleDXGIEvent(EVENT_RECORD* pEventRecord)
+ {
+     auto const& hdr = pEventRecord->EventHeader;
++    auto id = hdr.EventDescriptor.Id;
++    bool logging = id == Microsoft_Windows_DXGI::LoggingPresent_Start::Id ||
++        id == Microsoft_Windows_DXGI::LoggingPresent_Stop::Id;
++    bool analytic = id == Microsoft_Windows_DXGI::Present_Start::Id ||
++        id == Microsoft_Windows_DXGI::Present_Stop::Id ||
++        id == Microsoft_Windows_DXGI::PresentMultiplaneOverlay_Start::Id ||
++        id == Microsoft_Windows_DXGI::PresentMultiplaneOverlay_Stop::Id;
++    if (logging || analytic) {
++        bool start = hdr.EventDescriptor.Opcode == EVENT_TRACE_TYPE_START;
++        auto stream = mDxgiLoggingByProcess.find(hdr.ProcessId);
++        if (stream == mDxgiLoggingByProcess.end()) {
++            if (!start || !IsProcessTrackedForFiltering(hdr.ProcessId)) return;
++            mDxgiLoggingByProcess.emplace(hdr.ProcessId, logging);
++        } else if (stream->second != logging) {
++            return;
++        }
++    }
+     switch (hdr.EventDescriptor.Id) {
++    case Microsoft_Windows_DXGI::LoggingPresent_Start::Id:
++        if (IsProcessTrackedForFiltering(hdr.ProcessId)) {
++            EventDataDesc desc[] = { { L"pThis" }, { L"dwFlags" }, { L"SyncInterval" } };
++            mMetadata.GetEventData(pEventRecord, desc, _countof(desc));
++            RuntimePresentStart(Runtime::DXGI, hdr, desc[0].GetData<uint64_t>(),
++                desc[1].GetData<uint32_t>(), desc[2].GetData<int32_t>());
++        }
++        break;
++    case Microsoft_Windows_DXGI::LoggingPresent_Stop::Id:
++        if (IsProcessTrackedForFiltering(hdr.ProcessId)) {
++            RuntimePresentStop(Runtime::DXGI, hdr, mMetadata.GetEventData<uint32_t>(pEventRecord, L"m_Ret"));
++        }
++        break;
+     case Microsoft_Windows_DXGI::Present_Start::Id:
+     case Microsoft_Windows_DXGI::PresentMultiplaneOverlay_Start::Id:
+         if (IsProcessTrackedForFiltering(hdr.ProcessId)) {
+@@ -2865,6 +2895,7 @@ void PMTraceConsumer::HandleProcessEvent(EVENT_RECORD* pEventRecord)
+             mMetadata.GetEventData(pEventRecord, desc, _countof(desc));
+             event.ProcessId    = desc[0].GetData<uint32_t>();
+             event.IsStartEvent = false;
++            mDxgiLoggingByProcess.erase(event.ProcessId);
+ 
+             // Clean up PC Latency tracking data for this process to prevent memory leaks.
+             // This is necessary because PCLStatsShutdown events are application-controlled
+@@ -2912,6 +2943,7 @@ void PMTraceConsumer::HandleProcessEvent(EVENT_RECORD* pEventRecord)
+             event.IsStartEvent = false;
+ 
+             // Clean up PC Latency and AppTiming tracking data for this process to prevent memory leaks.
++            mDxgiLoggingByProcess.erase(event.ProcessId);
+             if (mTrackPcLatency) {
+                 std::erase_if(mPclTimingDataByPclFrameId, [&event](const auto& p) {
+                     return p.first.second == event.ProcessId;
+@@ -3910,4 +3942,4 @@ void PMTraceConsumer::SetAppTimingDataAsComplete(uint32_t processId, uint32_t ap
+         DebugAssert(ii->second.ProcessId == processId);
+         ii->second.PresentCompleted = true;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/PresentData/PresentMonTraceConsumer.hpp b/PresentData/PresentMonTraceConsumer.hpp
+index 052b7b4..36c8772 100644
+--- a/PresentData/PresentMonTraceConsumer.hpp
++++ b/PresentData/PresentMonTraceConsumer.hpp
+@@ -327,9 +327,13 @@ struct PMTraceConsumer
+ 
+     bool mFilteredEvents = false;       // Whether the trace session was configured to filter non-PresentMon events
+     bool mFilteredProcessIds = false;   // Whether to filter presents to specific processes
++    // Select one DXGI event stream per process, preventing duplicate runtime
++    // presents when both the analytic and logging providers emit a pair.
++    std::unordered_map<uint32_t, bool> mDxgiLoggingByProcess;
+ 
+     // Whether the analysis should track...
+     bool mTrackDisplay = true;         // ... presents to the display.
++    bool mTrackDesktopFrames = false; // ... observed DWM composition frame events.
+     bool mTrackGPU = false;            // ... GPU work.
+     bool mTrackGPUVideo = false;       // ... GPU video work (separately from non-video GPU work).
+     bool mTrackInput = false;          // ... keyboard/mouse latency.
+@@ -370,6 +374,18 @@ struct PMTraceConsumer
+     // separate swapchains may appear out of order.
+ 
+     void DequeueProcessEvents(std::vector<ProcessEvent>& outProcessEvents);
++    struct DesktopFrameEvent { uint32_t ProcessId; uint32_t ThreadId; uint64_t FrameId; uint64_t QpcTime; };
++    std::mutex mDesktopFrameMutex;
++    std::vector<DesktopFrameEvent> mDesktopFrameEvents;
++    void HandleDesktopFrame(EVENT_RECORD* event)
++    {
++        if (event->EventHeader.EventDescriptor.Version != 0) return;
++        auto id = mMetadata.GetEventData<uint64_t>(event, L"FrameId");
++        std::scoped_lock lock(mDesktopFrameMutex);
++        if (mDesktopFrameEvents.size() >= 4096) mDesktopFrameEvents.clear();
++        mDesktopFrameEvents.push_back({ event->EventHeader.ProcessId, event->EventHeader.ThreadId,
++            id, (uint64_t)event->EventHeader.TimeStamp.QuadPart });
++    }
+     void DequeuePresentEvents(std::vector<std::shared_ptr<PresentEvent>>& outPresentEvents);
+     uint32_t GetNumOverflowedPresents() const
+     {
+diff --git a/PresentData/PresentMonTraceSession.cpp b/PresentData/PresentMonTraceSession.cpp
+index 374ff9e..b65be88 100644
+--- a/PresentData/PresentMonTraceSession.cpp
++++ b/PresentData/PresentMonTraceSession.cpp
+@@ -355,11 +355,15 @@ void CALLBACK EventRecordCallback(EVENT_RECORD* pEventRecord)
+             return;
+         }
+     }
+-    if constexpr (TRACK_DISPLAY) {
+-        if (hdr.ProviderId == Microsoft_Windows_Dwm_Core::GUID) {
+-            session->mPMConsumer->HandleDWMEvent(pEventRecord);
++    if (hdr.ProviderId == Microsoft_Windows_Dwm_Core::GUID) {
++        if (hdr.EventDescriptor.Id == Microsoft_Windows_Dwm_Core::CurrentFrameId_Info::Id) {
++            if (session->mPMConsumer->mTrackDesktopFrames) session->mPMConsumer->HandleDesktopFrame(pEventRecord);
+             return;
+         }
++        if constexpr (TRACK_DISPLAY) {
++            session->mPMConsumer->HandleDWMEvent(pEventRecord);
++        }
++        return;
+     }
+     if (hdr.ProviderId == Microsoft_Windows_D3D9::GUID) {
+         session->mPMConsumer->HandleD3D9Event(pEventRecord);
+@@ -494,6 +498,7 @@ ULONG PMTraceSession::Start(
+         sessionProps.Wnode.ClientContext = mTimestampType;          // Clock resolution to use when logging the timestamp for each event
+         sessionProps.Wnode.Flags = WNODE_FLAG_TRACED_GUID;
+         sessionProps.LogFileMode = EVENT_TRACE_REAL_TIME_MODE;      // We have a realtime consumer, not writing to a log file
++        sessionProps.FlushTimer = 1;                               // Deliver low-volume desktop events without waiting for a full buffer
+         sessionProps.LoggerNameOffset = offsetof(TraceProperties, mSessionName);  // Location of session name; will be written by StartTrace()
+         sessionProps.BufferSize = 64;                                // Buffer size in KB
+         sessionProps.MinimumBuffers = 256;                           // Minimum number of buffers allocated for the session's buffer pool
+@@ -898,19 +903,22 @@ ULONG EnableProvidersListing(
+ 
+     // Microsoft_Windows_Dwm_Core
+     //
+-    if (pmConsumer->mTrackDisplay) {
++    if (pmConsumer->mTrackDisplay || pmConsumer->mTrackDesktopFrames) {
+         provider.ClearFilter();
++        if (pmConsumer->mTrackDesktopFrames) provider.AddEvent<Microsoft_Windows_Dwm_Core::CurrentFrameId_Info>();
++        if (pmConsumer->mTrackDisplay) {
+         provider.AddEvent<Microsoft_Windows_Dwm_Core::MILEVENT_MEDIA_UCE_PROCESSPRESENTHISTORY_GetPresentHistory_Info>();
+         provider.AddEvent<Microsoft_Windows_Dwm_Core::SCHEDULE_PRESENT_Start>();
+         provider.AddEvent<Microsoft_Windows_Dwm_Core::SCHEDULE_SURFACEUPDATE_Info>();
+         provider.AddEvent<Microsoft_Windows_Dwm_Core::FlipChain_Pending>();
+         provider.AddEvent<Microsoft_Windows_Dwm_Core::FlipChain_Complete>();
+         provider.AddEvent<Microsoft_Windows_Dwm_Core::FlipChain_Dirty>();
++        }
+         status = provider.Enable(sessionHandle, Microsoft_Windows_Dwm_Core::GUID);
+         if (status != ERROR_SUCCESS) return status;
+ 
+         // enable dwm_core win7 provider directly (no filtering because win7 doesn't support it anyways)
+-        status = provider.EnableWithoutFiltering(sessionHandle, Microsoft_Windows_Dwm_Core::Win7::GUID, TRACE_LEVEL_VERBOSE);
++        status = pmConsumer->mTrackDisplay ? provider.EnableWithoutFiltering(sessionHandle, Microsoft_Windows_Dwm_Core::Win7::GUID, TRACE_LEVEL_VERBOSE) : ERROR_SUCCESS;
+         if (status != ERROR_SUCCESS) return status;
+     }
+ 
+@@ -918,6 +926,8 @@ ULONG EnableProvidersListing(
+     // Microsoft_Windows_DXGI
+     //
+     provider.ClearFilter();
++    provider.AddEvent<Microsoft_Windows_DXGI::LoggingPresent_Start>();
++    provider.AddEvent<Microsoft_Windows_DXGI::LoggingPresent_Stop>();
+     provider.AddEvent<Microsoft_Windows_DXGI::Present_Start>();
+     provider.AddEvent<Microsoft_Windows_DXGI::Present_Stop>();
+     provider.AddEvent<Microsoft_Windows_DXGI::PresentMultiplaneOverlay_Start>();
+diff --git a/PresentMon.props b/PresentMon.props
+index 4a348ac..ce55c80 100644
+--- a/PresentMon.props
++++ b/PresentMon.props
+@@ -14,7 +14,7 @@
+   </PropertyGroup>
+   <ItemDefinitionGroup>
+     <PreBuildEvent>
+-      <Command>call $(MsBuildThisFileDirectory)Tools\generate_version_header.cmd $(PresentMonVersion) $(MsBuildThisFileDirectory)build\obj\generated\version.h</Command>
++      <Command>call "$(MsBuildThisFileDirectory)Tools\generate_version_header.cmd" $(PresentMonVersion) "$(MsBuildThisFileDirectory)build\obj\generated\version.h"</Command>
+     </PreBuildEvent>
+     <ClCompile>
+       <AdditionalIncludeDirectories>$(MsBuildThisFileDirectory)build\obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+@@ -26,4 +26,4 @@
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup />
+-</Project>
+\ No newline at end of file
++</Project>
+diff --git a/PresentMon/CommandLine.cpp b/PresentMon/CommandLine.cpp
+index 7b07408..c7470d5 100644
+--- a/PresentMon/CommandLine.cpp
++++ b/PresentMon/CommandLine.cpp
+@@ -390,6 +390,7 @@ bool ParseCommandLine(int argc, wchar_t** argv)
+     args->mPresentEventCircularBufferSize = 0;
+     args->mConsoleOutput = ConsoleOutput::Statistics;
+     args->mTrackDisplay = true;
++    args->mTrackDesktopFrames = false;
+     args->mTrackInput = true;
+     args->mTrackGPU = true;
+     args->mTrackGPUVideo = false;
+@@ -459,6 +460,7 @@ bool ParseCommandLine(int argc, wchar_t** argv)
+         else if (ParseArg(argv[i], L"track_gpu_video"))  { args->mTrackGPUVideo       = true;  continue; }
+         else if (ParseArg(argv[i], L"no_track_input"))   { args->mTrackInput          = false; continue; }
+         else if (ParseArg(argv[i], L"no_track_display")) { args->mTrackDisplay        = false; continue; }
++        else if (ParseArg(argv[i], L"desktop_frames"))   { args->mTrackDesktopFrames = true; continue; }
+ 
+         // Execution options:
+         else if (ParseArg(argv[i], L"session_name"))               { if (ParseValue(argv, argc, &i, &args->mSessionName)) { sessionNameSet = true; continue; } }
+diff --git a/PresentMon/MainThread.cpp b/PresentMon/MainThread.cpp
+index c43059a..43eb559 100644
+--- a/PresentMon/MainThread.cpp
++++ b/PresentMon/MainThread.cpp
+@@ -310,6 +310,7 @@ int wmain(int argc, wchar_t** argv)
+         : PMTraceConsumer::PRESENTEVENT_CIRCULAR_BUFFER_SIZE);
+ 
+     pmConsumer.mTrackDisplay               = args.mTrackDisplay;
++    pmConsumer.mTrackDesktopFrames         = args.mTrackDesktopFrames;
+     pmConsumer.mTrackGPU                   = args.mTrackGPU;
+     pmConsumer.mTrackGPUVideo              = args.mTrackGPUVideo;
+     pmConsumer.mTrackInput                 = args.mTrackInput;
+diff --git a/PresentMon/OutputThread.cpp b/PresentMon/OutputThread.cpp
+index 2b61aef..a24c6bd 100644
+--- a/PresentMon/OutputThread.cpp
++++ b/PresentMon/OutputThread.cpp
+@@ -149,6 +149,11 @@ static void HandleTerminatedProcess(
+ {
+     auto const& args = GetCommandLineArgs();
+ 
++    if (processInfo->mHandle != NULL) {
++        CloseHandle(processInfo->mHandle);
++        processInfo->mHandle = NULL;
++    }
++
+     if (processInfo->mIsTargetProcess) {
+         // Close this process' CSV.
+         CloseMultiCsv(processInfo);
+@@ -170,6 +175,9 @@ static void ProcessProcessEvent(
+ 
+         if (!pr.second) {
+             HandleTerminatedProcess(info);
++            // A new lifetime must not inherit swap chains from a reused PID,
++            // including when its old stop event was unavailable.
++            *info = ProcessInfo{};
+         }
+ 
+         info->mHandle          = NULL;
+@@ -439,26 +447,13 @@ static void ProcessEvents(
+             continue;
+         }
+ 
+-        // Look up the process this present belongs to.  If the process info doesn't exist yet,
+-        // handle process events first and then check again.  
+-        ProcessInfo* processInfo = nullptr;
+-        SwapChainData* chain = nullptr;
+-        if (GetPresentProcessInfo(presentEvent, false, &processInfo, &chain, &presentTime)) {
+-            continue;
+-        }
+-
+-        // Handle any process events that occurred before this present
++        // Advance lifetimes before looking up the process or its swap chains.
++        // A stop before this PresentStartTime belongs to an older lifetime,
++        // even when Windows has reused its PID for the current presenter.
++        // Using the previous cached frame time or deferring that stop blocks
++        // the replacement start indefinitely and retains the old image name.
+         if (checkProcessTime) {
+-            while ((*processEvents)[processEventIndex].QpcTime < presentTime) {
+-                auto& processEvent = (*processEvents)[processEventIndex];
+-
+-                // If this is a termination event for the same process as the current present,
+-                // skip processing this termination to avoid removing the process info we need
+-                if (!processEvent.IsStartEvent && processEvent.ProcessId == presentEvent->ProcessId) {
+-                    // Don't process this termination yet - we have a present from this process to handle first
+-                    break;
+-                }
+-
++            while ((*processEvents)[processEventIndex].QpcTime <= presentEvent->PresentStartTime) {
+                 ProcessProcessEvent((*processEvents)[processEventIndex]);
+                 processEventIndex += 1;
+                 if (processEventIndex == processEventCount) {
+@@ -468,6 +463,12 @@ static void ProcessEvents(
+             }
+         }
+ 
++        ProcessInfo* processInfo = nullptr;
++        SwapChainData* chain = nullptr;
++        if (GetPresentProcessInfo(presentEvent, true, &processInfo, &chain, &presentTime)) {
++            continue;
++        }
++
+         // Handle any recording toggles that occurred before this present
+         if (checkRecordingToggle) {
+             while ((*recordingToggleHistory)[recordingToggleIndex] < presentTime) {
+@@ -480,11 +481,6 @@ static void ProcessEvents(
+             }
+         }
+ 
+-        // If we didn't get process info, try again (this time querying realtime data if needed).
+-        if (processInfo == nullptr && GetPresentProcessInfo(presentEvent, true, &processInfo, &chain, &presentTime)) {
+-            continue;
+-        }
+-
+         auto ready = chain->mUnifiedSwapChain.Enqueue(pmon::util::metrics::FrameData::CopyFrameData(presentEvent),
+             args.mUseV1Metrics ? pmon::util::metrics::MetricsVersion::V1 : pmon::util::metrics::MetricsVersion::V2);
+ 
+@@ -589,6 +585,25 @@ void Output(PMTraceSession const* pmSession)
+         UpdateProcessEvents(pmSession->mPMConsumer, &processEvents);
+         pmSession->mPMConsumer->DequeuePresentEvents(presentEvents);
+ 
++        // One output thread owns stdout, so desktop records cannot interleave
++        // with the upstream application's CSV row writes.
++        if (args.mTrackDesktopFrames) {
++            std::vector<PMTraceConsumer::DesktopFrameEvent> desktop;
++            {
++                std::scoped_lock lock(pmSession->mPMConsumer->mDesktopFrameMutex);
++                desktop.swap(pmSession->mPMConsumer->mDesktopFrameEvents);
++            }
++            if (currentRecordingState && args.mCSVOutput == CSVOutput::Stdout) {
++                for (auto const& frame : desktop) {
++                    printf("#X890DesktopFrame,%u,%u,%llu,%llu,%llu\n", frame.ProcessId,
++                        frame.ThreadId, (unsigned long long)frame.FrameId,
++                        (unsigned long long)frame.QpcTime,
++                        (unsigned long long)pmSession->mTimestampFrequency.QuadPart);
++                }
++                if (!desktop.empty()) fflush(stdout);
++            }
++        }
++
+         // Process all the collected events, and update the various tracking
+         // and statistics data structures.
+         if (!presentEvents.empty()) {
+@@ -667,4 +682,4 @@ void StopOutputThread()
+ 
+         DeleteCriticalSection(&gRecordingToggleCS);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/PresentMon/PresentMon.hpp b/PresentMon/PresentMon.hpp
+index 9b15d93..a3df193 100644
+--- a/PresentMon/PresentMon.hpp
++++ b/PresentMon/PresentMon.hpp
+@@ -87,6 +87,7 @@ struct CommandLineArgs {
+     CSVOutput mCSVOutput;
+     ConsoleOutput mConsoleOutput;
+     bool mTrackDisplay;
++    bool mTrackDesktopFrames;
+     bool mTrackInput;
+     bool mTrackGPU;
+     bool mTrackGPUVideo;
+diff --git a/PresentMon/PresentMon.vcxproj b/PresentMon/PresentMon.vcxproj
+index 16f3c03..4ab675f 100644
+--- a/PresentMon/PresentMon.vcxproj
++++ b/PresentMon/PresentMon.vcxproj
+@@ -192,7 +192,7 @@
+       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mc.exe -um -v -z %(Filename)Events -h .\  %(FullPath)</Command>
+       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Autogenerate header from DD events manifest</Message>
+       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename)Events.rc;%(Filename)Events.h;%(Filename)Events_MSG00001.bin</Outputs>
+-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mc.exe -um -v -z %(Filename)Events -h .\  %(FullPath)</Command>
++      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mc.exe -um -v -z %(Filename)Events -h .\  "%(FullPath)"</Command>
+       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Autogenerate header from DD events manifest</Message>
+       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename)Events.rc;%(Filename)Events.h;%(Filename)Events_MSG00001.bin</Outputs>
+     </CustomBuild>
+@@ -203,4 +203,4 @@
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+   <ImportGroup Label="ExtensionTargets">
+   </ImportGroup>
+-</Project>
+\ No newline at end of file
++</Project>

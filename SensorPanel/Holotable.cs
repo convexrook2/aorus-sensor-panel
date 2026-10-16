@@ -45,7 +45,8 @@ internal sealed class Holotable : Grid
         heading.Children.Add(new TextBlock { Text = theme.Vessel!.Name + "  /  HOLOTABLE", FontSize = 22,
             FontFamily = new FontFamily("Bahnschrift"), Foreground = theme.Accent });
         if (!Supports(theme.ShipId)) throw new InvalidOperationException("This ship has no 3D holotable model.");
-        heading.Children.Add(new TextBlock { Text = "3D MODEL / " + ModelCredit(theme.ShipId!) + " · CC BY 4.0",
+        heading.Children.Add(new TextBlock { Text = "3D MODEL / " + ModelCredit(theme.ShipId!)
+            + (theme.ShipId == "Razorback" ? " · BLUEPRINT CORRECTION" : " · CC BY 4.0"),
             FontSize = 10, Foreground = theme.Muted });
         header.Children.Add(heading); header.Children.Add(buttons); Children.Add(header);
 
@@ -82,7 +83,7 @@ internal sealed class Holotable : Grid
 
         var footer = new StackPanel { Margin = new Thickness(22, 0, 22, 18) };
         var readings = new System.Windows.Controls.Primitives.UniformGrid { Columns = 3 };
-        foreach (var item in new[] { ("CPU", "cpuTemperature"), ("GPU", "gpuTemperature"), ("DISPLAY FPS", "fps"), ("CPU POWER", "cpuPower"), ("GPU POWER", "gpuPower"), ("MEMORY", "memory") })
+        foreach (var item in new[] { ("CPU", "cpuTemperature"), ("GPU", "gpuTemperature"), ("FPS", "fps"), ("CPU POWER", "cpuPower"), ("GPU POWER", "gpuPower"), ("MEMORY", "memory") })
         {
             var cell = new StackPanel { Margin = new Thickness(6, 3, 6, 5) };
             cell.Children.Add(new TextBlock { Text = item.Item1, FontSize = 10, Foreground = theme.Muted });
@@ -203,11 +204,11 @@ internal sealed class Holotable : Grid
         mesh.Freeze(); var material=new EmissiveMaterial(ink); material.Freeze();
         return new(mesh, material) { BackMaterial=material };
     }
-    internal static bool Supports(string? ship) => ship is "Rocinante" or "Donnager" or "Dropship" or "Truman" or "Epstein";
-    internal static string ModelCredit(string ship) => ship switch { "Rocinante" => "JAKUB.VILDOMEC", "Truman" => "MOHAMEDHUSSIEN", _ => "CHRIS KUHN / OWLSTRAW" };
+    internal static bool Supports(string? ship) => ship is "Rocinante" or "Donnager" or "Dropship" or "Truman" or "Epstein" or "Razorback";
+    internal static string ModelCredit(string ship) => ship switch { "Razorback" => "OWNER-SUPPLIED V2", "Rocinante" => "JAKUB.VILDOMEC", "Truman" => "MOHAMEDHUSSIEN", _ => "CHRIS KUHN / OWLSTRAW" };
     internal static void CheckResources()
     {
-        foreach (string ship in new[] { "Rocinante", "Donnager", "Dropship", "Truman", "Epstein" })
+        foreach (string ship in new[] { "Rocinante", "Donnager", "Dropship", "Truman", "Epstein", "Razorback" })
         {
             var parts=ShipModel.Load(ship);
             if (parts.Any(p => !p.Mesh.IsFrozen || !p.Original.IsFrozen || p.Mesh.Bounds.IsEmpty || p.Mesh.TextureCoordinates.Count!=p.Mesh.Positions.Count)

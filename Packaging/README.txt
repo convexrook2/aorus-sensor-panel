@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.7.1 | Windows x64
+Version 1.8.2 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -62,27 +62,46 @@ or disabled and respects Windows animation preferences.
 
 THEMES AND SOL NAVIGATION
 The collection includes Classic, Dark, ICE and additional colour palettes,
-plus eight Expanse-inspired ship themes. Theme changes retain readings,
+plus The Expanse main theme and eight individual ship themes. Theme changes retain readings,
 maxima, display and polling settings. Session maxima reset on app restart.
 
+THE EXPANSE MAIN THEME
+Choose Settings > Theme > The Expanse for a space showcase cycling through
+all eight existing ships. Settings > Expanse showcase controls Auto cycle
+and the cycle interval: 45 seconds by default, with choices from 15-120 seconds.
+Selecting a ship manually holds it until Auto cycle is enabled again.
+These controls are separate from Holographic display (map motion/ship rotation).
+
+Personnel cards identify verified ship relationships. Generic types without
+identified crews show no portrait. Optional portraits and
+scene backgrounds are loaded only from a local media pack. The app does not
+download show images at runtime or include private media packs in its installer.
+PNG/JPEG exports from ArtCraft can be used locally; ArtCraft is not required.
+Media pack format and instructions:
+https://github.com/convexrook2/aorus-sensor-panel/blob/main/Assets/Expanse/README.md
+
 The ship selector changes the theme and focuses a documented series
-association. Drag the Sol view to orbit, wheel to zoom, choose a destination
-by clicking or using its list, and press Home or RESET for the whole system.
-Positions, distances, body sizes and motion are schematic, not ephemerides
-or live spacecraft tracking. Medina is separate in Ring Space; Tycho is a
-mobile station. Decorative animation is not sensor data.
+association. The original SOL / NAVIGATION diagram is restored: drag to rotate,
+wheel to zoom, choose a destination and press Home or RESET for the whole system.
+Belter Charts supplies detailed Sun/planet textures, the Earth cloud layer,
+Saturn ring strip and irregular Eros/Phoebe meshes. Native WPF renders them.
+This original diagram is explicitly SCHEMATIC / NOT TO SCALE. Model shapes
+are retained; display sizes, orbit spacing, positions and motion are illustrative.
+Tycho is a mobile Belt station. The fixed Sol gate is outside Uranus, about
+2 AU beyond its orbit. Medina is in the separately labelled Ring Space inset,
+distinct from the alien central station. Animation pauses when hidden or motion
+is disabled and runs at up to 20 fps. See SolarNavigation/CREDITS.txt.
+Decorative animation is not sensor data.
 
 Rocinante/Tachi, Donnager, Truman, Epstein's Yacht and the MCRN dropship have
-bundled original-colour 3D models in the left artwork strip. Razorback, Tynan
-and Morrigan use flat artwork. Razorback currently has NO bundled 3D model.
-The requested red-and-white model by Sebastian Espinoza is a visual reference:
-https://sketchfab.com/3d-models/razorback-the-expanse-fan-art-0eca0a298cba4396bceca35d85dc51e8
-Its listing does not enable download. Including it requires authorised model
-files and redistribution terms. No gold or low-poly substitute is included.
+bundled original-colour 3D models in the left artwork strip. Razorback now uses
+the owner's blueprint-corrected v2 model in the rotating strip and holotable.
+Tynan and Morrigan use flat artwork. The Sketchfab Razorback is a visual reference;
+no mesh or texture was extracted from that page. The original v1 remains preserved.
 
 Bundled meshes retain original colour textures and markings; native WPF
 lighting approximates their source materials. Ship/map motion is capped at
-20 fps separately from collection. Credits: Holotable-Model-Credits.txt and
+20 fps for ships and 30 fps for navigation, separately from collection. Credits: Holotable-Model-Credits.txt and
 Ship-Artwork-Sources.json.
 
 START WITH WINDOWS
@@ -103,14 +122,19 @@ RAM clock: live MCLK on supported CPU layouts. DDR transfer rate is twice MCLK.
 SMBIOS configured speed is not substituted for a live reading.
 NVIDIA GPU temperature/power/usage/clocks: NVML from the installed driver.
 CPU usage, memory use, uptime and network traffic: Windows APIs/counters.
-Display FPS: portable PresentMon using Windows ETW for a selected game's
-displayed-frame intervals. This is not monitor refresh rate and may differ
-from an in-game counter.
+FPS: external Windows ETW/PresentMon observes supported presenting applications,
+including games and desktop apps. The compatibility reader measures successful
+application-present cadence, not confirmed displayed frames or monitor refresh
+rate. Automatic follows the foreground presenting app; FPS source can pin
+a process. With no active app stream, Automatic uses measured Windows desktop
+(DWM) composition frame events from the same ETW session. FPS source can also
+select the desktop explicitly. This desktop rate is not a per-app or scan-out
+rate. No injected hook or game-memory reader is used.
 
-Automatic FPS selection currently catalogues installed Steam games/demos and
-excludes ordinary desktop apps and launchers. Other launchers are not yet
-automatically catalogued. If anti-cheat blocks a new trace, close the game
-and panel, start the panel first, then start the game.
+Automatic FPS selection discovers app streams from measured frame events,
+without a Steam/game catalogue requirement. With no active app stream it selects
+Windows desktop (DWM). Capture remains external ETW, without game injection or
+an anti-cheat bypass. A pinned app retains its own availability status.
 
 TROUBLESHOOTING
 Missing CPU/board readings: check administrator access and PawnIO. Hardware

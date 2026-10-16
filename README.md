@@ -75,30 +75,55 @@ the menu. The tray menu remains available while the panel is hidden.
   Windows animation preferences.
 
 The collection includes Classic, Dark, ICE and additional colour palettes,
-plus eight Expanse-inspired ship themes. Theme changes retain readings,
+plus **The Expanse** main theme and eight individual ship themes. Theme changes retain readings,
 maxima, display selection and polling settings. Session maxima reset when
 the app restarts.
+
+### The Expanse main theme
+
+Choose **Settings → Theme → The Expanse** for a space showcase that cycles
+through all eight existing ships. **Settings → Expanse showcase** controls
+automatic cycling, with a default interval of 45 seconds and choices from
+15–120 seconds. Selecting a ship manually holds that ship until **Auto cycle**
+is enabled again. These controls are separate from **Holographic display**,
+which controls map motion and ship rotation.
+
+Personnel cards identify a verified character and their relationship to the
+selected ship. Generic types without identified crews show no portrait. Optional local
+portraits and scene backgrounds can replace the built-in space view. See the
+[local media pack guide](Assets/Expanse/README.md). The app does not download
+show images at runtime, and private media packs are excluded from the repository
+and installer. PNG/JPEG exports from ArtCraft can be used as local media;
+ArtCraft is not an application dependency.
 
 ## Ships and Sol navigation
 
 The ship selector changes the theme and focuses a documented series
-association. Drag the Sol view to orbit, use the wheel to zoom, select a
-destination by clicking or using its list, and press **Home** or **RESET** for
-the whole system. The map is explicitly schematic: distances, body sizes,
-positions and motion are illustrative, not astronomical ephemerides or live
-ship tracking. Medina is separate in Ring Space; Tycho is a mobile station.
+association. The original **SOL / NAVIGATION** diagram is restored: drag to
+rotate, wheel to zoom, choose a destination by clicking or using its list,
+and press **Home** or **RESET** for the whole system. Belter Charts supplies
+the detailed Sun/planet texture maps, Earth cloud layer, Saturn ring strip,
+and irregular Eros/Phoebe meshes. Native WPF renders these assets locally.
+The original diagram is explicitly schematic, **not to scale**; models keep
+their shapes while display sizes and orbit spacing aid readability.
+Tycho's mobile Belt position is approximate; the fixed Sol gate is shown
+outside Uranus. Medina retains its separate Ring Space inset, distinct from
+the alien central station. See [navigation scope and credits](SensorPanel/SolarSystem.md).
 
 Rocinante/Tachi, Donnager, Truman, Epstein's Yacht and the MCRN dropship have
-bundled original-colour 3D models in the left artwork strip. Razorback, Tynan
-and Morrigan use flat artwork. **Razorback does not currently include a 3D
-model.** The requested
-[red-and-white Razorback by Sebastián Espinoza](https://sketchfab.com/3d-models/razorback-the-expanse-fan-art-0eca0a298cba4396bceca35d85dc51e8)
-is a visual reference; its listing does not enable model download. Inclusion
-requires authorised model files and redistribution terms.
+bundled original-colour 3D models in the left artwork strip. Razorback uses the
+owner-supplied v2 model, reshaped against the existing orthographic blueprint,
+in both the rotating strip and holotable. Tynan and Morrigan use flat artwork.
+The Sketchfab Razorback remains a visual reference; its mesh is not bundled.
+The original v2 GLB is retained in `Assets/Models/Source`; convert it with
+`python tools/Convert-HoloScene.py Assets/Models/Source/Razorback_Blueprint_v2.glb Assets/Models/Razorback.ship 150000 FX`.
+The optional FX glow is omitted for the native idle model. Geometry is retained
+without simplification; source hash and conversion details are inside the asset.
 
 Bundled meshes retain original base-colour/emissive textures, UVs, normals and
 artist credits. Native WPF lighting approximates their source materials.
-Ship and map motion is capped at 20 fps independently of collection. Decorative
+Ship artwork motion is capped at 20 fps; navigation at 30 fps, paused when hidden
+or motion is disabled. Both run independently of collection. Decorative
 animation does not represent sensor measurements or fictional tactical data.
 
 See [model credits](Assets/Models/ATTRIBUTION.txt),
@@ -117,13 +142,14 @@ and [Rocinante UI](https://rhys.artstation.com/projects/q9Am1L).
 | RAM clock | Live MCLK on supported CPU layouts; DDR transfer rate is twice MCLK. SMBIOS configured speed is not substituted for a live reading. |
 | NVIDIA GPU temperature, power, usage and clocks | NVML from the installed NVIDIA driver, subject to each device's supported fields. |
 | CPU usage, memory use, uptime and network traffic | Windows APIs/counters. |
-| Display FPS | Portable PresentMon using Windows ETW for a selected game's displayed-frame intervals. |
+| FPS | External Windows ETW/PresentMon for supported presenting applications, plus actual DWM desktop composition events when no app stream is active. The FPS source menu identifies apps versus Windows desktop (DWM). No injected hooks or game-memory access. |
 
-Automatic FPS selection currently catalogues installed Steam games and demos,
-excludes ordinary desktop apps and launchers, and follows a focused recognized
-game. Other launchers are not automatically catalogued. FPS is not monitor
-refresh rate and may differ from an in-game counter. If anti-cheat prevents a
-new trace, close the game and panel, launch the panel first, then the game.
+Automatic FPS selection discovers supported app streams directly from frame
+events, follows the foreground presenting app, and retains an active stream
+while the panel has focus. With no app stream it uses Windows desktop (DWM)
+composition events, identified separately from app FPS. Steam membership is not
+required. FPS is not monitor refresh rate and may differ from an in-game counter.
+Capture uses external Windows ETW; no game injection or anti-cheat bypass is used.
 
 Failed, missing or stale measurements remain unavailable. Fan/header labels
 follow upstream mapping and may need verification against a board manual.
@@ -144,7 +170,11 @@ dotnet build .\SensorPanel\SensorPanel.csproj -c Release
 ```
 
 Use `tools/Validate-Holotable.ps1` for build/resource checks and saved-data
-presentation previews. Use `tools/Build-Installer.ps1` to build and package the
+presentation previews. `tools/Build-SolarAssets.ps1 -Restore` prepares the
+local Belter texture/mesh assets with the offline Node.js tooling;
+`tools/Validate-SolarNavigation.ps1` checks the restored original diagram
+in visible native previews at three panel sizes.
+Use `tools/Build-Installer.ps1` to build and package the
 shared-runtime installer; packaging also requires Inno Setup 6. The optional
 NVIDIA FrameView runtime source is optional; its native bridge build currently
 requires the SDK and C++ tools listed above. Normal automatic FPS uses PresentMon.

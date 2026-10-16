@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
 namespace SensorPanel;
@@ -73,13 +75,16 @@ internal sealed class SolarSystemView : Grid
         selector.SelectedIndex = Array.FindIndex(MapSurface.Bodies, b => b.Id == map.SelectedBodyId);
         selecting = false;
         status.Text = map.SelectedBodyId == "Medina" ? "RING SPACE · SEPARATE FROM SOL · SCHEMATIC"
-            : map.SelectedBodyId == "Tycho" ? "TYCHO · MOBILE STATION · SCHEMATIC"
+            : map.SelectedBodyId == "Tycho" ? "TYCHO · MOBILE BELT STATION · SCHEMATIC"
+            : map.SelectedBodyId == "SolGate" ? "SOL GATE · ~2 AU BEYOND URANUS · SCHEMATIC"
             : "SCHEMATIC · NOT TO SCALE";
     }
 
     internal void Check() => map.Check();
+    internal JsonElement Diagnose() => JsonSerializer.SerializeToElement(map.Diagnose());
+    internal object CheckAssets() => SolarBodyAssets.Check();
 
-    private sealed class MapSurface : FrameworkElement
+    private sealed class MapSurface : Grid
     {
         internal sealed record Body(string Id, string Label, double Radius, double Angle, double Size, Color Colour,
             string? Parent = null, bool Station = false, bool Planet = false);
@@ -103,15 +108,14 @@ internal sealed class SolarSystemView : Grid
             new("Phoebe", "Phoebe", .068, 1.05, 2.5, Color.FromRgb(151, 153, 156), "Saturn"),
             new("Uranus", "Uranus", .96, 4.4, 6.5, Color.FromRgb(114, 207, 215), Planet: true),
             new("Neptune", "Neptune", 1.10, 5.8, 6.5, Color.FromRgb(58, 106, 216), Planet: true),
-            new("SolGate", "Sol Ring", 1.23, .20, 5, Color.FromRgb(99, 229, 255), Station: true),
+            // Schematic order: the stationary gate is outside Uranus, inside Neptune.
+            new("SolGate", "Sol Ring", 1.03, .20, 5, Color.FromRgb(99, 229, 255), Station: true),
             new("Medina", "Medina · Ring Space", 0, 0, 5, Color.FromRgb(255, 189, 98), Station: true)
         ];
 
         internal static readonly SolidColorBrush Ink = Frozen(Color.FromRgb(132, 233, 251));
         internal static readonly SolidColorBrush FaintInk = Frozen(Color.FromRgb(92, 141, 160));
         private static readonly SolidColorBrush Amber = Frozen(Color.FromRgb(255, 199, 110));
-        private static readonly SolidColorBrush EarthLand = Frozen(Color.FromRgb(74, 155, 126));
-        private static readonly SolidColorBrush Storm = Frozen(Color.FromRgb(161, 86, 64));
         private static readonly SolidColorBrush LabelBackground = Frozen(Color.FromArgb(205, 3, 14, 23));
         private static readonly SolidColorBrush RingSpaceBackground = Frozen(Color.FromArgb(220, 6, 20, 30));
         private static readonly Pen Orbit = Pen(Color.FromArgb(72, 74, 182, 225), .75);
@@ -120,12 +124,13 @@ internal sealed class SolarSystemView : Grid
         private static readonly Pen Highlight = Pen(Color.FromArgb(235, 130, 242, 255), 1);
         private static readonly Pen RingSpaceBorder = Pen(Color.FromArgb(120, 255, 191, 104), .75);
         private static readonly Pen Link = DashedPen();
-        private static readonly Pen SaturnInnerRing = Pen(Color.FromArgb(140, 224, 209, 163), .23);
-        private static readonly Pen SaturnOuterRing = Pen(Color.FromArgb(125, 183, 173, 147), .06);
         private static readonly Typeface Typeface = new("Bahnschrift");
         private readonly DispatcherTimer timer = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(50) };
         private readonly Stopwatch clock = new();
-        private readonly Dictionary<string, Brush> planets = new();
+        private readonly Viewport3D viewport = new() { IsHitTestVisible = false, ClipToBounds = true };
+        private readonly OrthographicCamera camera = new() { Position = new(0, 0, 2000), LookDirection = new(0, 0, -1), UpDirection = new(0, 1, 0), NearPlaneDistance = 1, FarPlaneDistance = 4000 };
+        private readonly Dictionary<string, MatrixTransform3D> transforms = new();
+        private readonly Overlay backdrop, overlay;
         private readonly Dictionary<string, FormattedText> text = new();
         private readonly List<(Body Body, Point Point, double Radius)> hitTargets = new();
         private readonly List<(Body Body, Rect Bounds)> labelTargets = new();
@@ -133,6 +138,7 @@ internal sealed class SolarSystemView : Grid
         private readonly (Point Point, double Radius, double Opacity)[] stars;
         private bool motion = true, loaded, moving, checking;
         private double time, lastTime, yaw = -.24, tilt = .35, zoom = 1, targetZoom = 1;
+        private long frames;
         private Vector pan, targetPan;
         private Point? drag;
         private Point dragStart;
@@ -143,28 +149,25 @@ internal sealed class SolarSystemView : Grid
 
         internal MapSurface()
         {
-            Focusable = true; ClipToBounds = true; Cursor = Cursors.Hand; IsManipulationEnabled = true;
+            Focusable = true; ClipToBounds = true; Cursor = Cursors.Hand; IsManipulationEnabled = true; Background = Brushes.Transparent;
             ToolTip = "Select a body · Drag to rotate · Wheel to zoom · Arrows to rotate · Home to reset";
             var random = new Random(1977);
             stars = Enumerable.Range(0, 70).Select(_ => (new Point(random.NextDouble(), random.NextDouble()),
                 .35 + random.NextDouble() * .65, .10 + random.NextDouble() * .23)).ToArray();
+            var models = new Model3DGroup();
+            models.Children.Add(new AmbientLight(Color.FromRgb(91, 95, 105)));
+            models.Children.Add(new DirectionalLight(Color.FromRgb(255, 244, 227), new Vector3D(.7, -.4, -1)));
             foreach (var body in Bodies)
             {
-                var c = body.Colour;
-                var brush = new RadialGradientBrush
-                {
-                    Center = new Point(.31, .29), GradientOrigin = new Point(.24, .20), RadiusX = .86, RadiusY = .86,
-                    GradientStops = new GradientStopCollection
-                    {
-                        new(Lighten(c, 1.5), 0), new(c, .38),
-                        new(Color.FromRgb((byte)(c.R * .29), (byte)(c.G * .29), (byte)(c.B * .32)), .82),
-                        new(Color.FromRgb(3, 11, 20), 1)
-                    }
-                };
-                brush.Freeze(); planets.Add(body.Id, brush);
+                var transform = new MatrixTransform3D(); transforms.Add(body.Id, transform);
+                var instance = new Model3DGroup { Transform = transform }; instance.Children.Add(SolarBodyAssets.Load(body.Id)); models.Children.Add(instance);
             }
+            viewport.Camera = camera; viewport.Children.Add(new ModelVisual3D { Content = models });
+            RenderOptions.SetEdgeMode(viewport, EdgeMode.Unspecified);
+            backdrop = new Overlay(this, false); overlay = new Overlay(this, true);
+            Children.Add(backdrop); Children.Add(viewport); Children.Add(overlay);
             timer.Tick += Tick;
-            Loaded += (_, _) => { loaded = true; SystemParameters.StaticPropertyChanged += ParametersChanged; UpdateTimer(); };
+            Loaded += (_, _) => { loaded = true; SystemParameters.StaticPropertyChanged += ParametersChanged; UpdateTimer(); Refresh(); };
             Unloaded += (_, _) =>
             {
                 loaded = false; SystemParameters.StaticPropertyChanged -= ParametersChanged;
@@ -172,7 +175,7 @@ internal sealed class SolarSystemView : Grid
             };
             IsVisibleChanged += (_, _) => UpdateTimer();
             IsEnabledChanged += (_, _) => UpdateTimer();
-            SizeChanged += (_, _) => { text.Clear(); InvalidateVisual(); };
+            SizeChanged += (_, _) => { text.Clear(); if (!moving) SnapCamera(); Refresh(); };
             MouseLeftButtonDown += Down; MouseMove += Move; MouseLeftButtonUp += Up;
             LostMouseCapture += (_, _) => drag = null;
             MouseWheel += Wheel; KeyDown += Key;
@@ -210,16 +213,21 @@ internal sealed class SolarSystemView : Grid
                 // Reparenting a dashboard temporarily unloads this view. Preserve its camera so a requested
                 // ship-to-location transition can resume when the same view is attached again.
                 if (!motion || !SystemParameters.ClientAreaAnimation) SnapCamera();
-                InvalidateVisual();
+                Refresh();
             }
         }
         private void PauseTimer() { timer.Stop(); clock.Stop(); }
-        private void SnapCamera() { moving = false; zoom = targetZoom; pan = targetPan; }
+        private void SnapCamera()
+        {
+            moving = false; zoom = targetZoom;
+            var p = Position(Bodies.First(b => b.Id == selected)); targetPan = new Vector(-p.X, -p.Y); pan = targetPan;
+        }
         private void Tick(object? sender, EventArgs e)
         {
             if (!CanAnimate) { UpdateTimer(); return; }
             var now = clock.Elapsed.TotalSeconds;
             var delta = Math.Clamp(now - lastTime, 0, .15); lastTime = now; time += delta;
+            frames++;
             if (drag is null) yaw = Math.IEEERemainder(yaw + delta * .009, Math.Tau);
             if (selected != "Sun")
             {
@@ -234,7 +242,7 @@ internal sealed class SolarSystemView : Grid
                 if (Math.Abs(zoom - targetZoom) < .002 && (pan - targetPan).Length < .001)
                 { zoom = targetZoom; pan = targetPan; moving = false; }
             }
-            InvalidateVisual();
+            Refresh();
         }
 
         internal void FocusBody(string id, bool animate)
@@ -248,7 +256,7 @@ internal sealed class SolarSystemView : Grid
             moving = animate && motion && SystemParameters.ClientAreaAnimation;
             if (!moving) SnapCamera();
             if (!checking) Selected?.Invoke(selected);
-            InvalidateVisual();
+            Refresh();
         }
 
         private Point Position(Body body)
@@ -258,7 +266,8 @@ internal sealed class SolarSystemView : Grid
             if (body.Id == "Sun") return new Point();
             var speed = body.Station ? 0 : .007 / Math.Pow(Math.Max(.25, body.Radius), .45);
             var a = body.Angle + time * speed;
-            var point = new Point(body.Radius * Math.Cos(a), body.Radius * Math.Sin(a));
+            var radius = OrbitRadius(body);
+            var point = new Point(radius * Math.Cos(a), radius * Math.Sin(a));
             if (body.Parent is not null)
             {
                 var parent = Position(Bodies.First(b => b.Id == body.Parent));
@@ -276,11 +285,66 @@ internal sealed class SolarSystemView : Grid
                 ActualHeight * .49 + (x * s + y * c) * Scale * zoom * Flatten * tilt / .35);
         }
 
-        protected override void OnRender(DrawingContext dc)
+        private double BodyRadius(Body body)
+        {
+            double radius = Math.Clamp(body.Size * Math.Pow(zoom, .55), 2, 29);
+            if (body.Id == selected && body.Id != "Sun") radius = Math.Max(radius, Math.Min(32, Math.Min(ActualWidth, ActualHeight) * .16));
+            if (body.Parent is not null && body.Id != selected && body.Parent != selected && zoom < 1.8) radius = Math.Min(radius, 2.5);
+            return radius;
+        }
+        private double OrbitRadius(Body body)
+        {
+            if (body.Parent is null || body.Parent != selected && body.Id != selected) return body.Radius;
+            var parent = Bodies.First(b => b.Id == body.Parent);
+            double parentExtent = BodyRadius(parent) * (parent.Id == "Saturn" ? 2.41 : 1);
+            // In this explicitly schematic diagram, leave space around an enlarged selection.
+            return Math.Max(body.Radius, (parentExtent + BodyRadius(body) + 9) / (Scale * zoom * Flatten * tilt / .35));
+        }
+        private static Rect MedinaArea(Point p) => new(p.X - 98, p.Y - 28, 196, 56);
+        private void Refresh()
+        {
+            if (ActualWidth < 2 || ActualHeight < 2 || overlay is null) return;
+            camera.Width = ActualWidth;
+            foreach (var body in Bodies)
+            {
+                var p = Project(Position(body)); double radius = BodyRadius(body);
+                if (body.Id == "Medina") { var area = MedinaArea(p); p = new(area.Left + 28, area.Top + 28); radius = 20; }
+                var matrix = Matrix3D.Identity;
+                double pitch = body.Id == "SolGate" ? 65 : body.Id == "Tycho" ? 40 : body.Id == "Medina" ? -18 : 0;
+                matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), pitch));
+                matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), body.Station ? -25 + Math.Sin(time * .08) * 8 : 35 + time * 2));
+                matrix.Scale(new Vector3D(radius, radius, radius)); matrix.Translate(new Vector3D(p.X - ActualWidth / 2, ActualHeight / 2 - p.Y, 0));
+                transforms[body.Id].Matrix = matrix;
+            }
+            backdrop.InvalidateVisual(); overlay.InvalidateVisual();
+        }
+        private void Paint(DrawingContext dc, bool foreground)
         {
             if (ActualWidth < 2 || ActualHeight < 2) return;
             dc.DrawRectangle(Brushes.Transparent, null, new Rect(RenderSize));
+            if (!foreground)
+            {
+                PaintOrbits(dc);
+                return;
+            }
             hitTargets.Clear(); labelBounds.Clear(); labelTargets.Clear();
+            foreach (var body in Bodies.OrderBy(b => Project(Position(b)).Y))
+            {
+                var p = Project(Position(body)); var radius = BodyRadius(body);
+                hitTargets.Add((body, p, body.Id == "Saturn" ? radius * 2.41 : radius));
+                if (p.X < -100 || p.Y < -70 || p.X > ActualWidth + 100 || p.Y > ActualHeight + 70) continue;
+                DrawBody(dc, body, p, radius);
+            }
+            foreach (var hit in hitTargets.OrderBy(h => h.Body.Id == selected ? 0 : h.Body.Parent is null ? 1 : 2))
+            {
+                if (hit.Body.Id == "Medina") continue;
+                if (hit.Body.Parent is not null && hit.Body.Id != selected && hit.Body.Parent != selected && zoom < 1.8) continue;
+                DrawLabel(dc, hit.Body, hit.Point, hit.Radius);
+            }
+            DrawDirectionMarker(dc);
+        }
+        private void PaintOrbits(DrawingContext dc)
+        {
             foreach (var star in stars)
             {
                 dc.PushOpacity(star.Opacity); dc.DrawEllipse(Ink, null,
@@ -289,27 +353,11 @@ internal sealed class SolarSystemView : Grid
             DrawBelt(dc);
             foreach (var body in Bodies.Where(b => b.Planet)) DrawOrbit(dc, body.Radius, body.Id == selected ? OrbitBright : Orbit);
             foreach (var body in Bodies.Where(b => b.Parent is not null && (b.Id == selected || b.Parent == selected)))
-                DrawOrbit(dc, body.Radius, Orbit, Position(Bodies.First(b => b.Id == body.Parent)));
+                DrawOrbit(dc, OrbitRadius(body), Orbit, Position(Bodies.First(b => b.Id == body.Parent)));
             var ring = Project(Position(Bodies.First(b => b.Id == "SolGate")));
             var medina = Project(Position(Bodies.First(b => b.Id == "Medina")));
             dc.DrawLine(Link, ring, medina);
-            foreach (var body in Bodies.OrderBy(b => Project(Position(b)).Y))
-            {
-                var p = Project(Position(body));
-                var radius = Math.Clamp(body.Size * Math.Pow(zoom, .55), 2, 29);
-                if (body.Parent is not null && body.Id != selected && body.Parent != selected && zoom < 1.8) radius = Math.Min(radius, 2.5);
-                hitTargets.Add((body, p, radius));
-                if (p.X < -70 || p.Y < -70 || p.X > ActualWidth + 70 || p.Y > ActualHeight + 70) continue;
-                DrawBody(dc, body, p, radius);
-            }
-            // Selected labels are placed first, reserving space before less important labels.
-            foreach (var hit in hitTargets.OrderBy(h => h.Body.Id == selected ? 0 : h.Body.Parent is null ? 1 : 2))
-            {
-                if (hit.Body.Id == "Medina") continue;
-                if (hit.Body.Parent is not null && hit.Body.Id != selected && hit.Body.Parent != selected && zoom < 1.8) continue;
-                DrawLabel(dc, hit.Body, hit.Point, hit.Radius);
-            }
-            DrawDirectionMarker(dc);
+            dc.DrawRoundedRectangle(RingSpaceBackground, RingSpaceBorder, MedinaArea(medina), 4, 4);
         }
 
         private void DrawOrbit(DrawingContext dc, double radius, System.Windows.Media.Pen pen, Point center = default)
@@ -344,95 +392,30 @@ internal sealed class SolarSystemView : Grid
         private void DrawBody(DrawingContext dc, Body body, Point p, double r)
         {
             var active = body.Id == selected;
+            if (body.Id == "Medina")
+            {
+                var area = MedinaArea(p);
+                DrawText(dc, "RING SPACE / SEPARATE", new Point(area.Left + 55, area.Top + 7), 8, Amber);
+                DrawText(dc, "MEDINA STATION", new Point(area.Left + 55, area.Top + 20), 10, active ? Ink : Amber);
+                DrawText(dc, "NAUVOO / BEHEMOTH", new Point(area.Left + 55, area.Top + 36), 7, FaintInk);
+                labelBounds.Add(area); labelTargets.Add((body, area)); return;
+            }
             if (active)
             {
-                dc.PushOpacity(.10); dc.DrawEllipse(Ink, null, p, r + 13, r + 13); dc.Pop();
                 dc.DrawEllipse(null, Highlight, p, r + 6, r + 6);
                 dc.DrawLine(Highlight, new Point(p.X - r - 12, p.Y), new Point(p.X - r - 4, p.Y));
                 dc.DrawLine(Highlight, new Point(p.X + r + 4, p.Y), new Point(p.X + r + 12, p.Y));
             }
-            if (body.Id == "Medina")
+            if (body.Id == "Sun")
             {
-                var area = new Rect(p.X - 62, p.Y - 20, 124, 40);
-                dc.DrawRoundedRectangle(RingSpaceBackground, RingSpaceBorder, area, 4, 4);
-                DrawText(dc, "RING SPACE", new Point(area.Left + 8, area.Top + 5), 8, Amber);
-                DrawText(dc, "MEDINA STATION", new Point(area.Left + 8, area.Top + 17), 10, active ? Ink : Amber);
-                labelBounds.Add(area); labelTargets.Add((body, area)); return;
+                dc.PushOpacity(.06); dc.DrawEllipse(Amber, null, p, r * 3.5, r * 3.5); dc.Pop();
+                dc.PushOpacity(.08); dc.DrawEllipse(Amber, null, p, r * 2.1, r * 2.1); dc.Pop();
             }
             if (body.Id == "SolGate")
             {
-                dc.DrawEllipse(null, active ? Highlight : OrbitBright, p, r * 1.3, r * 1.3);
-                dc.DrawEllipse(null, OrbitBright, p, r * .8, r * .8); return;
+                // Preserve the original diagram's legible portal marker at small sizes.
+                dc.DrawEllipse(null, OrbitBright, p, r * .96, r * .96);
             }
-            if (body.Station)
-            {
-                var diamond = new StreamGeometry();
-                using (var path = diamond.Open())
-                {
-                    path.BeginFigure(new Point(p.X, p.Y - r), true, true);
-                    path.LineTo(new Point(p.X + r, p.Y), true, false); path.LineTo(new Point(p.X, p.Y + r), true, false);
-                    path.LineTo(new Point(p.X - r, p.Y), true, false);
-                }
-                diamond.Freeze(); dc.DrawGeometry(Ink, Highlight, diamond); return;
-            }
-            if (body.Id == "Sun")
-            {
-                dc.PushOpacity(.07); dc.DrawEllipse(Amber, null, p, r * 3.5, r * 3.5); dc.Pop();
-                dc.PushOpacity(.11); dc.DrawEllipse(Amber, null, p, r * 2.1, r * 2.1); dc.Pop();
-            }
-            if (body.Id == "Saturn") DrawSaturnRing(dc, p, r, true);
-            dc.DrawEllipse(planets[body.Id], null, p, r, r);
-            if (r >= 4) DrawSurface(dc, body, p, r);
-            if (body.Id == "Saturn") DrawSaturnRing(dc, p, r, false);
-        }
-
-        private void DrawSurface(DrawingContext dc, Body body, Point p, double r)
-        {
-            dc.PushClip(new EllipseGeometry(p, r - .3, r - .3));
-            if (body.Id == "Earth")
-            {
-                dc.PushOpacity(.64);
-                for (var i = 0; i < 5; i++)
-                {
-                    var longitude = time * .16 + i * 1.65;
-                    if (Math.Cos(longitude) < 0) continue;
-                    var x = Math.Sin(longitude) * r * .83;
-                    var y = Math.Sin(i * 2.4) * r * .48;
-                    dc.PushTransform(new RotateTransform(i * 37 + 18, p.X + x, p.Y + y));
-                    dc.DrawEllipse(EarthLand, null, new Point(p.X + x, p.Y + y), r * .24 * Math.Cos(longitude), r * .44);
-                    dc.Pop();
-                }
-                dc.Pop();
-                dc.PushOpacity(.40); dc.DrawEllipse(Brushes.White, null, new Point(p.X, p.Y - r * .92), r * .42, r * .16); dc.Pop();
-            }
-            else if (body.Id is "Jupiter" or "Saturn" or "Venus" or "Mars")
-            {
-                for (var i = -3; i <= 3; i++)
-                {
-                    var colour = i % 2 == 0 ? Amber : FaintInk;
-                    dc.PushOpacity(body.Id == "Mars" ? .13 : .20);
-                    var wave = Math.Sin(time * .12 + i * 1.3) * r * .08;
-                    dc.DrawEllipse(colour, null, new Point(p.X + wave, p.Y + i * r * .26), r * 1.2, r * .11);
-                    dc.Pop();
-                }
-                if (body.Id == "Jupiter")
-                {
-                    dc.PushOpacity(.6); dc.DrawEllipse(Storm, null,
-                        new Point(p.X + Math.Sin(time * .1) * r * .65, p.Y + r * .35), r * .24, r * .12); dc.Pop();
-                }
-            }
-            dc.Pop();
-        }
-
-        private static void DrawSaturnRing(DrawingContext dc, Point p, double r, bool rear)
-        {
-            dc.PushClip(rear ? new RectangleGeometry(new Rect(p.X - r * 2.1, p.Y - r, r * 4.2, r))
-                : new RectangleGeometry(new Rect(p.X - r * 2.1, p.Y, r * 4.2, r)));
-            dc.PushTransform(new RotateTransform(-17, p.X, p.Y));
-            dc.PushTransform(new ScaleTransform(r, r, p.X, p.Y));
-            dc.DrawEllipse(null, SaturnInnerRing, p, 1.8, .49);
-            dc.DrawEllipse(null, SaturnOuterRing, p, 2, .56);
-            dc.Pop(); dc.Pop(); dc.Pop();
         }
 
         private void DrawLabel(DrawingContext dc, Body body, Point p, double radius)
@@ -452,7 +435,8 @@ internal sealed class SolarSystemView : Grid
                 var rect = new Rect(x, y, labelWidth, labelHeight);
                 if (rect.Left < 3 || rect.Top < 2 || rect.Right > ActualWidth - 3 || rect.Bottom > ActualHeight - 2) continue;
                 if (labelBounds.Any(r => r.IntersectsWith(rect))) continue;
-                if (!active && hitTargets.Any(h => h.Body.Id != body.Id && rect.Contains(h.Point))) continue;
+                if (!active && hitTargets.Any(h => h.Body.Id != body.Id
+                    && new Rect(h.Point.X - h.Radius, h.Point.Y - h.Radius, h.Radius * 2, h.Radius * 2).IntersectsWith(rect))) continue;
                 dc.DrawRoundedRectangle(LabelBackground, null, rect, 2, 2);
                 dc.DrawText(formatted, new Point(x + 4, y + 1));
                 if (active) dc.DrawLine(Leader, p, new Point(Math.Clamp(p.X, rect.Left, rect.Right), Math.Clamp(p.Y, rect.Top, rect.Bottom)));
@@ -485,7 +469,7 @@ internal sealed class SolarSystemView : Grid
             if (drag is not { } previous || e.LeftButton != MouseButtonState.Pressed) return;
             var next = e.GetPosition(this); var delta = next - previous; drag = next;
             yaw += delta.X * .008; tilt = Math.Clamp(tilt + delta.Y * .002, .16, .67); moving = false;
-            InvalidateVisual(); e.Handled = true;
+            Refresh(); e.Handled = true;
         }
         private void Up(object sender, MouseButtonEventArgs e)
         {
@@ -513,8 +497,8 @@ internal sealed class SolarSystemView : Grid
         {
             if (!double.IsFinite(factor) || factor <= 0) return;
             targetZoom = Math.Clamp(targetZoom * factor, .65, 6);
-            moving = animate && CanAnimate; if (!moving) zoom = targetZoom;
-            InvalidateVisual();
+            moving = animate && CanAnimate; if (!moving) SnapCamera();
+            Refresh();
         }
         private void Key(object sender, KeyEventArgs e)
         {
@@ -527,7 +511,7 @@ internal sealed class SolarSystemView : Grid
                 ChangeZoom(e.Key is System.Windows.Input.Key.Add or System.Windows.Input.Key.OemPlus ? 1.15 : 1 / 1.15, true);
             }
             else return;
-            InvalidateVisual(); e.Handled = true;
+            Refresh(); e.Handled = true;
         }
 
         internal void Check()
@@ -537,6 +521,7 @@ internal sealed class SolarSystemView : Grid
             checking = true;
             try
             {
+                SolarBodyAssets.Check();
                 SetMotion(false);
                 if (MotionActive) throw new InvalidOperationException("Solar-system animation continued while disabled.");
                 foreach (var body in Bodies)
@@ -575,12 +560,25 @@ internal sealed class SolarSystemView : Grid
                 selected = previous.Selected; motion = previous.Motion; moving = previous.Moving;
                 zoom = previous.Zoom; targetZoom = previous.TargetZoom; pan = previous.Pan; targetPan = previous.TargetPan;
                 yaw = previous.Yaw; tilt = previous.Tilt; checking = false;
-                UpdateTimer(); InvalidateVisual();
+                UpdateTimer(); Refresh();
             }
         }
 
-        private static Color Lighten(Color colour, double amount) => Color.FromRgb((byte)Math.Min(255, colour.R * amount),
-            (byte)Math.Min(255, colour.G * amount), (byte)Math.Min(255, colour.B * amount));
+        internal object Diagnose() => new
+        {
+            selected, scene = selected == "Medina" ? "RingSpaceInset" : "SolSchematic",
+            frameCount = frames, renderActive = MotionActive, schematic = true, toScale = false,
+            labelOverlaps = labelBounds.SelectMany((a, i) => labelBounds.Skip(i + 1).Select(b => a.IntersectsWith(b))).Count(overlap => overlap),
+            selectedRadiusPixels = BodyRadius(Bodies.First(b => b.Id == selected)),
+            gateOutsideUranusInsideNeptune = Bodies.First(b => b.Id == "SolGate").Radius > Bodies.First(b => b.Id == "Uranus").Radius
+                && Bodies.First(b => b.Id == "SolGate").Radius < Bodies.First(b => b.Id == "Neptune").Radius,
+            assets = SolarBodyAssets.Sources
+        };
+        private sealed class Overlay(MapSurface owner, bool foreground) : FrameworkElement
+        {
+            protected override void OnRender(DrawingContext drawingContext) => owner.Paint(drawingContext, foreground);
+        }
+
         private static SolidColorBrush Frozen(Color colour) { var brush = new SolidColorBrush(colour); brush.Freeze(); return brush; }
         private static System.Windows.Media.Pen Pen(Color colour, double thickness)
         { var pen = new System.Windows.Media.Pen(Frozen(colour), thickness); pen.Freeze(); return pen; }

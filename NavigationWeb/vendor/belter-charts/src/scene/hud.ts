@@ -1,0 +1,124 @@
+/** Ride-the-burn HUD: phase, velocity, g, progress, cockpit/mute/exit. */
+import type { FlightPlan } from "../planner";
+import { shipVelocity } from "../planner";
+import { arrivalMode, BODY_BY_ID } from "../data/bodies";
+import type { ArrivalMode } from "../data/bodies";
+import { fmtDuration, fmtVelocity } from "../ui/format";
+import { store } from "../ui/store";
+import type { BurnPhase } from "./ship";
+
+const PHASE_LABEL: Record<BurnPhase, string> = {
+  burn: "BURN",
+  flip: "FLIP — DRIVE OFF",
+  brake: "BRAKE",
+  dock: "DOCKING",
+  off: "DOCKED",
+};
+
+/** Arrival phases read differently when there's nothing to clamp onto. */
+const ARRIVAL_LABEL: Record<ArrivalMode, { dock: string; off: string }> = {
+  dock: { dock: "DOCKING", off: "DOCKED" },
+  land: { dock: "LANDING", off: "LANDED" },
+  orbit: { dock: "ORBIT INSERTION", off: "IN ORBIT" },
+  hold: { dock: "APPROACH", off: "HOLDING" },
+};
+
+export class RideHud {
+  private root: HTMLDivElement;
+  private phaseEl: HTMLDivElement;
+  private rows: HTMLDivElement;
+  private bar: HTMLDivElement;
+  private muteBtn: HTMLButtonElement;
+  private viewBtn: HTMLButtonElement;
+
+  constructor(container: HTMLElement) {
+    this.root = document.createElement("div");
+    this.root.id = "ride-hud";
+    this.root.innerHTML = `
+      <div class="hud-phase"></div>
+      <div class="hud-rows"></div>
+      <div class="hud-bar"><div class="hud-bar-fill"></div></div>
+      <div class="hud-btns">
+        <button class="hud-view" data-tip="toggle cockpit / chase view" data-tip-pos="right">cockpit</button>
+        <button class="hud-mute" data-tip="mute / unmute engine sound" aria-label="mute engine sound">♪</button>
+        <button class="hud-exit">release couch ✕</button>
+      </div>
+    `;
+    this.root.classList.add("hidden");
+    container.appendChild(this.root);
+
+    this.phaseEl = this.root.querySelector(".hud-phase")!;
+    this.rows = this.root.querySelector(".hud-rows")!;
+    this.bar = this.root.querySelector(".hud-bar-fill")!;
+    this.muteBtn = this.root.querySelector(".hud-mute")!;
+    this.viewBtn = this.root.querySelector(".hud-view")!;
+
+    this.root.querySelector(".hud-exit")!.addEventListener("click", () => {
+      const s = store.getState();
+      s.setRide(false);
+      s.setPlaying(false);
+      s.setSpeed(2);
+    });
+    this.muteBtn.addEventListener("click", () => store.getState().toggleMuted());
+    this.viewBtn.addEventListener("click", () => {
+      const s = store.getState();
+      s.setCockpit(!s.cockpit);
+    });
+  }
+
+  update(
+    visible: boolean,
+    plan: FlightPlan | null,
+    timeMs: number,
+    phase: BurnPhase,
+    runaway: boolean,
+    cockpit: boolean
+  ) {
+    this.root.classList.toggle("hidden", !visible);
+    if (!visible || !plan) return;
+
+    // Runaway-burn stories (Epstein) encode the "flight" as accelerate-only
+    // up to the pseudo-flip (fuel exhaustion); progress runs against that.
+    const T = runaway ? plan.flipTimeSec : plan.travelTimeSec;
+    const t = Math.min(Math.max((timeMs - plan.depart.getTime()) / 1000, 0), T);
+    // Speed relative to the destination: starts at |v0-v1|, peaks near the
+    // flip, and still hits zero at dock. (Epstein: reduces to accel*t.)
+    const vel = shipVelocity(plan, t);
+    const v = Math.hypot(
+      vel.x - plan.arriveVel.x,
+      vel.y - plan.arriveVel.y,
+      vel.z - plan.arriveVel.z
+    );
+
+    this.phaseEl.textContent =
+      runaway && phase === "burn"
+        ? "RUNAWAY BURN"
+        : runaway
+          ? "DRIVE OFF"
+          : phase === "dock" || phase === "off"
+            ? ARRIVAL_LABEL[arrivalMode(BODY_BY_ID.get(plan.destId))][phase]
+            : PHASE_LABEL[phase];
+    this.phaseEl.dataset.phase = runaway ? "flip" : phase;
+
+    if (runaway) {
+      const fuel = Math.max(0, 100 * (1 - t / T));
+      this.rows.innerHTML = `
+        <div><span>velocity</span><b>${fmtVelocity(v)}</b></div>
+        <div><span>thrust</span><b>${plan.accelG} g</b></div>
+        <div><span>fuel</span><b>${fuel.toFixed(0)}%</b></div>
+        <div><span>burn time</span><b>${fmtDuration(t)}</b></div>
+      `;
+    } else {
+      const destName = BODY_BY_ID.get(plan.destId)?.name ?? plan.destId;
+      this.rows.innerHTML = `
+        <div><span>velocity</span><b>${fmtVelocity(v)}</b></div>
+        <div><span>thrust</span><b>${phase === "flip" ? "0" : plan.accelG} g</b></div>
+        <div><span>to ${destName}</span><b>${fmtDuration(T - t)}</b></div>
+      `;
+    }
+    this.bar.style.width = `${(100 * t) / T}%`;
+    this.muteBtn.textContent = store.getState().muted ? "♪̸" : "♪";
+    this.muteBtn.classList.toggle("muted", store.getState().muted);
+    this.viewBtn.textContent = cockpit ? "chase" : "cockpit";
+  }
+}

@@ -19,6 +19,10 @@ internal sealed class PanelWindow : Window
     private readonly Viewbox viewport = new();
     private PanelLayout? panelLayout;
     private ShipPanel? shipPanel;
+    private readonly DispatcherTimer showcaseClock = new(DispatcherPriority.Background);
+    private bool showcaseCycle = PanelPreferences.ExpanseCycle;
+    private int showcaseSeconds = PanelPreferences.ExpanseSceneSeconds;
+    private bool checkingThemes;
     private bool animateArtwork = true;
     private bool holographicMotion = PanelPreferences.HolographicMotion;
     private bool readoutPulse = PanelPreferences.ReadoutPulse;
@@ -60,12 +64,13 @@ internal sealed class PanelWindow : Window
     private bool hideInitially;
     private int samples;
     private int selectedFpsPid;
-    private readonly GameDiscovery fpsGames = new();
+    private FpsApplication[] fpsApplications = [];
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true };
 
-    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false, Size? previewSize = null, bool sensorPreview = false, string? previewTheme = null, bool checkThemes = false, bool checkShips = false)
+    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false, Size? previewSize = null, bool sensorPreview = false, string? previewTheme = null, bool checkThemes = false, bool checkShips = false, bool checkNavigation = false)
     {
         this.previewSize=previewSize; this.sensorPreview=sensorPreview;
+        checkingThemes = checkThemes || checkShips || checkNavigation;
         this.benchmarkPolling = benchmarkPolling;
         selectedFpsPid = fpsPid;
         this.previewPath = previewPath; this.capturePath = capturePath;
@@ -84,11 +89,19 @@ internal sealed class PanelWindow : Window
         shipPanel = new(text);
         shipPanel.ShipSelectionRequested += ship =>
         {
-            theme=PanelTheme.All.Single(choice=>choice.ShipId==ship);
+            if (theme.Showcase) { SelectShowcaseShip(ship, true); return; }
+            theme=PanelTheme.All.Single(choice=>choice.ShipId==ship && !choice.Showcase);
             if (previewPath is null) PanelPreferences.SaveTheme(theme.Id);
             ApplyTheme(); SaveDisplayState();
         };
         shipPanel.NavigationChanged += () => { if (IsLoaded) SaveDisplayState(); };
+        showcaseClock.Tick += (_, _) =>
+        {
+            if (CanCycleShowcase && settings?.IsOpen != true && shipPanel.HolotableOpen != true)
+                SelectShowcaseShip(ExpanseMedia.Next(shipPanel.FeaturedShipId), false);
+        };
+        IsVisibleChanged += (_, _) => UpdateShowcaseClock();
+        SystemParameters.StaticPropertyChanged += AnimationPreferenceChanged;
         ApplyTheme();
         SizeChanged += (_, _) => UpdatePanelLayout();
         DpiChanged += (_, _) => { if (fit && display is not null) Dispatcher.BeginInvoke(() => Displays.Place(this, display, true)); };
@@ -122,13 +135,26 @@ internal sealed class PanelWindow : Window
             // Reapply native monitor bounds after that initial layout completes.
             if (display is not null) Displays.Place(this, display, fit,previewSize);
             UpdatePanelLayout();
-            tray = new PanelTray(this); Start();
+            if (previewPath is null) tray = new PanelTray(this);
+            Start();
+            UpdateShowcaseClock();
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
         };
-        if (checkThemes || checkShips) ContentRendered += async (_, _) => await CheckThemeNavigation(checkShips);
+        bool previewCheckStarted = false;
+        if (checkThemes || checkShips) ContentRendered += async (_, _) =>
+        {
+            if (previewCheckStarted) return;
+            previewCheckStarted = true; await CheckThemeNavigation(checkShips);
+        };
+        if (checkNavigation) ContentRendered += async (_, _) =>
+        {
+            if (previewCheckStarted) return;
+            previewCheckStarted = true; await CheckSolarNavigation();
+        };
         Closed += (_, _) =>
         {
-            closing = true; benchmark?.Dispose(); tray?.Dispose(); clock.Stop(); displayRefresh.Stop(); artworkAnimation?.Dispose(); cancellation.Cancel();
+            closing = true; benchmark?.Dispose(); tray?.Dispose(); clock.Stop(); displayRefresh.Stop(); showcaseClock.Stop(); artworkAnimation?.Dispose(); cancellation.Cancel();
+            SystemParameters.StaticPropertyChanged -= AnimationPreferenceChanged;
             worker?.Join(TimeSpan.FromSeconds(3));
             if (latest is not null) SaveSnapshot(latest);
             cancellation.Dispose(); pollingChanged.Dispose();
@@ -179,11 +205,11 @@ internal sealed class PanelWindow : Window
         Label("cpuPower", "—", 462, 309, 30, 129);
         Label("cpuPowerMax", "max: —", 462, 348, 16, 129, color: Artwork.Gray);
 
-        Label("fpsLabel", "Display FPS", 644, 119, 16, 89, color: Artwork.Gray);
+        Label("fpsLabel", "FPS", 644, 119, 16, 89, color: Artwork.Gray);
         Label("fps", "—", 644, 160, 40, 89);
         Label("fpsNotice", "Unavailable", 644, 209, 13, 89, color: Artwork.Gray);
         Label("fpsApplication", "", 644, 231, 11, 89, color: Artwork.Gray);
-        text["fps"].ToolTip = "Windows displayed-frame FPS. Automatically detects running games and retains the selected game when you switch to desktop apps.";
+        text["fps"].ToolTip = "External Windows ETW/PresentMon FPS. Automatic selects a presenting app, then Windows desktop composition when no app stream is active. Choose FPS source to pin an app or the desktop. This is measured frame activity, not monitor refresh rate.";
         Label("gpuPowerLabel", "GPU Power", 744, 119, 18, 115, color: Artwork.Gray);
         Label("gpuPower", "—", 744, 160, 40, 115);
         Label("gpuPowerMax", "max: —", 744, 209, 16, 115, color: Artwork.Gray);
@@ -244,17 +270,18 @@ internal sealed class PanelWindow : Window
             }
         };
         menu.Items.Add(displays);
-        var fpsApplications = new MenuItem { Header = "FPS game" };
+        var fpsApplications = new MenuItem { Header = "FPS source" };
         menu.Opened += (_, _) =>
         {
             fpsApplications.Items.Clear();
-            var automatic = new MenuItem { Header = "Automatic · running games", IsCheckable = true, IsChecked = selectedFpsPid == 0 };
+            var automatic = new MenuItem { Header = "Automatic · apps / Windows desktop", IsCheckable = true, IsChecked = selectedFpsPid == 0 };
             automatic.Click += (_, _) => Volatile.Write(ref selectedFpsPid, 0);
             fpsApplications.Items.Add(automatic);
-            foreach (var game in fpsGames.Running())
+            foreach (var game in Volatile.Read(ref this.fpsApplications))
             {
                 int pid = game.ProcessId;
-                var item = new MenuItem { Header = game.Name, IsCheckable = true, IsChecked = selectedFpsPid == pid };
+                string caption = pid == -1 ? $"{game.Name} · {game.FramesPerSecond:0} FPS" : $"{game.Name} · PID {pid} · {game.FramesPerSecond:0} FPS";
+                var item = new MenuItem { Header = caption, IsCheckable = true, IsChecked = selectedFpsPid == pid };
                 item.Click += (_, _) => Volatile.Write(ref selectedFpsPid, pid);
                 fpsApplications.Items.Add(item);
             }
@@ -285,6 +312,48 @@ internal sealed class PanelWindow : Window
             themes.Items.Add(item);
         }
         menu.Items.Add(themes);
+        var showcase = new MenuItem { Header = "Expanse showcase" };
+        var cycle = new MenuItem { Header = "Auto-cycle ships and personnel", IsCheckable = true };
+        showcase.SubmenuOpened += (_, _) => cycle.IsChecked = showcaseCycle;
+        menu.Opened += (_, _) => showcase.IsEnabled = theme.Showcase;
+        cycle.Click += (_, _) =>
+        {
+            showcaseCycle = cycle.IsChecked;
+            if (previewPath is null) PanelPreferences.SaveExpanseCycle(showcaseCycle);
+            UpdateShowcaseClock(); SaveDisplayState();
+        };
+        showcase.Items.Add(cycle);
+        foreach (var choice in new[] { ("Previous ship · pause cycle", -1), ("Next ship · pause cycle", 1) })
+        {
+            var advance = new MenuItem { Header = choice.Item1 };
+            advance.Click += (_, _) => SelectShowcaseShip(ExpanseMedia.Next(shipPanel?.FeaturedShipId, choice.Item2), true);
+            showcase.Items.Add(advance);
+        }
+        var duration = new MenuItem { Header = "Scene duration" };
+        foreach (int seconds in new[] { 15, 30, 45, 90, 120 })
+        {
+            var choice = new MenuItem { Header = $"{seconds} seconds", IsCheckable = true };
+            duration.SubmenuOpened += (_, _) => choice.IsChecked = showcaseSeconds == seconds;
+            choice.Click += (_, _) =>
+            {
+                showcaseSeconds = seconds;
+                if (previewPath is null) PanelPreferences.SaveExpanseSceneSeconds(seconds);
+                UpdateShowcaseClock();
+            };
+            duration.Items.Add(choice);
+        }
+        showcase.Items.Add(duration);
+        var mediaFolder = new MenuItem { Header = "Open local scene-media folder" };
+        mediaFolder.Click += (_, _) =>
+        {
+            Directory.CreateDirectory(ExpanseMedia.Folder);
+            Process.Start(new ProcessStartInfo(ExpanseMedia.Folder) { UseShellExecute = true });
+        };
+        showcase.Items.Add(mediaFolder);
+        var reload = new MenuItem { Header = "Reload local scene media" };
+        reload.Click += (_, _) => { ExpanseMedia.Reload(); shipPanel?.RefreshShowcaseMedia(); SaveDisplayState(); };
+        showcase.Items.Add(reload);
+        menu.Items.Add(showcase);
         var scaling = new MenuItem { Header = "Scale artwork" };
         foreach (var choice in new[] { ("Fit","Fit · preserve proportions"),("Fill","Fill · crop outer edges"),("Stretch","Stretch · no borders") })
         {
@@ -402,6 +471,7 @@ internal sealed class PanelWindow : Window
                 long started = Stopwatch.GetTimestamp();
                 collector.FpsProcessId = Volatile.Read(ref selectedFpsPid);
                 var snapshot = collector.Read();
+                Volatile.Write(ref fpsApplications, collector.FpsApplications);
                 var statistics = runtime.Read();
                 Interlocked.Increment(ref collectionCycles);
                 Interlocked.Add(ref collectionTicks, Stopwatch.GetTimestamp()-started);
@@ -596,6 +666,7 @@ internal sealed class PanelWindow : Window
         if (shipPanel is not null)
         {
             if (theme.ShipConsole) shipPanel.Configure(theme, ActualWidth > 0 && ActualHeight > 0 ? ActualWidth / ActualHeight : 16.0 / 9, layoutMode);
+            if (theme.Showcase && previewPath is null) shipPanel.SetShowcaseScene(PanelPreferences.ExpanseShip);
             viewport.Child = theme.ShipConsole ? shipPanel : board;
             shipPanel.SetMotion(holographicMotion && theme.ShipConsole);
             shipPanel.SetReadoutEffects(readoutPulse,gaugeTransitions);
@@ -622,6 +693,30 @@ internal sealed class PanelWindow : Window
         cpuGraph.ApplyTheme(theme); gpuGraph.ApplyTheme(gpuTheme);
         cpuBar.ApplyTheme(theme); gpuBar.ApplyTheme(gpuTheme); memoryBar.ApplyTheme(theme);
         settings?.ApplyTheme();
+        UpdateShowcaseClock();
+    }
+    private bool CanCycleShowcase => !closing && !checkingThemes && theme.Showcase && showcaseCycle && IsLoaded && IsVisible && SystemParameters.ClientAreaAnimation;
+    private void UpdateShowcaseClock()
+    {
+        showcaseClock.Stop(); showcaseClock.Interval = TimeSpan.FromSeconds(showcaseSeconds);
+        if (CanCycleShowcase) showcaseClock.Start();
+    }
+    private void AnimationPreferenceChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is null or nameof(SystemParameters.ClientAreaAnimation))
+        { UpdateShowcaseClock(); shipPanel?.SetMotion(holographicMotion && theme.ShipConsole); }
+    }
+    private void SelectShowcaseShip(string ship, bool hold)
+    {
+        if (!theme.Showcase || shipPanel is null) return;
+        if (hold)
+        {
+            showcaseCycle = false;
+            if (previewPath is null) PanelPreferences.SaveExpanseCycle(false);
+        }
+        shipPanel.SetShowcaseScene(ship);
+        if (previewPath is null) PanelPreferences.SaveExpanseShip(ship);
+        UpdateShowcaseClock(); SaveDisplayState();
     }
     private void SaveDisplayState()
     {
@@ -634,7 +729,10 @@ internal sealed class PanelWindow : Window
             Dpi=Displays.Dpi(this), Layout=theme.ShipConsole ? shipPanel?.Mode : panelLayout?.Mode, Renderer=theme.ShipConsole ? "ShipConsole" : "Aorus", Scaling=viewport.Stretch.ToString(), Visible=IsVisible,
             ShowInTaskbar, TrayIconVisible=tray?.Visible ?? false, Theme=theme.Id, SettingsOpen=settings?.IsOpen ?? false,
             HolographicMotion=holographicMotion, ReadoutPulse=readoutPulse, GaugeTransitions=gaugeTransitions,
-            RotatingShipInLeftPanel=theme.ShipConsole && ShipPortrait.Supports(theme.ShipId),
+            RotatingShipInLeftPanel=theme.ShipConsole && ShipPortrait.Supports(shipPanel?.FeaturedShipId),
+            FeaturedShip=theme.ShipConsole ? shipPanel?.FeaturedShipId : null,
+            ExpanseAutoCycle=theme.Showcase && showcaseCycle, ExpanseCycleRunning=showcaseClock.IsEnabled,
+            ExpanseSceneSeconds=showcaseSeconds, ExpanseMedia=theme.Showcase ? ExpanseMedia.Status : null,
             NavigationFocus=theme.ShipConsole ? shipPanel?.NavigationFocus : null,
             HolotableOpen=shipPanel?.HolotableOpen ?? false
         },JsonOptions));
@@ -692,6 +790,8 @@ internal sealed class PanelWindow : Window
             var baseline = new[] { "cpuClock", "cpuUsage", "cpuPower", "voltage", "gpuPower", "gpuClock", "gpuMemory", "memoryClock", "fps" }
                 .ToDictionary(key => key, key => text[key].Text);
             var baselineMaxima = maxima.ToDictionary(pair => pair.Key, pair => pair.Value);
+            bool showcaseChecked = false;
+            bool? automaticCycleObserved = null;
             var choices = shipOnly ? PanelTheme.All.Where(t => t.ShipConsole).Append(PanelTheme.Resolve("Dark")).ToArray() : PanelTheme.All.ToArray();
             string output = Path.Combine(PanelPaths.Artifacts, "theme-previews", previewSize is { } size ? $"{size.Width:0}x{size.Height:0}" : "default");
             Directory.CreateDirectory(output);
@@ -724,6 +824,49 @@ internal sealed class PanelWindow : Window
                     string expected=choice.ShipId switch { "Rocinante"=>"Tycho", "Donnager"=>"Callisto", "Truman"=>"Earth", "Tynan"=>"Medina", "Razorback"=>"Earth", "Morrigan" or "Dropship" or "Epstein"=>"Mars", _=>throw new InvalidOperationException("Missing ship navigation check.") };
                     if (shipPanel!.NavigationFocus!=expected) throw new InvalidOperationException("Ship selection focused the wrong planet or station.");
                     shipPanel!.CheckSeparateEffects(); await SavePreview(choice.Id.ToLowerInvariant()+"-projection");
+                    if (choice.ShipId == "Razorback")
+                    {
+                        if (!shipPanel.HolotableAvailable) throw new InvalidOperationException("The bundled Razorback v2 holotable is unavailable.");
+                        shipPanel.CheckHolotable(); await SavePreview("razorback-holotable"); shipPanel.CloseHolotable();
+                    }
+                }
+                if (choice.Showcase)
+                {
+                    var elements = shipPanel!.ReadoutElements.ToArray();
+                    SelectShowcaseShip(shipPanel.FeaturedShipId ?? "Rocinante", true);
+                    foreach (string ship in ExpanseMedia.Ships)
+                    {
+                        shipPanel.SelectShip(ship);
+                        if (theme != choice || shipPanel.FeaturedShipId != ship || showcaseCycle
+                            || !elements.SequenceEqual(shipPanel.ReadoutElements)
+                            || baseline.Any(pair=>text[pair.Key].Text!=pair.Value)
+                            || maxima.Count!=baselineMaxima.Count || baselineMaxima.Any(pair=>maxima[pair.Key]!=pair.Value))
+                            throw new InvalidOperationException("Showcase scene changes rebuilt or altered sensor readouts, or failed to hold a manual scene.");
+                        await Task.Delay(1650);
+                        shipPanel.CheckBindings();
+                        if (shipPanel.ShowcaseMediaAvailable && Math.Abs(shipPanel.ShowcaseBackgroundOpacity-.85) > .01)
+                            throw new InvalidOperationException("Showcase crossfade did not settle after repeated scene changes.");
+                        if (ship is "Rocinante" or "Tynan" or "Truman" or "Epstein" or "Donnager" or "Morrigan" or "Dropship") await SavePreview("expanse-"+ship.ToLowerInvariant());
+                    }
+                    if (previewSize?.Width == 1280)
+                    {
+                        checkingThemes=false; showcaseCycle=true; showcaseSeconds=15; UpdateShowcaseClock();
+                        Hide(); await Task.Delay(100);
+                        if (showcaseClock.IsEnabled) throw new InvalidOperationException("Showcase cycle continued while hidden.");
+                        Show(); await Task.Delay(100);
+                        string? before=shipPanel.FeaturedShipId;
+                        if (SystemParameters.ClientAreaAnimation)
+                        {
+                            await Task.Delay(15700);
+                            automaticCycleObserved=shipPanel.FeaturedShipId!=before;
+                            if (automaticCycleObserved!=true) throw new InvalidOperationException("Showcase automatic dwell did not advance.");
+                        }
+                        else if (showcaseClock.IsEnabled) throw new InvalidOperationException("Showcase cycle ignored Windows reduced motion.");
+                        checkingThemes=true; showcaseCycle=false; showcaseSeconds=PanelPreferences.ExpanseSceneSeconds; UpdateShowcaseClock();
+                    }
+                    showcaseChecked=true;
+                    settings.Open(); settings.SelectVisibleOption("Expanse showcase"); await SavePreview("expanse-controls");
+                    settings.Close();
                 }
                 settings.Open();
                 settings.SelectVisibleOption("Theme");
@@ -769,7 +912,8 @@ internal sealed class PanelWindow : Window
                 SettingsWithinWindow = true, Display = display, Preview = true, ShipArtworkMode = "RotatingLeftStrip",
                 ReadoutEffectsIndependent = true, ShipRotationBoundsChecked = true, OriginalShipMaterialsChecked = true,
                 HolographicNumbersOnDashboard = true, ShipInLeftPanel = true,
-                SolarSystemChecked = true, ShipNavigationFocusChecked = true, ShipSelectorChecked = true
+                SolarSystemChecked = true, ShipNavigationFocusChecked = true, ShipSelectorChecked = true,
+                ExpanseShowcaseChecked=showcaseChecked, AutomaticCycleObserved=automaticCycleObserved
             }, JsonOptions));
             Close();
         }
@@ -777,6 +921,72 @@ internal sealed class PanelWindow : Window
         {
             File.WriteAllText(Path.Combine(PanelPaths.Artifacts, "theme-check-error.txt"), ex.ToString());
             Close(); Application.Current.Shutdown(1);
+        }
+    }
+
+    private async Task CheckSolarNavigation()
+    {
+        string output = Path.Combine(PanelPaths.Artifacts, "solar-navigation-validation", previewSize is { } size ? $"{size.Width:0}x{size.Height:0}" : "default");
+        Directory.CreateDirectory(output);
+        try
+        {
+            var view = shipPanel?.NavigationView ?? throw new InvalidOperationException("A ship theme is required for navigation validation.");
+            var baseline = text.ToDictionary(p => p.Key, p => p.Value.Text);
+            var baselineMaxima = maxima.ToDictionary(p => p.Key, p => p.Value);
+            view.SetMotion(false); view.Check();
+            var assetChecks = view.CheckAssets();
+            var captures = new List<object>();
+            foreach (string body in new[] { "Sun", "Earth", "Saturn", "Eros", "Phoebe", "Tycho", "SolGate", "Medina" })
+            {
+                view.FocusBody(body, false); await Task.Delay(700); UpdateLayout();
+                var state = view.Diagnose();
+                if (state.GetProperty("selected").GetString() != body) throw new InvalidOperationException("Native diagram focus diverged for " + body);
+                if (body == "Medina" && state.GetProperty("scene").GetString() != "RingSpaceInset")
+                    throw new InvalidOperationException("Medina lost its separate Ring Space inset.");
+                if (!state.GetProperty("schematic").GetBoolean() || state.GetProperty("toScale").GetBoolean()
+                    || !state.GetProperty("gateOutsideUranusInsideNeptune").GetBoolean())
+                    throw new InvalidOperationException("Schematic scale or landmark geography is misrepresented.");
+                if (state.GetProperty("labelOverlaps").GetInt32() != 0) throw new InvalidOperationException("Native diagram labels overlap.");
+                SaveVisual((Visual)Content, ActualWidth, ActualHeight, Path.Combine(output, body.ToLowerInvariant() + "-panel.png"));
+                SaveVisual(view, view.ActualWidth, view.ActualHeight, Path.Combine(output, body.ToLowerInvariant() + "-diagram.png"));
+                captures.Add(new { Body = body, State = state });
+            }
+            long stopped = view.Diagnose().GetProperty("frameCount").GetInt64(); await Task.Delay(700);
+            if (view.Diagnose().GetProperty("frameCount").GetInt64() != stopped) throw new InvalidOperationException("Navigation kept animating with motion disabled.");
+            view.FocusBody("Earth", false); view.SetMotion(true); await Task.Delay(600);
+            long before = view.Diagnose().GetProperty("frameCount").GetInt64(); await Task.Delay(2300);
+            long rendered = view.Diagnose().GetProperty("frameCount").GetInt64() - before;
+            if (SystemParameters.ClientAreaAnimation && (rendered < 10 || rendered > 60)) throw new InvalidOperationException("Native diagram frame budget or animation failed.");
+            view.Visibility = Visibility.Hidden; await Task.Delay(400);
+            long hidden = view.Diagnose().GetProperty("frameCount").GetInt64(); await Task.Delay(500);
+            if (view.MotionActive || view.Diagnose().GetProperty("frameCount").GetInt64() != hidden) throw new InvalidOperationException("Hidden navigation remained active.");
+            view.Visibility = Visibility.Visible; view.SetMotion(false); await Task.Delay(300);
+            settings!.Open(); await Task.Delay(300); UpdateLayout();
+            SaveVisual((Visual)Content, ActualWidth, ActualHeight, Path.Combine(output, "settings-overlay.png")); settings.Close();
+            if (baseline.Any(p => p.Key != "date" && p.Key != "uptime" && text[p.Key].Text != p.Value)
+                || baselineMaxima.Any(p => !maxima.TryGetValue(p.Key, out var value) || value != p.Value))
+                throw new InvalidOperationException("Navigation changed the sensor presentation.");
+            File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(new
+            {
+                Passed = true, OriginalSolNavigationDiagram = true, NativeWpfModels = true, OfflineAssets = true,
+                ScaleExplicitlySchematic = true, GateOutsideUranus = true, MedinaInSeparateRingSpaceInset = true,
+                MotionDisabledStopsAnimation = true, HiddenAnimationStops = true, SensorValuesPreserved = true, MaximaPreserved = true,
+                Assets = assetChecks, RenderedFramesIn2300ms = rendered, Captures = captures
+            }, JsonOptions));
+            await Task.Delay(800); Close();
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText(Path.Combine(output, "error.txt"), ex.ToString());
+            Close(); Application.Current.Shutdown(1);
+        }
+        static void SaveVisual(Visual visual, double width, double height, string path)
+        {
+            var bitmap = new RenderTargetBitmap((int)Math.Ceiling(width), (int)Math.Ceiling(height), 96, 96, PixelFormats.Pbgra32);
+            var drawing = new DrawingVisual();
+            using (var dc = drawing.RenderOpen()) dc.DrawRectangle(new VisualBrush(visual), null, new Rect(0, 0, width, height));
+            bitmap.Render(drawing); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using var stream = File.Create(path); encoder.Save(stream);
         }
     }
 

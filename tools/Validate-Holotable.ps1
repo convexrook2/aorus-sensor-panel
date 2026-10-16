@@ -1,4 +1,4 @@
-param([switch]$Package,[string]$SnapshotPath)
+param([switch]$Package,[string]$SnapshotPath,[ValidateSet('1280x720','1920x480','480x800')][string[]]$Sizes=@('1280x720','1920x480','480x800'))
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
@@ -13,7 +13,7 @@ try {
     $executable = Join-Path $projectRoot 'SensorPanel\bin\Release\net10.0-windows\SensorPanel.exe'
     $check = Start-Process -FilePath $executable -ArgumentList '--check-mapping' -Wait -PassThru
     if ($check.ExitCode -ne 0) { throw 'Mapping/resource checks failed.' }
-    foreach ($size in @('1280x720', '1920x480', '480x800')) {
+    foreach ($size in $Sizes) {
         $report = Join-Path $projectRoot ('artifacts\theme-previews\' + $size + '\navigation-check.json')
         $before = Get-Date
         $preview = Start-Process -FilePath $executable -ArgumentList @('--preview', ('"' + $SnapshotPath + '"'), '--sensor-preview', '--preview-size', $size, '--preview-theme', 'Rocinante', '--preview-check-ships') -PassThru

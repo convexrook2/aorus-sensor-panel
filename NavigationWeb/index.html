@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'">
+  <title>Sol navigation — Belter Charts</title>
+</head>
+<body>
+  <main id="navigation" aria-label="Three dimensional Expanse navigation">
+    <header>
+      <div class="identity"><b id="region">SOL SYSTEM</b><span> / BELTER CHARTS</span></div>
+      <nav aria-label="Map controls">
+        <button id="system" title="Fit the solar system (Home)">SOL</button>
+        <button id="inner" title="Fit the inner planets (I)">INNER</button>
+        <button id="ring-space" title="Enter Ring Space and focus Medina">RING SPACE</button>
+        <select id="destination" aria-label="Navigation destination"></select>
+      </nav>
+    </header>
+    <section id="viewport" aria-label="Interactive scale model; drag to rotate and wheel to zoom" tabindex="0">
+      <div id="labels"></div>
+      <aside id="caption"><strong id="title">Loading local charts…</strong><span id="detail"></span></aside>
+      <div id="loading" role="status">LOADING LOCAL CHARTS</div>
+      <div id="compass" aria-hidden="true">ECLIPTIC J2000</div>
+    </section>
+    <footer>
+      <div id="scale"><i></i><span></span></div>
+      <span id="scale-note">DISTANCES + PHYSICAL SIZES TO SCALE</span>
+      <button id="context" title="See the selected destination in its wider context">CONTEXT</button>
+      <button id="inspect" title="Inspect the selected model at its physical size (D)">DETAIL</button>
+    </footer>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

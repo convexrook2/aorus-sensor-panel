@@ -1,0 +1,49 @@
+AORUS SENSOR PANEL - FAN MADE / SOL NAVIGATION
+
+Based on Belter Charts by skylercole and contributors, Apache License 2.0.
+Pinned source: https://github.com/skylercole/belter-charts/tree/ba86075477fc529294a5e51cb4e1b0d183ff893a
+Full upstream code is retained in NavigationWeb/vendor/belter-charts.
+Apache licence: Belter-Charts-LICENSE.txt. Original data/asset credits:
+Belter-Charts-Upstream-Credits.md. The full upstream Scene3D renderer is reused.
+The camera controls have a marked panel adaptation for station close-ups,
+whole-system framing and settling a view with animation disabled.
+
+Changes: local panel interface and host; physical-size station detail models;
+stationary Sol gate; separate Ring Space with Medina and the alien Ring Station;
+bounded, pausable rendering; camera/scale handling and embedded-view validation.
+
+Three.js: MIT. https://github.com/mrdoob/three.js
+Astronomy Engine by Don Cross: MIT. https://github.com/cosinekitty/astronomy
+Zustand by Poimandres and contributors: MIT. https://github.com/pmndrs/zustand
+Full dependency licence texts accompany this bundle.
+
+Planet, solar and sky textures: Solar System Scope, CC BY 4.0.
+https://www.solarsystemscope.com/textures/
+https://creativecommons.org/licenses/by/4.0/
+Earth clouds/night maps and planet textures are used as supplied upstream.
+Galilean moon mosaics: NASA/JPL/USGS. Ceres: NASA/JPL-Caltech/UCLA/MPS/DLR/IDA.
+Eros plate shape: NEAR MSI team via NASA PDS Small Bodies Node.
+Ceres texture replaces the upstream HTML document named ceres.jpg with the
+public-domain Dawn global mosaic supplied by USGS:
+https://www.usgs.gov/media/images/global-mosaic-ceres-taken-during-dawn-mission
+See the upstream credits for individual sources and processing.
+
+Tycho, Medina and gate detail geometry: original panel geometry authored over
+Belter Charts' ring/spokes/hub and gate construction approach. No paid,
+noncommercial-only, or production-show station mesh is bundled.
+The Expanse is by James S. A. Corey; the TV series is produced by Alcon.
+Unofficial fan-made presentation; no endorsement is claimed.
+
+Scale and lore assumptions:
+1 scene unit = 1 kilometre. Physical mesh dimensions and distances are linear.
+Screen-space dots and labels are navigation markers, not physical body sizes.
+Planets use Belter Charts ephemerides at 2356-01-01, an illustrative story epoch.
+Tycho is mobile in the Belt. Ceres +60 degrees is a fan placement convention.
+Its 750 m overall span is approximate. Anderson placement/size is illustrative.
+The gate is fixed at Uranus' 19.19126393 AU semimajor axis +2 AU. Its azimuth
+and inclination are illustrative, not known canonical XYZ coordinates.
+Ring Space is a separate 1,000,000 km scene. The alien central station is 5 km;
+Medina is the 2.46 km Nauvoo/Behemoth hull. Medina's local offset is illustrative.
+The gate is 1,000 km across (TV convention); do not mix this with book dimensions.
+Some upstream moon models retain approximate Kepler phases. Chart positions
+remain fixed at the stated epoch; optional visual rotation does not advance it.

@@ -13,6 +13,8 @@
   <ItemGroup>
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
     <None Include="../tools/PresentMon/PresentMon-2.6.0-x64.exe" Link="PresentMon-2.6.0-x64.exe" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../tools/PresentMon/PresentMon-2.6.0-x890-compat-x64.exe" Link="PresentMon-2.6.0-x890-compat-x64.exe" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../tools/PresentMon/COMPAT-NOTICES.txt" Link="PresentMon-COMPAT-NOTICES.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../tools/PresentMon/LICENSE.txt" Link="PresentMon-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="BuildFrameViewBridge" BeforeTargets="CoreCompile"

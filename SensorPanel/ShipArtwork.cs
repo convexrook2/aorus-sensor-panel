@@ -107,7 +107,7 @@ internal sealed class ShipArtwork : Image
     }
     internal static void Check()
     {
-        var themes = PanelTheme.All.Where(t => t.ShipConsole).ToArray();
+        var themes = PanelTheme.All.Where(t => t.ShipConsole && !t.Showcase).ToArray();
         if (themes.Length != ShipProfile.All.Count || themes.Select(t => t.ShipId).Distinct().Count() != themes.Length)
             throw new InvalidOperationException("Every ship must have exactly one theme.");
         foreach (var theme in themes)

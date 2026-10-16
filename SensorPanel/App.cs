@@ -33,6 +33,9 @@ internal static class App
             }
             bool checkThemes = args.Contains("--preview-check-themes");
             bool checkShips = args.Contains("--preview-check-ships");
+            bool checkNavigation = args.Contains("--preview-check-navigation");
+            if (checkNavigation && (preview is null || !args.Contains("--sensor-preview")))
+                throw new ArgumentException("--preview-check-navigation requires a saved preview on the sensor display.");
             if ((checkThemes || checkShips) && (preview is null || !args.Contains("--sensor-preview")))
                 throw new ArgumentException("--preview-check-themes requires a saved preview and the secondary sensor display.");
             if (preview is null && !args.Contains("--readme") && !args.Contains("--remove-install-startup") && !IsElevated())
@@ -75,7 +78,7 @@ internal static class App
                     throw new ArgumentException("Preview dimensions must be 1–8192 pixels.");
                 previewSize=new Size(width,height);
             }
-            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips));
+            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation));
         }
         catch (Exception ex)
         {

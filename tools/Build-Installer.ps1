@@ -21,7 +21,7 @@ try {
     if ($check.ExitCode -ne 0) { throw 'Panel mapping/resource checks failed.' }
     dotnet publish '.\SensorPanel\SensorPanel.csproj' -c Package -r win-x64 --self-contained false -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o $packageRoot
     if ($LASTEXITCODE -ne 0) { throw 'Shared-runtime publication failed.' }
-    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','NvidiaFrameViewBridge.dll','README.txt','Holotable-Model-Credits.txt')) {
+    foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','PresentMon-2.6.0-x890-compat-x64.exe','PresentMon-COMPAT-NOTICES.txt','NvidiaFrameViewBridge.dll','README.txt','Holotable-Model-Credits.txt','SolarNavigation\CREDITS.txt','SolarNavigation\models\eros.fnm','SolarNavigation\models\phoebe.fnm','SolarNavigation\models\tycho.fnm','SolarNavigation\models\medina.fnm','SolarNavigation\models\solgate.fnm')) {
         if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $required))) { throw ('Missing packaged dependency: ' + $required) }
     }
     foreach ($excluded in @('coreclr.dll','hostfxr.dll','hostpolicy.dll','System.Private.CoreLib.dll','PresentationFramework.dll','wpfgfx_cor3.dll')) {
@@ -33,6 +33,14 @@ try {
         if (-not ($runtimeConfig.runtimeOptions.frameworks | Where-Object { $_.name -eq $framework -and $_.version -eq '10.0.0' })) { throw ('Shared runtime requirement mismatch: ' + $framework) }
     }
     if ((Get-ArtifactHash (Join-Path $packageRoot 'PresentMon-2.6.0-x64.exe')) -ne 'B2A706BC6AD475749E3B7E3409263AA1E6906D45BDCF993F6DBC0F660188F1AF') { throw 'PresentMon release digest mismatch.' }
+    if ((Get-ArtifactHash (Join-Path $packageRoot 'PresentMon-2.6.0-x890-compat-x64.exe')) -ne (Get-ArtifactHash (Join-Path $projectRoot 'tools\PresentMon\PresentMon-2.6.0-x890-compat-x64.exe'))) { throw 'PresentMon compatibility repair was not packaged correctly.' }
+    $nativeAssetRoot = Join-Path $projectRoot 'Assets\SolarNavigation'
+    $nativeAssets = @(Get-ChildItem -LiteralPath (Join-Path $nativeAssetRoot 'textures') -File)
+    $nativeAssets += @('eros','phoebe','tycho','medina','solgate') | ForEach-Object { Get-Item -LiteralPath (Join-Path $nativeAssetRoot ('models\' + $_ + '.fnm')) }
+    foreach ($asset in $nativeAssets) {
+        $relative = $asset.FullName.Substring($nativeAssetRoot.Length+1)
+        if ((Get-ArtifactHash (Join-Path $packageRoot ('SolarNavigation\' + $relative))) -ne (Get-ArtifactHash $asset.FullName)) { throw ('Native solar asset digest mismatch: ' + $relative) }
+    }
     & '.\tools\Package-Notices.ps1' -PackageRoot $packageRoot
     & (Join-Path $packageRoot 'SensorCollector.exe') --self-test
     if ($LASTEXITCODE -ne 0) { throw 'Published collector/native bridge checks failed.' }

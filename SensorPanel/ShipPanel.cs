@@ -21,16 +21,26 @@ internal sealed class ShipPanel : Canvas
     private bool readoutPulse = PanelPreferences.ReadoutPulse;
     private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
     private ShipPortrait? shipPortrait;
+    private Grid? shipMedia;
+    private ExpanseBackdrop? showcaseBackdrop;
+    private ExpanseCrew? showcaseCrew;
+    private TextBlock? heading, subtitle, faction, modelStatus, contextLabel, mediaCredit;
     private SolarSystemView? projection;
     private ComboBox? shipChoices;
     private string? selectedShip;
+    public string? FeaturedShipId => selectedShip;
+    internal IReadOnlyList<TextBlock> ReadoutElements => bound.Select(entry => entry.Label).ToArray();
+    internal bool ShowcaseMediaAvailable => showcaseBackdrop?.HasImage == true && showcaseCrew?.HasImage == true;
+    internal double ShowcaseBackgroundOpacity => showcaseBackdrop?.ActiveOpacity ?? 0;
     public string? NavigationFocus => projection?.SelectedBodyId;
+    internal SolarSystemView? NavigationView => projection;
     public event Action<string>? ShipSelectionRequested;
     public event Action? NavigationChanged;
+    public event Action? ShowcaseChanged;
     private Holotable? holotable;
     private PanelTheme? activeTheme;
     public bool HolotableOpen => holotable is not null;
-    public bool HolotableAvailable => Holotable.Supports(activeTheme?.ShipId);
+    public bool HolotableAvailable => Holotable.Supports(FeaturedShipId);
     public string Mode { get; private set; } = "Landscape";
 
     public ShipPanel(Dictionary<string, TextBlock> source)
@@ -38,6 +48,11 @@ internal sealed class ShipPanel : Canvas
         this.source = source; ClipToBounds = true;
         cpuDial = new(source["cpuTemperature"], source["cpuTemperatureMax"]);
         gpuDial = new(source["gpuTemperature"], source["gpuTemperatureMax"]);
+        IsVisibleChanged += (_, _) =>
+        {
+            if (!IsVisible && shipMedia is not null)
+            { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
+        };
     }
 
     internal static Plan Calculate(double aspect, string layout)
@@ -67,6 +82,7 @@ internal sealed class ShipPanel : Canvas
         var plan = Calculate(aspect, layout);
         string key = $"{theme.Id}:{plan.Width}:{plan.Height}:{plan.Mode}";
         if (configuration == key) return;
+        string? sceneShip = theme.Showcase && activeTheme?.Showcase == true ? selectedShip : theme.ShipId;
         configuration = key; Mode = plan.Mode;
         CloseHolotable(); activeTheme = theme;
         foreach (var element in new FrameworkElement[] { cpuDial, gpuDial, cpuGraph, gpuGraph })
@@ -76,7 +92,18 @@ internal sealed class ShipPanel : Canvas
         }
         shipPortrait?.SetMotion(false);
         shipPortrait=null;
+        showcaseBackdrop?.SetMotion(false);
+        showcaseBackdrop=null;
+        showcaseCrew?.SetMotion(false);
+        showcaseCrew=null;
+        heading=subtitle=faction=modelStatus=contextLabel=mediaCredit=null;
         Children.Clear(); bound.Clear(); Width = plan.Width; Height = plan.Height; Background = theme.Backdrop;
+        if (theme.Showcase)
+        {
+            showcaseBackdrop=new ExpanseBackdrop();
+            showcaseBackdrop.SetMotion(motion);
+            Put(this,showcaseBackdrop,new(0,0,plan.Width,plan.Height));
+        }
         bool portrait = Mode == "Portrait";
         double bodyX=plan.Cpu.X;
         bool reuseProjection=projection is not null;
@@ -86,29 +113,37 @@ internal sealed class ShipPanel : Canvas
             projection.BodySelected+=_=>NavigationChanged?.Invoke();
         }
         Put(this, projection, plan.Navigation);
-        selectedShip=theme.ShipId;
+        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)115 : (byte)232,3,12,21));
+        selectedShip=sceneShip;
         var navigation=ExpanseNavigation.ForShip(selectedShip);
         projection.FocusBody(navigation.Body,reuseProjection);
         projection.ToolTip=navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source;
-        var vessel = theme.Vessel ?? throw new InvalidOperationException("A ship console needs its vessel profile.");
-        string title = vessel.Name;
-        var heading = Label(title, portrait ? 26 : 38, theme.Header, true);
+        var vessel = ShipProfile.Resolve(selectedShip ?? throw new InvalidOperationException("A ship console needs its vessel profile."));
+        string title = theme.Showcase ? "THE EXPANSE" : vessel.Name;
+        heading = Label(title, portrait ? 26 : 38, theme.Header, true);
+        if (theme.Showcase) heading.ToolTip=vessel.Name+" · "+vessel.Role;
         Put(this, heading, new(bodyX, 16, plan.Width-bodyX-(portrait ? 18 : 260), 46));
         Put(this, Bind("date", 15, theme.Muted), new(portrait ? bodyX : plan.Width - 245, portrait ? 56 : 25, 224, 24));
         if (!portrait && Mode != "Wide")
-            Put(this, Label(vessel.Role + "  /  SENSOR PROJECTION", 12, theme.Muted), new(bodyX+3, 68, plan.Width-bodyX-24, 20));
+        {
+            subtitle=Label(SceneSubtitle(vessel,theme.Showcase),12,theme.Muted);
+            Put(this, subtitle, new(bodyX+3, 68, plan.Width-bodyX-24, 20));
+        }
         Put(this, Bind("boardName", portrait ? 11 : 13, theme.Muted),
             new(bodyX, portrait ? 79 : Mode == "Wide" ? 69 : 88, plan.Width-bodyX-18, 18));
         Put(this, new Border { Background=theme.Chrome, Opacity=.32, CornerRadius=new CornerRadius(10) }, plan.Sidebar);
-        if (ShipPortrait.Supports(theme.ShipId))
+        shipMedia=new Grid { ClipToBounds=true, IsHitTestVisible=false };
+        double crewReserve=theme.Showcase ? 175 : 0;
+        Put(this,shipMedia,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-76-crewReserve)));
+        if (theme.Showcase)
         {
-            shipPortrait=new ShipPortrait(theme.ShipId!);
-            Put(this, shipPortrait, new(plan.Sidebar.X+4, plan.Sidebar.Y+36, plan.Sidebar.Width-8, plan.Sidebar.Height-76));
+            showcaseCrew=new ExpanseCrew();
+            showcaseCrew.SetMotion(motion);
+            Put(this,showcaseCrew,new(plan.Sidebar.X+8,plan.Sidebar.Bottom-175,plan.Sidebar.Width-16,portrait ? 142 : 145));
         }
-        else Put(this, new ShipArtwork(theme, true) { Opacity=.7 }, new(plan.Sidebar.X+4, plan.Sidebar.Y+36, plan.Sidebar.Width-8, plan.Sidebar.Height-76));
-        Put(this, Label(vessel.Faction, portrait ? 13 : 19, theme.Accent, true), new(plan.Sidebar.X+10, plan.Sidebar.Y+12, plan.Sidebar.Width-20, 24));
-        var modelStatus=Label(ShipPortrait.Supports(theme.ShipId) ? "ORIGINAL COLOURS" : theme.ShipId=="Razorback" ? "2D · 3D MODEL NOT INCLUDED" : "SHIP BLUEPRINT", portrait ? 7 : 9, theme.Muted);
-        if(theme.ShipId=="Razorback") modelStatus.ToolTip="This theme currently uses flat artwork. The requested 3D model is not bundled; this is not a loading error.";
+        faction=Label(vessel.Faction,portrait ? 13 : 19,theme.Accent,true);
+        Put(this, faction, new(plan.Sidebar.X+10, plan.Sidebar.Y+12, plan.Sidebar.Width-20, 24));
+        modelStatus=Label("",portrait ? 7 : 9,theme.Muted);
         Put(this, modelStatus,
             new(plan.Sidebar.X+8, plan.Sidebar.Bottom-28, plan.Sidebar.Width-16, 18));
         shipChoices=new ComboBox {
@@ -129,7 +164,7 @@ internal sealed class ShipPanel : Canvas
             ShipSelectionRequested?.Invoke(choice.Id);
         };
         Put(this,shipChoices,new(plan.Sidebar.X+5,plan.Sidebar.Y-34,plan.Sidebar.Width-10,26));
-        var contextLabel=Label(navigation.Relation+" · "+navigation.Place,portrait ? 8 : 10,theme.Muted);
+        contextLabel=Label(navigation.Relation+" · "+navigation.Place,portrait ? 8 : 10,theme.Muted);
         Put(this,contextLabel,new(plan.Navigation.X+8,plan.Navigation.Y-12,plan.Navigation.Width-16,14));
         Hardware(plan.Cpu, theme, false); Hardware(plan.Gpu, theme.ForGpu(), true);
         SmallCard(plan.Memory, theme, false); SmallCard(plan.Network, theme.ForGpu(), true);
@@ -140,10 +175,89 @@ internal sealed class ShipPanel : Canvas
         Put(this, Bind("status", portrait ? 9 : 11, theme.Muted), new(20, plan.Height - 22, plan.Width - 160, 18));
         Put(this, Label("FAN MADE", 10, theme.Muted), new(plan.Width - 116, plan.Height - 23, 92, 18));
         if (!portrait)
-            Put(this, Label((ShipPortrait.Supports(theme.ShipId) ? "MODEL  /  " + Holotable.ModelCredit(theme.ShipId!) : "ARTWORK  /  " + vessel.Artist), 9, theme.Muted), new(plan.Width - 390, plan.Height - 23, 260, 18));
+        {
+            mediaCredit=Label("",9,theme.Muted);
+            Put(this, mediaCredit, new(plan.Width - 390, plan.Height - 23, 260, 18));
+        }
+        UpdateSceneMedia(vessel,false);
         cpuDial.ApplyTheme(theme); gpuDial.ApplyTheme(theme.ForGpu());
         cpuGraph.ApplyTheme(theme); gpuGraph.ApplyTheme(theme.ForGpu());
         SetReadoutEffects(readoutPulse, gaugeTransitions); SetMotion(motion);
+    }
+
+    private static string SceneSubtitle(ShipProfile vessel,bool showcase) => showcase
+        ? vessel.Name+"  /  "+ExpanseMedia.ForShip(vessel.Id).Scene : vessel.Role+"  /  SENSOR PROJECTION";
+
+    public void RefreshShowcaseMedia()
+    {
+        if (activeTheme?.Showcase != true || selectedShip is null) return;
+        showcaseBackdrop?.Reload(selectedShip); showcaseCrew?.Show(selectedShip);
+        if (subtitle is not null) subtitle.Text=SceneSubtitle(ShipProfile.Resolve(selectedShip),true);
+        if (mediaCredit is not null)
+        {
+            var scene=ExpanseMedia.ForShip(selectedShip);
+            mediaCredit.ToolTip=scene.Credit+"\n"+scene.Source+"\n"+(ShipPortrait.Supports(selectedShip)
+                ? Holotable.ModelCredit(selectedShip) : ShipProfile.Resolve(selectedShip).Artist);
+        }
+    }
+
+    // Scene changes replace only decorative media and identity. Published sensor
+    // bindings, histories, readout elements and the solar-system view stay attached.
+    public void SetShowcaseScene(string shipId)
+    {
+        if (activeTheme?.Showcase != true) return;
+        var vessel=ShipProfile.Resolve(shipId);
+        if (selectedShip==vessel.Id) return;
+        CloseHolotable(); selectedShip=vessel.Id;
+        if (heading is not null) heading.ToolTip=vessel.Name+" · "+vessel.Role;
+        if (subtitle is not null) subtitle.Text=SceneSubtitle(vessel,true);
+        var navigation=ExpanseNavigation.ForShip(vessel.Id);
+        if (contextLabel is not null) contextLabel.Text=navigation.Relation+" · "+navigation.Place;
+        UpdateSceneMedia(vessel,true);
+        if (shipChoices is not null)
+            shipChoices.SelectedItem=shipChoices.Items.OfType<ComboBoxItem>().Single(item=>item.Tag is ShipProfile ship && ship.Id==vessel.Id);
+        projection?.FocusBody(navigation.Body,true);
+        if (projection is not null) projection.ToolTip=navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source;
+        ShowcaseChanged?.Invoke();
+    }
+
+    private void UpdateSceneMedia(ShipProfile vessel,bool fade)
+    {
+        if (activeTheme is null || shipMedia is null) return;
+        shipPortrait?.SetMotion(false); shipPortrait=null;
+        shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1;
+        shipMedia.Children.Clear();
+        bool model=ShipPortrait.Supports(vessel.Id);
+        if (model)
+        {
+            shipPortrait=new ShipPortrait(vessel.Id);
+            shipPortrait.SetMotion(motion); shipMedia.Children.Add(shipPortrait);
+        }
+        else shipMedia.Children.Add(new ShipArtwork(activeTheme with { ShipId=vessel.Id },true) { Opacity=.7 });
+        if (faction is not null) faction.Text=vessel.Faction;
+        if (modelStatus is not null)
+        {
+            modelStatus.Text=model ? vessel.Id=="Razorback" ? "RAZORBACK V2 · 3D" : "ORIGINAL COLOURS" : "SHIP BLUEPRINT";
+            modelStatus.ToolTip=vessel.Id=="Razorback"
+                ? "Your v2 model, reshaped using the existing orthographic blueprint." : null;
+        }
+        if (mediaCredit is not null)
+        {
+            mediaCredit.Text=activeTheme.Showcase ? "LOCAL SCENE PACK / FAN MADE" : model ? "MODEL  /  "+Holotable.ModelCredit(vessel.Id) : "ARTWORK  /  "+vessel.Artist;
+            if (activeTheme.Showcase)
+            {
+                var scene=ExpanseMedia.ForShip(vessel.Id);
+                mediaCredit.ToolTip=scene.Credit+"\n"+scene.Source+"\n"+(model ? Holotable.ModelCredit(vessel.Id) : vessel.Artist);
+            }
+        }
+        showcaseBackdrop?.Show(vessel.Id);
+        showcaseCrew?.Show(vessel.Id);
+        if (fade && motion && IsLoaded && IsVisible && SystemParameters.ClientAreaAnimation)
+        {
+            var transition=new DoubleAnimation(.35,1,TimeSpan.FromMilliseconds(450)) { FillBehavior=FillBehavior.Stop };
+            Timeline.SetDesiredFrameRate(transition,20);
+            shipMedia.BeginAnimation(OpacityProperty,transition);
+        }
     }
 
     private void Hardware(Rect bounds, PanelTheme theme, bool gpu)
@@ -158,7 +272,7 @@ internal sealed class ShipPanel : Canvas
         double x = dialSize + 31, y = compact ? 67 : 85, width = (bounds.Width - x - 14) / 2;
         double row = compact ? 44 : 62;
         var fields = gpu
-            ? new[] { ("LOAD", "gpuUsage", ""), ("POWER", "gpuPower", ""), ("CLOCK", "gpuClock", ""), ("DISPLAY FPS", "fps", ""), ("VRAM CLOCK", "gpuMemory", " MHz"), ("POWER PEAK", "gpuPowerMax", "") }
+            ? new[] { ("LOAD", "gpuUsage", ""), ("POWER", "gpuPower", ""), ("CLOCK", "gpuClock", ""), ("FPS", "fps", ""), ("VRAM CLOCK", "gpuMemory", " MHz"), ("POWER PEAK", "gpuPowerMax", "") }
             : new[] { ("LOAD", "cpuUsage", ""), ("POWER", "cpuPower", ""), ("CLOCK", "cpuClock", " MHz"), ("VCORE", "voltage", ""), ("POWER PEAK", "cpuPowerMax", ""), ("VOLTAGE SOURCE", "voltageNotice", "") };
         for (int i = 0; i < fields.Length; i++)
             Metric(card, fields[i].Item1, fields[i].Item2, fields[i].Item3, new(x + (i % 2) * width, y + (i / 2) * row, width - 5, row - 4), theme, compact ? 19 : 25);
@@ -174,7 +288,7 @@ internal sealed class ShipPanel : Canvas
         var card = MakeCard(bounds, theme);
         bool compact = bounds.Height < 120;
         Put(card, Label(network ? "04  /  NETWORK LINK" : "03  /  MEMORY & SESSION", 11, theme.Accent, true), new(17, 11, bounds.Width - 34, 20));
-        var fields = network ? new[] { ("UPLOAD", "upload"), ("DOWNLOAD", "download"), ("FPS APPLICATION", "fpsApplication") }
+        var fields = network ? new[] { ("UPLOAD", "upload"), ("DOWNLOAD", "download"), ("FPS SOURCE", "fpsApplication") }
             : new[] { ("MEMORY LOAD", "memory"), ("RAM CLOCK", "memoryClock"), ("UPTIME", "uptime") };
         double width = (bounds.Width - 34) / 3;
         for (int i = 0; i < fields.Length; i++)
@@ -191,7 +305,7 @@ internal sealed class ShipPanel : Canvas
         var plane=new StreamGeometry();
         using (var path=plane.Open()) { path.BeginFigure(new Point(8,0),true,true); path.PolyLineTo(new Point[] {new(bounds.Width-12,0),new(bounds.Width,bounds.Height-8),new(0,bounds.Height)},true,false); }
         plane.Freeze();
-        var wash=new SolidColorBrush(Color.FromArgb(42,theme.Surface.Color.R,theme.Surface.Color.G,theme.Surface.Color.B)); wash.Freeze();
+        var wash=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)170 : (byte)42,theme.Surface.Color.R,theme.Surface.Color.G,theme.Surface.Color.B)); wash.Freeze();
         card.Children.Add(new System.Windows.Shapes.Path { Data=plane, Fill=wash, Stroke=theme.Divider, StrokeThickness=.6, Opacity=.72, IsHitTestVisible=false });
         Put(card, new Border { Background=theme.Accent, Opacity=.8 }, new(8,0,Math.Min(56,bounds.Width/4),1));
         return card;
@@ -227,6 +341,10 @@ internal sealed class ShipPanel : Canvas
     {
         motion = enabled;
         shipPortrait?.SetMotion(enabled); projection?.SetMotion(enabled); holotable?.SetMotion(enabled);
+        showcaseBackdrop?.SetMotion(enabled); showcaseCrew?.SetMotion(enabled);
+        if ((!enabled || !SystemParameters.ClientAreaAnimation) && shipMedia is not null)
+        { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
+        if (!enabled && shipMedia is not null) { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
     }
     public void SetReadoutEffects(bool pulse, bool smoothGauges)
     {
@@ -238,7 +356,8 @@ internal sealed class ShipPanel : Canvas
     internal void OpenHolotable()
     {
         if (holotable is not null || activeTheme is null || !HolotableAvailable) return;
-        holotable = new Holotable(activeTheme, source, motion, readoutPulse, CloseHolotable);
+        holotable = new Holotable(activeTheme with { ShipId=FeaturedShipId }, source, motion, readoutPulse, CloseHolotable);
+        projection?.SetMotion(false);
         Put(this, holotable, new(8, 8, Width - 16, Height - 36));
         SetZIndex(holotable, 10); holotable.Focus();
     }
@@ -246,6 +365,7 @@ internal sealed class ShipPanel : Canvas
     {
         if (holotable is null) return;
         holotable.SetMotion(false); Children.Remove(holotable); holotable = null;
+        projection?.SetMotion(motion);
     }
     internal void CheckHolotable()
     {

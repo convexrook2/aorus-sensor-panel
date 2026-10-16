@@ -12,6 +12,7 @@ public sealed class Collector : IDisposable
     private readonly PresentMonSource? presentMon;
     private readonly Svi3Source? svi3;
     public int FpsProcessId { get => presentMon?.ProcessId ?? 0; set { if (presentMon is not null) presentMon.ProcessId = value; } }
+    public FpsApplication[] FpsApplications => presentMon?.Applications ?? [];
     private readonly string? motherboard, cpu;
     private readonly SourceStatus identityStatus;
     private ulong previousIdle, previousTotal;

@@ -44,3 +44,17 @@ not official production meshes. No custom ship designs or fleet charts included.
 
 This independent FAN MADE project is not affiliated with The Expanse,
 its creators, GIGABYTE, AORUS or the model artist.
+
+Razorback v2 - owner-supplied model, used at the owner's request.
+Source: Assets/Models/Source/Razorback_Blueprint_v2.glb
+SHA-256: e943a21e54606b991ffc76c98444414debc5905b58a5dd61e5019fbf469dbae3
+Revision of the owner's Razorback_Digital_Model_v1.zip, using the existing
+orthographic sheet by Ryan Begemann / Mallacore (ship credit Chris Kuhn) for
+visible proportions. Hidden machinery is approximate. Source textures preserved.
+The Sketchfab model was viewed as a visual reference only; no mesh or texture
+was downloaded or extracted from it. No third-party open licence is assigned
+to the owner-supplied mesh. Rights in the depicted fictional ship remain with
+their respective owners.
+Conversion: native static WPF mesh, uniform display normalization, original UVs,
+normals and base colours; optional FX glow omitted for the idle view. All 61,020
+remaining triangles retained. WPF lighting approximates the GLB's PBR materials.

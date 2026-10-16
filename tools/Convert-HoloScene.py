@@ -2,9 +2,10 @@
 
 Preserves original base-colour textures, UVs, normals, material groups and
 emissive colours. Omits shader maps unsupported by WPF. NumPy is build-time only.
-Usage: python tools/Convert-HoloScene.py source.glb Assets/Models/Ship.ship 150000
+Usage: python tools/Convert-HoloScene.py source.glb Assets/Models/Ship.ship 150000 [excluded-node-prefix]
 """
 import io
+import hashlib
 import json
 from pathlib import Path
 import struct
@@ -13,7 +14,7 @@ import zipfile
 import numpy as np
 
 
-def convert(source, destination, budget='150000'):
+def convert(source, destination, budget='150000', excluded_node_prefix=''):
     raw = Path(source).read_bytes()
     magic, version, length = struct.unpack_from('<III', raw)
     if magic != 0x46546C67 or version != 2 or length != len(raw):
@@ -57,6 +58,8 @@ def convert(source, destination, budget='150000'):
 
     def visit(index, parent):
         node = doc['nodes'][index]
+        if excluded_node_prefix and node.get('name', '').startswith(excluded_node_prefix):
+            return
         matrix = parent @ transform(node)
         if 'skin' in node:
             raise ValueError('Skinned model requires a static export')
@@ -164,7 +167,8 @@ def convert(source, destination, budget='150000'):
     for material, points, indices in parts:
         mesh.write(struct.pack('<III', material, len(points), len(indices)))
         mesh.write(points.tobytes()); mesh.write(indices.tobytes())
-    metadata = {'format': 1, 'sourceTriangles': source_triangles, 'triangles': sum(len(f) for _, f in joined.values()),
+    metadata = {'format': 1, 'sourceSha256': hashlib.sha256(raw).hexdigest(), 'excludedNodePrefix': excluded_node_prefix,
+                'sourceTriangles': source_triangles, 'triangles': sum(len(f) for _, f in joined.values()),
                 'materials': materials, 'parts': len(parts)}
     out = Path(destination)
     out.parent.mkdir(parents=True, exist_ok=True)

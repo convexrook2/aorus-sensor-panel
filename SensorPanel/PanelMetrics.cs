@@ -23,7 +23,7 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
     public string? FpsId => FpsReading?.Id;
     public string? FpsApplication => FpsReading is not null && FpsReading.Name.Length > 0 ? Path.GetFileNameWithoutExtension(FpsReading.Name) : null;
     public double? Fps => FpsId is null ? null : Read(FpsId);
-    public string FpsDetail => FpsReading?.Detail ?? "Windows display FPS; select an application from the right-click menu.";
+    public string FpsDetail => FpsReading?.Detail ?? "Windows ETW/PresentMon FPS; select an application from the right-click menu.";
     public double? Gpu(string suffix) => gpuPrefix is null ? null : Read(gpuPrefix + suffix);
     public double? BoardSystem => Read("libre/lpc/it8696e/0/temperature/0");
     public double? BoardPch => Read("libre/lpc/it8696e/0/temperature/1");
@@ -51,6 +51,7 @@ internal sealed class PanelMetrics(Snapshot snapshot, DateTimeOffset now, bool s
         ShipPanel.Check();
         Holotable.CheckResources();
         PanelTheme.Check();
+        ExpanseMedia.Check();
         if (PanelPreferences.ValidPollingInterval(500) != 500 || PanelPreferences.ValidPollingInterval(5000) != 5000 ||
             PanelPreferences.ValidPollingInterval(499) != 1000 || PanelPreferences.ValidPollingInterval(5001) != 1000 ||
             PanelWindow.PollingWaitMilliseconds(1000, 30) != 970 || PanelWindow.PollingWaitMilliseconds(500, 700) != 0)

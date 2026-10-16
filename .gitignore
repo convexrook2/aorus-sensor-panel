@@ -8,6 +8,8 @@ artifacts/
 .env
 .env.*
 !.env.example
+**/node_modules/
+NavigationWeb/.vite/
 
 # Copied Rainmeter/HWiNFO utilities are not used by the standalone panel.
 Assets/AORUS/@Resources/HWiNFOSharedMemoryViewer.exe

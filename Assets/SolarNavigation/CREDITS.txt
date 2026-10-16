@@ -1,0 +1,43 @@
+AORUS SENSOR PANEL - FAN MADE / ORIGINAL SOL NAVIGATION DIAGRAM
+
+The native SOL / NAVIGATION schematic is restored from the panel's v1.7.1
+implementation. Belter Charts supplies detailed asset pixels and geometry;
+its web interface and Scene3D renderer are not loaded by the native panel.
+The earlier web adaptation is preserved in NavigationWeb and its safety backup.
+
+Asset source: Belter Charts by skylercole and contributors, Apache-2.0,
+commit ba86075477fc529294a5e51cb4e1b0d183ff893a.
+https://github.com/skylercole/belter-charts/tree/ba86075477fc529294a5e51cb4e1b0d183ff893a
+See Belter-Charts-LICENSE.txt and Belter-Charts-Upstream-Credits.md.
+
+Sun/planet maps, Earth cloud mask and Saturn ring strip: Solar System Scope,
+CC BY 4.0. https://www.solarsystemscope.com/textures/
+https://creativecommons.org/licenses/by/4.0/
+Galilean moon mosaics: NASA/JPL/USGS. Ceres: NASA/JPL-Caltech/UCLA/MPS/DLR/IDA.
+The Ceres map uses the public-domain USGS Dawn global mosaic:
+https://www.usgs.gov/media/images/global-mosaic-ceres-taken-during-dawn-mission
+Eros shape: NEAR MSI team, NASA PDS Small Bodies Node, 89,398 source triangles.
+Phoebe: Belter Charts' original procedural packed mesh and vertex colours.
+
+Native adaptation: original image maps on UV-mapped spheres; the cloud mask
+becomes alpha; the ring strip is mapped radially. Eros faces are retained;
+source meshes are split into native render batches without simplification.
+WPF approximates source materials. Packed vertex colours use face averages
+in a native palette; the procedural web regolith shader is not reproduced.
+
+Tycho, Medina and Sol gate: retained original panel detail geometry, exported
+offline from NavigationWeb/src/models.ts. Three.js supplies the offline geometry
+tools (MIT; three-LICENSE.txt). No paid, noncommercial-only or production-show
+station mesh is bundled. The owner's Razorback v2 is a separate credited asset.
+
+This is a SCHEMATIC, NOT TO SCALE. Models retain their shapes, while display
+sizes and orbital spacing are enlarged/compressed for clarity. Positions and
+motion are illustrative, not ephemerides or live spacecraft tracking.
+Tycho is mobile in the Belt; its marker is an approximate placement.
+The fixed Sol gate is shown outside Uranus and inside Neptune (~2 AU beyond
+Uranus); its direction is illustrative. Medina, the former Nauvoo/Behemoth,
+is in the separate labelled Ring Space inset, distinct from the alien central
+Ring Station. The dashed portal link is a navigation relationship, not a distance.
+
+The Expanse is by James S. A. Corey; the TV series is produced by Alcon.
+Unofficial fan-made presentation; no endorsement is claimed.
