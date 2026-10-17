@@ -6,9 +6,11 @@ folder=ROOT/'unpacked';folder.mkdir(exist_ok=True)
 manifest=json.loads((ROOT/'manifest.json').read_text())
 for key in ('current','previous'):
     row=manifest[key];data=gzip.decompress((ROOT/row['file']).read_bytes())
-    assert hashlib.sha256(data).hexdigest()==row['sha256']
+    if hashlib.sha256(data).hexdigest()!=row['sha256']:
+        raise ValueError(f'{key}: decoded model checksum differs from manifest')
     output=folder/Path(row['file']).with_suffix('').name
     if output.exists():
-        assert output.read_bytes()==data,f'Preserving an edited {output}; use a new destination.'
+        if output.read_bytes()!=data:
+            raise FileExistsError(f'Preserving an edited {output}; use a new destination.')
     else:output.write_bytes(data)
     print(output)

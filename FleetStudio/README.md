@@ -59,9 +59,14 @@ separately from this distribution.
   exactly before packaging. No additional LOD reduction or image resampling.
 - `manifest.json` pins both compressed and decoded SHA-256 values. The browser
   verifies the decoded model before parsing it.
+- Validation stays active under `python -O`; a mismatched asset is rejected and
+  unpacking refuses to overwrite an edited copy. Rapid model-version switching
+  keeps the requested revision/hash together and ignores superseded failures.
 - Local validation: twelve Blender views under one studio rig, both forward
   close-ups, both pod close-ups, and browser checks of camera views, rotation,
   lights, plumes, alternate lighting and previous-version restore.
+- Short-window check at 800×400: all seven camera buttons remain clear of the
+  footer controls; normal browser dimensions are restored after inspection.
 - Preservation check before delivery: 991 existing source files, 142 installed
   files and 111 earlier preview files match their checkpoint. The original
   checkout's Git index and pre-existing binary diff remain unchanged.

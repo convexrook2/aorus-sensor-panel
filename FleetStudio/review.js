@@ -77,12 +77,15 @@ try{
    $('#artist').href=entry.referenceUrl||entry.sourceUrl||'#';
  }
  async function load(id,reset=true){
-   const token=++loadId,selected=catalog.find(e=>e.id===id)||catalog[0];$('#status').hidden=false;$('#status').textContent='Loading '+selected.title+'…';
-   const file=previous&&selected.beforeModel?selected.beforeModel:selected.model;
+   const token=++loadId,requestedPrevious=previous,selected=catalog.find(e=>e.id===id)||catalog[0];
+   const file=requestedPrevious&&selected.beforeModel?selected.beforeModel:selected.model;
+   const expected=requestedPrevious&&selected.beforeModel?selected.beforeSha256:selected.sha256;
+   $('#status').hidden=false;$('#status').textContent='Loading '+selected.title+'…';
+   try{
    const response=await fetch(file);if(!response.ok)throw Error('Model unavailable: '+response.status);
    const buffer=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)),b=>b.toString(16).padStart(2,'0')).join('');
-   const expected=previous&&selected.beforeModel?selected.beforeSha256:selected.sha256;
+   if(token!==loadId)return;
    if(hash!==expected)throw Error('Model checksum differs from catalogue');
    const gltf=await new GLTFLoader().parseAsync(buffer,'./');
    if(token!==loadId){dispose(gltf.scene);return;}
@@ -91,7 +94,7 @@ try{
    const bounds=new THREE.Box3().setFromObject(gltf.scene),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
    const maximum=Math.max(size.x,size.y,size.z);if(!(maximum>0&&Number.isFinite(maximum)))throw Error('Invalid mesh bounds');
    const scale=3.2/maximum;gltf.scene.position.sub(center);root.scale.setScalar(scale);
-   document.body.dataset.sourceMaximum=maximum.toFixed(6);document.body.dataset.fitScale=scale.toFixed(6);document.body.dataset.modelFile=previous&&entry.beforeModel?entry.beforeModel:entry.model;
+   document.body.dataset.sourceMaximum=maximum.toFixed(6);document.body.dataset.fitScale=scale.toFixed(6);document.body.dataset.modelFile=file;
    if(entry.orientation!=='gate'){const axis=size.x>=size.y&&size.x>=size.z?new THREE.Vector3(1,0,0):size.z>size.y?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);root.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,entry.flipLongitudinal?-1:1,0));}
    let lights=0;
    root.traverse(o=>{
@@ -106,19 +109,20 @@ try{
    });
    // Blender keeps spaces in node names in some exporter revisions.
    if(entry.id==='SolRing'&&!field){root.traverse(o=>{if(o.isMesh&&o.name.includes('Active aperture')){field=o;portal=makePortal();specialMaterials.add(portal);o.material.dispose();o.material=portal;originals.set(o,portal);o.castShadow=false;o.receiveShadow=false;}});if(!field)throw Error('The separate gate aperture was not found');}
-   const anchorEntry=previous&&entry.beforeEngineId?entry.beforeEngineId:entry.id;
+   const anchorEntry=requestedPrevious&&entry.beforeEngineId?entry.beforeEngineId:entry.id;
    shipEffects=makeShipEffects(root,gltf.scene,engines[anchorEntry]?.engines||[],center,scale);
    scene.add(root);root.updateMatrixWorld(true);renderer.shadowMap.needsUpdate=true;
-   const displayTitle=previous&&entry.beforeTitle?entry.beforeTitle:entry.title+(previous?' / previous':'');
+   const displayTitle=requestedPrevious&&entry.beforeTitle?entry.beforeTitle:entry.title+(requestedPrevious?' / previous':'');
    $('#title').textContent=displayTitle;document.title=displayTitle+' | rotating preview';$('#ship').value=entry.id;
-   $('#note').textContent=previous&&entry.beforeNote?entry.beforeNote:entry.note;$('#credit').textContent=previous&&entry.beforeCredit?entry.beforeCredit:entry.credit;
-   const info=previous&&entry.beforeInfo?entry.beforeInfo:entry;
+   $('#note').textContent=requestedPrevious&&entry.beforeNote?entry.beforeNote:entry.note;$('#credit').textContent=requestedPrevious&&entry.beforeCredit?entry.beforeCredit:entry.credit;
+   const info=requestedPrevious&&entry.beforeInfo?entry.beforeInfo:entry;
    $('#technical').textContent=info.triangles.toLocaleString()+' triangles · '+info.materials+' materials · '+lights+' local lights · '+shipEffects.emitterMaterials+' emissive materials · full geometry';
    $('#before').hidden=!entry.beforeModel;$('#before').textContent=entry.beforeLabel||'Previous version';$('#portal').hidden=$('#effect').hidden=$('#rim-view').hidden=entry.id!=='SolRing';
    if(field)field.visible=$('#portal').getAttribute('aria-pressed')==='true';
    references();surface();lighting();shipState();if(reset)view();$('#status').hidden=true;
    document.body.dataset.loaded=entry.id;document.body.dataset.shipLights=lights;document.body.dataset.portalAnimated=Boolean(portal);
    const url=new URL(location.href);url.searchParams.set('ship',entry.id);history.replaceState(null,'',url);invalidate();
+   }catch(error){if(token===loadId)throw error;}
  }
  for(const e of catalog){const option=document.createElement('option');option.value=e.id;option.textContent=e.title;$('#ship').append(option);}
  $('#ship').onchange=()=>{previous=false;$('#before').setAttribute('aria-pressed','false');load($('#ship').value).catch(fail);};
