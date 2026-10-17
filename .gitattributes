@@ -1,3 +1,7 @@
 # Preserve generated GLSL and unified-patch context exactly.
 Assets/SolarNavigation/assets/** -text -whitespace
 tools/PresentMon/*.patch text eol=lf -whitespace
+
+# Bundled upstream Three.js stays versioned without enormous dependency diffs.
+Assets/FleetViewer/vendor/** -diff linguist-vendored=true
+FleetStudio/vendor/** -diff linguist-vendored=true

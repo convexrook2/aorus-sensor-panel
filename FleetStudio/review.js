@@ -14,7 +14,7 @@ let renderer,scene,root,entry,portal,field,composer,shipEffects;
 const originals=new Map(),specialMaterials=new Set();
 const fail=error=>{console.error(error);$('#status').hidden=false;$('#status').textContent='Preview error: '+error.message;};
 try{
- const response=await fetch('./catalog.json');if(!response.ok)throw Error('Catalogue unavailable');
+ const response=await fetch('./catalog.json',{cache:'no-store'});if(!response.ok)throw Error('Catalogue unavailable');
  const catalog=await response.json();
  const engineResponse=await fetch('./engines.json');if(!engineResponse.ok)throw Error('Drive catalogue unavailable');const engines=await engineResponse.json();
  renderer=new THREE.WebGLRenderer({canvas:$('canvas'),antialias:true,powerPreference:'high-performance'});
@@ -42,7 +42,7 @@ try{
  const normals=new THREE.MeshNormalMaterial(),wire=new THREE.MeshBasicMaterial({color:0x9ad7e3,wireframe:true});
  let dirty=true,spin=true,animateField=true,previous=false,loadId=0,last=0,seconds=0,effectTime=0,frames=0,rateTime=0,rateFrames=0,shipLit=true,plumesOn=false;
  const invalidate=()=>{dirty=true;};controls.addEventListener('change',invalidate);
- function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?2.6:2.16;renderer.setSize(w,h,false);composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
+ function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?3.0:2.55;renderer.setSize(w,h,false);composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
  addEventListener('resize',resize);resize();
  function surface(){const mode=$('#surface').value;root?.traverse(o=>{if(!o.isMesh||o===field||!originals.has(o))return;o.material=mode==='materials'?originals.get(o):mode==='clay'?clay:mode==='normals'?normals:wire;});renderer.shadowMap.needsUpdate=true;invalidate();}
  function shipState(){
@@ -83,7 +83,8 @@ try{
    $('#status').hidden=false;$('#status').textContent='Loading '+selected.title+'…';
    try{
    const response=await fetch(file);if(!response.ok)throw Error('Model unavailable: '+response.status);
-   const buffer=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+   const payload=await response.arrayBuffer(),bytes=new Uint8Array(payload);
+   const buffer=bytes[0]===0x1f&&bytes[1]===0x8b?await new Response(new Blob([payload]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer():payload;
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)),b=>b.toString(16).padStart(2,'0')).join('');
    if(token!==loadId)return;
    if(hash!==expected)throw Error('Model checksum differs from catalogue');
@@ -144,5 +145,5 @@ try{
    if(t-rateTime>=1000){const fps=Math.round(rateFrames*1000/(t-rateTime));$('#motion').textContent=(spin?'Rotating':'Rotation paused')+' · '+(fps>1?fps+' fps':'idle');$('#motion').dataset.frames=frames;$('#motion').dataset.cameraAngle=controls.getAzimuthalAngle().toFixed(4);$('#motion').dataset.fieldTime=seconds.toFixed(3);$('#motion').dataset.plumeTime=effectTime.toFixed(3);rateFrames=0;rateTime=t;}
  }
  document.addEventListener('visibilitychange',()=>{last=performance.now();rateTime=last;rateFrames=0;invalidate();});requestAnimationFrame(tick);
- await load(new URL(location.href).searchParams.get('ship'));
+ await load(new URL(location.href).searchParams.get('ship')||'Pella');
 }catch(error){fail(error);}

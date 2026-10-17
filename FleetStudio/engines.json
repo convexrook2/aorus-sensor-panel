@@ -1,4 +1,82 @@
 {
+  "Guanshiyin": {
+    "engines": [
+      {
+        "position": [
+          0.0,
+          -1.6711516,
+          -0.0532376
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07097136000000001,
+        "length": 0.42582816000000007,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Morrigan": {
+    "engines": [
+      {
+        "position": [
+          -3.841602161332722e-17,
+          -1.9930795847750866,
+          0.06064376143066677
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.2865051903114187,
+        "length": 0.75,
+        "addCore": false,
+        "basis": "New v4 single bell outlet, normalized exact source bounds"
+      }
+    ]
+  },
+  "Arboghast": {
+    "engines": [
+      {
+        "position": [
+          -0.4,
+          -0.48660899999999996,
+          -0.265969
+        ],
+        "direction": [
+          0,
+          -0.78801075,
+          -0.61566148
+        ],
+        "radius": 0.04,
+        "length": 0.24,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.4,
+          -0.48660899999999996,
+          -0.265969
+        ],
+        "direction": [
+          0,
+          -0.78801075,
+          -0.61566148
+        ],
+        "radius": 0.04,
+        "length": 0.24,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
   "Pella": {
     "engines": [
       {
@@ -63,5 +141,1318 @@
       }
     ],
     "finish": "Separate inspection revision; original source retained"
+  },
+  "Razorback": {
+    "engines": [
+      {
+        "position": [
+          0.0,
+          -8.94,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.92,
+        "length": 3.614200019836426,
+        "basis": "Existing source-model drive component: FX__drive glow (hide for engine off)",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "BashiBazouk": {
+    "engines": [
+      {
+        "position": [
+          0.0,
+          -2.1700001,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.27359999999999995,
+        "length": 1.3276992321014405,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Tynan": {
+    "engines": [
+      {
+        "position": [
+          0.0,
+          -2.2,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.24,
+        "length": 1.1730000019073488,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Donnager": {
+    "engines": [
+      {
+        "position": [
+          -110.98806765,
+          -68.26816915,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016268266,
+        "length": 180.097609596,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          -110.98807355,
+          153.7076849,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016251798000003,
+        "length": 180.09751078800002,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          110.98804865,
+          153.70766700000001,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016257271999997,
+        "length": 180.097543632,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          110.98806504999999,
+          -68.26817804999999,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016264126000003,
+        "length": 180.097584756,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Rocinante": {
+    "engines": [
+      {
+        "position": [
+          0,
+          0,
+          -176.33
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 35.5,
+        "length": 96.0,
+        "addCore": true,
+        "basis": "Measured engines_main_skirt source-model outlet"
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Dropship": {
+    "engines": [
+      {
+        "position": [
+          -362.594822,
+          -27.9819021,
+          -155.02881115000002
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 3.4914888959999986,
+        "length": 20.948933375999992,
+        "basis": "Existing source-model drive component: Landing_Thrusters_Black_Metal_0",
+        "addCore": true
+      },
+      {
+        "position": [
+          -362.594822,
+          -27.9819112,
+          -216.31752555
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 3.4914888959999986,
+        "length": 20.948933375999992,
+        "basis": "Existing source-model drive component: Landing_Thrusters_Black_Metal_0",
+        "addCore": true
+      },
+      {
+        "position": [
+          -276.8797874,
+          -27.9819112,
+          -216.31752555
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 3.4914888959999986,
+        "length": 20.948933375999992,
+        "basis": "Existing source-model drive component: Landing_Thrusters_Black_Metal_0",
+        "addCore": true
+      },
+      {
+        "position": [
+          -276.8797874,
+          -27.9819021,
+          -155.02881115000002
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 3.4914888959999986,
+        "length": 20.948933375999992,
+        "basis": "Existing source-model drive component: Landing_Thrusters_Black_Metal_0",
+        "addCore": true
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Epstein": {
+    "engines": [
+      {
+        "position": [
+          194.78,
+          0,
+          -354.0213
+        ],
+        "direction": [
+          1,
+          0,
+          0
+        ],
+        "radius": 29.5,
+        "length": 82.0,
+        "addCore": true,
+        "color": [
+          1,
+          0.4,
+          0.12
+        ],
+        "basis": "Measured Metal_Exhaust source-model large aft bell; warm flashback drive"
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "AgathaKing": {
+    "engines": [
+      {
+        "position": [
+          -2.3149100000000002,
+          1.42883,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -2.3149100000000002,
+          1.7354,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -2.0494149999999998,
+          1.27555,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -2.0494149999999998,
+          1.8886850000000002,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -1.78392,
+          1.42883,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -1.78392,
+          1.7354,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Canterbury": {
+    "engines": [
+      {
+        "position": [
+          -0.4797666,
+          -1.451,
+          -0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.059519999999999997,
+        "length": 0.35712,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.4797666,
+          -1.451,
+          0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.059519999999999997,
+        "length": 0.35712,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.2697666,
+          -1.451,
+          -0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.05952000000000001,
+        "length": 0.35712000000000005,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.2697666,
+          -1.451,
+          0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.05952000000000001,
+        "length": 0.35712000000000005,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.2697666,
+          -1.451,
+          -0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.05952000000000001,
+        "length": 0.35712000000000005,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.2697666,
+          -1.451,
+          0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.05952000000000001,
+        "length": 0.35712000000000005,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.4797666,
+          -1.451,
+          -0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.059519999999999997,
+        "length": 0.35712,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.4797666,
+          -1.451,
+          0.3747666
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.059519999999999997,
+        "length": 0.35712,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Knight": {
+    "engines": [
+      {
+        "position": [
+          -0.3,
+          -1.0759,
+          -0.04
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.06528,
+        "length": 0.39168000000000003,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.3,
+          -1.0759,
+          -0.04
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.06528,
+        "length": 0.39168000000000003,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Anubis": {
+    "engines": [
+      {
+        "position": [
+          -0.060000000000000005,
+          -1.248,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.13056,
+        "length": 0.672000002861023,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Nauvoo": {
+    "engines": [
+      {
+        "position": [
+          -0.48,
+          -1.2493,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.3394112,
+          -1.2493,
+          -0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.3394112,
+          -1.2493,
+          0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.0,
+          -1.2493,
+          -0.48
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.0,
+          -1.2493,
+          0.48
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.3394112,
+          -1.2493,
+          -0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.3394112,
+          -1.2493,
+          0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.48,
+          -1.2493,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Behemoth": {
+    "engines": [
+      {
+        "position": [
+          -0.48,
+          -1.2493,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.3394112,
+          -1.2493,
+          -0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.3394112,
+          -1.2493,
+          0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.0,
+          -1.2493,
+          -0.48
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.0,
+          -1.2493,
+          0.48
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.3394112,
+          -1.2493,
+          -0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.3394112,
+          -1.2493,
+          0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.48,
+          -1.2493,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Medina": {
+    "engines": [
+      {
+        "position": [
+          -0.48,
+          -1.2493,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.3394112,
+          -1.2493,
+          -0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.3394112,
+          -1.2493,
+          0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.0,
+          -1.2493,
+          -0.48
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.0,
+          -1.2493,
+          0.48
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.3394112,
+          -1.2493,
+          -0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.3394112,
+          -1.2493,
+          0.3394112
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.48,
+          -1.2493,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.054911999999999996,
+        "length": 0.329472,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Scopuli": {
+    "engines": [
+      {
+        "position": [
+          0.0,
+          -1.2212,
+          0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.11136,
+        "length": 0.6579999923706055,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Scirocco": {
+    "engines": [
+      {
+        "position": [
+          -0.33999999999999997,
+          -1.451,
+          -0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.33999999999999997,
+          -1.451,
+          0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.33999999999999997,
+          -1.451,
+          -0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.33999999999999997,
+          -1.451,
+          0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "Hammurabi": {
+    "engines": [
+      {
+        "position": [
+          -0.33999999999999997,
+          -1.451,
+          -0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          -0.33999999999999997,
+          -1.451,
+          0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.33999999999999997,
+          -1.451,
+          -0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      },
+      {
+        "position": [
+          0.33999999999999997,
+          -1.451,
+          0.27
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07103999999999998,
+        "length": 0.42623999999999984,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "RocinanteS6": {
+    "engines": [
+      {
+        "position": [
+          0,
+          -1.597311583948297,
+          0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.21624828324536952,
+        "length": 0.68,
+        "basis": "Measured single source-model drive bell outlet"
+      }
+    ],
+    "finish": "Separate inspection revision; original source retained"
+  },
+  "SolRing": {
+    "engines": [],
+    "finish": "Stationary gate: aperture animation instead of an engine plume"
+  },
+  "MorriganEarlier": {
+    "engines": [
+      {
+        "position": [
+          0.0,
+          -1.3212,
+          -0.05
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.13824,
+        "length": 0.672000002861023,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "DonnagerEarlier": {
+    "engines": [
+      {
+        "position": [
+          -110.98806765,
+          -68.26816915,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016268266,
+        "length": 180.097609596,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          -110.98807355,
+          153.7076849,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016251798000003,
+        "length": 180.09751078800002,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          110.98804865,
+          153.70766700000001,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016257271999997,
+        "length": 180.097543632,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          110.98806504999999,
+          -68.26817804999999,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016264126000003,
+        "length": 180.097584756,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "AgathaKing-v3": {
+    "engines": [
+      {
+        "position": [
+          -2.0494147,
+          1.8971174,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": true,
+        "basis": "Six source stern outlets; fitted to visible circular centres in axial browser inspection"
+      },
+      {
+        "position": [
+          -2.3222127021920977,
+          1.7396174000000002,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": true,
+        "basis": "Six source stern outlets; fitted to visible circular centres in axial browser inspection"
+      },
+      {
+        "position": [
+          -2.322212702192098,
+          1.4246174,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": true,
+        "basis": "Six source stern outlets; fitted to visible circular centres in axial browser inspection"
+      },
+      {
+        "position": [
+          -2.0494147,
+          1.2671174,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": true,
+        "basis": "Six source stern outlets; fitted to visible circular centres in axial browser inspection"
+      },
+      {
+        "position": [
+          -1.7766166978079017,
+          1.4246173999999998,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": true,
+        "basis": "Six source stern outlets; fitted to visible circular centres in axial browser inspection"
+      },
+      {
+        "position": [
+          -1.7766166978079017,
+          1.7396174,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": true,
+        "basis": "Six source stern outlets; fitted to visible circular centres in axial browser inspection"
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
   }
 }

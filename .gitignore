@@ -11,6 +11,11 @@ artifacts/
 **/node_modules/
 NavigationWeb/.vite/
 
+# Python interpreter caches are reproducible, not project sources.
+__pycache__/
+*.pyc
+*.pyo
+
 # Copied Rainmeter/HWiNFO utilities are not used by the standalone panel.
 Assets/AORUS/@Resources/HWiNFOSharedMemoryViewer.exe
 Assets/AORUS/@Resources/RedistrutablePlugin/

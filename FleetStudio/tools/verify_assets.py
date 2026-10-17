@@ -1,5 +1,5 @@
-"""Check the exact distributed assets without a GPU or third-party Python deps."""
-import gzip,hashlib,json,struct
+"""Check the hosted fleet assets without a GPU or third-party Python deps."""
+import gzip,hashlib,json,math,struct
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -9,9 +9,14 @@ def require(condition,message):
     if not condition:raise ValueError(message)
 manifest=json.loads((ROOT/'manifest.json').read_text())
 catalog=json.loads((ROOT/'catalog.json').read_text())
-require(len(catalog)==1 and catalog[0]['id']=='Pella','Expected one Pella catalogue entry')
-for key in ('current','previous'):
-    expected=manifest[key];path=ROOT/expected['file'];compressed=path.read_bytes()
+require(bool(catalog) and len({e['id'] for e in catalog})==len(catalog),'Empty or duplicate catalogue')
+assets=manifest.get('assets',[manifest['current'],manifest['previous']])
+by_file={e['file']:e for e in assets}
+require(len(by_file)==len(assets),'Duplicate manifest files')
+for expected in assets:
+    key=expected['file'];path=(ROOT/key).resolve()
+    require(path.is_relative_to(ROOT.resolve()),f'{key}: file outside package')
+    compressed=path.read_bytes()
     require(digest(compressed)==expected['gzip_sha256'],f'{key}: compressed checksum')
     raw=gzip.decompress(compressed);require(digest(raw)==expected['sha256'],f'{key}: decoded checksum')
     magic,version,total=struct.unpack_from('<III',raw);require((magic,version,total)==(0x46546c67,2,len(raw)),f'{key}: GLB header')
@@ -28,11 +33,25 @@ for key in ('current','previous'):
             positions=doc['accessors'][p['attributes']['POSITION']]
             for a in p['attributes'].values():require(doc['accessors'][a]['count']==positions['count'],f'{key}: attribute count')
     require(triangles==expected['triangles'],f'{key}: triangle count')
-    require(len(doc['materials'])==expected['materials'] and len(doc['images'])==expected['images'],f'{key}: material/image counts')
-    require(all('bufferView'in im and 'uri'not in im for im in doc['images']),f'{key}: non-embedded image')
-    require(len(doc['extensions']['KHR_lights_punctual']['lights'])==expected['lights'],f'{key}: point light count')
-    field='model' if key=='current' else 'beforeModel';sha='sha256' if key=='current' else 'beforeSha256'
-    require(catalog[0][field]==expected['file'] and catalog[0][sha]==expected['sha256'],f'{key}: catalogue/manifest mismatch')
+    require(len(doc.get('materials',[]))==expected['materials'] and len(doc.get('images',[]))==expected['images'],f'{key}: material/image counts')
+    require(all('bufferView'in im and 'uri'not in im for im in doc.get('images',[])),f'{key}: non-embedded image')
+    require(len(doc.get('extensions',{}).get('KHR_lights_punctual',{}).get('lights',[]))==expected['lights'],f'{key}: point light count')
+    if 'binary_sha256'in expected:require(digest(raw[28+jl:28+jl+bl])==expected['binary_sha256'],f'{key}: source geometry/image bytes')
     print(f'{key}: PASS, {triangles:,} triangles, {expected["lights"]} lights, embedded maps, exact SHA-256')
-require(len(json.loads((ROOT/'engines.json').read_text())['Pella']['engines'])==4,'Expected four drive anchors')
-print('PASS: four drives, catalogue/current/rollback assets agree; no runtime installation performed.')
+engines=json.loads((ROOT/'engines.json').read_text())
+for entry in catalog:
+    for field,sha in [('model','sha256'),('beforeModel','beforeSha256')]:
+        if not entry.get(field):continue
+        require(entry[field] in by_file,f'{entry["id"]}: asset absent from manifest')
+        require(entry[sha]==by_file[entry[field]]['sha256'],f'{entry["id"]}: catalogue/manifest mismatch')
+    require(not entry.get('references'),f'{entry["id"]}: local reference image in hosted catalogue')
+    require(entry['id'] in engines,f'{entry["id"]}: missing engine record')
+    anchors=engines[entry['id']]['engines']
+    require(bool(anchors) or entry['id']=='SolRing',f'{entry["id"]}: missing drive anchors')
+    for a in anchors:
+        require(len(a['position'])==len(a['direction'])==3 and all(math.isfinite(x) for x in a['position']+a['direction']),f'{entry["id"]}: invalid anchor')
+        require(a['radius']>0 and a['length']>0,f'{entry["id"]}: invalid plume dimensions')
+    if entry.get('beforeEngineId'):require(entry['beforeEngineId'] in engines,f'{entry["id"]}: previous drive anchors missing')
+require(len(engines['Pella']['engines'])==4,'Expected four Pella drive anchors')
+require(sum(p.stat().st_size for p in ROOT.rglob('*') if p.is_file())<900*1024*1024,'Static package exceeds hosting allowance')
+print(f'PASS: {len(catalog)} catalogue entries, {len(assets)} exact assets, independent drive anchors; no runtime installation performed.')
