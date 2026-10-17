@@ -1,0 +1,67 @@
+{
+  "Pella": {
+    "engines": [
+      {
+        "position": [
+          0.35506535567460534,
+          -1.49257288687596,
+          0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      },
+      {
+        "position": [
+          -0.35506535567460534,
+          -1.49257288687596,
+          0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      },
+      {
+        "position": [
+          -0.35506535567460534,
+          -1.49257288687596,
+          -0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      },
+      {
+        "position": [
+          0.35506535567460534,
+          -1.49257288687596,
+          -0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      }
+    ],
+    "finish": "Separate inspection revision; original source retained"
+  }
+}

@@ -1,0 +1,49 @@
+[
+  {
+    "id": "Pella",
+    "title": "Pella / smooth dark hull",
+    "credit": "Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project.",
+    "note": "Smooth dark coating across the forward hull and engine pods, with restrained grain, source hatches and ribs, two vector emblems, fitted ship lights and four independent blue drive plumes. A credited fan reconstruction; production fidelity is still a visual study.",
+    "referenceUrl": "https://kelvintam.artstation.com/projects/v2358E",
+    "sourceUrl": "https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse",
+    "triangles": 1022795,
+    "materials": 21,
+    "images": 16,
+    "maps": {
+      "colour": 6,
+      "normal": 6,
+      "occlusion": 0,
+      "metalRough": 6,
+      "emissive": 0
+    },
+    "model": "models/Pella.glb.gz",
+    "sha256": "615c0ae12013bced3fe71db2817e3990ef4428e764ac77d600a6bf08b5a420d4",
+    "beforeModel": "models/Pella-previous.glb.gz",
+    "beforeSha256": "5c50f44678a2646c422e4fa1d81703856d0972451a369f04e1bcecbfa0d078d7",
+    "beforeInfo": {
+      "triangles": 1032949,
+      "materials": 20
+    },
+    "coatingReferenceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
+    "coatingReferenceCredit": "Jakub.Vildomec; CC BY 4.0",
+    "coatingLicenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "references": [],
+    "beforeLabel": "Previous finish",
+    "beforeTitle": "Pella / previous patterned coating",
+    "beforeNote": "Saved earlier coating for comparison and rollback.",
+    "relatedSources": [
+      {
+        "label": "Kelvin Tam / Rocket Science production gallery (all exterior views)",
+        "url": "https://kelvintam.artstation.com/projects/v2358E"
+      },
+      {
+        "label": "Generation Films / exterior pass at 0:54\u20131:04, docking at 1:51\u20131:54",
+        "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE&t=54s"
+      },
+      {
+        "label": "Thirupathi Nomula / production modelling reel",
+        "url": "https://thirupathinomula.artstation.com/projects/y4QPKK"
+      }
+    ]
+  }
+]
