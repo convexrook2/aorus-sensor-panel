@@ -1,0 +1,32 @@
+{
+  "revision": "Pella smooth coating / 2026-10-17",
+  "current": {
+    "file": "models/Pella.glb.gz",
+    "sha256": "615c0ae12013bced3fe71db2817e3990ef4428e764ac77d600a6bf08b5a420d4",
+    "gzip_sha256": "655c7d04b69c842fa6be6c58aff4a10ef5f669ff0f32835d34029f618de991e1",
+    "source_sha256": "86f8931ba1974cf5b6ee7bb1ed27d565bc3a3b187d5f97f52ab6a312d1456c30",
+    "triangles": 1022795,
+    "materials": 21,
+    "images": 16,
+    "lights": 25,
+    "uncompressed_bytes": 115012820,
+    "compressed_bytes": 36859365,
+    "live_geometry_image_bytes_exact": true
+  },
+  "previous": {
+    "file": "models/Pella-previous.glb.gz",
+    "sha256": "5c50f44678a2646c422e4fa1d81703856d0972451a369f04e1bcecbfa0d078d7",
+    "gzip_sha256": "4f6db7faf5eba86185a39d7b39296e692a2e267be6c5695551d272a9e94f8736",
+    "source_sha256": "66a0e318e4125c3eeb998ec0aabf4292099109b73897870fd82fdc6bb7e195f9",
+    "triangles": 1032949,
+    "materials": 20,
+    "images": 16,
+    "lights": 25,
+    "uncompressed_bytes": 109363420,
+    "compressed_bytes": 32294544,
+    "live_geometry_image_bytes_exact": true
+  },
+  "scope": "Standalone fleet asset and browser preview. No installed app, installer, monitoring, FPS or SOL runtime changed.",
+  "reference_images_or_video_bundled": false,
+  "rollback": "Previous finish switches to the separately retained model; installation remains unchanged."
+}
