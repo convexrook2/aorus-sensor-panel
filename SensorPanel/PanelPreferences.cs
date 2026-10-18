@@ -25,9 +25,9 @@ internal static class PanelPreferences
     public static bool GaugeTransitions => Load().GaugeTransitions;
     public static bool ExpanseCycle => Load().ExpanseCycle;
     public static int ExpanseSceneSeconds => Load().ExpanseSceneSeconds is >= 15 and <= 120 ? Load().ExpanseSceneSeconds : 45;
-    public static string ExpanseShip => ExpanseMedia.Ships.Contains(Load().ExpanseShip) ? Load().ExpanseShip : "Rocinante";
+    public static string ExpanseShip => ExpanseMedia.Ships.Contains(ShipProfile.CanonicalId(Load().ExpanseShip)) ? ShipProfile.CanonicalId(Load().ExpanseShip) : "Rocinante";
     public static void SaveExpanseCycle(bool enabled) => Write(Load() with { ExpanseCycle = enabled });
-    public static void SaveExpanseShip(string ship) => Write(Load() with { ExpanseShip = ExpanseMedia.Ships.Contains(ship) ? ship : "Rocinante" });
+    public static void SaveExpanseShip(string ship) => Write(Load() with { ExpanseShip = ExpanseMedia.Ships.Contains(ShipProfile.CanonicalId(ship)) ? ShipProfile.CanonicalId(ship) : "Rocinante" });
     public static void SaveExpanseSceneSeconds(int value) => Write(Load() with { ExpanseSceneSeconds = value is >= 15 and <= 120 ? value : 45 });
     public static void SaveHolographicMotion(bool enabled) => Write(Load() with { HolographicMotion = enabled });
     public static void SaveReadoutPulse(bool enabled) => Write(Load() with { ReadoutPulse = enabled });

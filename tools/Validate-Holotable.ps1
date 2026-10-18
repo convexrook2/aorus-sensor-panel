@@ -17,7 +17,9 @@ try {
         $report = Join-Path $projectRoot ('artifacts\theme-previews\' + $size + '\navigation-check.json')
         $before = Get-Date
         $preview = Start-Process -FilePath $executable -ArgumentList @('--preview', ('"' + $SnapshotPath + '"'), '--sensor-preview', '--preview-size', $size, '--preview-theme', 'Rocinante', '--preview-check-ships') -PassThru
-        if (-not $preview.WaitForExit(180000)) { $preview.Kill(); throw "Visible preview timed out: $size" }
+        # The expanded fleet checks every hull and holotable, in addition to
+        # theme selection, saved bindings and the showcase dwell cycle.
+        if (-not $preview.WaitForExit(420000)) { $preview.Kill(); throw "Visible preview timed out: $size" }
         if ($preview.ExitCode -ne 0 -or -not (Test-Path -LiteralPath $report) -or (Get-Item -LiteralPath $report).LastWriteTime -lt $before) { throw "Preview failed: $size. See artifacts\theme-check-error.txt." }
         $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
         if (-not $result.Passed -or -not $result.ReadoutEffectsIndependent -or -not $result.ShipRotationBoundsChecked -or -not $result.ShipInLeftPanel -or -not $result.SolarSystemChecked -or -not $result.ShipNavigationFocusChecked -or -not $result.ShipSelectorChecked) { throw "Projection checks failed: $size" }

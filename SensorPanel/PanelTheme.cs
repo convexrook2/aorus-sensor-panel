@@ -55,8 +55,8 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
             with { Texture = "Soft", ConsoleStyle = "Roci", ShipId = "Rocinante", SecondaryAccent = Brush("#F3B56C") },
         Create("MCRN", "Expanse · Donnager", "#130D0C", "#FFF3E8", "#C8ADA0", "#FF9272", "#51372D", "#251A15", "#0C0806", "#090605", "#FFAC81")
             with { Texture = "Soft", ConsoleStyle = "Mars", ShipId = "Donnager", SecondaryAccent = Brush("#E9C080") },
-        Create("UNN", "Expanse · Truman", "#0D151D", "#E9F1FA", "#ADBED2", "#97C9FF", "#354C63", "#1A2838", "#090F18", "#080E15", "#E9F1FA")
-            with { Texture = "Soft", ConsoleStyle = "Earth", ShipId = "Truman", SecondaryAccent = Brush("#B9DCD7") },
+        Create("UNN", "Expanse · Agatha King", "#0D151D", "#E9F1FA", "#ADBED2", "#97C9FF", "#354C63", "#1A2838", "#090F18", "#080E15", "#E9F1FA")
+            with { Texture = "Soft", ConsoleStyle = "Earth", ShipId = "AgathaKing", SecondaryAccent = Brush("#B9DCD7") },
         Create("Belter", "Expanse · Tynan", "#15130E", "#FAF0D9", "#C1B597", "#ECCC81", "#4D4534", "#242117", "#0D0C08", "#0C0B08", "#F3DFA7")
             with { Texture = "Soft", ConsoleStyle = "Belt", ShipId = "Tynan", SecondaryAccent = Brush("#AFC79C") },
         Create("Razorback", "Expanse · Razorback", "#100D17", "#FFF2FB", "#CDB5CC", "#F8A2C8", "#4A3452", "#211829", "#0B0810", "#0C0912", "#FFD0E4")
@@ -66,9 +66,27 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
         Create("Dropship", "Expanse · Dropship", "#16130D", "#FFF6E7", "#CDBD9E", "#F5C16C", "#50432D", "#282116", "#100D07", "#100D08", "#FFE1A6")
             with { Texture = "Soft", ConsoleStyle = "Landing", ShipId = "Dropship", SecondaryAccent = Brush("#A7CBE2") },
         Create("Epstein", "Expanse · Epstein's Yacht", "#08131E", "#F0F6FF", "#A8BCD0", "#9CCFFF", "#2C4A68", "#14283B", "#060E18", "#070F18", "#E0EFFF")
-            with { Texture = "Soft", ConsoleStyle = "Roci", ShipId = "Epstein", SecondaryAccent = Brush("#F2AE69") }
+            with { Texture = "Soft", ConsoleStyle = "Roci", ShipId = "Epstein", SecondaryAccent = Brush("#F2AE69") },
+        .. FleetThemes()
     ];
-    public static PanelTheme Resolve(string? id) => All.FirstOrDefault(t => string.Equals(t.Id, id, StringComparison.OrdinalIgnoreCase)) ?? All[0];
+    private static IEnumerable<PanelTheme> FleetThemes()
+    {
+        foreach (var ship in ShipProfile.All.Skip(8))
+        {
+            bool mars = ship.Faction == "MCRN";
+            bool earth = ship.Faction is "UN" or "UNN";
+            var theme = mars
+                ? Create(ship.Id, "Expanse · " + ship.Name, "#130D0C", "#FFF3E8", "#C8ADA0", "#FF9272", "#51372D", "#251A15", "#0C0806", "#090605", "#FFAC81")
+                : earth
+                ? Create(ship.Id, "Expanse · " + ship.Name, "#0D151D", "#E9F1FA", "#ADBED2", "#97C9FF", "#354C63", "#1A2838", "#090F18", "#080E15", "#E9F1FA")
+                : Create(ship.Id, "Expanse · " + ship.Name, "#0C1216", "#EDF5F5", "#ADC0C4", "#A8D8DF", "#334950", "#18282E", "#070D10", "#080E12", "#E1F2F4");
+            yield return theme with { Texture = "Soft", ConsoleStyle = mars ? "Mars" : earth ? "Earth" : "Belt",
+                ShipId = ship.Id, SecondaryAccent = Brush(mars ? "#E9C080" : "#E7BF7D") };
+        }
+    }
+    public static PanelTheme Resolve(string? id) => All.FirstOrDefault(t => string.Equals(t.Id,
+        id is not null && (id.Equals("AgathaKing",StringComparison.OrdinalIgnoreCase) || id.Equals("Truman",StringComparison.OrdinalIgnoreCase)) ? "UNN" : id,
+        StringComparison.OrdinalIgnoreCase)) ?? All[0];
     private static SolidColorBrush Brush(string value)
     {
         var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));

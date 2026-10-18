@@ -1,0 +1,227 @@
+{
+  "lossless": true,
+  "ships": 21,
+  "source": "Reviewed Fleet Studio catalogue; scoped model updates",
+  "files": [
+    {
+      "path": "ATTRIBUTION.txt",
+      "bytes": 3420,
+      "sha256": "7e957bf7b6a6cf88c54dc0da54853373f38e0e26b586035fb8d4366fb89ebea2"
+    },
+    {
+      "path": "catalog.json",
+      "bytes": 24308,
+      "sha256": "a12e87da2a53a5f3bd93a8655271c13520b62e9bea89c70b336c78b9418aaa12"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1095,
+      "sha256": "c738e5d0c243c62bad450c27af55647f3b9d96f4f96921be48bc01eeca186c0b"
+    },
+    {
+      "path": "models/AgathaKing.glb.gz",
+      "bytes": 47329112,
+      "sha256": "6503f7822cef0b57d478f81af895b2f441614b588488124d85e0bc5b16137541"
+    },
+    {
+      "path": "models/Anubis.glb.gz",
+      "bytes": 554272,
+      "sha256": "2f544c1ad09f1e3af217f383d6235758b4ae536e204f491d45fa4a1251255c4c"
+    },
+    {
+      "path": "models/Arboghast.glb.gz",
+      "bytes": 650454,
+      "sha256": "58090c012e65391e51f69f845ea492fc213882d0b83a5d1047ba36de626736ff"
+    },
+    {
+      "path": "models/BashiBazouk.glb.gz",
+      "bytes": 3594133,
+      "sha256": "2260165936b60062bee086aeedc40f71faca35d433184cb5d470c25712353826"
+    },
+    {
+      "path": "models/Behemoth.glb.gz",
+      "bytes": 1027882,
+      "sha256": "1c802282b5941e5e782f2dcf88870e018239ffa95688166b824ecc1518b02c28"
+    },
+    {
+      "path": "models/Canterbury.glb.gz",
+      "bytes": 690616,
+      "sha256": "8b79b7eb833e9c7590960e16e06503f5c09a6e86a3b0e2749561aacd35358048"
+    },
+    {
+      "path": "models/Donnager.glb.gz",
+      "bytes": 49176342,
+      "sha256": "d6652b9b036465cdf1a7540ed6a1107b09bef216066ea8ef012fc08ec1d902c0"
+    },
+    {
+      "path": "models/Dropship.glb.gz",
+      "bytes": 3603402,
+      "sha256": "74153e8cdd1619348baf1dcdae8e18060a00da08f195e5daba3b6977dd62b8ad"
+    },
+    {
+      "path": "models/Epstein.glb.gz",
+      "bytes": 8326493,
+      "sha256": "2f8d41e53cc92f295e9525ea43d4e478f64239755446eddf6893b006768ed5f1"
+    },
+    {
+      "path": "models/Guanshiyin.glb.gz",
+      "bytes": 5549263,
+      "sha256": "1175c35584bc7857fbf4aaca268a1344b9ad81b80b4dfd55ed4d57cd6417402e"
+    },
+    {
+      "path": "models/Hammurabi.glb.gz",
+      "bytes": 656928,
+      "sha256": "02d4ee36f9e3d97e54570d62d82434c196273edb8d14d67dcb2b04179864dd37"
+    },
+    {
+      "path": "models/Knight.glb.gz",
+      "bytes": 566992,
+      "sha256": "a6fde7aa786841e46ea04af8ed179df1f1764b4b03037d20c55a6e90f393dcf9"
+    },
+    {
+      "path": "models/Medina.glb.gz",
+      "bytes": 1037274,
+      "sha256": "430cc1391a63ff635f24af2625bf9ce0af2bf605e85bde2321d4e22c1ab780f4"
+    },
+    {
+      "path": "models/Morrigan.glb.gz",
+      "bytes": 583770,
+      "sha256": "bb1cd19d5fa34239b74516c8efeee23554fd6aa3011d3442ffacb180fe0e985b"
+    },
+    {
+      "path": "models/Nauvoo.glb.gz",
+      "bytes": 1007130,
+      "sha256": "9de2f7120f29684ec4a677106b066102407c5f0601ddc32aef17a3478a62e36a"
+    },
+    {
+      "path": "models/Pella.glb.gz",
+      "bytes": 36896133,
+      "sha256": "8ce14295c1429ca48dc4db850c8c45c4259cafb9f03faeaf4e6a3425dd65ba53"
+    },
+    {
+      "path": "models/Razorback.glb.gz",
+      "bytes": 2769209,
+      "sha256": "e7e92b3c0e8648c6ef69f654c87b6d75a2d7478975f2bec6f821f9ea304abeaf"
+    },
+    {
+      "path": "models/Rocinante.glb.gz",
+      "bytes": 10300971,
+      "sha256": "8db6f0d749458584f67b26ee3f1f443fd2f28b0970cfc00db6e83e428e67f476"
+    },
+    {
+      "path": "models/Scirocco.glb.gz",
+      "bytes": 657572,
+      "sha256": "938c9a58ca7afe6dfaa433a0c073f86fa0ee239318bd17df1d8f3aaedce6bbff"
+    },
+    {
+      "path": "models/Scopuli.glb.gz",
+      "bytes": 569457,
+      "sha256": "f0f8aa2d443ffb6db5c15ecc1f069f5a0bfd6c7431585f2a0c90d3d6c17dcb07"
+    },
+    {
+      "path": "models/Tynan.glb.gz",
+      "bytes": 4670499,
+      "sha256": "1c5ae2705ae229f0afc10ced9d8764e68ce5607ebe29e026b89d81491cd7c17b"
+    },
+    {
+      "path": "vendor/three/build/three.core.js",
+      "bytes": 1443056,
+      "sha256": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759"
+    },
+    {
+      "path": "vendor/three/build/three.module.js",
+      "bytes": 650153,
+      "sha256": "bbf5ed13fe4373f5bd38b14ea8e62e9f157327da5638edc6d3863e08b167c9c7"
+    },
+    {
+      "path": "vendor/three/examples/jsm/controls/OrbitControls.js",
+      "bytes": 40504,
+      "sha256": "faabb4e8dfd9235ee4a9fd7c9a3d75f90f1689dbd4944bd6fd32117dacec5f93"
+    },
+    {
+      "path": "vendor/three/examples/jsm/environments/RoomEnvironment.js",
+      "bytes": 4960,
+      "sha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4"
+    },
+    {
+      "path": "vendor/three/examples/jsm/loaders/GLTFLoader.js",
+      "bytes": 114959,
+      "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2"
+    },
+    {
+      "path": "vendor/three/examples/jsm/math/SimplexNoise.js",
+      "bytes": 15148,
+      "sha256": "4b1455617135e6b477de76244de07547d95570643379b72f4758e50161b06072"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/EffectComposer.js",
+      "bytes": 8501,
+      "sha256": "4e079a5886152d7e529a59aef644e968ab4d32c6a33ce016b36bf29b2eac26f7"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/MaskPass.js",
+      "bytes": 4694,
+      "sha256": "7cd08eee9d5d6f5578beaddbdcbe9c384f6873810af27f22ab7db3ceeb127aa3"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/OutputPass.js",
+      "bytes": 4184,
+      "sha256": "02e4a261af34de71338185e9e87f0cbe5cba9115608d984363e1269dec1d2272"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/Pass.js",
+      "bytes": 4218,
+      "sha256": "444b409c235ead986893c472e720da1b779a56985c7d10b279c7944b52bd61c5"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/RenderPass.js",
+      "bytes": 4280,
+      "sha256": "817f6c3cdcd0fd41515d112359ea0532568eefb5aabd3b33903957ebca1b8a6a"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+      "bytes": 3228,
+      "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/SSAOPass.js",
+      "bytes": 13443,
+      "sha256": "59944f833d10330f6bdd205260ad06a8ef2bd12a115e4101d81578b249627e3f"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/CopyShader.js",
+      "bytes": 729,
+      "sha256": "a33057d5ac91c43304c186ac0e8816e62bb2ed471d3a00ff3018dfd5c0389718"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/OutputShader.js",
+      "bytes": 1876,
+      "sha256": "353479f77a8d7e2629d49ccac9fc2f5dbfdda5442e0adf867b00377a2fcb0cb2"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/SSAOShader.js",
+      "bytes": 6968,
+      "sha256": "034dad98927ed8f2677a19ce56d4da1212ce5070ed2666157106025dc260bb55"
+    },
+    {
+      "path": "vendor/three/examples/jsm/utils/BufferGeometryUtils.js",
+      "bytes": 37621,
+      "sha256": "5c552223a9309883743b80538d6e9cdb45e3227f30d3ec56fb2c39b46e78d595"
+    },
+    {
+      "path": "vendor/three/examples/jsm/utils/SkeletonUtils.js",
+      "bytes": 11535,
+      "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
+    },
+    {
+      "path": "vendor/three/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "viewer.js",
+      "bytes": 11881,
+      "sha256": "b8dc66eb81f101f77c0d3a3a894661a6d1fa6aa26f3cdec13523ad745e49cd73"
+    }
+  ]
+}

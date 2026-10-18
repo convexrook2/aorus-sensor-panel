@@ -13,23 +13,31 @@ internal static class ExpanseMedia
 {
     public static string Folder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "X890Sensor", "ExpanseMedia");
     public static IReadOnlyList<string> Ships { get; } = ShipProfile.All.Select(ship => ship.Id).ToArray();
-    private static readonly Dictionary<string, ExpanseScene> defaults = new()
+    private static readonly Dictionary<string, ExpanseScene> defaults = CreateDefaults();
+    private static Dictionary<string, ExpanseScene> CreateDefaults()
     {
+        var result = new Dictionary<string, ExpanseScene>
+        {
         ["Rocinante"] = new("Rocinante", "James Holden", "Steven Strait", "REMEMBER THE CANT", Association: "CAPTAIN / ROCINANTE"),
         ["Donnager"] = new("Donnager", "Theresa Yao", "Jean Yoon", "MARS / JUPITER FLEET", Association: "CAPTAIN / DONNAGER"),
-        ["Truman"] = new("Truman", "Michael Souther", "Martin Roach", "AGATHA KING / TRUMAN CLASS", Association: "ADMIRAL / AGATHA KING"),
+        ["AgathaKing"] = new("AgathaKing", "Michael Souther", "Martin Roach", "AGATHA KING / TRUMAN CLASS", Association: "ADMIRAL / AGATHA KING"),
         ["Tynan"] = new("Tynan", "Camina Drummer", "Cara Gee", "BELT / SALVAGE OPERATIONS", Association: "CAPTAIN / TYNAN"),
         ["Razorback"] = new("Razorback", "Julie Mao", "Florence Faivre", "A LITTLE REBELLION", Association: "ORIGINAL RACING PILOT"),
         ["Morrigan"] = new("Morrigan", "", "", "MORRIGAN CLASS / PATROL", Association: "SHIP CLASS / CREW UNIDENTIFIED"),
         ["Dropship"] = new("Dropship", "", "", "MCRN / LANDING OPERATIONS", Association: "TRANSPORT TYPE / CREW UNIDENTIFIED"),
         ["Epstein"] = new("Epstein", "Solomon Epstein", "Sam Huntington", "THE DRIVE THAT OPENED THE SYSTEM", Association: "ENGINEER / TEST PILOT")
-    };
+        };
+        foreach (var ship in ShipProfile.All)
+            result.TryAdd(ship.Id, new(ship.Id, "", "", ship.Class, Association: ship.Role));
+        return result;
+    }
     private static Dictionary<string, ExpanseScene>? scenes;
     private static DateTime manifestStamp;
     public static string Status { get; private set; } = "Built-in space scene";
 
     public static ExpanseScene ForShip(string ship)
     {
+        ship=ShipProfile.CanonicalId(ship);
         // Check only when a scene is requested, never on the sensor poll path.
         // Local corrections become visible at the next scene selection.
         DateTime stamp;
@@ -52,8 +60,9 @@ internal static class ExpanseMedia
             foreach (var item in items ?? [])
             {
                 if (item is null || string.IsNullOrWhiteSpace(item.ShipId)) continue;
-                if (!defaults.TryGetValue(item.ShipId, out var fallback)) continue;
-                result[item.ShipId] = fallback with
+                string shipId=ShipProfile.CanonicalId(item.ShipId);
+                if (!defaults.TryGetValue(shipId, out var fallback)) continue;
+                result[shipId] = fallback with
                 {
                     Background = SafeFile(item.Background), Portrait = SafeFile(item.Portrait),
                     Scene = Short(item.Scene, fallback.Scene), Character = Short(item.Character, fallback.Character),

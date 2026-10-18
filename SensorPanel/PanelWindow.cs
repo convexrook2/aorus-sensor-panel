@@ -105,11 +105,19 @@ internal sealed class PanelWindow : Window
         ApplyTheme();
         SizeChanged += (_, _) => UpdatePanelLayout();
         DpiChanged += (_, _) => { if (fit && display is not null) Dispatcher.BeginInvoke(() => Displays.Place(this, display, true)); };
-        viewport.MouseLeftButtonDown += (_, e) => { if (e.ClickCount == 2) ToggleFit(); else if (!fit) DragMove(); };
+        viewport.MouseLeftButtonDown += (_, e) =>
+        {
+            if(shipPanel?.HolotableOpen==true)return;
+            if(e.ClickCount==2)ToggleFit();else if(!fit)DragMove();
+        };
         KeyDown += (_, e) =>
         {
             if (e.Key == Key.Escape && shipPanel?.HolotableOpen == true) { shipPanel.CloseHolotable(); e.Handled = true; }
             else if (e.Key == Key.Escape && settings?.IsOpen == true) { settings.Close(); e.Handled = true; }
+            else if (e.Key == Key.H && Keyboard.Modifiers == ModifierKeys.None && settings?.IsOpen != true
+                && e.OriginalSource is not ComboBox && e.OriginalSource is not ComboBoxItem
+                && theme.ShipConsole && shipPanel?.HolotableAvailable == true)
+            { shipPanel.OpenHolotable(); e.Handled = true; }
             else if (e.Key == Key.F11) ToggleFit(); else if (e.Key == Key.Escape && fit) ToggleFit();
         };
         ContextMenu = BuildMenu();
@@ -776,8 +784,14 @@ internal sealed class PanelWindow : Window
         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
     }
 
-    private void Capture(string path)
+    private async void Capture(string path)
     {
+        if(theme.ShipConsole && shipPanel is not null)
+        {
+            try{await shipPanel.ShipViewport.WaitForReadyAsync();}
+            catch(Exception ex) when(ex is TimeoutException or InvalidOperationException or TaskCanceledException)
+            {File.WriteAllText(Path.Combine(PanelPaths.Artifacts,"fleet-capture-error.txt"),ex.ToString());}
+        }
         FrameworkElement target = theme.ShipConsole ? shipPanel! : board;
         target.UpdateLayout();
         var bitmap = new RenderTargetBitmap((int)Math.Ceiling(target.Width), (int)Math.Ceiling(target.Height), 96, 96, PixelFormats.Pbgra32);
@@ -834,13 +848,21 @@ internal sealed class PanelWindow : Window
                 settings.Close(); await SavePreview(choice.Id.ToLowerInvariant());
                 if (choice.ShipConsole)
                 {
-                    string expected=choice.ShipId switch { "Rocinante"=>"Tycho", "Donnager"=>"Callisto", "Truman"=>"Earth", "Tynan"=>"Medina", "Razorback"=>"Earth", "Morrigan" or "Dropship" or "Epstein"=>"Mars", _=>throw new InvalidOperationException("Missing ship navigation check.") };
+                    string expected=choice.ShipId switch
+                    {
+                        "Rocinante" or "Nauvoo"=>"Tycho", "Donnager"=>"Callisto",
+                        "AgathaKing" or "Razorback" or "Guanshiyin"=>"Earth", "Tynan" or "Medina"=>"Medina",
+                        "Morrigan" or "Dropship" or "Epstein" or "Pella"=>"Mars",
+                        "Canterbury" or "Knight"=>"Ceres", "Anubis" or "Scopuli"=>"Eros",
+                        "Behemoth"=>"SolGate", "Scirocco"=>"Ganymede", "Hammurabi"=>"Io",
+                        "Arboghast"=>"Venus", "BashiBazouk"=>"Sun", _=>throw new InvalidOperationException("Missing ship navigation check.")
+                    };
                     if (shipPanel!.NavigationFocus!=expected) throw new InvalidOperationException("Ship selection focused the wrong planet or station.");
                     shipPanel!.CheckSeparateEffects(); await SavePreview(choice.Id.ToLowerInvariant()+"-projection");
-                    if (choice.ShipId == "Razorback")
+                    if (choice.ShipId is not null)
                     {
-                        if (!shipPanel.HolotableAvailable) throw new InvalidOperationException("The bundled Razorback v2 holotable is unavailable.");
-                        shipPanel.CheckHolotable(); await SavePreview("razorback-holotable"); shipPanel.CloseHolotable();
+                        if (!shipPanel.HolotableAvailable) throw new InvalidOperationException("The bundled ship holotable is unavailable: " + choice.ShipId);
+                        shipPanel.CheckHolotable(); await SavePreview(choice.Id.ToLowerInvariant()+"-holotable"); shipPanel.CloseHolotable();
                     }
                 }
                 if (choice.Showcase)
@@ -1001,6 +1023,34 @@ internal sealed class PanelWindow : Window
             long hidden = view.Diagnose().GetProperty("frameCount").GetInt64(); await Task.Delay(500);
             if (view.MotionActive || view.Diagnose().GetProperty("frameCount").GetInt64() != hidden) throw new InvalidOperationException("Hidden navigation remained active.");
             view.Visibility = Visibility.Visible; view.SetMotion(false); await Task.Delay(300);
+            var holotableShips=new[] { "Donnager","Pella","Razorback","AgathaKing","Tynan","BashiBazouk","Guanshiyin" };
+            var fleetModels=new List<object>();
+            foreach (string ship in holotableShips)
+            {
+                shipPanel!.SelectShip(ship); await shipPanel.ShipViewport.WaitForReadyAsync();
+                UpdateLayout();await Task.Delay(180);
+                var portrait=await shipPanel.ShipViewport.DiagnoseAsync();
+                if(portrait.GetProperty("interactive").GetBoolean() || portrait.GetProperty("id").GetString()!=ship)
+                    throw new InvalidOperationException("The full ship portrait did not follow the selector.");
+                await shipPanel.ShipViewport.CaptureAsync(Path.Combine(output,ship.ToLowerInvariant()+"-full-portrait.png"));
+                shipPanel.CheckHolotable(); await Task.Delay(250); UpdateLayout();
+                var holo=await shipPanel.ShipViewport.DiagnoseAsync();
+                if(!holo.GetProperty("interactive").GetBoolean() || holo.GetProperty("sourceSha256").GetString()!=portrait.GetProperty("sourceSha256").GetString())
+                    throw new InvalidOperationException("The holotable did not retain the identical full model.");
+                if(!holo.GetProperty("active").GetBoolean()
+                    || (long)holo.GetProperty("width").GetInt32()*holo.GetProperty("height").GetInt32()
+                        <= (long)portrait.GetProperty("width").GetInt32()*portrait.GetProperty("height").GetInt32()*1.2)
+                    throw new InvalidOperationException("The holotable did not expand and activate its canvas: "+ship);
+                await shipPanel.ShipViewport.CaptureAsync(Path.Combine(output,ship.ToLowerInvariant()+"-full-holotable.png"));
+                SaveVisual((Visual)Content,ActualWidth,ActualHeight,Path.Combine(output,ship.ToLowerInvariant()+"-holotable-access.png"));
+                fleetModels.Add(new{Ship=ship,Portrait=portrait,Holotable=holo});
+                shipPanel.CloseHolotable();
+                if (shipPanel.HolotableOpen) throw new InvalidOperationException("The holotable did not close.");
+            }
+            shipPanel!.SetMotion(false);await Task.Delay(300);
+            var fleetStopped=await shipPanel.ShipViewport.DiagnoseAsync();await Task.Delay(600);
+            if((await shipPanel.ShipViewport.DiagnoseAsync()).GetProperty("frames").GetInt64()!=fleetStopped.GetProperty("frames").GetInt64())
+                throw new InvalidOperationException("The ship kept rendering after motion stopped.");
             settings!.Open(); await Task.Delay(300); UpdateLayout();
             SaveVisual((Visual)Content, ActualWidth, ActualHeight, Path.Combine(output, "settings-overlay.png")); settings.Close();
             if (baseline.Any(p => p.Key != "date" && p.Key != "uptime" && text[p.Key].Text != p.Value)
@@ -1008,7 +1058,9 @@ internal sealed class PanelWindow : Window
                 throw new InvalidOperationException("Navigation changed the sensor presentation.");
             File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(new
             {
-                Passed = true, OriginalSolNavigationDiagram = true, NativeWpfModels = true, OfflineAssets = true,
+                Passed = true, OriginalSolNavigationDiagram = true, NativeSolarDiagram = true, OfflineAssets = true,
+                FullQualityFleetModels=fleetModels, LosslessSourceModelsChecked=true, SharedPortraitAndHolotableRenderer=true,
+                HolotablePortraitAccessChecked = true, HolotableShips = holotableShips,
                 SchematicAndTrueScaleModes = true, NasaVectorUnitsAndMoonParentsChecked = true, MoonMotionAdvanced = true,
                 OffscreenAndSubpixelMeshesDetached = true, PhysicalTrailsClippedBeforeDrawing = true,
                 EarthNightLights = true, SolarPointLightAndCorona = true, GateOutsideUranus = true, MedinaInSeparateRingSpaceInset = true,

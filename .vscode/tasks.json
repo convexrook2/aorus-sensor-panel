@@ -2,6 +2,26 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Check desktop fleet assets",
+      "type": "shell",
+      "command": "python",
+      "args": ["./tools/Sync-FleetViewer.py", "--check"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build desktop panel (no launch)",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["build", "./SensorPanel/SensorPanel.csproj", "-c", "Release"],
+      "dependsOn": "Check desktop fleet assets",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "Validate holographic sensor panel",
       "type": "shell",
       "command": "& './tools/Validate-Holotable.ps1'",

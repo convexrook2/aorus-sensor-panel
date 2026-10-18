@@ -103,6 +103,12 @@ def convert(source, destination, budget='150000', excluded_node_prefix=''):
         for cells in [768, 512, 384, 256, 192, 128, 96, 64, 48, 32]:
             reduced = {}
             for key, (vertices, faces) in joined.items():
+                material = doc.get('materials', [])[key] if key >= 0 else {}
+                # Small lamp/nozzle meshes must not disappear when hull vertices
+                # merge. A textured full-hull emissive map is not a small lamp.
+                if len(faces) <= 4096 and not material.get('emissiveTexture') and any(material.get('emissiveFactor', [0, 0, 0])):
+                    reduced[key] = (vertices, faces)
+                    continue
                 # Cluster only within the same material and surface direction.
                 # Retain a source vertex's original UV and normal at every merge.
                 keys = np.hstack([np.rint(vertices[:, :3]/(3.2/cells)), np.rint(vertices[:, 3:6]*2)]).astype(np.int32)

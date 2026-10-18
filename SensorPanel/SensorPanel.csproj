@@ -21,12 +21,14 @@
   <ItemGroup>
     <!-- Preserve the prior web adaptation in source; the original native diagram is primary. -->
     <Compile Remove="BelterSystemView.cs" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
     <Using Remove="System.Drawing" />
     <Using Remove="System.Windows.Forms" />
     <Resource Include="../Assets/Branding/AorusFanMade.ico" Link="Branding/AorusFanMade.ico" />
     <Resource Include="../Assets/Ships/*.jpg" Link="Ships/%(Filename)%(Extension)" />
     <Resource Include="../Assets/Models/*.ship" Link="Models/%(Filename)%(Extension)" />
     <Content Include="../Assets/Models/ATTRIBUTION.txt" Link="Holotable-Model-Credits.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../Assets/FleetViewer/**/*" Link="FleetViewer/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Packaging/README.txt" Link="README.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/Expanse/README.md" Link="Expanse-Media-Guide.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/SolarNavigation/textures/*" Link="SolarNavigation/textures/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />

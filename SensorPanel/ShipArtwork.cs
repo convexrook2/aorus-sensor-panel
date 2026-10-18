@@ -14,14 +14,28 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
     [
         new("Rocinante", "ROCINANTE", "ROCI", "CORVETTE", "FLIGHT ENGINEERING", "MikeMac999"),
         new("Donnager", "MCRN DONNAGER", "MCRN", "BATTLESHIP", "TACTICAL ENGINEERING", "Ryan Begemann"),
-        new("Truman", "UNN / TRUMAN CLASS", "UNN", "DREADNOUGHT", "FLEET ENGINEERING", "Ryan Begemann"),
+        new("AgathaKing", "UNN AGATHA KING", "UNN", "TRUMAN CLASS", "FLEET ENGINEERING", "mohamedhussien"),
         new("Tynan", "OPAS TYNAN", "OPA", "SALVAGE SHIP", "SALVAGE ENGINEERING", "Frank Yang"),
         new("Razorback", "RAZORBACK", "RACE", "PINNACE", "PERFORMANCE TELEMETRY", "Ryan Begemann"),
         new("Morrigan", "MCRN MORRIGAN", "MCRN", "PATROL DESTROYER", "PATROL ENGINEERING", "Ryan Begemann"),
         new("Dropship", "MCRN DROPSHIP", "MCRN", "DROPSHIP", "LANDING ENGINEERING", "Ryan Begemann"),
-        new("Epstein", "EPSTEIN'S YACHT", "MARS", "YACHT", "DRIVE ENGINEERING", "Chris Kuhn / owlstraw")
+        new("Epstein", "EPSTEIN'S YACHT", "MARS", "YACHT", "DRIVE ENGINEERING", "Chris Kuhn / owlstraw"),
+        new("Canterbury", "CANTERBURY", "PUR'N'KLEEN", "ICE HAULER", "HAULAGE ENGINEERING", "Original fan model"),
+        new("Knight", "KNIGHT", "PUR'N'KLEEN", "SHUTTLE", "SHUTTLE ENGINEERING", "Original fan model"),
+        new("Anubis", "ANUBIS", "PROTOGEN", "STEALTH FRIGATE", "SYSTEMS ENGINEERING", "Original fan model"),
+        new("Pella", "PELLA", "FREE NAVY", "LIGHT CRUISER", "FLEET ENGINEERING", "Martin Taichl / CC BY 4.0 · adapted"),
+        new("Nauvoo", "LDSS NAUVOO", "LDSS", "GENERATION SHIP", "DRUM ENGINEERING", "Original fan model"),
+        new("Behemoth", "OPAS BEHEMOTH", "OPA", "CONVERTED WARSHIP", "FLEET ENGINEERING", "Original fan model"),
+        new("Medina", "MEDINA STATION", "OPA", "STATION / NAUVOO HULL", "STATION ENGINEERING", "Original fan model"),
+        new("Scopuli", "SCOPULI", "OPA", "LIGHT FREIGHTER", "CARGO ENGINEERING", "Original fan model"),
+        new("Scirocco", "MCRN SCIROCCO", "MCRN", "ASSAULT CRUISER", "MARINE ENGINEERING", "Original fan model"),
+        new("Hammurabi", "MCRN HAMMURABI", "MCRN", "SCIROCCO CLASS", "FLEET ENGINEERING", "Original fan model"),
+        new("Guanshiyin", "GUANSHIYIN", "MAO-KWIK", "YACHT", "YACHT ENGINEERING", "Original fan model"),
+        new("Arboghast", "UNS ARBOGHAST", "UN", "SCIENCE VESSEL", "SURVEY ENGINEERING", "Original fan model"),
+        new("BashiBazouk", "BASHI BAZOUK", "FREE NAVY", "BELTER SHIP", "CARGO ENGINEERING", "Reference: Lee Fitzgerald / North Front")
     ];
-    public static ShipProfile Resolve(string id) => All.Single(s => s.Id == id);
+    internal static string CanonicalId(string id) => id == "Truman" ? "AgathaKing" : id;
+    public static ShipProfile Resolve(string id) => All.Single(s => s.Id == CanonicalId(id));
 }
 // Crop one ship directly from the original embedded pixels. No regenerated art.
 // Decode once at background resolution; selecting a theme does not decode again.
@@ -60,8 +74,9 @@ internal sealed class ShipArtwork : Image
     };
     internal static BitmapSource GetImage(string ship)
     {
+        ship=ShipProfile.CanonicalId(ship);
         if (images.TryGetValue(ship, out var existing)) return existing;
-        if (ship == "Epstein")
+        if (ship == "Epstein" || ship is not ("Rocinante" or "Donnager" or "Truman" or "Tynan" or "Razorback" or "Morrigan" or "Dropship"))
         {
             // Render the actual downloaded hull once for its faded backdrop.
             // No invented blueprint or continuously running background scene.
@@ -116,7 +131,7 @@ internal sealed class ShipArtwork : Image
             if (!image.IsFrozen || image.PixelWidth <= 0 || image.PixelHeight <= 0)
                 throw new InvalidOperationException("Ship image failed to load: " + theme.ShipId);
         }
-        if (PanelTheme.Resolve("MCRN").ShipId != "Donnager" || PanelTheme.Resolve("UNN").ShipId != "Truman"
+        if (PanelTheme.Resolve("MCRN").ShipId != "Donnager" || PanelTheme.Resolve("UNN").ShipId != "AgathaKing"
             || PanelTheme.Resolve("Belter").ShipId != "Tynan")
             throw new InvalidOperationException("Legacy faction theme compatibility failed.");
     }

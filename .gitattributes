@@ -5,3 +5,6 @@ tools/PresentMon/*.patch text eol=lf -whitespace
 # Bundled upstream Three.js stays versioned without enormous dependency diffs.
 Assets/FleetViewer/vendor/** -diff linguist-vendored=true
 FleetStudio/vendor/** -diff linguist-vendored=true
+
+# The desktop bundle manifest hashes exact file bytes across platforms.
+Assets/FleetViewer/** -text whitespace=cr-at-eol

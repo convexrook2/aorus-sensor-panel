@@ -1,0 +1,665 @@
+[
+  {
+    "id": "Pella",
+    "title": "Pella / v26 thin layered armour",
+    "credit": "Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project.",
+    "note": "Thin overlapping outer skins on four engine pods and two forward armour fields, with the original emblems raised onto the coating. Smooth dark finish, recessed flat backing, hatches, lamps and four drives retained. Reference-guided panel interpretation; hidden construction is not production-certified.",
+    "referenceUrl": "https://kelvintam.artstation.com/projects/v2358E",
+    "sourceUrl": "https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse",
+    "triangles": 1023479,
+    "materials": 21,
+    "images": 16,
+    "maps": {
+      "colour": 6,
+      "normal": 6,
+      "occlusion": 0,
+      "metalRough": 6,
+      "emissive": 0
+    },
+    "model": "models/Pella.glb.gz",
+    "sha256": "ba35d65e86fc9fd082f3cda5d4351a23a18e8aaf01e9bac0c14e387ce3f26a75",
+    "coatingReferenceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
+    "coatingReferenceCredit": "Jakub.Vildomec; CC BY 4.0",
+    "coatingLicenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "relatedSources": [
+      {
+        "label": "Kelvin Tam / Rocket Science production gallery (all exterior views)",
+        "url": "https://kelvintam.artstation.com/projects/v2358E"
+      },
+      {
+        "label": "Generation Films / exterior pass at 0:54\u20131:04, docking at 1:51\u20131:54",
+        "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE&t=54s"
+      },
+      {
+        "label": "Thirupathi Nomula / production modelling reel",
+        "url": "https://thirupathinomula.artstation.com/projects/y4QPKK"
+      }
+    ],
+    "sourceBytes": 115243532,
+    "compressedBytes": 36896133,
+    "compression": "gzip-lossless",
+    "compressedSha256": "8ce14295c1429ca48dc4db850c8c45c4259cafb9f03faeaf4e6a3425dd65ba53",
+    "renderMaps": {
+      "colour": 3,
+      "normal": 3,
+      "occlusion": 0,
+      "metalRough": 3,
+      "emissive": 0
+    },
+    "lightUnitScale": 0.0014641288433382138
+  },
+  {
+    "id": "Razorback",
+    "title": "Razorback / owner v2",
+    "credit": "Owner-supplied model, revised for this project against the existing blueprint; reference Ryan Begemann / Mallacore.",
+    "note": "Retained owner v2 geometry and paint. New rendering review only; this pass has not rebuilt its shape or established absolute dimensions.",
+    "referenceUrl": "https://rjb-mallacore.artstation.com/projects/o2QJBq",
+    "triangles": 61116,
+    "materials": 15,
+    "images": 2,
+    "maps": {
+      "colour": 2,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Razorback.glb.gz",
+    "sha256": "e943a21e54606b991ffc76c98444414debc5905b58a5dd61e5019fbf469dbae3",
+    "sourceBytes": 3996092,
+    "compressedBytes": 2769209,
+    "compression": "gzip-lossless",
+    "compressedSha256": "e7e92b3c0e8648c6ef69f654c87b6d75a2d7478975f2bec6f821f9ea304abeaf",
+    "renderMaps": {
+      "colour": 2,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "BashiBazouk",
+    "title": "Bashi Bazouk / v2 hull correction",
+    "credit": "Authored for this project; production reference Lee Fitzgerald / North Front Studio.",
+    "note": "Latest staged v2 with a physically sloped upper hull and conforming panels. Authored fan reconstruction; hidden fittings are interpreted.",
+    "referenceUrl": "https://www.artstation.com/artwork/xYGE4O",
+    "triangles": 86564,
+    "materials": 17,
+    "images": 6,
+    "maps": {
+      "colour": 6,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/BashiBazouk.glb.gz",
+    "sha256": "a80f49b735903cede82930b16fe31c53cc424b45da357d87d63023b38f899440",
+    "sourceBytes": 7598520,
+    "compressedBytes": 3594133,
+    "compression": "gzip-lossless",
+    "compressedSha256": "2260165936b60062bee086aeedc40f71faca35d433184cb5d470c25712353826",
+    "renderMaps": {
+      "colour": 6,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Tynan",
+    "title": "Tynan / v2 detail study",
+    "credit": "Authored for this project; V4 production drawings by Frank Yang / North Front Studio.",
+    "note": "Latest staged detail pass, with layered hardware and authored wear. The production orthos establish proportions; finish remains cleaner than the painting.",
+    "referenceUrl": "https://frankyang.artstation.com/projects/3oAAeo",
+    "triangles": 92814,
+    "materials": 25,
+    "images": 10,
+    "maps": {
+      "colour": 10,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Tynan.glb.gz",
+    "sha256": "092f61042bf558f20f35ea6abfe6f337a2587ecdc7c2e8361d3cffb19b756a0e",
+    "sourceBytes": 8889932,
+    "compressedBytes": 4670499,
+    "compression": "gzip-lossless",
+    "compressedSha256": "1c5ae2705ae229f0afc10ced9d8764e68ce5607ebe29e026b89d81491cd7c17b",
+    "renderMaps": {
+      "colour": 10,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Guanshiyin",
+    "title": "Guanshiyin / v3 V05 study",
+    "credit": "Authored for this project; V05 production drawings by Lee Fitzgerald / North Front Studio; original generated horse mural.",
+    "note": "Lee Fitzgerald V05: shallower bands, pointed aft recess, faceted gold arch and nested gold inlays. Previous version retains v2. Docked Razorback excluded; hidden surfaces interpreted.",
+    "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
+    "triangles": 75670,
+    "materials": 16,
+    "images": 5,
+    "maps": {
+      "colour": 5,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Guanshiyin.glb.gz",
+    "sha256": "d77db10d44c6660e7408177c39356db13aa7a8c41758c7c5a7f5f66d01b9d4a2",
+    "sourceBytes": 6931380,
+    "compressedBytes": 5549263,
+    "compression": "gzip-lossless",
+    "compressedSha256": "1175c35584bc7857fbf4aaca268a1344b9ad81b80b4dfd55ed4d57cd6417402e",
+    "renderMaps": {
+      "colour": 5,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Donnager",
+    "title": "MCRN Donnager / v2 production finish",
+    "credit": "Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.",
+    "note": "Darker grey armour, burnt-orange trim and authored surface normals/roughness from Gautam Singh\u2019s production gallery. Original hull and lettering preserved. Previous version shows v1.",
+    "referenceUrl": "https://gautamsingh.artstation.com/projects/ZyEXR",
+    "sourceUrl": "https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28",
+    "triangles": 1804024,
+    "materials": 11,
+    "images": 6,
+    "maps": {
+      "colour": 4,
+      "normal": 4,
+      "occlusion": 0,
+      "metalRough": 4,
+      "emissive": 0
+    },
+    "model": "models/Donnager.glb.gz",
+    "sha256": "671582ddaed980fb984319a0d9c4c802458284b5be7efb3f88de284695254e47",
+    "sourceBytes": 128620316,
+    "compressedBytes": 49176342,
+    "compression": "gzip-lossless",
+    "compressedSha256": "d6652b9b036465cdf1a7540ed6a1107b09bef216066ea8ef012fc08ec1d902c0",
+    "renderMaps": {
+      "colour": 4,
+      "normal": 4,
+      "occlusion": 0,
+      "metalRough": 4,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Rocinante",
+    "title": "Rocinante / Tachi source",
+    "credit": "Jakub.Vildomec; CC BY 4.0.",
+    "note": "Original downloaded MCRN Tachi fan asset and livery. Source geometry and maps are unchanged; no season-specific Rocinante conversion is claimed.",
+    "referenceUrl": "https://www.artstation.com/artwork/zQwR6",
+    "sourceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
+    "triangles": 140863,
+    "materials": 4,
+    "images": 10,
+    "maps": {
+      "colour": 4,
+      "normal": 3,
+      "occlusion": 3,
+      "metalRough": 3,
+      "emissive": 0
+    },
+    "model": "models/Rocinante.glb.gz",
+    "sha256": "1d65e23b07624aacb74ff929d5c065eb23810d31c7d9f342d823b14c9da43116",
+    "sourceBytes": 19590524,
+    "compressedBytes": 10300971,
+    "compression": "gzip-lossless",
+    "compressedSha256": "8db6f0d749458584f67b26ee3f1f443fd2f28b0970cfc00db6e83e428e67f476",
+    "renderMaps": {
+      "colour": 4,
+      "normal": 3,
+      "occlusion": 3,
+      "metalRough": 3,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Dropship",
+    "title": "MCRN Dropship / original source",
+    "credit": "Chris Kuhn / owlstraw; CC BY 4.0.",
+    "note": "Original downloaded fan GLB with its materials. This pass reviews rendering, not a newly rebuilt dropship.",
+    "referenceUrl": "https://rjb-mallacore.artstation.com/projects/d0bQ0w",
+    "sourceUrl": "https://sketchfab.com/3d-models/mcrn-dropship-the-expanse-1f26e13076a740cd99ec3d0f556dc479",
+    "triangles": 201902,
+    "materials": 5,
+    "images": 1,
+    "maps": {
+      "colour": 2,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Dropship.glb.gz",
+    "sha256": "28bf2b973aca2f04feefd22b63afd0090efb6c0a086410376aca97169520f091",
+    "sourceBytes": 10008996,
+    "compressedBytes": 3603402,
+    "compression": "gzip-lossless",
+    "compressedSha256": "74153e8cdd1619348baf1dcdae8e18060a00da08f195e5daba3b6977dd62b8ad",
+    "renderMaps": {
+      "colour": 2,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Epstein",
+    "title": "Epstein's yacht / original source",
+    "credit": "Chris Kuhn / owlstraw; CC BY 4.0.",
+    "note": "Original downloaded fan GLB and materials. No geometry refinement or production-mesh status is claimed in this pass.",
+    "referenceUrl": "https://rjb-mallacore.artstation.com/projects/PenQB4",
+    "sourceUrl": "https://sketchfab.com/3d-models/epsteins-yacht-the-expanse-137498e7aabb47dfaee3fe2652fadefa",
+    "flipLongitudinal": true,
+    "triangles": 334160,
+    "materials": 8,
+    "images": 1,
+    "maps": {
+      "colour": 4,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Epstein.glb.gz",
+    "sha256": "22b657a6e74ac56870e68edfba6444804051d53441d0c797e7e16e9ab03cb48c",
+    "sourceBytes": 17589836,
+    "compressedBytes": 8326493,
+    "compression": "gzip-lossless",
+    "compressedSha256": "2f8d41e53cc92f295e9525ea43d4e478f64239755446eddf6893b006768ed5f1",
+    "renderMaps": {
+      "colour": 4,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "AgathaKing",
+    "title": "Agatha King / v4 fitted drive lighting",
+    "credit": "Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front.",
+    "note": "Six recessed luminous drive throats and local spill at existing emissive fittings. Original v3 pale armour, slate-blue bands, muted olive trim and all source geometry/maps retained. Reference-guided fan study; name and UN insignia placement remain unverified.",
+    "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
+    "sourceUrl": "https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e",
+    "flipLongitudinal": true,
+    "triangles": 297861,
+    "materials": 3,
+    "images": 4,
+    "maps": {
+      "colour": 1,
+      "normal": 1,
+      "occlusion": 1,
+      "metalRough": 1,
+      "emissive": 1
+    },
+    "model": "models/AgathaKing.glb.gz",
+    "sha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
+    "relatedSources": [
+      {
+        "label": "Lee Fitzgerald / North Front: Agatha King V03 production concepts",
+        "url": "https://leefitzgerald.artstation.com/projects/X1rzxL"
+      }
+    ],
+    "sourceBytes": 62246608,
+    "compressedBytes": 47329112,
+    "compression": "gzip-lossless",
+    "compressedSha256": "6503f7822cef0b57d478f81af895b2f441614b588488124d85e0bc5b16137541",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 1,
+      "occlusion": 1,
+      "metalRough": 1,
+      "emissive": 1
+    },
+    "lightUnitScale": 0.0014641288433382138
+  },
+  {
+    "id": "Morrigan",
+    "title": "MCRN Morrigan / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier simplified project-authored fan study. Detailed downloadable alternatives were researched but are not used in this entry.",
+    "referenceUrl": "https://rjb-mallacore.artstation.com/projects/d0bQ0w",
+    "triangles": 6054,
+    "materials": 8,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Morrigan.glb.gz",
+    "sha256": "2e49cec0a83188f18e915612d92a10bad2a1812642fb00f3783aa50dabb7f600",
+    "sourceBytes": 822100,
+    "compressedBytes": 583770,
+    "compression": "gzip-lossless",
+    "compressedSha256": "bb1cd19d5fa34239b74516c8efeee23554fd6aa3011d3442ffacb180fe0e985b",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Canterbury",
+    "title": "Canterbury / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier simplified project-authored fan study. The official SYFY mesh download was unavailable and is not represented by this geometry.",
+    "referenceUrl": "https://deningart.artstation.com/projects/XP8Vl",
+    "triangles": 24034,
+    "materials": 10,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Canterbury.glb.gz",
+    "sha256": "77a3cddea457dda48460d78cadd43989173c979720d08a50882837065dee8bf9",
+    "sourceBytes": 1393116,
+    "compressedBytes": 690616,
+    "compression": "gzip-lossless",
+    "compressedSha256": "8b79b7eb833e9c7590960e16e06503f5c09a6e86a3b0e2749561aacd35358048",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Knight",
+    "title": "Knight / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier simplified project-authored fan study. The official SYFY mesh download was unavailable; the linked production concept shows damage.",
+    "referenceUrl": "https://deningart.artstation.com/projects/QaqDE",
+    "triangles": 5420,
+    "materials": 7,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Knight.glb.gz",
+    "sha256": "c7469468de6fdb102161c20d29ee73b271a54f56753ccdf8f49db045fe7c180e",
+    "sourceBytes": 717840,
+    "compressedBytes": 566992,
+    "compression": "gzip-lossless",
+    "compressedSha256": "a6fde7aa786841e46ea04af8ed179df1f1764b4b03037d20c55a6e90f393dcf9",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Anubis",
+    "title": "Anubis / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier simplified project-authored fan study. Detailed topology and hidden surfaces remain interpreted; no new refinement in this pass.",
+    "referenceUrl": "https://magazine.artstation.com/2016/02/scenes-concept-art-expanse/",
+    "triangles": 2754,
+    "materials": 9,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Anubis.glb.gz",
+    "sha256": "7fd35b3de9e64b214a6597691549295f83653b149ec0f74974cb4ae733da812b",
+    "sourceBytes": 638232,
+    "compressedBytes": 554272,
+    "compression": "gzip-lossless",
+    "compressedSha256": "2f544c1ad09f1e3af217f383d6235758b4ae536e204f491d45fa4a1251255c4c",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Nauvoo",
+    "title": "LDSS Nauvoo / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier generation-ship fan study. Shares a parametric base with Behemoth and Medina, with separate era fittings; no new refinement.",
+    "referenceUrl": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
+    "triangles": 62630,
+    "materials": 9,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Nauvoo.glb.gz",
+    "sha256": "cf40797eb7aa7bc51592edb6bdeafcc6dd0a30b6ce4b8c65cd50e5e389f71f09",
+    "sourceBytes": 4042036,
+    "compressedBytes": 1007130,
+    "compression": "gzip-lossless",
+    "compressedSha256": "9de2f7120f29684ec4a677106b066102407c5f0601ddc32aef17a3478a62e36a",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Behemoth",
+    "title": "OPAS Behemoth / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier converted-warship fan configuration of the Nauvoo base. Existing geometry is retained; linked production collection includes interior studies.",
+    "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
+    "triangles": 65606,
+    "materials": 9,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Behemoth.glb.gz",
+    "sha256": "c1ddcba52494f4d37ff0245fcf61947b743d55f2454586172b260f963269e447",
+    "sourceBytes": 4152148,
+    "compressedBytes": 1027882,
+    "compression": "gzip-lossless",
+    "compressedSha256": "1c802282b5941e5e782f2dcf88870e018239ffa95688166b824ecc1518b02c28",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Medina",
+    "title": "Medina station / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier station configuration of the Nauvoo base, with distinct fittings. Existing geometry retained; not a newly reconstructed station.",
+    "referenceUrl": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
+    "triangles": 66794,
+    "materials": 10,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Medina.glb.gz",
+    "sha256": "ad72a33ff8667caf8aec31db26e00bb67a3257217c32607b1163bffbe4365b23",
+    "sourceBytes": 4197788,
+    "compressedBytes": 1037274,
+    "compression": "gzip-lossless",
+    "compressedSha256": "430cc1391a63ff635f24af2625bf9ce0af2bf605e85bde2321d4e22c1ab780f4",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Scopuli",
+    "title": "Scopuli / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier simplified project-authored fan study. Full final exterior orthographic coverage remains unresolved; no new refinement.",
+    "referenceUrl": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
+    "triangles": 4864,
+    "materials": 7,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Scopuli.glb.gz",
+    "sha256": "49effe9e695075d0cf7f277fe47c5ced502f4cabd59a38ab01a4bed8fb074cf6",
+    "sourceBytes": 746916,
+    "compressedBytes": 569457,
+    "compression": "gzip-lossless",
+    "compressedSha256": "f0f8aa2d443ffb6db5c15ecc1f069f5a0bfd6c7431585f2a0c90d3d6c17dcb07",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Scirocco",
+    "title": "MCRN Scirocco / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier project-authored class model. Its native geometry matches Hammurabi; production turnarounds are references for a future refinement.",
+    "referenceUrl": "https://deningart.artstation.com/projects/RyJwRm",
+    "triangles": 18958,
+    "materials": 9,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Scirocco.glb.gz",
+    "sha256": "b13bbd793799b15c8828a5ea2dd4a0ad1b95b1b788ea7b455a6ad004f1b75dd0",
+    "sourceBytes": 1239132,
+    "compressedBytes": 657572,
+    "compression": "gzip-lossless",
+    "compressedSha256": "938c9a58ca7afe6dfaa433a0c073f86fa0ee239318bd17df1d8f3aaedce6bbff",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Hammurabi",
+    "title": "MCRN Hammurabi / shared Scirocco geometry",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier Scirocco-class configuration, sharing geometry with Scirocco. Existing paint differs; distinct named-vessel fittings are not established.",
+    "referenceUrl": "https://deningart.artstation.com/projects/RyJwRm",
+    "triangles": 18958,
+    "materials": 9,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Hammurabi.glb.gz",
+    "sha256": "b52da98ea14fe3f998752ffb429a17943f6b6cb2009d4a13c2ac45d471384930",
+    "sourceBytes": 1238452,
+    "compressedBytes": 656928,
+    "compression": "gzip-lossless",
+    "compressedSha256": "02d4ee36f9e3d97e54570d62d82434c196273edb8d14d67dcb2b04179864dd37",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  },
+  {
+    "id": "Arboghast",
+    "title": "UNS Arboghast / earlier fan study",
+    "credit": "Authored for this project; independent fan approximation.",
+    "note": "Earlier simplified project-authored science-vessel model. Production exterior reference is available; complete orthographic reconstruction is pending.",
+    "referenceUrl": "https://karlcrosby.artstation.com/projects/1ndxoZ",
+    "triangles": 9882,
+    "materials": 8,
+    "images": 1,
+    "maps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "model": "models/Arboghast.glb.gz",
+    "sha256": "d537f34c26e9e82c3f8f85e678b04d06ae867d04ea95437e1f7625ab71f4dd84",
+    "sourceBytes": 984672,
+    "compressedBytes": 650454,
+    "compression": "gzip-lossless",
+    "compressedSha256": "58090c012e65391e51f69f845ea492fc213882d0b83a5d1047ba36de626736ff",
+    "renderMaps": {
+      "colour": 1,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    }
+  }
+]

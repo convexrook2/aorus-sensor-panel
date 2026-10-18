@@ -9,7 +9,8 @@ using System.Windows.Media.Media3D;
 
 namespace SensorPanel;
 
-internal sealed record ShipModelPart(MeshGeometry3D Mesh, Material Original, bool DoubleSided);
+internal sealed record ShipModelPart(MeshGeometry3D Mesh, Material Original, bool DoubleSided,
+    string MaterialName, Color? SolidEmission);
 
 internal static class ShipModel
 {
@@ -18,6 +19,7 @@ internal static class ShipModel
     private sealed record SceneInfo(int Format, int Triangles, int Parts, MaterialInfo[] Materials);
     public static IReadOnlyList<ShipModelPart> Load(string ship)
     {
+        ship=ShipProfile.CanonicalId(ship);
         if (cache.TryGetValue(ship, out var existing)) return existing;
         using var package = typeof(App).Assembly.GetManifestResourceStream("SensorPanel.g.resources")!;
         using var resources = new ResourceReader(package);
@@ -54,7 +56,9 @@ internal static class ShipModel
                 if (mesh.Normals.All(n => n.LengthSquared<1e-12)) mesh.Normals.Clear();
                 for (int i=0; i<indices; i++) { int index=reader.ReadInt32(); if (index<0 || index>=vertices) throw new InvalidDataException("Invalid ship triangle."); mesh.TriangleIndices.Add(index); }
                 mesh.Freeze(); triangles+=indices/3;
-                parts.Add(new(mesh, materials[material], scene.Materials[material].DoubleSided));
+                var info=scene.Materials[material];
+                Color? emission=info.EmissiveTexture is null && info.Emissive.Any(c=>c>0) ? Colour(info.Emissive) : null;
+                parts.Add(new(mesh, materials[material], info.DoubleSided, info.Name, emission));
             }
             if (triangles!=scene.Triangles || geometry.ReadByte()!=-1) throw new InvalidDataException("Ship geometry does not match its manifest.");
             cache.Add(ship, parts); return parts;

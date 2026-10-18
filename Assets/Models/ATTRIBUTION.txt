@@ -58,3 +58,92 @@ their respective owners.
 Conversion: native static WPF mesh, uniform display normalization, original UVs,
 normals and base colours; optional FX glow omitted for the idle view. All 61,020
 remaining triangles retained. WPF lighting approximates the GLB's PBR materials.
+
+ORIGINAL REFERENCE-GUIDED FLEET MODELS
+Tynan, Morrigan, Canterbury, Knight, Anubis, Nauvoo, Behemoth, Medina,
+Scopuli, Scirocco, Hammurabi, Guanshiyin and Arboghast.
+Authored for this project with tools/Build-ExpanseFleet.py; editable GLBs,
+generation report and reference provenance: Assets/Models/Source/Fleet/.
+Geometry, UV maps, panel textures and stencils are authored by the generator.
+No production mesh, purchased geometry, Sketchfab extraction or reference-image
+pixels are bundled in these assets. These independent fan approximations are
+not official production models. Unseen fittings and minor markings are
+interpreted; model units do not assert certified fictional physical dimensions.
+Rights in the depicted fictional spacecraft remain with their respective owners.
+No third-party Creative Commons licence is claimed for these authored meshes.
+
+Visual-reference credits:
+- Tynan: Frank Yang / North Front Studio, Season 4 concept orthographics.
+  https://frankyang.artstation.com/projects/3oAAeo
+- Morrigan: existing Ryan Begemann / Mallacore orthographic reference.
+  https://www.reddit.com/r/TheExpanse/comments/ts4tfm/
+- Canterbury, Knight, Anubis, Nauvoo/Behemoth/Medina, Scopuli, Scirocco/Hammurabi,
+  Guanshiyin and Arboghast: TV exterior references collected by The Expanse Wiki.
+  Individual source URLs and interpretation limits are in Fleet/references.json.
+- Scirocco production concept reference credits North Front Studio.
+
+Nauvoo, Behemoth and Medina use one authored base with configuration changes.
+Hammurabi uses the authored Scirocco-class base and its own markings.
+Agatha King reuses the existing mohamedhussien Truman mesh under its existing
+CC BY 4.0 credit above; it is a named presentation, not a newly authored hull.
+
+PELLA - ADAPTATION OF A LICENSED FAN MESH
+Original model: Raptor Class Light Cruiser From the Expanse
+Original author: Martin Taichl (@Martin)
+https://www.printables.com/@Martin
+https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse
+Creative Commons Attribution 4.0 International (CC BY 4.0).
+https://creativecommons.org/licenses/by/4.0/
+Downloaded from the author's Whole folder on 2026-10-16:
+xxx_-_raptor_whole.stl. Preserved source:
+Assets/Models/Source/Fleet/Pella-Martin-CCBY4.stl.gz
+Full attribution and original STL checksum:
+Assets/Models/Source/Fleet/Pella-Martin-LICENSE.txt
+
+Changes: adapted and reduced the assembled STL for the static panel viewer;
+normalized orientation and display scale; created UV coordinates and new
+material painting for the Free Navy appearance; converted to GLB and the
+native panel scene. The original STL supplies geometry without textures.
+Pipeline: tools/PellaMesh.py, tools/PellaModel.py, tools/Build-ExpanseFleet.py
+and tools/Convert-HoloScene.py. This replaces the earlier procedural Pella
+approximation; Pella is excluded from the original-geometry claims above.
+The base is a fan recreation, not an official production mesh or a certified
+1:1 replica. The source creator's MCRN colours and name are their interpretation.
+
+Visual references for the adaptation (no reference pixels or production
+textures bundled in the model assets):
+- Kelvin Tam, production renders; modelling by Thirupathi Nomula and Jude Perera.
+  https://kelvintam.artstation.com/projects/v2358E
+- Thirupathi Nomula, production modelling portfolio: Pella and Ceres docking.
+  https://thirupathinomula.artstation.com/projects/y4QPKK
+- Chris Danelon, production VFX turntable, Pella chapter 00:21-01:17.
+  https://www.youtube.com/watch?v=vefkFrWLuNI&t=21s
+- Generation Films, owner-supplied fan breakdown, exterior/docking 00:44-01:50.
+  https://www.youtube.com/watch?v=eZg1ocpLXOE
+
+
+Reviewed Fleet Studio native revisions (2026-10-16)
+Pella: Pella / v9 stealth finish
+Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project.
+Study source SHA256: 5fd5c97587c9809971b8d4383965272c169a3737482c6663a58541eea27c46a5
+AgathaKing: Agatha King / v3 reference paint
+Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front.
+Study source SHA256: 7be202fb161751a2d93d6fdbd1fb739549582ec7f7c947da325a63da8aa3d9f8
+BashiBazouk: Bashi Bazouk / v2 hull correction
+Authored for this project; production reference Lee Fitzgerald / North Front Studio.
+Study source SHA256: a80f49b735903cede82930b16fe31c53cc424b45da357d87d63023b38f899440
+Tynan: Tynan / v2 detail study
+Authored for this project; V4 production drawings by Frank Yang / North Front Studio.
+Study source SHA256: 092f61042bf558f20f35ea6abfe6f337a2587ecdc7c2e8361d3cffb19b756a0e
+Guanshiyin: Guanshiyin / v3 V05 study
+Authored for this project; V05 production drawings by Lee Fitzgerald / North Front Studio; original generated horse mural.
+Study source SHA256: d77db10d44c6660e7408177c39356db13aa7a8c41758c7c5a7f5f66d01b9d4a2
+Razorback: Razorback / owner v2
+Owner-supplied model, revised for this project against the existing blueprint; reference Ryan Begemann / Mallacore.
+Study source SHA256: e943a21e54606b991ffc76c98444414debc5905b58a5dd61e5019fbf469dbae3
+Prepared with tools/Prepare-FleetNative.py; original full study files preserved. Native WPF uses base colour and geometric normals, with a 150000 triangle budget. PBR normal/ORM maps remain in the study viewer. Artist reference images are not included in native packages. Agatha King is now an independently painted resource, not a Truman alias.
+
+Donnager v2 finish: Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.
+https://gautamsingh.artstation.com/projects/ZyEXR
+New authored colour, roughness and micro-normal surface finish; licensed fan geometry and lettering retained. Full PBR maps stay in the study; native package keeps the new colour finish.
+Study source SHA256: 671582ddaed980fb984319a0d9c4c802458284b5be7efb3f88de284695254e47

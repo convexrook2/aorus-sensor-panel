@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
@@ -20,8 +21,10 @@ internal sealed class ShipPanel : Canvas
     private bool motion = PanelPreferences.HolographicMotion;
     private bool readoutPulse = PanelPreferences.ReadoutPulse;
     private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
-    private ShipPortrait? shipPortrait;
+    private readonly FleetViewport shipPortrait = new();
+    internal FleetViewport ShipViewport => shipPortrait;
     private Grid? shipMedia;
+    private Button? holotableAccess;
     private ExpanseBackdrop? showcaseBackdrop;
     private ExpanseCrew? showcaseCrew;
     private TextBlock? heading, faction, mediaCredit;
@@ -91,8 +94,8 @@ internal sealed class ShipPanel : Canvas
             if (element.Parent is Panel parent) parent.Children.Remove(element);
             else if (element.Parent is Decorator decorator) decorator.Child = null;
         }
-        shipPortrait?.SetMotion(false);
-        shipPortrait=null;
+        shipPortrait.SetMotion(false);
+        shipMedia?.Children.Remove(shipPortrait);
         showcaseBackdrop?.SetMotion(false);
         showcaseBackdrop=null;
         showcaseCrew?.SetMotion(false);
@@ -130,6 +133,14 @@ internal sealed class ShipPanel : Canvas
         Put(this, new Border { Background=theme.Chrome, Opacity=.32, CornerRadius=new CornerRadius(10) }, plan.Sidebar);
         shipMedia=new Grid { ClipToBounds=true, IsHitTestVisible=false };
         Put(this,shipMedia,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-64)));
+        // Keep the portrait decorative; a separate accessible button owns input.
+        var hitArea=new FrameworkElementFactory(typeof(Border));
+        hitArea.SetValue(Border.BackgroundProperty,Brushes.Transparent);
+        holotableAccess=new Button { Cursor=Cursors.Hand, ToolTip="Open ship holotable (H)",
+            Template=new ControlTemplate(typeof(Button)) { VisualTree=hitArea } };
+        System.Windows.Automation.AutomationProperties.SetName(holotableAccess,"Open ship holotable");
+        holotableAccess.Click+=(_,_)=>OpenHolotable();
+        Put(this,holotableAccess,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-64)));
         if (theme.Showcase)
         {
             showcaseCrew=new ExpanseCrew();
@@ -206,13 +217,14 @@ internal sealed class ShipPanel : Canvas
     private void UpdateSceneMedia(ShipProfile vessel,bool fade)
     {
         if (activeTheme is null || shipMedia is null) return;
-        shipPortrait?.SetMotion(false); shipPortrait=null;
+        shipPortrait.SetMotion(false);
         shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1;
         shipMedia.Children.Clear();
         bool model=ShipPortrait.Supports(vessel.Id);
+        if (holotableAccess is not null) holotableAccess.IsEnabled=model;
         if (model)
         {
-            shipPortrait=new ShipPortrait(vessel.Id);
+            shipPortrait.SetShip(vessel.Id);shipPortrait.SetInteractive(false);
             shipPortrait.SetMotion(motion); shipMedia.Children.Add(shipPortrait);
         }
         else shipMedia.Children.Add(new ShipArtwork(activeTheme with { ShipId=vessel.Id },true) { Opacity=.7 });
@@ -240,7 +252,10 @@ internal sealed class ShipPanel : Canvas
     private void FitShipMedia()
     {
         if (shipMedia is not null)
+        {
             shipMedia.Height=Math.Max(80,sidebarBounds.Height-64-(showcaseCrew?.HasImage == true ? 146 : 0));
+            if (holotableAccess is not null) holotableAccess.Height=shipMedia.Height;
+        }
     }
 
     private void Hardware(Rect bounds, PanelTheme theme, bool gpu)
@@ -352,7 +367,8 @@ internal sealed class ShipPanel : Canvas
     internal void OpenHolotable()
     {
         if (holotable is not null || activeTheme is null || !HolotableAvailable) return;
-        holotable = new Holotable(activeTheme with { ShipId=FeaturedShipId }, source, motion, readoutPulse, CloseHolotable);
+        shipMedia?.Children.Remove(shipPortrait);
+        holotable = new Holotable(activeTheme with { ShipId=FeaturedShipId }, source, motion, readoutPulse, CloseHolotable,shipPortrait);
         projection?.SetMotion(false);
         Put(this, holotable, new(8, 8, Width - 16, Height - 36));
         SetZIndex(holotable, 10); holotable.Focus();
@@ -360,12 +376,21 @@ internal sealed class ShipPanel : Canvas
     internal void CloseHolotable()
     {
         if (holotable is null) return;
-        holotable.SetMotion(false); Children.Remove(holotable); holotable = null;
+        holotable.ReleaseViewport(); Children.Remove(holotable); holotable = null;
+        shipPortrait.SetInteractive(false);shipPortrait.SetMotion(motion);
+        shipMedia?.Children.Add(shipPortrait);
         projection?.SetMotion(motion);
     }
     internal void CheckHolotable()
     {
-        OpenHolotable();
+        if (holotableAccess is not { IsEnabled:true, IsVisible:true })
+            throw new InvalidOperationException("The ship portrait cannot open its holotable.");
+        var hit=InputHitTest(new Point(GetLeft(holotableAccess)+holotableAccess.Width/2,
+            GetTop(holotableAccess)+holotableAccess.Height/2)) as DependencyObject;
+        if (hit is null || (hit!=holotableAccess && !holotableAccess.IsAncestorOf(hit)))
+            throw new InvalidOperationException("Another control blocks the ship holotable button.");
+        holotableAccess.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        if (holotable is null) throw new InvalidOperationException("The ship portrait click did not open its holotable.");
         holotable!.CheckInteraction();
         holotable.SetMotion(motion);
         CheckBindings();

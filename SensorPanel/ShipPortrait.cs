@@ -16,7 +16,11 @@ internal sealed class ShipPortrait : Grid
     private static readonly IReadOnlyDictionary<string, PortraitPose> poses = new Dictionary<string, PortraitPose>
     {
         ["Rocinante"] = new(1), ["Donnager"] = new(1), ["Dropship"] = new(1),
-        ["Truman"] = new(-1), ["Epstein"] = new(-1), ["Razorback"] = new(1)
+        ["Epstein"] = new(-1), ["Razorback"] = new(1),
+        ["Tynan"] = new(1), ["Morrigan"] = new(1), ["Canterbury"] = new(1), ["Knight"] = new(1),
+        ["Anubis"] = new(1), ["Pella"] = new(1), ["Nauvoo"] = new(1), ["Behemoth"] = new(1),
+        ["Medina"] = new(1), ["Scopuli"] = new(1), ["Scirocco"] = new(1), ["Hammurabi"] = new(1),
+        ["Guanshiyin"] = new(1), ["Arboghast"] = new(1), ["AgathaKing"] = new(-1), ["BashiBazouk"] = new(1)
     };
     private readonly OrthographicCamera camera = new(new(0, 0, 6), new(0, 0, -6), new(0, 1, 0), 2);
     private readonly AxisAngleRotation3D yaw = new(new(0, 1, 0), -28);
@@ -29,6 +33,7 @@ internal sealed class ShipPortrait : Grid
 
     public ShipPortrait(string ship)
     {
+        ship=ShipProfile.CanonicalId(ship);
         if (!Supports(ship)) throw new ArgumentException("This ship has no original 3D model.", nameof(ship));
         ClipToBounds = true; IsHitTestVisible = false; Focusable = false;
         var hull = new Model3DGroup();
@@ -61,22 +66,28 @@ internal sealed class ShipPortrait : Grid
         if (pose.NosePolarity == -1)
             upright.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new(0, 0, 1), 180)));
         portraitNose = upright.Transform(sourceLongAxis * pose.NosePolarity);
-        upright.Freeze(); uprightBounds = upright.TransformBounds(bounds);
+        upright.Freeze();
+        var visibleBounds=upright.TransformBounds(bounds);
+        var emitters=ShipLighting.ForPortrait(hullParts.Select(p=>p.Part).ToArray(),upright,visibleBounds);
+        visibleBounds.Union(emitters.Bounds); uprightBounds=visibleBounds;
         horizontalRadius = Math.Sqrt(uprightBounds.SizeX*uprightBounds.SizeX + uprightBounds.SizeZ*uprightBounds.SizeZ)/2;
         hull.Transform = upright; hull.Freeze();
 
         var rotating = new Model3DGroup { Transform = new RotateTransform3D(yaw) };
-        rotating.Children.Add(hull);
+        rotating.Children.Add(hull); rotating.Children.Add(emitters);
         var scene = new Model3DGroup();
-        scene.Children.Add(new AmbientLight(Color.FromRgb(110, 110, 110)));
-        scene.Children.Add(new DirectionalLight(Colors.White, new(-1, -.5, -3)));
-        scene.Children.Add(new DirectionalLight(Color.FromRgb(140, 140, 140), new(2, -1, 2)));
+        // Lights stay fixed in view space while the hull rotates through them.
+        // A low fill preserves the shaded side; the key reveals dark plating.
+        scene.Children.Add(new AmbientLight(Color.FromScRgb(1,.035f,.04f,.05f)));
+        float key=ship=="Pella" ? 2.4f : 1.15f;
+        scene.Children.Add(new DirectionalLight(Color.FromScRgb(1,key,key*.94f,key*.9f), new(-1.5,-.65,-2)));
+        scene.Children.Add(new DirectionalLight(Color.FromScRgb(1,.22f,.33f,.5f), new(1,.2,1.5)));
         scene.Children.Add(rotating);
         var view = new Viewport3D { Camera = camera, ClipToBounds = true, IsHitTestVisible = false };
         view.Children.Add(new ModelVisual3D { Content = scene }); Children.Add(view);
 
         double distance = Math.Max(4, horizontalRadius*3 + 1);
-        camera.Position = new(0, 0, distance); camera.LookDirection = new(0, 0, -distance);
+        camera.Position = new(0, uprightBounds.Y+uprightBounds.SizeY/2, distance); camera.LookDirection = new(0, 0, -distance);
         camera.NearPlaneDistance = .1; camera.FarPlaneDistance = distance + horizontalRadius + 2;
         SizeChanged += (_, _) => FitCamera();
         IsVisibleChanged += (_, _) => UpdateMotion();
@@ -93,7 +104,7 @@ internal sealed class ShipPortrait : Grid
         FitCamera();
     }
 
-    public static bool Supports(string? ship) => ship is not null && poses.ContainsKey(ship);
+    public static bool Supports(string? ship) => ship is not null && poses.ContainsKey(ShipProfile.CanonicalId(ship));
     public bool MotionActive => yaw.HasAnimatedProperties;
     public void SetMotion(bool enabled) { motion = enabled; UpdateMotion(); }
 
@@ -125,8 +136,9 @@ internal sealed class ShipPortrait : Grid
 
     internal void Check()
     {
-        if (poses.Count != 6 || poses["Rocinante"].NosePolarity != 1 || poses["Donnager"].NosePolarity != 1
-            || poses["Dropship"].NosePolarity != 1 || poses["Truman"].NosePolarity != -1 || poses["Epstein"].NosePolarity != -1
+        if (poses.Count != ShipProfile.All.Count || ShipProfile.All.Any(ship => !poses.ContainsKey(ship.Id))
+            || poses["Rocinante"].NosePolarity != 1 || poses["Donnager"].NosePolarity != 1
+            || poses["Dropship"].NosePolarity != 1 || poses["AgathaKing"].NosePolarity != -1 || poses["Epstein"].NosePolarity != -1
             || poses["Razorback"].NosePolarity != 1
             || (portraitNose - new Vector3D(0, 1, 0)).Length > 1e-8)
             throw new InvalidOperationException("Portrait pose must retain the verified per-ship nose/engine polarity.");
