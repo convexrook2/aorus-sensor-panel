@@ -18,6 +18,8 @@ Hardware support depends on the available sensor interfaces and drivers.
   .NET Framework, an x86 runtime or the core runtime alone do not satisfy it.
 - Administrator access and an existing [PawnIO 2.2+ driver](https://pawnio.eu)
   for supported CPU and motherboard readings. Setup does not install a driver.
+- [Microsoft Edge WebView2 Evergreen Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section)
+  for the full ship viewport. Setup checks for it and offers the official download.
 - An installed NVIDIA driver for NVIDIA GPU readings. Other GPU vendors are
   not currently supported by this collector.
 
@@ -75,7 +77,7 @@ the menu. The tray menu remains available while the panel is hidden.
   Windows animation preferences.
 
 The collection includes Classic, Dark, ICE and additional colour palettes,
-plus **The Expanse** main theme and eight individual ship themes. Theme changes retain readings,
+plus **The Expanse** main theme and 21 individual ship themes. Theme changes retain readings,
 maxima, display selection and polling settings. Session maxima reset when
 the app restarts.
 
@@ -88,7 +90,7 @@ RPM and NVIDIA fan duty. Fan duty is a percentage, not RPM. Actor captions,
 unidentified-crew placeholders and the inactive "ORIGINAL COLOURS" label are removed.
 
 Choose **Settings → Theme → The Expanse** for a space showcase that cycles
-through all eight existing ships. **Settings → Expanse showcase** controls
+through all 21 ships. **Settings → Expanse showcase** controls
 automatic cycling, with a default interval of 45 seconds and choices from
 15–120 seconds. Selecting a ship manually holds that ship until **Auto cycle**
 is enabled again. These controls are separate from **Holographic display**,
@@ -126,21 +128,20 @@ Tycho's mobile Belt position is approximate; the fixed Sol gate is shown
 outside Uranus. Medina retains its separate Ring Space inset, distinct from
 the alien central station. See [navigation scope and credits](SensorPanel/SolarSystem.md).
 
-Rocinante/Tachi, Donnager, Truman, Epstein's Yacht and the MCRN dropship have
-bundled original-colour 3D models in the left artwork strip. Razorback uses the
-owner-supplied v2 model, reshaped against the existing orthographic blueprint,
-in both the rotating strip and holotable. Tynan and Morrigan use flat artwork.
-The Sketchfab Razorback remains a visual reference; its mesh is not bundled.
-The original v2 GLB is retained in `Assets/Models/Source`; convert it with
-`python tools/Convert-HoloScene.py Assets/Models/Source/Razorback_Blueprint_v2.glb Assets/Models/Razorback.ship 150000 FX`.
-The optional FX glow is omitted for the native idle model. Geometry is retained
-without simplification; source hash and conversion details are inside the asset.
+All 21 ships have local 3D portraits and holotables using one reusable WebView2
+GPU viewport. Click the portrait or press **H** to open the holotable. Drag to
+orbit, scroll or pinch to zoom, use **RESET VIEW** to reset, and **CLOSE** or
+**Escape** to return to the portrait. Both views retain the identical full
+model and embedded PBR maps, checked against its SHA-256 value. No additional
+mesh reduction or texture resampling occurs in the full viewport.
 
-Bundled meshes retain original base-colour/emissive textures, UVs, normals and
-artist credits. Native WPF lighting approximates their source materials.
-Ship artwork motion is capped at 20 fps; navigation at 30 fps, paused when hidden
-or motion is disabled. Both run independently of collection. Decorative
-animation does not represent sensor measurements or fictional tactical data.
+Agatha King has six illuminated drive throats. Pella has thin layered armour
+over its smooth dark finish and recessed backing. These remain credited fan
+studies; earlier approximations are labelled in the catalogue. Source and
+asset credits accompany `Assets/FleetViewer/`. Artwork loads locally and uses
+no runtime reference-image downloads. Ship and navigation motion stop when
+hidden or disabled and run independently of collection. Decorative animation
+does not represent sensor measurements or fictional tactical data.
 
 See [model credits](Assets/Models/ATTRIBUTION.txt),
 [artwork sources](Assets/Ships/sources.json) and
@@ -192,7 +193,8 @@ local Belter texture/mesh assets with the offline Node.js tooling;
 `tools/Validate-SolarNavigation.ps1` checks the restored original diagram
 in visible native previews at three panel sizes.
 Use `tools/Build-Installer.ps1` to build and package the
-shared-runtime installer; packaging also requires Inno Setup 6. The optional
+shared-runtime installer; packaging also requires Python 3 for asset checks
+and Inno Setup 6. The optional
 NVIDIA FrameView runtime source is optional; its native bridge build currently
 requires the SDK and C++ tools listed above. Normal automatic FPS uses PresentMon.
 

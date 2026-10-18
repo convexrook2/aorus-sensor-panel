@@ -1,5 +1,5 @@
 #define AppName "AORUS Sensor Panel - FAN MADE"
-#define AppVersion "1.8.4"
+#define AppVersion "1.8.5"
 #ifndef PackageRoot
   #error PackageRoot must identify the validated shared-runtime publish directory.
 #endif
@@ -10,7 +10,11 @@
   #error OutputRoot must identify the installer output directory.
 #endif
 [Setup]
+#if defined(RuntimeProbeRoot) || defined(WebViewProbeVersion)
+AppId={{A581AA94-321C-4C69-AB20-7551DA1D7212}
+#else
 AppId={{1B7C308F-694A-4C92-8C95-218009316F78}
+#endif
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher=Independent FAN MADE project
@@ -55,6 +59,10 @@ Filename: "{app}\SensorPanel.exe"; Parameters: "--remove-install-startup"; Flags
 [Code]
 const
   RuntimeDownload = 'https://dotnet.microsoft.com/en-us/download/dotnet/10.0';
+  WebViewDownload = 'https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section';
+  WebViewMessage = 'Microsoft Edge WebView2 Evergreen Runtime is required for the ship viewer but was not found.' + #13#10#13#10 +
+    'Install the Evergreen Runtime from Microsoft, then choose Check again.' + #13#10 +
+    'Setup does not install or change your web browser.';
   RuntimeMessage = 'Microsoft .NET 10 Desktop Runtime (x64) is required but was not found.' + #13#10#13#10 +
     'Install the Windows x64 Desktop Runtime from Microsoft, then retry Setup.' + #13#10 +
     'The x86 runtime, .NET Framework, and .NET 8 do not satisfy this requirement.' + #13#10#13#10 +
@@ -119,27 +127,47 @@ begin
   Result := RuntimeAtRoot(ExpandConstant('{commonpf64}\dotnet'));
 end;
 
+function HasWebViewRuntime: Boolean;
+var
+  Version, Key: String;
+begin
+  Key := 'SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}';
+  { Compile-time negative fixture; never supplied to release builds. }
+#ifdef WebViewProbeVersion
+  Version := '{#WebViewProbeVersion}';
+  Result := (Trim(Version) <> '') and (Version <> '0.0.0.0');
+  Exit;
+#endif
+  Result := False;
+  if RegQueryStringValue(HKLM32, Key, 'pv', Version) then
+    if (Trim(Version) <> '') and (Version <> '0.0.0.0') then begin Result := True; Exit; end;
+  if RegQueryStringValue(HKCU32, Key, 'pv', Version) then
+    if (Trim(Version) <> '') and (Version <> '0.0.0.0') then begin Result := True; Exit; end;
+  if RegQueryStringValue(HKCU64, Key, 'pv', Version) then
+    if (Trim(Version) <> '') and (Version <> '0.0.0.0') then begin Result := True; Exit; end;
+end;
+
 procedure RefreshRuntime(Sender: TObject);
 begin
-  if HasDesktopRuntime then
-    RuntimeLabel.Caption := 'Microsoft .NET 10 Desktop Runtime (x64) was found.' + #13#10#13#10 +
-      'This smaller installer uses the shared runtime already on your PC. It does not bundle another copy.'
-  else
-    RuntimeLabel.Caption := RuntimeMessage;
+  if not HasDesktopRuntime then RuntimeLabel.Caption := RuntimeMessage
+  else if not HasWebViewRuntime then RuntimeLabel.Caption := WebViewMessage
+  else RuntimeLabel.Caption := 'Microsoft .NET 10 Desktop Runtime (x64) and WebView2 Evergreen Runtime were found.' + #13#10#13#10 +
+    'Setup uses the shared runtimes already on your PC. It does not bundle private copies.';
 end;
 
 procedure OpenRuntimeDownload(Sender: TObject);
 var
   ErrorCode: Integer;
 begin
-  ShellExec('open', RuntimeDownload, '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
+  if not HasDesktopRuntime then ShellExec('open', RuntimeDownload, '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode)
+  else ShellExec('open', WebViewDownload, '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
 end;
 
 procedure InitializeWizard;
 var
   DownloadButton, RefreshButton: TNewButton;
 begin
-  RuntimePage := CreateCustomPage(wpWelcome, 'Required runtime', 'Microsoft .NET 10 Desktop Runtime (x64)');
+  RuntimePage := CreateCustomPage(wpWelcome, 'Required runtimes', '.NET 10 Desktop (x64) and WebView2 Evergreen');
   RuntimeLabel := TNewStaticText.Create(RuntimePage);
   RuntimeLabel.Parent := RuntimePage.Surface;
   RuntimeLabel.SetBounds(0, 0, RuntimePage.SurfaceWidth, ScaleY(145));
@@ -163,10 +191,10 @@ begin
   Result := True;
   if CurPageID = RuntimePage.ID then begin
     RefreshRuntime(nil);
-    Result := HasDesktopRuntime;
+    Result := HasDesktopRuntime and HasWebViewRuntime;
     if not Result then begin
-      if WizardSilent then Log(RuntimeMessage)
-      else MsgBox(RuntimeMessage + #13#10#13#10 + RuntimeDownload, mbError, MB_OK);
+      if WizardSilent then Log(RuntimeLabel.Caption)
+      else MsgBox(RuntimeLabel.Caption, mbError, MB_OK);
     end;
   end;
 end;
@@ -175,7 +203,8 @@ function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
   Result := '';
   { Also gates silent installs before any legacy runtime cleanup or file writes. }
-  if not HasDesktopRuntime then Result := RuntimeMessage + #13#10#13#10 + RuntimeDownload;
+  if not HasDesktopRuntime then Result := RuntimeMessage + #13#10#13#10 + RuntimeDownload
+  else if not HasWebViewRuntime then Result := WebViewMessage + #13#10#13#10 + WebViewDownload;
 end;
 
 function DisableStartup: Boolean;

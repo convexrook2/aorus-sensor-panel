@@ -11,7 +11,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>../Assets/Branding/AorusFanMade.ico</ApplicationIcon>
-    <Version>1.8.4</Version>
+    <Version>1.8.5</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <SelfContained>false</SelfContained>
     <RollForward>LatestPatch</RollForward>

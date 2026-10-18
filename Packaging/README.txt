@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.8.4 | Windows x64
+Version 1.8.5 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -15,6 +15,9 @@ REQUIREMENTS
 - Administrator access and an existing PawnIO 2.2+ driver for supported CPU
   and motherboard readings. No driver is installed, changed or removed here.
   https://pawnio.eu
+- Microsoft Edge WebView2 Evergreen Runtime for the full ship viewer.
+  Setup checks for it and links to Microsoft's download if it is missing.
+  https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section
 - An installed NVIDIA driver for NVIDIA GPU readings. Other GPU vendors
   are not currently supported by this collector.
 - A display exposed as a Windows monitor. USB panels using a proprietary
@@ -62,12 +65,12 @@ or disabled and respects Windows animation preferences.
 
 THEMES AND SOL NAVIGATION
 The collection includes Classic, Dark, ICE and additional colour palettes,
-plus The Expanse main theme and eight individual ship themes. Theme changes retain readings,
+plus The Expanse main theme and 21 individual ship themes. Theme changes retain readings,
 maxima, display and polling settings. Session maxima reset on app restart.
 
 THE EXPANSE MAIN THEME
 Choose Settings > Theme > The Expanse for a space showcase cycling through
-all eight existing ships. Settings > Expanse showcase controls Auto cycle
+all 21 ships. Settings > Expanse showcase controls Auto cycle
 and the cycle interval: 45 seconds by default, with choices from 15-120 seconds.
 Selecting a ship manually holds it until Auto cycle is enabled again.
 These controls are separate from Holographic display (map motion/ship rotation).
@@ -101,17 +104,19 @@ selected name. True-scale zoom skips off-screen and sub-pixel meshes and clips
 orbit trails before drawing. See SolarNavigation/CREDITS.txt.
 Decorative animation is not sensor data.
 
-Rocinante/Tachi, Donnager, Truman, Epstein's Yacht and the MCRN dropship have
-bundled original-colour 3D models in the left artwork strip. Razorback now uses
-the owner's blueprint-corrected v2 model in the rotating strip and holotable.
-Tynan and Morrigan use flat artwork. The Sketchfab Razorback is a visual reference;
-no mesh or texture was extracted from that page. The original v1 remains preserved.
+All 21 ships have local 3D portraits and holotables using the same reusable
+GPU viewport. Click the ship portrait or press H to open its holotable. Drag
+to orbit, scroll or pinch to zoom, choose RESET VIEW to reset and CLOSE or
+Escape to return to the portrait. Portrait and holotable retain the same
+complete model, embedded texture maps and source hash.
 
-Bundled meshes retain original colour textures and markings; native WPF
-lighting approximates their source materials. Ship and idle map animation are
-capped at 20 updates/second; camera movement uses up to 60 and detaches its
-render callback afterward, separately from collection. Credits: Holotable-Model-Credits.txt and
-Ship-Artwork-Sources.json.
+Agatha King gains six illuminated drive throats; Pella gains thin layered
+armour over its smooth dark finish and recessed backing. These are credited
+fan studies, with earlier approximations still labelled. The viewer loads
+only packaged artwork and uses WebView2; it does not download show references.
+Ship and navigation motion remain independent of sensor collection and stop
+when hidden or disabled. Credits: FleetViewer/ATTRIBUTION.txt,
+Holotable-Model-Credits.txt and Ship-Artwork-Sources.json.
 
 START WITH WINDOWS
 This option is initially OFF. Enable it in Setup or the panel menu to create

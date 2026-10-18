@@ -12,6 +12,8 @@ New-Item -ItemType Directory -Path $packageRoot,$outputRoot -Force | Out-Null
 Start-Transcript -Path '.\artifacts\installer-build.txt' -Force
 try {
     & '.\tools\Check-PublicContent.ps1'
+    python '.\tools\Sync-FleetViewer.py' --check
+    if ($LASTEXITCODE -ne 0) { throw 'Desktop fleet asset checks failed.' }
     & '.\tools\Build-Branding.ps1'
     dotnet build '.\SensorPanel\SensorPanel.csproj' -c Package
     if ($LASTEXITCODE -ne 0) { throw 'Package build failed.' }
@@ -30,6 +32,18 @@ try {
     foreach ($excluded in @('coreclr.dll','hostfxr.dll','hostpolicy.dll','System.Private.CoreLib.dll','PresentationFramework.dll','wpfgfx_cor3.dll')) {
         if (Test-Path -LiteralPath (Join-Path $packageRoot $excluded)) { throw ('A private runtime was unexpectedly published: ' + $excluded) }
     }
+    foreach ($requiredWebView in @('Microsoft.Web.WebView2.Core.dll','Microsoft.Web.WebView2.Wpf.dll','FleetViewer\catalog.json','FleetViewer\manifest.json')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $requiredWebView))) { throw ('Missing ship viewport dependency: ' + $requiredWebView) }
+    }
+    if (-not ((Test-Path -LiteralPath (Join-Path $packageRoot 'WebView2Loader.dll')) -or
+        (Test-Path -LiteralPath (Join-Path $packageRoot 'runtimes\win-x64\native\WebView2Loader.dll')))) { throw 'Missing x64 WebView2 loader.' }
+    $fleetManifest = Get-Content -LiteralPath (Join-Path $projectRoot 'Assets\FleetViewer\manifest.json') -Raw | ConvertFrom-Json
+    foreach ($file in $fleetManifest.files) {
+        $fleetTarget = [IO.Path]::GetFullPath((Join-Path $packageRoot ('FleetViewer\' + $file.path)))
+        if (-not $fleetTarget.StartsWith($packageRoot + '\',[StringComparison]::OrdinalIgnoreCase)) { throw 'Fleet manifest escaped the package.' }
+        if ((Get-ArtifactHash $fleetTarget) -ne $file.sha256) { throw ('Packaged fleet asset mismatch: ' + $file.path) }
+    }
+    Write-Host ('PASS: all ' + $fleetManifest.files.Count + ' desktop fleet files packaged with exact hashes.')
     $runtimeConfig = Get-Content -LiteralPath (Join-Path $packageRoot 'SensorPanel.runtimeconfig.json') -Raw | ConvertFrom-Json
     if ($runtimeConfig.runtimeOptions.includedFrameworks -or $runtimeConfig.runtimeOptions.rollForward -ne 'LatestPatch') { throw 'Expected shared runtime with compatible patch roll-forward.' }
     foreach ($framework in @('Microsoft.NETCore.App','Microsoft.WindowsDesktop.App')) {
