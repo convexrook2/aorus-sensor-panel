@@ -1,5 +1,21 @@
 # Fleet Studio
 
+## Desktop app (normal launch)
+
+Open `X890.code-workspace` in VS Code, select **Fleet Studio · desktop** in
+Run and Debug, and press F5. Alternatively double-click `Start-Desktop.cmd`.
+The independent C# WPF host loads these local files using WebView2 virtual-host
+mapping. It does not start Python or listen on a network port and never starts
+with Windows. Build with `dotnet build FleetStudio.Desktop/FleetStudio.Desktop.csproj`.
+
+Efficient quality starts with rotation/effects paused, pixel ratio 1 and no
+postprocessing. The renderer wakes only for interaction/loading or explicitly
+enabled animation (30 fps limit). Full shading is opt-in. Minimizing destroys
+the WebView2/model; restoring reloads the selected ship and quality but resets
+camera/effects. Closing exits the app. The monitor does not launch it. Geometry
+and source assets are shared on disk, not loaded by an idle Fleet Studio service.
+The browser-preview instructions below remain available for web QA only.
+
 Hosting target: **https://convexrook2.github.io/aorus-sensor-panel/**.
 GitHub Pages was not enabled at the 2026-10-17 checkpoint; this address is not
 yet a verified live viewer. Local preview instructions are below. Once hosting
@@ -142,7 +158,7 @@ separately from this distribution.
 - Earlier Pella coating validation: twelve Blender views under one studio rig, both forward
   close-ups, both pod close-ups, and browser checks of camera views, rotation,
   lights, plumes, alternate lighting and previous-version restore.
-- Earlier short-window check at 800×400: all seven camera buttons remain clear of the
+- Earlier short-window check at 800├ù400: all seven camera buttons remain clear of the
   footer controls; normal browser dimensions are restored after inspection.
 - Earlier coating preservation check: 991 existing source files, 142 installed
   files and 111 earlier preview files match their checkpoint. The original
@@ -166,7 +182,7 @@ Visual references, linked for inspection only:
 - [Kelvin Tam / Rocket Science production gallery](https://kelvintam.artstation.com/projects/v2358E)
 - [Thirupathi Nomula production modelling reel](https://thirupathinomula.artstation.com/projects/y4QPKK)
 - [Generation Films Pella breakdown](https://www.youtube.com/watch?v=eZg1ocpLXOE):
-  0:54–1:04 exterior pass and 1:51–1:54 docking exterior; all frames before 2:00
+  0:54ΓÇô1:04 exterior pass and 1:51ΓÇô1:54 docking exterior; all frames before 2:00
   were reviewed locally.
 
 Reference photographs, production renders and video are **not redistributed**

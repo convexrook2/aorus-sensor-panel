@@ -9,6 +9,7 @@ internal static class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
         if (args.Contains("--self-test")) return SelfTests.Run();
+        if (args.Contains("--self-test-managed")) return SelfTests.Run(checkNativeBridge:false);
         if (args.Contains("--list-games"))
         {
             var discovery = new GameDiscovery();

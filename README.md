@@ -8,6 +8,52 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+## Run in VS Code
+
+Open **X890.code-workspace**. The solution contains the monitor, its C# collector,
+and a separate Fleet Studio desktop app. Install the .NET 10 SDK and the Microsoft
+C# extension for development; the shipped monitor only needs the Desktop Runtime.
+
+- **Run and Debug → X890 · UI preview (no sensors) → F5** builds and opens a normal
+  desktop window with a labelled empty snapshot. Dashes are expected; this does
+  not read hardware or require administrator access.
+- **Terminal → Run Task → Run X890 monitor (live)** builds and opens the live monitor.
+  Accept Windows' administrator prompt yourself for hardware access. Its title
+  says Live monitor. Exit the existing tray instance first if one is already running.
+- **Run and Debug → Fleet Studio · desktop → F5** builds and opens the separate
+  ship viewer. Close its window to stop it. Minimizing releases its WebView2 and
+  loaded model; restoring reloads the selected ship and quality, with camera and
+  effect controls reset. No Python process, HTTP server or sign-in task is needed.
+
+For double-click launch from the checkout, use **Start-Monitor.cmd** or
+**FleetStudio/Start-Desktop.cmd**. Their consoles show build failures. These use
+the SDK and do not install or register anything.
+
+The normal monitor uses WPF and the existing SensorCollector backend
+(LibreHardwareMonitor/PawnIO, NVIDIA NVML and optional game FPS via PresentMon).
+It collects serially at the saved polling interval, default 1000 ms. The default
+efficient mode uses still ship artwork, creates no WebView2, skips decoding the
+AORUS animation sequence, and disables automatic showcase cycling, map motion,
+number pulses and gauge transitions. Existing full visual checks and the explicit
+`--full-graphics` option retain the prior animated monitor/holotable path. This
+does not overwrite saved appearance preferences. Still artwork for some ships is
+rasterized once from the bundled model without retaining its mesh cache. Only the
+current still image is cached. The normal ship dashboard uses bounded 2D CPU/GPU
+clock histories in place of the solar map; `--full-graphics` restores the native
+WPF Sol map as well as the embedded ship viewport.
+
+Fleet Studio uses JavaScript/Three.js inside a WPF/WebView2 window and reads its
+bundled files through a local virtual host. Efficient quality is the default:
+pixel ratio 1, no postprocessing, rotation/effects initially paused, and rendering
+only when something changes. Deliberate animation is capped at 30 fps. Full shading
+is available inside Fleet Studio. An open 3D viewer still uses RAM/GPU resources;
+close it when finished. Its model geometry is unchanged. Hardware acceleration is
+retained rather than moving rendering onto the CPU.
+
+The legacy `http://127.0.0.1:8770/` browser preview remains optional and works only
+while its separately launched server is running. Pinning a chat or URL cannot start
+that server. The desktop launch profiles above are the normal way to open the apps.
+
 ## Requirements
 
 - Windows x64 and a display exposed as a Windows monitor. USB panels using a
@@ -176,15 +222,13 @@ is no universal performance or game-FPS guarantee.
 
 ## Build and validation
 
-Clone the repository and install the .NET 10 SDK, Visual Studio x64 C++ build
-tools, and the NVIDIA FrameView SDK. The current build compiles the native
-FrameView bridge even though automatic FPS uses PresentMon. Toolchain discovery
-uses `vswhere`; nonstandard installations can set `VCVARS64_PATH` and
-`FRAMEVIEW_SDK_PATH`. Then restore/build from the repository root:
+Clone the repository and install the .NET 10 SDK. Restore/build the actual
+application projects from the repository root (archived builds are not projects
+in this solution):
 
 ```powershell
-dotnet build .\SensorPanel\SensorPanel.csproj -c Release
-& .\SensorCollector\bin\Release\net10.0-windows\SensorCollector.exe --self-test
+dotnet build .\X890.slnx -c Release
+& .\SensorCollector\bin\Release\net10.0-windows\SensorCollector.exe --self-test-managed
 ```
 
 Use `tools/Validate-Holotable.ps1` for build/resource checks and saved-data
@@ -194,9 +238,16 @@ local Belter texture/mesh assets with the offline Node.js tooling;
 in visible native previews at three panel sizes.
 Use `tools/Build-Installer.ps1` to build and package the
 shared-runtime installer; packaging also requires Python 3 for asset checks
-and Inno Setup 6. The optional
-NVIDIA FrameView runtime source is optional; its native bridge build currently
-requires the SDK and C++ tools listed above. Normal automatic FPS uses PresentMon.
+and Inno Setup 6. The FrameView bridge remains explicitly included by the installer
+build, which still requires the FrameView SDK and C++ tools. For development,
+NVIDIA FrameView is optional. Build its native bridge explicitly with
+`-p:BuildFrameViewBridge=true` if needed; that additionally requires Visual Studio
+x64 C++ build tools and the NVIDIA FrameView SDK. Toolchain discovery uses
+`vswhere`; nonstandard installations can set `VCVARS64_PATH` and
+`FRAMEVIEW_SDK_PATH`. Normal automatic FPS uses PresentMon and does not require
+compiling that bridge.
+`--self-test-managed` covers managed contracts and explicitly skips the native ABI;
+the existing `--self-test` still requires and verifies the built bridge.
 
 Keep diagnostic exports, screenshots, logs and machine-specific settings out
 of commits and release uploads. Saved-data layout checks do not establish

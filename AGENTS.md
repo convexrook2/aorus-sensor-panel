@@ -11,6 +11,14 @@ This repository belongs to Lennon. X890 Sensor is primarily a monitoring app; th
 
 ## Fleet Studio local service
 
+- Normal desktop use is `FleetStudio.Desktop` (WPF/WebView2 local virtual-host
+  mapping), launched explicitly from `X890.code-workspace` or `Start-Desktop.cmd`.
+  It has no SensorCollector reference and no Python/HTTP server. Close exits;
+  minimize disposes the browser/model and restore reloads. The monitor defaults
+  to efficient still artwork with no WebView2; `--full-graphics` is deliberate
+  visual-review mode. Keep automatic motion and expensive rendering opt-in.
+  The following loopback rules apply to the optional legacy browser preview.
+
 - Reserve `127.0.0.1:8770` for the standalone, read-only Fleet Studio server. The reusable URL is `http://127.0.0.1:8770/`; `/fleet-preview` redirects there. Port `8771` may be used for a short, separately stopped validation server. Verify `/health` before assuming that a listener on `8770` is Fleet Studio.
 - Default to **on-demand** operation: no Fleet Studio sign-in task or persistent server while unused. `FleetStudio/Start-Viewer.cmd` opens the default browser and a visible server console when the named task is absent. Close both the viewer tab and console when finished; closing only the tab leaves the server running. `FleetStudio/Install-LocalServer.ps1 -Remove` removes a matching, stopped sign-in task. Installing the optional **Fleet Studio Local Viewer** task requires a fresh explicit owner request for always-available background operation. The server must bind to loopback and remain separate from monitoring. Its log is `%LOCALAPPDATA%\FleetStudio\server.log`.
 - The server serves files and does not create a WebGL context or use the GPU. A browser tab displaying a 3D model does. Keep only the needed viewer tabs open; hidden tabs pause rendering but can retain GPU memory. Do not add always-running renders, automatic browser launches, or a GPU-heavy helper for the server.

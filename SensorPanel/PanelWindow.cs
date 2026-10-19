@@ -20,13 +20,13 @@ internal sealed class PanelWindow : Window
     private PanelLayout? panelLayout;
     private ShipPanel? shipPanel;
     private readonly DispatcherTimer showcaseClock = new(DispatcherPriority.Background);
-    private bool showcaseCycle = PanelPreferences.ExpanseCycle;
+    private bool showcaseCycle = !PanelRuntime.Efficient && PanelPreferences.ExpanseCycle;
     private int showcaseSeconds = PanelPreferences.ExpanseSceneSeconds;
     private bool checkingThemes;
-    private bool animateArtwork = true;
-    private bool holographicMotion = PanelPreferences.HolographicMotion;
-    private bool readoutPulse = PanelPreferences.ReadoutPulse;
-    private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
+    private bool animateArtwork = !PanelRuntime.Efficient;
+    private bool holographicMotion = !PanelRuntime.Efficient && PanelPreferences.HolographicMotion;
+    private bool readoutPulse = !PanelRuntime.Efficient && PanelPreferences.ReadoutPulse;
+    private bool gaugeTransitions = !PanelRuntime.Efficient && PanelPreferences.GaugeTransitions;
     private MenuItem? animationCommand;
     private PanelSettings? settings;
     private string layoutMode = PanelPreferences.Layout;
@@ -56,6 +56,7 @@ internal sealed class PanelWindow : Window
     private readonly string? previewPath, capturePath;
     private readonly Size? previewSize;
     private readonly bool sensorPreview;
+    private readonly bool windowed;
     private Thread? worker;
     private Snapshot? latest;
     private DateTimeOffset lastReceived;
@@ -67,9 +68,10 @@ internal sealed class PanelWindow : Window
     private FpsApplication[] fpsApplications = [];
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true };
 
-    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false, Size? previewSize = null, bool sensorPreview = false, string? previewTheme = null, bool checkThemes = false, bool checkShips = false, bool checkNavigation = false)
+    public PanelWindow(string? previewPath, string? capturePath, int fpsPid = 0, bool benchmarkPolling = false, Size? previewSize = null, bool sensorPreview = false, string? previewTheme = null, bool checkThemes = false, bool checkShips = false, bool checkNavigation = false, bool windowed = false)
     {
         this.previewSize=previewSize; this.sensorPreview=sensorPreview;
+        this.windowed=windowed;
         checkingThemes = checkThemes || checkShips || checkNavigation;
         this.benchmarkPolling = benchmarkPolling;
         selectedFpsPid = fpsPid;
@@ -82,6 +84,12 @@ internal sealed class PanelWindow : Window
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.NoResize;
         WindowStartupLocation = WindowStartupLocation.Manual;
         Background = Brushes.Black; Topmost = false; ShowActivated = false; ShowInTaskbar = false;
+        if (windowed)
+        {
+            fit=false; WindowStyle=WindowStyle.SingleBorderWindow; ResizeMode=ResizeMode.CanResize;
+            WindowStartupLocation=WindowStartupLocation.CenterScreen; ShowActivated=true; ShowInTaskbar=true;
+            Title += " · " + (previewPath is null ? "Live monitor" : "Saved UI preview (not live)");
+        }
         viewport.Stretch = ScalingStretch(PanelPreferences.Scaling); viewport.Child = board;
         var surface = new Grid(); surface.Children.Add(viewport); Content = surface;
         BuildLayout();
@@ -321,7 +329,7 @@ internal sealed class PanelWindow : Window
         }
         menu.Items.Add(themes);
         var showcase = new MenuItem { Header = "Expanse showcase" };
-        var cycle = new MenuItem { Header = "Auto-cycle ships and personnel", IsCheckable = true };
+        var cycle = new MenuItem { Header = "Auto-cycle ships and personnel", IsCheckable = true, IsEnabled = !PanelRuntime.Efficient };
         showcase.SubmenuOpened += (_, _) => cycle.IsChecked = showcaseCycle;
         menu.Opened += (_, _) => showcase.IsEnabled = theme.Showcase;
         cycle.Click += (_, _) =>
@@ -373,9 +381,9 @@ internal sealed class PanelWindow : Window
         menu.Items.Add(scaling);
         var top = new MenuItem { Header = "Always on top", IsCheckable = true, IsChecked = Topmost };
         top.Click += (_, _) => Topmost = top.IsChecked; menu.Items.Add(top);
-        var animate = animationCommand = new MenuItem { Header = "Animate AORUS artwork", IsCheckable = true, IsChecked = true };
+        var animate = animationCommand = new MenuItem { Header = "Animate AORUS artwork", IsCheckable = true, IsChecked = animateArtwork };
         animate.Click += (_, _) => { animateArtwork = animate.IsChecked; if (artworkAnimation is not null) artworkAnimation.Enabled = animateArtwork && !theme.ShipConsole; };
-        menu.Opened += (_, _) => animate.IsEnabled = !theme.ShipConsole;
+        menu.Opened += (_, _) => animate.IsEnabled = !PanelRuntime.Efficient && !theme.ShipConsole;
         menu.Items.Add(animate);
         var readoutEffects = new MenuItem { Header = "Sensor readouts" };
         var pulse = new MenuItem { Header = "Pulse changed numbers", IsCheckable = true, IsChecked = readoutPulse };
@@ -401,7 +409,7 @@ internal sealed class PanelWindow : Window
             if (previewPath is null) PanelPreferences.SaveHolographicMotion(holographicMotion);
             SaveDisplayState();
         };
-        menu.Opened += (_, _) => readoutEffects.IsEnabled=holographic.IsEnabled=theme.ShipConsole;
+        menu.Opened += (_, _) => readoutEffects.IsEnabled=holographic.IsEnabled=!PanelRuntime.Efficient && theme.ShipConsole;
         holographic.Items.Add(holoMotion); menu.Items.Add(holographic);
         var polling = new MenuItem { Header = "Sensor polling interval" };
         menu.Opened += (_, _) => polling.Header = $"Sensor polling · {Volatile.Read(ref pollingIntervalMs)} ms";
@@ -436,6 +444,13 @@ internal sealed class PanelWindow : Window
 
     private void PlaceInitialDisplay()
     {
+        if (windowed)
+        {
+            fit=false; hideInitially=false;
+            display=Displays.List().FirstOrDefault(d=>d.Primary);
+            if (display is not null) Displays.Place(this,display,false,previewSize);
+            return;
+        }
         var displays = Displays.List();
         display = previewPath is not null && !sensorPreview ? displays.FirstOrDefault(d => d.Primary) : PanelPreferences.Preferred(displays);
         if (sensorPreview && display is not { Primary:false }) throw new InvalidOperationException("A secondary screen is required for sensor-display preview; the primary workspace will not be used.");
@@ -693,7 +708,7 @@ internal sealed class PanelWindow : Window
             shipPanel.SetReadoutEffects(readoutPulse,gaugeTransitions);
         }
         if (artworkAnimation is not null) artworkAnimation.Enabled = animateArtwork && !theme.ShipConsole;
-        if (animationCommand is not null) animationCommand.IsEnabled = !theme.ShipConsole;
+        if (animationCommand is not null) animationCommand.IsEnabled = !PanelRuntime.Efficient && !theme.ShipConsole;
         board.Background = theme.Backdrop;
         foreach (var pair in mutedLabels) pair.Key.Foreground = pair.Value ? theme.Muted : theme.Foreground;
         text["boardName"].Foreground = theme.Header;
@@ -745,12 +760,12 @@ internal sealed class PanelWindow : Window
         var bounds=Displays.CurrentBounds(this);
         File.WriteAllText(Path.Combine(PanelPaths.Artifacts,"panel-display-state.json"),JsonSerializer.Serialize(new
         {
-            Version=typeof(App).Assembly.GetName().Version?.ToString(), Preview=previewPath is not null,
+            Version=typeof(App).Assembly.GetName().Version?.ToString(), Preview=previewPath is not null, EfficientMode=PanelRuntime.Efficient,
             Display=display, Bounds=bounds, Fit=fit, FitsTarget=display is not null && bounds==Displays.Placement(display,true),
             Dpi=Displays.Dpi(this), Layout=theme.ShipConsole ? shipPanel?.Mode : panelLayout?.Mode, Renderer=theme.ShipConsole ? "ShipConsole" : "Aorus", Scaling=viewport.Stretch.ToString(), Visible=IsVisible,
             ShowInTaskbar, TrayIconVisible=tray?.Visible ?? false, Theme=theme.Id, SettingsOpen=settings?.IsOpen ?? false,
             HolographicMotion=holographicMotion, ReadoutPulse=readoutPulse, GaugeTransitions=gaugeTransitions,
-            RotatingShipInLeftPanel=theme.ShipConsole && ShipPortrait.Supports(shipPanel?.FeaturedShipId),
+            RotatingShipInLeftPanel=!PanelRuntime.Efficient && theme.ShipConsole && ShipPortrait.Supports(shipPanel?.FeaturedShipId),
             FeaturedShip=theme.ShipConsole ? shipPanel?.FeaturedShipId : null,
             ExpanseAutoCycle=theme.Showcase && showcaseCycle, ExpanseCycleRunning=showcaseClock.IsEnabled,
             ExpanseSceneSeconds=showcaseSeconds, ExpanseMedia=theme.Showcase ? ExpanseMedia.Status : null,
@@ -1107,6 +1122,7 @@ internal sealed class PanelWindow : Window
     }
     private async Task LoadArtwork()
     {
+        if (PanelRuntime.Efficient) return;
         try { if (artworkAnimation is not null) await artworkAnimation.LoadAsync(); }
         catch (Exception ex) { File.WriteAllText(Path.Combine(PanelPaths.Artifacts, "panel-animation-error.txt"), ex.ToString()); }
     }

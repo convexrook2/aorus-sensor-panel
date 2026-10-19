@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="SensorCollector/SensorCollector.csproj" />
+  <Project Path="SensorPanel/SensorPanel.csproj" />
+  <Project Path="FleetStudio.Desktop/FleetStudio.Desktop.csproj" />
+</Solution>

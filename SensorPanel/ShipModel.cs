@@ -17,7 +17,7 @@ internal static class ShipModel
     private static readonly Dictionary<string, IReadOnlyList<ShipModelPart>> cache = new();
     private sealed record MaterialInfo(string Name, string? Texture, float[] Colour, float[] Emissive, bool DoubleSided, string Alpha, string? EmissiveTexture);
     private sealed record SceneInfo(int Format, int Triangles, int Parts, MaterialInfo[] Materials);
-    public static IReadOnlyList<ShipModelPart> Load(string ship)
+    public static IReadOnlyList<ShipModelPart> Load(string ship, bool cacheResult = true)
     {
         ship=ShipProfile.CanonicalId(ship);
         if (cache.TryGetValue(ship, out var existing)) return existing;
@@ -61,7 +61,8 @@ internal static class ShipModel
                 parts.Add(new(mesh, materials[material], info.DoubleSided, info.Name, emission));
             }
             if (triangles!=scene.Triangles || geometry.ReadByte()!=-1) throw new InvalidDataException("Ship geometry does not match its manifest.");
-            cache.Add(ship, parts); return parts;
+            if (cacheResult) cache.Add(ship, parts);
+            return parts;
         }
         throw new InvalidDataException("Missing original ship model: "+ship);
     }

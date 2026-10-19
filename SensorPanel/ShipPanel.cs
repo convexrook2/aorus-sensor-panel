@@ -18,9 +18,9 @@ internal sealed class ShipPanel : Canvas
     private readonly ConsoleDial cpuDial, gpuDial;
     private readonly HistoryGraph cpuGraph = new(), gpuGraph = new();
     private string configuration = "";
-    private bool motion = PanelPreferences.HolographicMotion;
-    private bool readoutPulse = PanelPreferences.ReadoutPulse;
-    private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
+    private bool motion = !PanelRuntime.Efficient && PanelPreferences.HolographicMotion;
+    private bool readoutPulse = !PanelRuntime.Efficient && PanelPreferences.ReadoutPulse;
+    private bool gaugeTransitions = !PanelRuntime.Efficient && PanelPreferences.GaugeTransitions;
     private readonly FleetViewport shipPortrait = new();
     internal FleetViewport ShipViewport => shipPortrait;
     private Grid? shipMedia;
@@ -44,7 +44,7 @@ internal sealed class ShipPanel : Canvas
     private Holotable? holotable;
     private PanelTheme? activeTheme;
     public bool HolotableOpen => holotable is not null;
-    public bool HolotableAvailable => Holotable.Supports(FeaturedShipId);
+    public bool HolotableAvailable => !PanelRuntime.Efficient && Holotable.Supports(FeaturedShipId);
     public string Mode { get; private set; } = "Landscape";
 
     public ShipPanel(Dictionary<string, TextBlock> source)
@@ -111,17 +111,32 @@ internal sealed class ShipPanel : Canvas
         bool portrait = Mode == "Portrait";
         double bodyX=plan.Cpu.X;
         bool reuseProjection=projection is not null;
-        if (projection is null)
+        if (!PanelRuntime.Efficient && projection is null)
         {
             projection=new SolarSystemView();
             projection.BodySelected+=_=>NavigationChanged?.Invoke();
         }
-        Put(this, projection, plan.Navigation);
-        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)115 : (byte)232,3,12,21));
+        if (projection is not null)
+        {
+            Put(this, projection, plan.Navigation);
+            projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)115 : (byte)232,3,12,21));
+        }
+        else
+        {
+            // The always-on monitor uses the existing bounded 2D histories.
+            // Solar textures, meshes and a 3D viewport are visual-review opt-ins.
+            var area=plan.Navigation;
+            double column=(area.Width-36)/2;
+            Put(this,new Border { Background=theme.Surface, CornerRadius=new CornerRadius(8) },area);
+            Put(this,Label("CPU CLOCK / MHz · LAST 60 SAMPLES",11,theme.Muted),new(area.X+12,area.Y+10,column,18));
+            Put(this,Label("GPU CLOCK / MHz · LAST 60 SAMPLES",11,theme.Muted),new(area.X+24+column,area.Y+10,column,18));
+            Put(this,cpuGraph,new(area.X+12,area.Y+36,column,Math.Max(12,area.Height-48)));
+            Put(this,gpuGraph,new(area.X+24+column,area.Y+36,column,Math.Max(12,area.Height-48)));
+        }
         selectedShip=sceneShip;
         var navigation=ExpanseNavigation.ForShip(selectedShip);
-        projection.FocusBody(navigation.Body,reuseProjection);
-        projection.SetContext(navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source);
+        projection?.FocusBody(navigation.Body,reuseProjection);
+        projection?.SetContext(navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source);
         var vessel = ShipProfile.Resolve(selectedShip ?? throw new InvalidOperationException("A ship console needs its vessel profile."));
         string title = theme.Showcase ? "THE EXPANSE" : vessel.Name;
         heading = Label(title, portrait ? 15 : 18, theme.Header, true);
@@ -136,7 +151,7 @@ internal sealed class ShipPanel : Canvas
         // Keep the portrait decorative; a separate accessible button owns input.
         var hitArea=new FrameworkElementFactory(typeof(Border));
         hitArea.SetValue(Border.BackgroundProperty,Brushes.Transparent);
-        holotableAccess=new Button { Cursor=Cursors.Hand, ToolTip="Open ship holotable (H)",
+        holotableAccess=new Button { Cursor=Cursors.Hand, ToolTip=PanelRuntime.Efficient ? "Open the separate Fleet Studio desktop app to inspect ships" : "Open ship holotable (H)",
             Template=new ControlTemplate(typeof(Button)) { VisualTree=hitArea } };
         System.Windows.Automation.AutomationProperties.SetName(holotableAccess,"Open ship holotable");
         holotableAccess.Click+=(_,_)=>OpenHolotable();
@@ -220,7 +235,7 @@ internal sealed class ShipPanel : Canvas
         shipPortrait.SetMotion(false);
         shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1;
         shipMedia.Children.Clear();
-        bool model=ShipPortrait.Supports(vessel.Id);
+        bool model=!PanelRuntime.Efficient && ShipPortrait.Supports(vessel.Id);
         if (holotableAccess is not null) holotableAccess.IsEnabled=model;
         if (model)
         {

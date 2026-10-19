@@ -15,13 +15,13 @@ try {
     python '.\tools\Sync-FleetViewer.py' --check
     if ($LASTEXITCODE -ne 0) { throw 'Desktop fleet asset checks failed.' }
     & '.\tools\Build-Branding.ps1'
-    dotnet build '.\SensorPanel\SensorPanel.csproj' -c Package
+    dotnet build '.\SensorPanel\SensorPanel.csproj' -c Package -p:BuildFrameViewBridge=true
     if ($LASTEXITCODE -ne 0) { throw 'Package build failed.' }
     & '.\SensorCollector\bin\Package\net10.0-windows\SensorCollector.exe' --self-test
     if ($LASTEXITCODE -ne 0) { throw 'Collector checks failed.' }
     $check = Start-Process '.\SensorPanel\bin\Package\net10.0-windows\SensorPanel.exe' -ArgumentList '--check-mapping' -WindowStyle Normal -Wait -PassThru
     if ($check.ExitCode -ne 0) { throw 'Panel mapping/resource checks failed.' }
-    dotnet publish '.\SensorPanel\SensorPanel.csproj' -c Package -r win-x64 --self-contained false -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o $packageRoot
+    dotnet publish '.\SensorPanel\SensorPanel.csproj' -c Package -r win-x64 --self-contained false -p:BuildFrameViewBridge=true -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o $packageRoot
     if ($LASTEXITCODE -ne 0) { throw 'Shared-runtime publication failed.' }
     foreach ($required in @('SensorPanel.exe','SensorPanel.dll','SensorPanel.runtimeconfig.json','PresentMon-2.6.0-x64.exe','PresentMon-2.6.0-x890-compat-x64.exe','PresentMon-COMPAT-NOTICES.txt','NvidiaFrameViewBridge.dll','README.txt','Holotable-Model-Credits.txt','SolarNavigation\CREDITS.txt','SolarNavigation\models\eros.fnm','SolarNavigation\models\phoebe.fnm','SolarNavigation\models\tycho.fnm','SolarNavigation\models\medina.fnm','SolarNavigation\models\solgate.fnm')) {
         if (-not (Test-Path -LiteralPath (Join-Path $packageRoot $required))) { throw ('Missing packaged dependency: ' + $required) }

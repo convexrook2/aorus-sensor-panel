@@ -1,0 +1,7 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    { "name": "X890 · UI preview (no sensors)", "type": "coreclr", "request": "launch", "preLaunchTask": "Build X890 monitor", "program": "${workspaceFolder}/SensorPanel/bin/Debug/net10.0-windows/SensorPanel.dll", "args": ["--preview", "${workspaceFolder}/tools/preview-empty.json", "--windowed", "--preview-theme", "Rocinante"], "cwd": "${workspaceFolder}", "console": "internalConsole" },
+    { "name": "Fleet Studio · desktop", "type": "coreclr", "request": "launch", "preLaunchTask": "Build Fleet Studio", "program": "${workspaceFolder}/FleetStudio.Desktop/bin/Debug/net10.0-windows10.0.17763.0/FleetStudio.Desktop.dll", "cwd": "${workspaceFolder}", "console": "internalConsole" }
+  ]
+}

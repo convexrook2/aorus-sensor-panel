@@ -34,6 +34,7 @@ internal static class App
             bool checkThemes = args.Contains("--preview-check-themes");
             bool checkShips = args.Contains("--preview-check-ships");
             bool checkNavigation = args.Contains("--preview-check-navigation");
+            PanelRuntime.Efficient = !args.Contains("--full-graphics") && !checkThemes && !checkShips && !checkNavigation;
             if (checkNavigation && (preview is null || !args.Contains("--sensor-preview")))
                 throw new ArgumentException("--preview-check-navigation requires a saved preview on the sensor display.");
             if ((checkThemes || checkShips) && (preview is null || !args.Contains("--sensor-preview")))
@@ -78,7 +79,7 @@ internal static class App
                     throw new ArgumentException("Preview dimensions must be 1–8192 pixels.");
                 previewSize=new Size(width,height);
             }
-            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation));
+            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed")));
         }
         catch (Exception ex)
         {
@@ -120,6 +121,12 @@ internal static class App
             if (!names.Contains($"aorus/animations/x/x{frame}.png"))
                 throw new InvalidOperationException($"The built panel is missing brand frame {frame}.");
     }
+}
+
+internal static class PanelRuntime
+{
+    // Full 3D remains available for deliberate visual review, never by default.
+    internal static bool Efficient { get; set; } = true;
 }
 
 internal static class PanelPaths

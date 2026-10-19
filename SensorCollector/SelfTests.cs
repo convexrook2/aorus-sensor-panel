@@ -2,7 +2,7 @@ namespace SensorCollector;
 
 internal static class SelfTests
 {
-    public static int Run()
+    public static int Run(bool checkNativeBridge = true)
     {
         var time = DateTimeOffset.UtcNow;
         var missing = GigabyteTemperature.Decode(0, 0, time);
@@ -30,7 +30,8 @@ internal static class SelfTests
         if (LibreSource.DecodeMemoryClock(3000, 99.8) != 2994 || LibreSource.DecodeMemoryClock(0, 100) is not null ||
             LibreSource.DecodeMemoryClock(uint.MaxValue, 100) is not null || LibreSource.DecodeMemoryClock(3000, null) is not null)
             throw new Exception("DDR5 clock decoding must reject missing registers/BCLK and keep MHz separate from MT/s.");
-        FrameViewSource.CheckAbi();
+        if (checkNativeBridge) FrameViewSource.CheckAbi();
+        else { FrameViewSource.CheckSamples(); Console.WriteLine("SKIP: optional FrameView native ABI (use --self-test with the built bridge)."); }
         CheckAutomaticGames();
         CheckPresentingApplications();
         CheckDesktopFrames();
@@ -43,7 +44,7 @@ internal static class SelfTests
             PresentMonSource.Csv("\"Game, test.exe\",1,\"a\"\"b\"")[0] != "Game, test.exe" ||
             PresentMonSource.Csv("\"Game, test.exe\",1,\"a\"\"b\"")[2] != "a\"b")
             throw new Exception("Displayed FPS must average frame durations, reject NA/zero intervals, and preserve quoted CSV fields.");
-        Console.WriteLine("PASS: sensor contracts, voltage quarantine, DDR5 ratio/BCLK and FrameView x64 ABI/sample validation.");
+        Console.WriteLine("PASS: sensor contracts, voltage quarantine, DDR5 ratio/BCLK and FrameView sample validation." + (checkNativeBridge ? " Native x64 ABI validated." : " Native ABI not tested."));
         return 0;
     }
 

@@ -91,6 +91,11 @@ public sealed class FrameViewSource(int processId = 0) : IDisposable
             if (query() != 0x00382018) throw new Exception("FrameView SDK's compiled x64 layout must match 56/32/24 byte structures.");
         }
         finally { NativeLibrary.Free(native); }
+        CheckSamples();
+    }
+
+    internal static void CheckSamples()
+    {
         var now = DateTimeOffset.UtcNow;
         if (Decode(1, 1, 100, 100, 500, 100, now).Value is not null ||
             Decode(1, 1, double.NaN, 100, 100, 100, now).Value is not null ||

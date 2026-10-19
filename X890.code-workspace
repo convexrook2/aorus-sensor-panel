@@ -1,0 +1,8 @@
+{
+  "folders": [{"path": "."}],
+  "settings": {
+    "dotnet.defaultSolution": "X890.slnx",
+    "files.watcherExclude": {"**/artifacts/**": true, "**/output/**": true, "**/.playwright-cli/**": true},
+    "search.exclude": {"**/artifacts/**": true, "**/output/**": true, "**/bin/**": true, "**/obj/**": true}
+  }
+}

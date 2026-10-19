@@ -44,11 +44,11 @@
     <Resource Include="../Assets/AORUS/@Resources/GIFs/R/*.png" Link="Aorus/Animations/R/%(Filename)%(Extension)" />
     <Resource Include="../Assets/AORUS/@Resources/GIFs/GIF1/*.png" Link="Aorus/Animations/X/%(Filename)%(Extension)" />
   </ItemGroup>
-  <Target Name="CopyFrameViewBridge" AfterTargets="Build">
+  <Target Name="CopyFrameViewBridge" AfterTargets="Build" Condition="'$(BuildFrameViewBridge)' == 'true'">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\SensorCollector\bin\$(Configuration)\net10.0-windows\$(RuntimeIdentifier)\NvidiaFrameViewBridge.dll"
           DestinationFolder="$(TargetDir)" />
   </Target>
-  <Target Name="PublishFrameViewBridge" AfterTargets="Publish">
+  <Target Name="PublishFrameViewBridge" AfterTargets="Publish" Condition="'$(BuildFrameViewBridge)' == 'true'">
     <Copy SourceFiles="$(TargetDir)NvidiaFrameViewBridge.dll"
           DestinationFolder="$(PublishDir)" />
   </Target>

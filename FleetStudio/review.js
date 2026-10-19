@@ -17,8 +17,9 @@ try{
  const response=await fetch('./catalog.json',{cache:'no-store'});if(!response.ok)throw Error('Catalogue unavailable');
  const catalog=await response.json();
  const engineResponse=await fetch('./engines.json');if(!engineResponse.ok)throw Error('Drive catalogue unavailable');const engines=await engineResponse.json();
- renderer=new THREE.WebGLRenderer({canvas:$('canvas'),antialias:true,powerPreference:'high-performance'});
- renderer.setPixelRatio(devicePixelRatio);renderer.outputColorSpace=THREE.SRGBColorSpace;
+ let efficient=new URL(location.href).searchParams.get('quality')!=='full';
+ renderer=new THREE.WebGLRenderer({canvas:$('canvas'),antialias:false,powerPreference:'low-power'});
+ renderer.setPixelRatio(efficient?1:Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1;
  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
  renderer.debug.onShaderError=()=>fail(Error('A GPU shader failed to compile'));
@@ -27,7 +28,7 @@ try{
  scene.environment=environment.texture;scene.environmentIntensity=.22;room.dispose();pmrem.dispose();
  const camera=new THREE.OrthographicCamera(-2,2,2,-2,.01,60);
  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;
- controls.autoRotate=true;controls.autoRotateSpeed=.65;controls.minZoom=.3;controls.maxZoom=40;
+ controls.autoRotate=false;controls.autoRotateSpeed=.65;controls.minZoom=.3;controls.maxZoom=40;
  const key=new THREE.DirectionalLight(0xfff7eb,4);key.position.set(4,6,5);key.castShadow=true;
  key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-2.5,right:2.5,top:2.5,bottom:-2.5,near:.1,far:18});
  key.shadow.bias=-.00008;key.shadow.normalBias=.003;scene.add(key,key.target);
@@ -40,9 +41,13 @@ try{
  composer.addPass(new UnrealBloomPass(new THREE.Vector2(1,1),.18,.35,1.5));composer.addPass(new OutputPass());
  const clay=new THREE.MeshStandardMaterial({color:0x7f868a,roughness:.63,metalness:0});
  const normals=new THREE.MeshNormalMaterial(),wire=new THREE.MeshBasicMaterial({color:0x9ad7e3,wireframe:true});
- let dirty=true,spin=true,animateField=true,previous=false,loadId=0,last=0,seconds=0,effectTime=0,frames=0,rateTime=0,rateFrames=0,shipLit=true,plumesOn=false;
- const invalidate=()=>{dirty=true;};controls.addEventListener('change',invalidate);
- function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?3.0:2.55;renderer.setSize(w,h,false);composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
+ let dirty=true,spin=false,animateField=false,previous=false,loadId=0,last=0,seconds=0,effectTime=0,frames=0,rateTime=0,rateFrames=0,shipLit=true,plumesOn=false,scheduled=0,lastRender=0;
+ const schedule=()=>{if(!document.hidden&&!scheduled)scheduled=requestAnimationFrame(tick);};
+ const invalidate=()=>{dirty=true;schedule();};controls.addEventListener('change',invalidate);
+ function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?3.0:2.55;renderer.setSize(w,h,false);if(!efficient)composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
+ function quality(){efficient=$('#quality').value==='efficient';renderer.setPixelRatio(efficient?1:Math.min(devicePixelRatio,2));ao.enabled=!efficient;$('#ao').disabled=efficient;$('#ao').setAttribute('aria-pressed',ao.enabled);if(efficient)composer.setSize(1,1);document.body.dataset.quality=efficient?'efficient':'full';const url=new URL(location.href);url.searchParams.set('quality',efficient?'efficient':'full');history.replaceState(null,'',url);resize();}
+ $('#quality').value=efficient?'efficient':'full';$('#quality').onchange=quality;quality();
+ $('#rotate').setAttribute('aria-pressed','false');$('#rotate').textContent='Resume rotation';$('#effect').setAttribute('aria-pressed','false');
  addEventListener('resize',resize);resize();
  function surface(){const mode=$('#surface').value;root?.traverse(o=>{if(!o.isMesh||o===field||!originals.has(o))return;o.material=mode==='materials'?originals.get(o):mode==='clay'?clay:mode==='normals'?normals:wire;});renderer.shadowMap.needsUpdate=true;invalidate();}
  function shipState(){
@@ -138,12 +143,18 @@ try{
  const toggleReferences=open=>{$('#reference-panel').hidden=!open;$('#references').setAttribute('aria-expanded',open);};
  $('#references').onclick=()=>toggleReferences($('#reference-panel').hidden);$('#close-references').onclick=()=>toggleReferences(false);
  addEventListener('keydown',e=>{if(e.key==='Escape')toggleReferences(false);});
- function tick(t){requestAnimationFrame(tick);const dt=Math.min(Math.max((t-last)*.001,0),.1);last=t;if(document.hidden)return;
+ function tick(t){scheduled=0;if(document.hidden)return;const active=spin||Boolean(portal&&animateField&&field.visible)||Boolean(plumesOn&&shipEffects?.engineCount);
+   if(!dirty&&!active)return;
+   if(active&&!dirty&&t-lastRender<1000/30){schedule();return;}
+   const dt=Math.min(Math.max((t-last)*.001,0),.1);last=t;lastRender=t;
    if(spin)controls.update(dt);if(portal&&animateField&&field.visible){seconds+=dt;portal.uniforms.time.value=seconds;dirty=true;}
-   effectTime+=dt;if(shipEffects?.tick(effectTime))dirty=true;
-   if(dirty||spin){ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);composer.render();dirty=false;frames++;rateFrames++;}
-   if(t-rateTime>=1000){const fps=Math.round(rateFrames*1000/(t-rateTime));$('#motion').textContent=(spin?'Rotating':'Rotation paused')+' · '+(fps>1?fps+' fps':'idle');$('#motion').dataset.frames=frames;$('#motion').dataset.cameraAngle=controls.getAzimuthalAngle().toFixed(4);$('#motion').dataset.fieldTime=seconds.toFixed(3);$('#motion').dataset.plumeTime=effectTime.toFixed(3);rateFrames=0;rateTime=t;}
+   if(plumesOn){effectTime+=dt;if(shipEffects?.tick(effectTime))dirty=true;}
+   if(dirty||active){if(efficient)renderer.render(scene,camera);else{ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);composer.render();}dirty=false;frames++;rateFrames++;}
+   $('#motion').dataset.frames=frames;$('#motion').dataset.cameraAngle=controls.getAzimuthalAngle().toFixed(4);$('#motion').dataset.fieldTime=seconds.toFixed(3);$('#motion').dataset.plumeTime=effectTime.toFixed(3);
+   if(!active){$('#motion').textContent='Idle · redraws only on interaction';rateFrames=0;rateTime=t;}
+   else if(t-rateTime>=1000){const fps=Math.round(rateFrames*1000/(t-rateTime));$('#motion').textContent=(spin?'Rotating':'Effects active')+' · '+fps+' fps · 30 fps limit';rateFrames=0;rateTime=t;}
+   if(active)schedule();
  }
- document.addEventListener('visibilitychange',()=>{last=performance.now();rateTime=last;rateFrames=0;invalidate();});requestAnimationFrame(tick);
+ document.addEventListener('visibilitychange',()=>{if(scheduled)cancelAnimationFrame(scheduled);scheduled=0;last=performance.now();rateTime=last;rateFrames=0;if(!document.hidden)invalidate();});
  await load(new URL(location.href).searchParams.get('ship')||'Pella');
 }catch(error){fail(error);}
