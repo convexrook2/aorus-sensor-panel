@@ -1,0 +1,294 @@
+{
+  "generator": "tools/Build-ExpanseFleet.py",
+  "trimesh": "5.1.1",
+  "method": "Original parametric fan meshes; Pella adapts Martin Taichl CC BY 4.0 geometry. Authored textures, same native conversion as Razorback",
+  "limitations": "Fan approximations. Hidden detail and markings interpreted; no production meshes or reference image pixels bundled.",
+  "models": [
+    {
+      "id": "Tynan",
+      "triangles": 12412,
+      "materials": 9,
+      "components": 174,
+      "bounds": [
+        [
+          -0.9570712905191555,
+          -1.92,
+          -0.6481557823693183
+        ],
+        [
+          0.9570712905191555,
+          1.9899999999999998,
+          0.537
+        ]
+      ],
+      "sourceSha256": "2c84439815164dc147ab0593433f4cd43a5852992f94c622cfab3b947d0e3114",
+      "source": "Assets\\Models\\Source\\Fleet\\Tynan.glb",
+      "native": "Assets\\Models\\Tynan.ship",
+      "nativeSha256": "5542dc46fab402b6f1a1d80a211edda9d66e61b2b375a6812476eed7e2fbb49a"
+    },
+    {
+      "id": "Morrigan",
+      "triangles": 6054,
+      "materials": 8,
+      "components": 87,
+      "bounds": [
+        [
+          -0.461,
+          -1.62,
+          -0.41
+        ],
+        [
+          0.461,
+          1.7399999999999998,
+          0.47100000000000003
+        ]
+      ],
+      "sourceSha256": "2e49cec0a83188f18e915612d92a10bad2a1812642fb00f3783aa50dabb7f600",
+      "source": "Assets\\Models\\Source\\Fleet\\Morrigan.glb",
+      "native": "Assets\\Models\\Morrigan.ship",
+      "nativeSha256": "aba21c49bf9b40cfe927eb338c9775b2537202d01176445724d21e78ec1bc624"
+    },
+    {
+      "id": "Canterbury",
+      "triangles": 24034,
+      "materials": 10,
+      "components": 227,
+      "bounds": [
+        [
+          -0.72,
+          -1.7,
+          -0.713
+        ],
+        [
+          0.72,
+          1.4664937420024846,
+          1.025
+        ]
+      ],
+      "sourceSha256": "77a3cddea457dda48460d78cadd43989173c979720d08a50882837065dee8bf9",
+      "source": "Assets\\Models\\Source\\Fleet\\Canterbury.glb",
+      "native": "Assets\\Models\\Canterbury.ship",
+      "nativeSha256": "b8d4624be6a16d1d6bee5dff98f5770f1b0ee3832c5986af52ed14ac49cb601c"
+    },
+    {
+      "id": "Knight",
+      "triangles": 5420,
+      "materials": 7,
+      "components": 54,
+      "bounds": [
+        [
+          -0.735,
+          -1.3,
+          -0.52
+        ],
+        [
+          0.735,
+          1.2,
+          0.454
+        ]
+      ],
+      "sourceSha256": "c7469468de6fdb102161c20d29ee73b271a54f56753ccdf8f49db045fe7c180e",
+      "source": "Assets\\Models\\Source\\Fleet\\Knight.glb",
+      "native": "Assets\\Models\\Knight.ship",
+      "nativeSha256": "8be5ef06fd7f98bdb26d92b477dd318990182e3d1664b38c5b25a28ddf3ce026"
+    },
+    {
+      "id": "Anubis",
+      "triangles": 2754,
+      "materials": 9,
+      "components": 26,
+      "bounds": [
+        [
+          -0.7000000000000001,
+          -1.58,
+          -0.45999999999999996
+        ],
+        [
+          0.64,
+          1.78,
+          0.48
+        ]
+      ],
+      "sourceSha256": "7fd35b3de9e64b214a6597691549295f83653b149ec0f74974cb4ae733da812b",
+      "source": "Assets\\Models\\Source\\Fleet\\Anubis.glb",
+      "native": "Assets\\Models\\Anubis.ship",
+      "nativeSha256": "e358a0ffebf793ee879783906fbdda6794cd50eecaa6806881ab783e60fc6233"
+    },
+    {
+      "id": "Pella",
+      "triangles": 140120,
+      "materials": 9,
+      "components": 295,
+      "bounds": [
+        [
+          -0.5417669769268838,
+          -1.6002661927728146,
+          -0.5417669769268838
+        ],
+        [
+          0.5417669769268838,
+          1.5999903286663766,
+          0.5417669769268838
+        ]
+      ],
+      "sourceSha256": "78581024d70f850183df3dc33792131ac0461295cd51f3fb6e5061bd0962277b",
+      "source": "Assets\\Models\\Source\\Fleet\\Pella.glb",
+      "native": "Assets\\Models\\Pella.ship",
+      "nativeSha256": "fbf952222b942f80fc16528e3ee627fa3dcad7fd148bcf5e1aae9ba904dab521"
+    },
+    {
+      "id": "Nauvoo",
+      "triangles": 62630,
+      "materials": 9,
+      "components": 841,
+      "bounds": [
+        [
+          -0.739,
+          -1.53,
+          -0.739
+        ],
+        [
+          0.739,
+          2.14,
+          0.739
+        ]
+      ],
+      "sourceSha256": "cf40797eb7aa7bc51592edb6bdeafcc6dd0a30b6ce4b8c65cd50e5e389f71f09",
+      "source": "Assets\\Models\\Source\\Fleet\\Nauvoo.glb",
+      "native": "Assets\\Models\\Nauvoo.ship",
+      "nativeSha256": "2139f0e618ec1676dbe5e1329213419d6a0fdcfd56ac773cd7bece84a2a77ead"
+    },
+    {
+      "id": "Behemoth",
+      "triangles": 65606,
+      "materials": 9,
+      "components": 878,
+      "bounds": [
+        [
+          -0.739,
+          -1.53,
+          -0.739
+        ],
+        [
+          0.739,
+          2.14,
+          0.739
+        ]
+      ],
+      "sourceSha256": "c1ddcba52494f4d37ff0245fcf61947b743d55f2454586172b260f963269e447",
+      "source": "Assets\\Models\\Source\\Fleet\\Behemoth.glb",
+      "native": "Assets\\Models\\Behemoth.ship",
+      "nativeSha256": "83e3622160b83b40839fff20f812d0639f1cd26b5178ceaad15b3841248d3aca"
+    },
+    {
+      "id": "Medina",
+      "triangles": 66794,
+      "materials": 10,
+      "components": 887,
+      "bounds": [
+        [
+          -0.739,
+          -1.53,
+          -0.9542869280115048
+        ],
+        [
+          1.06,
+          2.14,
+          0.954286928011505
+        ]
+      ],
+      "sourceSha256": "ad72a33ff8667caf8aec31db26e00bb67a3257217c32607b1163bffbe4365b23",
+      "source": "Assets\\Models\\Source\\Fleet\\Medina.glb",
+      "native": "Assets\\Models\\Medina.ship",
+      "nativeSha256": "dc8bd3b7b08b5a387e65ad694a572d48a775b62fd21094e5512749be79564131"
+    },
+    {
+      "id": "Scopuli",
+      "triangles": 4864,
+      "materials": 7,
+      "components": 57,
+      "bounds": [
+        [
+          -0.5640000000000001,
+          -1.52,
+          -0.44
+        ],
+        [
+          0.5640000000000001,
+          1.77,
+          0.404
+        ]
+      ],
+      "sourceSha256": "49effe9e695075d0cf7f277fe47c5ced502f4cabd59a38ab01a4bed8fb074cf6",
+      "source": "Assets\\Models\\Source\\Fleet\\Scopuli.glb",
+      "native": "Assets\\Models\\Scopuli.ship",
+      "nativeSha256": "d428a238cbb0eb9cf2f2504b25f53581e9ee8b7b58c3571646f1a17f2008cbd4"
+    },
+    {
+      "id": "Scirocco",
+      "triangles": 18958,
+      "materials": 9,
+      "components": 218,
+      "bounds": [
+        [
+          -0.6806054549961649,
+          -1.7,
+          -0.5275
+        ],
+        [
+          0.6806054549961649,
+          1.58,
+          0.74
+        ]
+      ],
+      "sourceSha256": "b13bbd793799b15c8828a5ea2dd4a0ad1b95b1b788ea7b455a6ad004f1b75dd0",
+      "source": "Assets\\Models\\Source\\Fleet\\Scirocco.glb",
+      "native": "Assets\\Models\\Scirocco.ship",
+      "nativeSha256": "dc64fdb81cd3591acdf094d934808f4aca6e1f9c7117d6d6b214ba7d7d3f5012"
+    },
+    {
+      "id": "Hammurabi",
+      "triangles": 18958,
+      "materials": 9,
+      "components": 218,
+      "bounds": [
+        [
+          -0.6806054549961649,
+          -1.7,
+          -0.5275
+        ],
+        [
+          0.6806054549961649,
+          1.58,
+          0.74
+        ]
+      ],
+      "sourceSha256": "b52da98ea14fe3f998752ffb429a17943f6b6cb2009d4a13c2ac45d471384930",
+      "source": "Assets\\Models\\Source\\Fleet\\Hammurabi.glb",
+      "native": "Assets\\Models\\Hammurabi.ship",
+      "nativeSha256": "f2a633cecb734fbeb23d48b4e1bd885cacd5f5edafa2f332e9502d9a153fb188"
+    },
+    {
+      "id": "Arboghast",
+      "triangles": 9882,
+      "materials": 8,
+      "components": 108,
+      "bounds": [
+        [
+          -1.0125,
+          -0.8941673219655211,
+          -0.9363928951443815
+        ],
+        [
+          1.0125,
+          0.7811437335830699,
+          0.9172996634251102
+        ]
+      ],
+      "sourceSha256": "d537f34c26e9e82c3f8f85e678b04d06ae867d04ea95437e1f7625ab71f4dd84",
+      "source": "Assets\\Models\\Source\\Fleet\\Arboghast.glb",
+      "native": "Assets\\Models\\Arboghast.ship",
+      "nativeSha256": "9dc3edca985bb5c8ef84df12aba0d370db5352dd6420dfda3ab17312b0b5db93"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "method": "Original geometry and original texture artwork, guided by publicly viewable TV references and the existing owner-approved blueprints, except Pella: adapted from Martin Taichl's assembled fan mesh under CC BY 4.0 with new UV and material painting.",
+  "measurementStatus": "Approximate visible proportions. No certified physical dimensions or unseen production topology claimed.",
+  "referenceImagesBundled": false,
+  "references": [
+    { "models": ["Tynan"], "artist": "Frank Yang / North Front Studio", "kind": "Production perspective and five orthographic views", "url": "https://frankyang.artstation.com/projects/3oAAeo", "features": ["Exposed structural frame", "Upper and lower cheek plates", "Offset service hardware", "Single large aft drive", "Antenna placement"] },
+    { "models": ["Morrigan"], "artist": "Ryan Begemann / Mallacore", "kind": "Existing orthographic reference sheet", "url": "https://www.reddit.com/r/TheExpanse/comments/ts4tfm/", "features": ["Triangular end section", "Nose width changes", "Long patrol hull", "Single drive", "Two PDC fittings"] },
+    { "models": ["Canterbury", "Knight"], "kind": "TV exterior gallery and shuttle concept image", "url": "https://expanse.fandom.com/wiki/Canterbury_(TV)", "features": ["Open six-sided ice bay", "Dorsal habitation", "Cargo racks and manipulators", "Eight main nozzles", "Separate shuttle"] },
+    { "models": ["Anubis"], "kind": "TV stealth-frigate exterior and specifications", "url": "https://expanse.fandom.com/wiki/Anubis_(TV)", "features": ["Asymmetric faceted envelope", "Concealed service panels", "Forward railgun", "Single aft drive"], "limitations": "Limited clear exterior views; detailed surface topology interpreted." },
+    {
+      "models": [
+        "Pella"
+      ],
+      "title": "Raptor Class Light Cruiser From the Expanse",
+      "artist": "Martin Taichl (@Martin)",
+      "kind": "Licensed assembled fan mesh, adapted for the Free Navy Pella",
+      "url": "https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attributionFile": "Assets/Models/Source/Fleet/Pella-Martin-LICENSE.txt",
+      "baseMeshSource": "Assets/Models/Source/Fleet/Pella-Martin-CCBY4.stl.gz",
+      "originalMeshFile": "xxx_-_raptor_whole.stl",
+      "originalMeshSha256": "c06878f57e5b9f04043793226f8c6a06b082848273ea6fc9e9369f474c8dedd6",
+      "changes": "Adapted and reduced the assembled STL for a static panel model; normalized orientation and display scale; created UV coordinates and new material painting for the Free Navy appearance; converted to GLB and the native panel scene. The source STL supplies geometry, not production textures.",
+      "features": [
+        "Blunt stepped octagonal forward hull",
+        "Two forward launcher sponsons",
+        "Four aft U-channel nacelles with integrated shoulder webs",
+        "Four ribbed engine bells and octagonal braces",
+        "Sealed central aft hub",
+        "Recessed split airlock and locking bars",
+        "Nine subordinate PDC fittings"
+      ],
+      "visualReferences": [
+        {
+          "artist": "Kelvin Tam; production modelling by Thirupathi Nomula and Jude Perera",
+          "kind": "Production asset renders and TV exterior views",
+          "url": "https://kelvintam.artstation.com/projects/v2358E"
+        },
+        {
+          "artist": "Thirupathi Nomula / Rocket Science VFX",
+          "kind": "Production modeller portfolio: Pella and Ceres docking shot",
+          "url": "https://thirupathinomula.artstation.com/projects/y4QPKK"
+        },
+        {
+          "artist": "Chris Danelon",
+          "kind": "Production VFX turntable; Pella chapter 00:21-01:17",
+          "url": "https://www.youtube.com/watch?v=vefkFrWLuNI&t=21s"
+        },
+        {
+          "artist": "Generation Films",
+          "kind": "Owner-supplied fan breakdown; exterior and docking chapter 00:44-01:50",
+          "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE"
+        }
+      ],
+      "limitations": "The licensed base is an independent fan recreation, not a production mesh or certified 1:1 replica. The creator's MCRN colours and ship name are their own interpretation. Production stills and videos guide the adaptation; reference pixels and production textures are not bundled."
+    },
+    { "models": ["Nauvoo", "Behemoth", "Medina"], "kind": "TV exterior gallery, construction art and drive-array views", "url": "https://expanse.fandom.com/wiki/Nauvoo_(TV)", "features": ["Long drum", "Recessed forward head and radial spokes", "Central mast", "Eight-drive array", "Different conversion and docking fittings"], "limitations": "Small sculpture and interiors omitted; later station service fittings interpreted." },
+    { "models": ["Scopuli"], "kind": "TV exterior gallery", "url": "https://expanse.fandom.com/wiki/Scopuli", "features": ["Long box-shaped transport", "Separated machinery section", "Cargo modules and rear propulsion"], "limitations": "Dark exterior shots; small fittings and unseen surfaces interpreted." },
+    { "models": ["Scirocco", "Hammurabi"], "artist": "North Front Studio concept reference", "kind": "TV-class concept image and named-hull gallery", "url": "https://expanse.fandom.com/wiki/Scirocco-class_(TV)", "features": ["Broad forward octagonal hull", "Four-drive aft cluster", "Dorsal command structures", "Three ventral deployment bays", "Orange MCRN trim"], "namedVariant": "https://expanse.fandom.com/wiki/Hammurabi_(TV)" },
+    { "models": ["Arboghast"], "kind": "TV survey-vessel exterior", "url": "https://expanse.fandom.com/wiki/Arboghast", "features": ["Wide shallow disc", "Upper instruments", "Underside structures and survey hardware"], "limitations": "Only TV exterior used; book destroyer description does not control the mesh." }
+  ]
+}

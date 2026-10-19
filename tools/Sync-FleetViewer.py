@@ -36,7 +36,18 @@ def inspect(data):
         'occlusion':sum('occlusionTexture' in m for m in materials),
         'metalRough':sum('metallicRoughnessTexture' in m.get('pbrMetallicRoughness',{}) for m in materials),
         'emissive':sum('emissiveTexture' in m for m in materials)}
-    triangles=sum(doc['accessors'][p['indices']]['count']//3 for m in doc['meshes'] for p in m['primitives'])
+    # Match viewer.js: each mesh instance in the active glTF scene contributes
+    # triangles. A repeated mesh shares source vertices but is drawn twice.
+    mesh_triangles=[sum(doc['accessors'][p['indices']]['count']//3 for p in m['primitives'])
+        for m in doc['meshes']]
+    nodes=doc['nodes']
+    def visit(node_id,ancestors):
+        require(node_id not in ancestors,'Cyclic glTF scene graph')
+        node=nodes[node_id]
+        return (mesh_triangles[node['mesh']] if 'mesh' in node else 0)+sum(
+            visit(child,ancestors|{node_id}) for child in node.get('children',[]))
+    scene=doc['scenes'][doc.get('scene',0)]
+    triangles=sum(visit(node_id,set()) for node_id in scene['nodes'])
     return raw,doc,maps,triangles
 
 def verify():
@@ -60,6 +71,10 @@ def verify():
     print('PASS:',len(catalog),'desktop ships,',len(listed),'bundle files; no native build or launch')
 
 def sync(ships,rollback):
+    # Explicit native-id=studio-id mapping keeps separate era assets intact.
+    sources=dict(item.split('=',1) if '=' in item else (item,item) for item in ships)
+    require(len(sources)==len(ships),'Duplicate requested native ship')
+    ships=list(sources)
     require(len(set(ships))==len(ships),'Duplicate requested ship')
     rollback=rollback.resolve()
     require(rollback.is_relative_to((ROOT/'artifacts').resolve()) and not rollback.exists(),'Use a new rollback folder under artifacts')
@@ -68,13 +83,13 @@ def sync(ships,rollback):
     source_manifest={x['file']:x for x in read(STUDIO/'manifest.json')['assets']}
     for ship in ships:
         old=next((x for x in catalog if x['id']==ship),None)
-        require(old is not None and ship in source,'Ship absent from an existing catalogue: '+ship)
-        entry=source[ship];data=local(STUDIO,entry['model']).read_bytes()
+        require(old is not None and sources[ship] in source,'Ship absent from an existing catalogue: '+ship)
+        entry=source[sources[ship]];data=local(STUDIO,entry['model']).read_bytes()
         require(sha(data)==source_manifest[entry['model']]['gzip_sha256'],'Reviewed compressed source checksum')
         raw,doc,maps,triangles=inspect(data)
         require(sha(raw)==entry['sha256'] and triangles==entry['triangles'],'Reviewed source checksum/count')
         row={k:v for k,v in entry.items() if not k.startswith('before') and k!='references'}
-        row.update(model=old['model'],sourceBytes=len(raw),compressedBytes=len(data),compression='gzip-lossless',
+        row.update(id=ship,sourceId=sources[ship],model=old['model'],sourceBytes=len(raw),compressedBytes=len(data),compression='gzip-lossless',
             compressedSha256=sha(data),renderMaps=maps,lightUnitScale=1/683)
         planned.append((ship,old,row,data))
     rollback.mkdir(parents=True)

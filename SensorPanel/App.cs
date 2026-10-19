@@ -32,6 +32,13 @@ internal static class App
                 previewTheme = args[themeIndex + 1];
             }
             bool checkThemes = args.Contains("--preview-check-themes");
+            int initialThemeIndex=Array.IndexOf(args,"--theme");
+            string? initialTheme=initialThemeIndex>=0 && initialThemeIndex+1<args.Length ? args[initialThemeIndex+1] : null;
+            if(args.Contains("--theme") && (initialTheme is null || !PanelTheme.All.Any(t=>t.Id==initialTheme)))
+                throw new ArgumentException("--theme requires a supported theme ID.");
+            if(initialTheme is not null && previewTheme is not null)
+                throw new ArgumentException("Use only one of --theme and --preview-theme.");
+            previewTheme??=initialTheme;
             bool checkShips = args.Contains("--preview-check-ships");
             bool checkNavigation = args.Contains("--preview-check-navigation");
             if (checkNavigation && (preview is null || !args.Contains("--sensor-preview")))
@@ -82,7 +89,12 @@ internal static class App
                     throw new ArgumentException("Preview dimensions must be 1–8192 pixels.");
                 previewSize=new Size(width,height);
             }
-            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed"),args.Contains("--runtime-check")));
+            bool checkHolotable=args.Contains("--check-holotable-live");
+            if(args.Contains("--measure-fleet-rendering") && !checkHolotable)
+                throw new ArgumentException("--measure-fleet-rendering requires --check-holotable-live.");
+            if(checkHolotable && (preview is not null || !args.Contains("--windowed") || !args.Contains("--runtime-check")))
+                throw new ArgumentException("--check-holotable-live requires --windowed --runtime-check and actual live monitoring.");
+            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed"),args.Contains("--runtime-check"),checkHolotable));
         }
         catch (Exception ex)
         {

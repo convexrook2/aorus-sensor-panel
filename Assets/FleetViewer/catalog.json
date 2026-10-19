@@ -3,10 +3,10 @@
     "id": "Pella",
     "title": "Pella / v26 thin layered armour",
     "credit": "Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project.",
-    "note": "Thin overlapping outer skins on four engine pods and two forward armour fields, with the original emblems raised onto the coating. Smooth dark finish, recessed flat backing, hatches, lamps and four drives retained. Reference-guided panel interpretation; hidden construction is not production-certified.",
+    "note": "Thin overlapping outer skins on four engine pods and two forward armour fields, with the original emblems raised onto the coating. Smooth dark finish, recessed flat backing, hatches, lamps and four drives retained. Reference-guided panel interpretation; hidden construction is not production-certified. Nine additional localized practical lights at existing pod-edge and bow-service fixtures, plus a tiny red marker on the second existing antenna. The original 25 lights, four blue drives, hull, layered armour, maps and emblems remain unchanged. Exact fixture brightness is a show-reference interpretation, not a production lighting blueprint.",
     "referenceUrl": "https://kelvintam.artstation.com/projects/v2358E",
     "sourceUrl": "https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse",
-    "triangles": 1023479,
+    "triangles": 1023503,
     "materials": 21,
     "images": 16,
     "maps": {
@@ -17,7 +17,7 @@
       "emissive": 0
     },
     "model": "models/Pella.glb.gz",
-    "sha256": "ba35d65e86fc9fd082f3cda5d4351a23a18e8aaf01e9bac0c14e387ce3f26a75",
+    "sha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
     "coatingReferenceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
     "coatingReferenceCredit": "Jakub.Vildomec; CC BY 4.0",
     "coatingLicenseUrl": "https://creativecommons.org/licenses/by/4.0/",
@@ -35,10 +35,10 @@
         "url": "https://thirupathinomula.artstation.com/projects/y4QPKK"
       }
     ],
-    "sourceBytes": 115243532,
-    "compressedBytes": 36896133,
+    "sourceBytes": 115246572,
+    "compressedBytes": 36936450,
     "compression": "gzip-lossless",
-    "compressedSha256": "8ce14295c1429ca48dc4db850c8c45c4259cafb9f03faeaf4e6a3425dd65ba53",
+    "compressedSha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f",
     "renderMaps": {
       "colour": 3,
       "normal": 3,
@@ -140,39 +140,47 @@
   },
   {
     "id": "Guanshiyin",
-    "title": "Guanshiyin / v3 V05 study",
-    "credit": "Authored for this project; V05 production drawings by Lee Fitzgerald / North Front Studio; original generated horse mural.",
-    "note": "Lee Fitzgerald V05: shallower bands, pointed aft recess, faceted gold arch and nested gold inlays. Previous version retains v2. Docked Razorback excluded; hidden surfaces interpreted.",
+    "title": "Guanshiyin / V05 reference pass v11",
+    "credit": "Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.",
+    "note": "Owner-selected v11 Fleet Studio model. Further Guanshiyin modeling is stopped.",
     "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
-    "triangles": 75670,
-    "materials": 16,
-    "images": 5,
+    "triangles": 98140,
+    "materials": 18,
+    "images": 7,
     "maps": {
-      "colour": 5,
+      "colour": 6,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
-      "emissive": 0
+      "emissive": 1
     },
     "model": "models/Guanshiyin.glb.gz",
-    "sha256": "d77db10d44c6660e7408177c39356db13aa7a8c41758c7c5a7f5f66d01b9d4a2",
-    "sourceBytes": 6931380,
-    "compressedBytes": 5549263,
+    "sha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
+    "relatedSources": [
+      {
+        "label": "Artist / exterior reference",
+        "url": "https://leefitzgerald.artstation.com/projects/X1rzxL"
+      }
+    ],
+    "referenceComparisonStatus": "Owner-selected v11 for the local Fleet Studio viewer.",
+    "sourceBytes": 7214944,
+    "compressedBytes": 5620908,
     "compression": "gzip-lossless",
-    "compressedSha256": "1175c35584bc7857fbf4aaca268a1344b9ad81b80b4dfd55ed4d57cd6417402e",
+    "compressedSha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb",
     "renderMaps": {
-      "colour": 5,
+      "colour": 6,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
-      "emissive": 0
-    }
+      "emissive": 1
+    },
+    "lightUnitScale": 0.0014641288433382138
   },
   {
     "id": "Donnager",
-    "title": "MCRN Donnager / v2 production finish",
+    "title": "Donnager / v5 fitted ship lights",
     "credit": "Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.",
-    "note": "Darker grey armour, burnt-orange trim and authored surface normals/roughness from Gautam Singh\u2019s production gallery. Original hull and lettering preserved. Previous version shows v1.",
+    "note": "Full source geometry and dark/orange finish retained. HDR emission and localized spill fitted to existing white/red/amber/drive emitters. Production-gallery comparison; no native installation or final owner acceptance.",
     "referenceUrl": "https://gautamsingh.artstation.com/projects/ZyEXR",
     "sourceUrl": "https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28",
     "triangles": 1804024,
@@ -186,49 +194,68 @@
       "emissive": 0
     },
     "model": "models/Donnager.glb.gz",
-    "sha256": "671582ddaed980fb984319a0d9c4c802458284b5be7efb3f88de284695254e47",
-    "sourceBytes": 128620316,
-    "compressedBytes": 49176342,
+    "sha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
+    "relatedSources": [
+      {
+        "label": "Artist / exterior reference",
+        "url": "https://gautamsingh.artstation.com/projects/ZyEXR"
+      }
+    ],
+    "sourceBytes": 128640456,
+    "compressedBytes": 49175887,
     "compression": "gzip-lossless",
-    "compressedSha256": "d6652b9b036465cdf1a7540ed6a1107b09bef216066ea8ef012fc08ec1d902c0",
+    "compressedSha256": "10807a4529dc595e153bc20eafdf02e3fd88d8c26be6adc7a59341afaac77944",
     "renderMaps": {
       "colour": 4,
       "normal": 4,
       "occlusion": 0,
       "metalRough": 4,
       "emissive": 0
-    }
+    },
+    "lightUnitScale": 0.0014641288433382138
   },
   {
     "id": "Rocinante",
-    "title": "Rocinante / Tachi source",
-    "credit": "Jakub.Vildomec; CC BY 4.0.",
-    "note": "Original downloaded MCRN Tachi fan asset and livery. Source geometry and maps are unchanged; no season-specific Rocinante conversion is claimed.",
-    "referenceUrl": "https://www.artstation.com/artwork/zQwR6",
-    "sourceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
-    "triangles": 140863,
-    "materials": 4,
-    "images": 10,
-    "maps": {
-      "colour": 4,
-      "normal": 3,
-      "occlusion": 3,
-      "metalRough": 3,
+    "title": "Rocinante / Season 6 CSL refit",
+    "model": "models/Rocinante.glb.gz",
+    "sha256": "cc3018a5ba94efdbaa17a1fd548c533e5bc4d51d5cb1300bec1f414e224840f9",
+    "triangles": 687992,
+    "materials": 9,
+    "images": 3,
+    "note": "Separate final-TV-era CSL refit study with railgun, PDCs and landing gear. Detachable display plate and stand connector removed. Charcoal/red/grey paint uses the owner-selected replica gallery; blue-violet CSL finish follows the final Season 6 close-up. Full source detail retained; interpreted material boundaries still under review.",
+    "credit": "Geometry: Martin Taichl / Martin, CC BY 4.0. Adapted PBR finish, CSL material, local lights and drive effects for X890. TV/replica photos are comparison references, not texture pixels. Not official production geometry.",
+    "referenceUrl": "https://www.printables.com/model/136343-rocinante-from-the-expanse",
+    "relatedSources": [
+      {
+        "label": "Owner colour reference / Master Replicas gallery",
+        "url": "https://www.masterreplicas.co.uk/products/the-expanse-the-rocinante-xl-copy"
+      },
+      {
+        "label": "Mormegil81 multicolour print / secondary angle reference",
+        "url": "https://www.reddit.com/r/BambuLab/comments/1al2suw/rocinante_multicolor_print/"
+      },
+      {
+        "label": "Martin Taichl / original source and CC BY 4.0",
+        "url": "https://www.printables.com/model/136343-rocinante-from-the-expanse"
+      },
+      {
+        "label": "Artist / exterior reference",
+        "url": "https://expanse.fandom.com/wiki/Carbon_silicate_lace_plating"
+      }
+    ],
+    "sourceId": "RocinanteS6",
+    "sourceBytes": 77451744,
+    "compressedBytes": 22290404,
+    "compression": "gzip-lossless",
+    "compressedSha256": "f7195068905ac8103100f0c9d9cea29de668dc9642823652f24af7e26bc04092",
+    "renderMaps": {
+      "colour": 3,
+      "normal": 4,
+      "occlusion": 0,
+      "metalRough": 4,
       "emissive": 0
     },
-    "model": "models/Rocinante.glb.gz",
-    "sha256": "1d65e23b07624aacb74ff929d5c065eb23810d31c7d9f342d823b14c9da43116",
-    "sourceBytes": 19590524,
-    "compressedBytes": 10300971,
-    "compression": "gzip-lossless",
-    "compressedSha256": "8db6f0d749458584f67b26ee3f1f443fd2f28b0970cfc00db6e83e428e67f476",
-    "renderMaps": {
-      "colour": 4,
-      "normal": 3,
-      "occlusion": 3,
-      "metalRough": 3,
-      "emissive": 0
-    }
+    "lightUnitScale": 0.0014641288433382138
   },
   {
     "id": "Dropship",
@@ -334,33 +361,44 @@
   },
   {
     "id": "Morrigan",
-    "title": "MCRN Morrigan / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier simplified project-authored fan study. Detailed downloadable alternatives were researched but are not used in this entry.",
+    "title": "Morrigan / Scipio Africanus v4",
+    "credit": "Original reconstruction from Ryan Begemann / Mallacore fan blueprint and owner-provided physical-kit / Azzecco shape views. Scipio Africanus livery study; no reference pixels in textures.",
+    "note": "New closed triangular core, slanted bow, stepped armor and deep backed bays, dorsal docking socket, two six-barrel PDC towers, one drive and 36 ship-owned fitting lights. Fan-reference reconstruction; all-angle comparison and final owner acceptance remain separate from native deployment.",
     "referenceUrl": "https://rjb-mallacore.artstation.com/projects/d0bQ0w",
-    "triangles": 6054,
-    "materials": 8,
-    "images": 1,
+    "triangles": 48520,
+    "materials": 14,
+    "images": 5,
     "maps": {
-      "colour": 1,
+      "colour": 5,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
       "emissive": 0
     },
     "model": "models/Morrigan.glb.gz",
-    "sha256": "2e49cec0a83188f18e915612d92a10bad2a1812642fb00f3783aa50dabb7f600",
-    "sourceBytes": 822100,
-    "compressedBytes": 583770,
+    "sha256": "5cc655a6c5eff342637bb2f999f7e44446015badef35a856a22932d131b6925f",
+    "relatedSources": [
+      {
+        "label": "Artist / exterior reference",
+        "url": "https://www.galaxykits.com/news/morrigan-class-destroyer-the-expanse-1144-fantastic-plastic/"
+      },
+      {
+        "label": "Artist / exterior reference",
+        "url": "https://rjb-mallacore.artstation.com/projects/d0bQ0w"
+      }
+    ],
+    "sourceBytes": 4529544,
+    "compressedBytes": 2102363,
     "compression": "gzip-lossless",
-    "compressedSha256": "bb1cd19d5fa34239b74516c8efeee23554fd6aa3011d3442ffacb180fe0e985b",
+    "compressedSha256": "251b760884aa4410f3818ac7f49c931288994c26467a2d197ce215bc82f68ad0",
     "renderMaps": {
-      "colour": 1,
+      "colour": 5,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
       "emissive": 0
-    }
+    },
+    "lightUnitScale": 0.0014641288433382138
   },
   {
     "id": "Canterbury",

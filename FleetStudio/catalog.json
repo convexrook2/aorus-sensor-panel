@@ -21,37 +21,30 @@
   },
   {
     "id": "Guanshiyin",
-    "title": "Guanshiyin / V05 finish v7",
-    "credit": "Authored for this project; V05 production drawings by Lee Fitzgerald / North Front Studio; original generated horse mural.",
-    "note": "V05 finish: recessed original mural panels with physical walls, smoother fitted gold linework and arch sweep. Two concealed pressure hulls retained. Local browser study; final owner acceptance remains. No native installation.",
+    "title": "Guanshiyin / V05 reference pass v11",
+    "credit": "Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.",
+    "note": "Owner-selected v11 Fleet Studio model. Further Guanshiyin modeling is stopped.",
     "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
-    "triangles": 95676,
-    "materials": 17,
-    "images": 5,
+    "triangles": 98140,
+    "materials": 18,
+    "images": 7,
     "maps": {
-      "colour": 5,
+      "colour": 6,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
-      "emissive": 0
+      "emissive": 1
     },
-    "model": "models/Guanshiyin-767ab3a21a2f.glb.gz",
-    "sha256": "b276c8fecbb502702e542197bd15b00065faeffeab63d03aeb2e4399c15f0d3e",
-    "beforeModel": "models/Guanshiyin-before-f3baa42a8c09.glb.gz",
-    "beforeSha256": "23792eb45916f6a0a98015bdf2be0f2e001be980f12cb81a90cf683bb5d96533",
-    "beforeInfo": {
-      "triangles": 90838,
-      "materials": 17
-    },
-    "beforeTitle": "Guanshiyin / v4 hull & light study",
-    "beforeLabel": "Compare v4",
+    "model": "models/Guanshiyin-6808d1f10962.glb.gz",
+    "sha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
     "relatedSources": [
       {
         "label": "Artist / exterior reference",
         "url": "https://leefitzgerald.artstation.com/projects/X1rzxL"
       }
     ],
-    "references": []
+    "references": [],
+    "referenceComparisonStatus": "Owner-selected v11 for the local Fleet Studio viewer."
   },
   {
     "id": "Morrigan",
@@ -130,10 +123,10 @@
     "id": "Pella",
     "title": "Pella / v26 thin layered armour",
     "credit": "Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project.",
-    "note": "Thin overlapping outer skins on four engine pods and two forward armour fields, with the original emblems raised onto the coating. Smooth dark finish, recessed flat backing, hatches, lamps and four drives retained. Reference-guided panel interpretation; hidden construction is not production-certified.",
+    "note": "Thin overlapping outer skins on four engine pods and two forward armour fields, with the original emblems raised onto the coating. Smooth dark finish, recessed flat backing, hatches, lamps and four drives retained. Reference-guided panel interpretation; hidden construction is not production-certified. Nine additional localized practical lights at existing pod-edge and bow-service fixtures, plus a tiny red marker on the second existing antenna. The original 25 lights, four blue drives, hull, layered armour, maps and emblems remain unchanged. Exact fixture brightness is a show-reference interpretation, not a production lighting blueprint.",
     "referenceUrl": "https://kelvintam.artstation.com/projects/v2358E",
     "sourceUrl": "https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse",
-    "triangles": 1023479,
+    "triangles": 1023503,
     "materials": 21,
     "images": 16,
     "maps": {
@@ -143,8 +136,8 @@
       "metalRough": 6,
       "emissive": 0
     },
-    "model": "models/Pella-ba35d65e86fc.glb.gz",
-    "sha256": "ba35d65e86fc9fd082f3cda5d4351a23a18e8aaf01e9bac0c14e387ce3f26a75",
+    "model": "models/Pella-2a6126d5a157.glb.gz",
+    "sha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
     "beforeModel": "models/Pella-68c816c89a33.glb.gz",
     "beforeSha256": "d33064c102a2bd4529a34ea3315ce6e4cb394bff4de4f9ee5c9a7aee7603b83d",
     "beforeInfo": {

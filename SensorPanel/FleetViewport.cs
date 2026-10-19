@@ -20,14 +20,17 @@ internal sealed class FleetViewport : Grid, IDisposable
         Foreground=Brushes.LightBlue, TextWrapping=TextWrapping.Wrap,
         HorizontalAlignment=HorizontalAlignment.Center, VerticalAlignment=VerticalAlignment.Center };
     private WebView2CompositionControl? browser;
+    private Canvas? browserSurface;
     private Window? owner;
     private Task? initialization;
     private TaskCompletionSource modelReady = Completion();
-    private bool engineReady, disposed, failed, loaded, motion=true, interactive, layoutPending;
+    private bool engineReady, disposed, failed, loaded, motion=true, interactive, holotableMode, layoutPending, resetOnLayout;
     private (bool Active,bool Motion)? activity;
     private string ship="Rocinante";
+    private string stageColour="#dd315e";
     internal event Action? CloseRequested;
     internal bool Interactive => interactive;
+    internal bool IsHolotable => holotableMode;
     internal bool MotionActive => !interactive && motion && loaded && IsVisible && IsEnabled
         && SystemParameters.ClientAreaAnimation && !failed && !disposed && modelReady.Task.IsCompletedSuccessfully;
     internal string ShipId => ship;
@@ -49,7 +52,12 @@ internal sealed class FleetViewport : Grid, IDisposable
         if(owner is null)
         {
             owner=Window.GetWindow(this);
-            if(owner is not null) owner.Closed+=OwnerClosed;
+            if(owner is not null)
+            {
+                owner.Closed+=OwnerClosed;
+                owner.SizeChanged+=OwnerSizeChanged;
+                owner.DpiChanged+=OwnerDpiChanged;
+            }
             SystemParameters.StaticPropertyChanged+=AnimationPreferenceChanged;
         }
         initialization??=InitializeAsync();
@@ -57,6 +65,8 @@ internal sealed class FleetViewport : Grid, IDisposable
         RefreshLayout();
     }
     private void OwnerClosed(object? sender, EventArgs e)=>Dispose();
+    private void OwnerSizeChanged(object sender,SizeChangedEventArgs e)=>RefreshLayout();
+    private void OwnerDpiChanged(object sender,DpiChangedEventArgs e)=>RefreshLayout();
     private void AnimationPreferenceChanged(object? sender, PropertyChangedEventArgs e)
     { if(e.PropertyName is null or nameof(SystemParameters.ClientAreaAnimation)) PublishActivity(); }
 
@@ -70,7 +80,11 @@ internal sealed class FleetViewport : Grid, IDisposable
             var environment=await CoreWebView2Environment.CreateAsync(userDataFolder:profile);
             if(disposed)return;
             browser=new WebView2CompositionControl { DefaultBackgroundColor=System.Drawing.Color.Transparent, UseLayoutRounding=false };
-            Children.Insert(0,browser);
+            // Canvas keeps the larger raster surface out of parent measurement.
+            // Its inverse transform preserves the established layout and input.
+            browserSurface=new Canvas { ClipToBounds=true };
+            browserSurface.Children.Add(browser);Children.Insert(0,browserSurface);
+            UpdateCaptureSize();
             await browser.EnsureCoreWebView2Async(environment);
             if(disposed)return;
             var core=browser.CoreWebView2;
@@ -144,7 +158,7 @@ internal sealed class FleetViewport : Grid, IDisposable
         try{core.PostWebMessageAsJson(JsonSerializer.Serialize(message));}
         catch(InvalidOperationException ex){Fail(ex);}
     }
-    private void SendScene()=>Send(new{type="scene",id=ship,interactive});
+    private void SendScene()=>Send(new{type="scene",id=ship,interactive,holotable=holotableMode,stageColour});
     private void RefreshLayout()
     {
         if(layoutPending||disposed)return;
@@ -154,8 +168,27 @@ internal sealed class FleetViewport : Grid, IDisposable
         {
             layoutPending=false;
             if(disposed||!IsLoaded)return;
+            UpdateCaptureSize();
             SendScene();PublishActivity();Send(new{type="resize"});
+            // Do not retain framing from the narrow portrait during reparenting.
+            // Apply once after the new WPF layout; ordinary resizes retain orbit/zoom.
+            if(resetOnLayout && engineReady){Reset();resetOnLayout=false;}
         }));
+    }
+    private void UpdateCaptureSize()
+    {
+        if(browser is null||owner is null||ActualWidth<=0||ActualHeight<=0)return;
+        // WebView2CompositionControl captures a bitmap at its logical size.
+        // A surrounding Viewbox can enlarge that bitmap without increasing its
+        // pixel count. Render at the ancestor scale, then map back into the same
+        // logical rectangle. WebView2 already accounts for monitor DPI itself.
+        var screen=TransformToAncestor(owner).TransformBounds(new Rect(0,0,ActualWidth,ActualHeight));
+        double width=Math.Ceiling(ActualWidth*Math.Max(1,screen.Width/ActualWidth));
+        double height=Math.Ceiling(ActualHeight*Math.Max(1,screen.Height/ActualHeight));
+        if(browser.Width==width&&browser.Height==height)return;
+        browser.Width=width;browser.Height=height;
+        var inverse=new ScaleTransform(ActualWidth/width,ActualHeight/height);inverse.Freeze();
+        browser.RenderTransform=inverse;
     }
     private void PublishActivity()
     {
@@ -180,7 +213,17 @@ internal sealed class FleetViewport : Grid, IDisposable
         SendScene();
     }
     internal void SetInteractive(bool enabled)
-    { interactive=enabled;IsHitTestVisible=enabled;Focusable=enabled;SendScene();PublishActivity(); }
+    {
+        resetOnLayout|=interactive!=enabled;
+        interactive=enabled;IsHitTestVisible=enabled;Focusable=enabled;
+        RefreshLayout();PublishActivity();
+    }
+    internal void SetHolotableMode(bool enabled,Color? accent=null)
+    {
+        if(accent is {} c)stageColour=$"#{c.R:X2}{c.G:X2}{c.B:X2}";
+        resetOnLayout|=holotableMode!=enabled;holotableMode=enabled;
+        SetInteractive(false);
+    }
     internal void SetMotion(bool enabled){motion=enabled;PublishActivity();}
     internal void Reset()=>Send(new{type="reset"});
     internal async Task WaitForReadyAsync()=>await modelReady.Task.WaitAsync(TimeSpan.FromSeconds(60));
@@ -190,6 +233,24 @@ internal sealed class FleetViewport : Grid, IDisposable
         string json=await browser!.CoreWebView2.ExecuteScriptAsync("window.x890Fleet.diagnose()");
         using var data=JsonDocument.Parse(json);ValidateModel(data.RootElement);return data.RootElement.Clone();
     }
+    internal object PixelDiagnostics()
+    {
+        var first=PointToScreen(new Point());
+        var last=PointToScreen(new Point(ActualWidth,ActualHeight));
+        var image=browser?.Template?.FindName("PART_image",browser) as Image;
+        var captured=image?.Source;
+        return new
+        {
+            LogicalWidth=ActualWidth,LogicalHeight=ActualHeight,
+            ScreenWidth=Math.Abs(last.X-first.X),ScreenHeight=Math.Abs(last.Y-first.Y),
+            BrowserWidth=browser?.ActualWidth,BrowserHeight=browser?.ActualHeight,
+            CaptureType=captured?.GetType().FullName,
+            CaptureWidth=captured is System.Windows.Interop.D3DImage d3d?d3d.PixelWidth:captured?.Width,
+            CaptureHeight=captured is System.Windows.Interop.D3DImage d3dHeight?d3dHeight.PixelHeight:captured?.Height
+        };
+    }
+    internal async Task StartRenderProfileAsync()
+    { await WaitForReadyAsync();await browser!.CoreWebView2.ExecuteScriptAsync("window.x890Fleet.profile(30)"); }
     internal async Task CaptureAsync(string path)
     {
         await WaitForReadyAsync();
@@ -206,7 +267,12 @@ internal sealed class FleetViewport : Grid, IDisposable
     {
         if(disposed)return;
         disposed=true;
-        if(owner is not null)owner.Closed-=OwnerClosed;
+        if(owner is not null)
+        {
+            owner.Closed-=OwnerClosed;
+            owner.SizeChanged-=OwnerSizeChanged;
+            owner.DpiChanged-=OwnerDpiChanged;
+        }
         SystemParameters.StaticPropertyChanged-=AnimationPreferenceChanged;
         browser?.Dispose();browser=null;
     }

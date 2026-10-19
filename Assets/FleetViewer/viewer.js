@@ -12,44 +12,67 @@ const post=message=>window.chrome?.webview?.postMessage(message);
 function failure(error){status.hidden=false;status.textContent='Ship unavailable · '+error.message;post({type:'error',message:error.message});console.error(error);}
 
 try {
- const response=await fetch('./catalog.json');if(!response.ok)throw Error('Missing fleet catalogue');
+ const previewFetch=window.chrome?.webview?{}:{cache:'no-store'};
+ const response=await fetch('./catalog.json',previewFetch);if(!response.ok)throw Error('Missing fleet catalogue');
  const catalog=await response.json();
  // Same PBR pipeline as Fleet Studio. Meshes and image data are not resampled.
  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance',preserveDrawingBuffer:true});
  renderer.setPixelRatio(devicePixelRatio);renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.setClearColor(0x000000,0);renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1;
- renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
+ renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
+ renderer.info.autoReset=false;
  const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-2,2,2,-2,.01,40);
  const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);
  scene.environment=environment.texture;scene.environmentIntensity=.22;room.dispose();pmrem.dispose();
- const key=new THREE.DirectionalLight(0xfff7eb,4);key.position.set(4,6,5);key.castShadow=true;
- key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-2.7,right:2.7,top:2.7,bottom:-2.7,near:.1,far:18});
+ // One fixed camera-left key reveals relief as the model turns. The low-level
+ // environment remains for PBR reflections; it does not cast a second shadow.
+ const key=new THREE.SpotLight(0xfff4e6,620,0,.5,.45,2);
+ key.position.set(-4,5.5,6);key.target.position.set(0,0,0);key.castShadow=true;
+ key.shadow.mapSize.set(2048,2048);key.shadow.camera.near=.5;key.shadow.camera.far=18;
  key.shadow.bias=-.00008;key.shadow.normalBias=.004;scene.add(key,key.target);
- const fill=new THREE.DirectionalLight(0xe7efff,.45);fill.position.set(-5,1,3);scene.add(fill);
- const rim=new THREE.DirectionalLight(0xbcd4ed,1.2);rim.position.set(2,-1,-6);scene.add(rim);
  const target=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType,samples:4});
  const composer=new EffectComposer(renderer,target),renderPass=new RenderPass(scene,camera),ao=new SSAOPass(scene,camera,1,1,24);
  ao.ssaoMaterial.defines.PERSPECTIVE_CAMERA=0;ao.depthRenderMaterial.defines.PERSPECTIVE_CAMERA=0;
  ao.kernelRadius=.075;ao.minDistance=.0005;ao.maxDistance=.035;
  composer.addPass(renderPass);composer.addPass(ao);composer.addPass(new OutputPass());
+ // A small physical display plinth belongs to the holotable, not to the ship.
+ // Its geometry never enters model provenance/statistics or the portrait.
+ const displayStage=new THREE.Group();displayStage.visible=false;scene.add(displayStage);
+ const plinth=new THREE.Mesh(new THREE.CylinderGeometry(1,1.035,.055,96),
+   new THREE.MeshStandardMaterial({color:0x101c27,metalness:.35,roughness:.72}));
+ plinth.receiveShadow=true;displayStage.add(plinth);
+ const stageRings=[];
+ for(const r of [.72,.94]){
+   const ring=new THREE.Mesh(new THREE.RingGeometry(r,r+.004,96),
+     new THREE.MeshBasicMaterial({color:0xdd315e,transparent:true,opacity:.32,side:THREE.DoubleSide}));
+   ring.rotation.x=-Math.PI/2;ring.position.y=.029;displayStage.add(ring);stageRings.push(ring);
+ }
  const controls=new OrbitControls(camera,canvas);controls.enableDamping=false;controls.minZoom=.15;controls.maxZoom=16;
- let root=null,entry=null,interactive=false,motion=true,active=true,dirty=true,frame=0,last=0,frames=0,loadToken=0;
+ // Inspection rotates and zooms about the ship, never translates it off-screen.
+ controls.enablePan=false;controls.zoomToCursor=false;
+ let root=null,entry=null,interactive=false,holotable=false,motion=true,active=true,dirty=true,frame=0,last=0,lastRender=0,frames=0,loadToken=0;
  let radius=1,height=3.2,modelSha='',modelStats={},raf=0,seconds=0,pendingId=null,viewWidth=0,viewHeight=0,viewRatio=0;
+ let lastFrameStats={},profile=null;
  const gl=renderer.getContext(),gpuInfo=gl.getExtension('WEBGL_debug_renderer_info');
+ const timerQuery=gl.getExtension('EXT_disjoint_timer_query_webgl2');
  const gpu=gpuInfo?gl.getParameter(gpuInfo.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);
  function invalidate(){dirty=true;schedule();}
+ function cancelScheduled(){if(raf)cancelAnimationFrame(raf);raf=0;}
  function schedule(){if(!raf&&active&&!document.hidden)raf=requestAnimationFrame(tick);}
  controls.addEventListener('change',invalidate);
  function fit(){
    const aspect=Math.max(1,innerWidth)/Math.max(1,innerHeight);
-   const halfHeight=Math.max(height/2,radius/aspect)*1.14;
+   const halfHeight=Math.max(height/2+(holotable ? .14 : 0),(holotable?Math.max(.8,radius*1.35):radius)/aspect)*1.14;
    camera.left=-halfHeight*aspect;camera.right=halfHeight*aspect;camera.top=halfHeight;camera.bottom=-halfHeight;
    camera.updateProjectionMatrix();
  }
  function resize(){if(viewWidth===innerWidth&&viewHeight===innerHeight&&viewRatio===devicePixelRatio)return;viewWidth=innerWidth;viewHeight=innerHeight;viewRatio=devicePixelRatio;renderer.setPixelRatio(devicePixelRatio);renderer.setSize(innerWidth,innerHeight,false);composer.setPixelRatio(devicePixelRatio);composer.setSize(innerWidth,innerHeight);fit();invalidate();}
  function reset(){
    if(root)root.rotation.y=interactive?0:-.62;
-   camera.up.set(0,1,0);camera.position.set(...(interactive?[4,1.4,6]:[0,.05,8]));
+   displayStage.visible=holotable&&!!root;
+   displayStage.scale.set(Math.max(.8,radius*1.35),1,Math.max(.8,radius*1.35));
+   displayStage.position.y=-height/2-.10;
+   camera.up.set(0,1,0);camera.position.set(...(holotable||interactive?[4,1.7,6]:[0,.05,8]));
    controls.target.set(0,0,0);camera.zoom=1;controls.update();fit();renderer.shadowMap.needsUpdate=true;invalidate();
  }
  function disposeRoot(obj){
@@ -74,7 +97,7 @@ try {
    try {
    // Release the previous GPU resources before allocating the next full model.
    if(root){scene.remove(root);disposeRoot(root);root=null;}entry=null;invalidate();
-   const response=await fetch(selected.model);if(!response.ok)throw Error('Missing model: '+id);
+   const response=await fetch(selected.model,previewFetch);if(!response.ok)throw Error('Missing model: '+id);
    const raw=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
    const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',raw)),b=>b.toString(16).padStart(2,'0')).join('');
    if(digest!==selected.sha256)throw Error('Model integrity failed: '+id);
@@ -94,6 +117,10 @@ try {
      if((o.isPointLight||o.isSpotLight)&&entry.lightUnitScale){o.intensity*=entry.lightUnitScale*(3.2/max)**2;if(o.distance)o.distance*=3.2/max;}
      if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;for(const m of Array.isArray(o.material)?o.material:[o.material])for(const t of Object.values(m))if(t?.isTexture)t.anisotropy=renderer.capabilities.getMaxAnisotropy();
    });
+   // Centre after the source's orientation/scale too, including non-identity
+   // scene transforms. Both portrait rotation and inspection orbit share this pivot.
+   oriented.updateMatrixWorld(true);
+   oriented.position.sub(new THREE.Box3().setFromObject(oriented).getCenter(new THREE.Vector3()));
    root=new THREE.Group();root.add(oriented);root.updateMatrixWorld(true);
    const visible=new THREE.Box3().setFromObject(root),extent=visible.getSize(new THREE.Vector3());
    radius=Math.hypot(extent.x,extent.z)/2;height=extent.y;scene.add(root);reset();
@@ -105,28 +132,64 @@ try {
  function render(){
    ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);
    ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);
-   composer.render();dirty=false;frames++;
+   // Diagnostic timer queries exist only during an explicitly requested review.
+   if(profile?.state==='collecting'&&timerQuery){
+     const disjoint=gl.getParameter(timerQuery.GPU_DISJOINT_EXT);
+     for(let i=profile.pending.length-1;i>=0;i--){
+       const q=profile.pending[i];
+       if(disjoint||gl.getQueryParameter(q,gl.QUERY_RESULT_AVAILABLE)){
+         if(!disjoint)profile.gpu.push(gl.getQueryParameter(q,gl.QUERY_RESULT)/1e6);
+         gl.deleteQuery(q);profile.pending.splice(i,1);
+       }
+     }
+   }
+   const sampling=profile?.state==='collecting'&&profile.cpu.length<profile.requested;
+   const query=sampling&&timerQuery?gl.createQuery():null;
+   if(query)gl.beginQuery(timerQuery.TIME_ELAPSED_EXT,query);
+   renderer.info.reset();const started=performance.now();composer.render();
+   if(query){gl.endQuery(timerQuery.TIME_ELAPSED_EXT);profile.pending.push(query);}
+   if(sampling)profile.cpu.push(performance.now()-started);
+   if(profile?.state==='collecting'&&profile.cpu.length>=profile.requested&&!profile.pending.length)profile.state='complete';
+   lastFrameStats={drawCalls:renderer.info.render.calls,submittedTriangles:renderer.info.render.triangles};
+   dirty=false;frames++;lastRender=performance.now();
  }
  function tick(t){
    raf=0;const dt=last?Math.min((t-last)/1000,.1):0;last=t;
    if(!active||document.hidden)return;
-   if(root&&motion&&!interactive){root.rotation.y+=dt*Math.PI*2/30;seconds+=dt;renderer.shadowMap.needsUpdate=true;dirty=true;}
+   if(root&&motion&&!interactive){
+     root.rotation.y+=dt*Math.PI*2/30;seconds+=dt;
+     if(!holotable||t-lastRender>=1000/30-.5){
+       renderer.shadowMap.needsUpdate=true;dirty=true;
+     }
+   }
    if(dirty)render();frame++;
    if(motion&&!interactive||dirty)schedule();
  }
- function diagnose(){return {id:entry?.id??null,title:entry?.title??null,sourceSha256:modelSha,expectedSha256:entry?.sha256,
+ function diagnose(){
+   camera.updateMatrixWorld(true);
+   const centre=new THREE.Vector3().project(camera);
+   const boundsCentre=root?new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3()).project(camera):centre;
+   return {id:entry?.id??null,title:entry?.title??null,sourceSha256:modelSha,expectedSha256:entry?.sha256,
    ...modelStats,expectedTriangles:entry?.triangles,expectedMaps:entry?.renderMaps,gpu,webgl2:gl instanceof WebGL2RenderingContext,
-   shadows:renderer.shadowMap.enabled,ambientOcclusion:ao.enabled,interactive,motion,active,
+   shadows:renderer.shadowMap.enabled,ambientOcclusion:ao.enabled,interactive,holotable,motion,active,
+   displayStage:displayStage.visible,rotationRadians:root?.rotation.y??0,frameLimit:holotable?30:null,
    transparent:true,pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,
    frames,animationSeconds:seconds,modelReady:!!root,renderPipeline:'Fleet Studio / Three.js PBR',
-   toneMapping:'AgX',geometryReduced:false,texturesResampled:false};}
+   toneMapping:'AgX',geometryReduced:false,texturesResampled:false,lastFrameStats,
+   renderProfile:profile?{state:profile.state,samples:profile.cpu.length,gpuSamples:profile.gpu.length,gpuTimerSupported:!!timerQuery,
+     gpuMilliseconds:profile.gpu.length?profile.gpu.reduce((a,b)=>a+b,0)/profile.gpu.length:null,
+     cpuSubmissionMilliseconds:profile.cpu.length?profile.cpu.reduce((a,b)=>a+b,0)/profile.cpu.length:null}:null,
+   framing:{centreNdc:{x:centre.x,y:centre.y},boundsCentreNdc:{x:boundsCentre.x,y:boundsCentre.y},target:controls.target.toArray(),panEnabled:controls.enablePan,zoom:camera.zoom,
+     cssWidth:innerWidth,cssHeight:innerHeight,projectionAspect:(camera.right-camera.left)/(camera.top-camera.bottom)}};}
  function receive(message){
    if(message.type==='scene'){
-     const changed=interactive!==message.interactive;interactive=!!message.interactive;controls.enabled=interactive;
+     const changed=interactive!==!!message.interactive||holotable!==!!message.holotable;
+     holotable=!!message.holotable;interactive=!!message.interactive&&!holotable;controls.enabled=interactive;
+     if(message.stageColour)for(const ring of stageRings)ring.material.color.set(message.stageColour);
      if(changed)reset();load(message.id).catch(failure);
    } else if(message.type==='activity'){
      motion=!!message.motion;active=!!message.active;last=0;
-     if(!active&&raf){cancelAnimationFrame(raf);raf=0;}else invalidate();
+     if(!active)cancelScheduled();else invalidate();
    } else if(message.type==='resize')resize();
    else if(message.type==='reset')reset();
    else if(message.type==='orbit'&&interactive){
@@ -136,8 +199,11 @@ try {
    } else if(message.type==='zoom'&&interactive){camera.zoom=THREE.MathUtils.clamp(camera.zoom*message.factor,.15,16);camera.updateProjectionMatrix();invalidate();}
  }
  window.chrome?.webview?.addEventListener('message',event=>receive(event.data));
- window.x890Fleet={diagnose};
- addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{last=0;if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden)invalidate();});
+ window.x890Fleet={diagnose,profile:(requested=30)=>{
+   if(profile?.state==='collecting')return;
+   profile={state:'collecting',requested:Math.min(120,Math.max(1,requested)),cpu:[],gpu:[],pending:[]};invalidate();
+ }};
+ addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{last=0;if(document.hidden)cancelScheduled();else invalidate();});
  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();failure(Error('Graphics context was lost. Reopen the panel to restore it.'));});
  addEventListener('keydown',event=>{
    if(!interactive)return;

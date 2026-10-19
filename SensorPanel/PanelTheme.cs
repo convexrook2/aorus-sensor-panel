@@ -12,7 +12,9 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
     public string Texture { get; init; } = "Plain";
     public string? ConsoleStyle { get; init; }
     public string? ShipId { get; init; }
-    public bool Showcase => Id == "Expanse";
+    public bool Cycling { get; init; }
+    public bool Showcase => Id == "Expanse" || Cycling;
+    public bool RociConsole => Id == "Rocinante";
     public ShipProfile? Vessel => ShipId is null ? null : ShipProfile.Resolve(ShipId);
     public bool ShipConsole => ConsoleStyle is not null;
     public SolidColorBrush? SecondaryAccent { get; init; }
@@ -51,8 +53,8 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
             with { Texture = "Soft", SecondaryAccent = Brush("#94E2D5") },
         Create("Expanse", "The Expanse", "#050A13", "#EDF7FA", "#B0C0D0", "#91E7FF", "#344D65", "#101C2D", "#060B0F", "#05090D", "#F1F8FF")
             with { Texture = "Soft", ConsoleStyle = "Roci", ShipId = "Rocinante", SecondaryAccent = Brush("#F3B56C") },
-        Create("Rocinante", "Expanse · Rocinante", "#080D12", "#EDF7FA", "#A1B6C2", "#79D9EB", "#2B424D", "#101C24", "#060B0F", "#05090D", "#D9F5FA")
-            with { Texture = "Soft", ConsoleStyle = "Roci", ShipId = "Rocinante", SecondaryAccent = Brush("#F3B56C") },
+        Create("Rocinante", "Expanse · Rocinante", "#030708", "#E1DDD1", "#A6AAA4", "#D9B777", "#344344", "#091011", "#030708", "#030708", "#E1DDD1")
+            with { ConsoleStyle = "Roci", ShipId = "Rocinante" },
         Create("MCRN", "Expanse · Donnager", "#130D0C", "#FFF3E8", "#C8ADA0", "#FF9272", "#51372D", "#251A15", "#0C0806", "#090605", "#FFAC81")
             with { Texture = "Soft", ConsoleStyle = "Mars", ShipId = "Donnager", SecondaryAccent = Brush("#E9C080") },
         Create("UNN", "Expanse · Agatha King", "#0D151D", "#E9F1FA", "#ADBED2", "#97C9FF", "#354C63", "#1A2838", "#090F18", "#080E15", "#E9F1FA")
@@ -73,6 +75,12 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
     {
         foreach (var ship in ShipProfile.All.Skip(8))
         {
+            if (ship.Id=="Pella")
+            {
+                yield return Create("Pella","Expanse · Pella","#050F1B","#E2E2CF","#9FB8C2","#DD315E","#503047","#0A1826","#050F1B","#0A1520","#E2E2CF")
+                    with { ConsoleStyle="Pella",ShipId="Pella" };
+                continue;
+            }
             bool mars = ship.Faction == "MCRN";
             bool earth = ship.Faction is "UN" or "UNN";
             var theme = mars

@@ -1,0 +1,50 @@
+PELLA - ORIGINAL MESH ATTRIBUTION AND ADAPTATION NOTICE
+
+Original title: Raptor Class Light Cruiser From the Expanse
+Original author: Martin Taichl (Printables: Martin / @Martin)
+Author profile: https://www.printables.com/@Martin
+Source: https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse
+Files: https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse/files
+Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Licence link: https://creativecommons.org/licenses/by/4.0/
+Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+The author's Printables listing explicitly applies CC BY 4.0 and permits
+adaptation and commercial use with attribution. Retain this attribution,
+the source and licence links, and a statement of changes when sharing the
+original or this adaptation. No endorsement by the original artist is implied.
+
+Original assembled file: xxx_-_raptor_whole.stl (Whole folder)
+Downloaded through the author's enabled download on 2026-10-16.
+Original STL size: 75,669,584 bytes
+Original STL SHA-256:
+c06878f57e5b9f04043793226f8c6a06b082848273ea6fc9e9369f474c8dedd6
+Preserved compressed original:
+Assets/Models/Source/Fleet/Pella-Martin-CCBY4.stl.gz
+The checksum above identifies the decompressed STL, not its gzip wrapper.
+
+Adaptation for this project's Pella:
+- Adapted and reduced the assembled mesh for static panel rendering.
+- Normalized orientation and display scale.
+- Created UV coordinates and new Free Navy material painting.
+- Converted the asset to GLB and the native panel scene.
+Pipeline: tools/PellaMesh.py, tools/PellaModel.py, tools/Build-ExpanseFleet.py
+and tools/Convert-HoloScene.py.
+
+The STL provides geometry, not original textures. The creator's MCRN paint
+scheme and ship name are their own interpretation; this project paints the
+adaptation for its Free Navy Pella presentation. This is a credited fan
+recreation, not an official production mesh or a certified 1:1 replica.
+Rights in the depicted fictional spacecraft remain with their respective owners.
+
+Visual reference credits (reference pixels and production textures are not
+included in the distributed model assets):
+Kelvin Tam - production renders, with modelling credited to Thirupathi Nomula
+and Jude Perera:
+https://kelvintam.artstation.com/projects/v2358E
+Thirupathi Nomula / Rocket Science VFX - Pella and Ceres modelling portfolio:
+https://thirupathinomula.artstation.com/projects/y4QPKK
+Chris Danelon - production VFX turntable, Pella chapter 00:21-01:17:
+https://www.youtube.com/watch?v=vefkFrWLuNI&t=21s
+Generation Films - owner-supplied fan breakdown, exterior/docking 00:44-01:50:
+https://www.youtube.com/watch?v=eZg1ocpLXOE

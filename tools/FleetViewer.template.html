@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__MODEL_ID__ / original fleet model</title>
+<style>
+:root{color-scheme:dark;--ink:#e8edf3;--muted:#81929f;--line:rgba(172,201,218,.15);--cyan:#7ce2f2}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d13;color:var(--ink);font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+#canvas{position:absolute;inset:0;width:100%;height:100%;display:block;background:radial-gradient(ellipse at 48% 40%,#152431 0%,#0b121b 42%,#06090e 100%);touch-action:none;cursor:grab}#canvas:active{cursor:grabbing}
+header{position:absolute;top:34px;left:40px;pointer-events:none} .eyebrow{font-size:10px;letter-spacing:.23em;color:var(--cyan);font-weight:600;text-transform:uppercase}
+h1{font-size:34px;font-weight:500;letter-spacing:.13em;margin:7px 0 5px} .sub{color:var(--muted);font-size:12px}
+#badge{position:absolute;top:38px;right:40px;font-size:10px;letter-spacing:.13em;color:#97acb8;border:1px solid var(--line);padding:7px 12px;border-radius:3px;background:#0b131eaa}
+#views{position:absolute;left:40px;top:172px;display:flex;flex-direction:column;gap:8px}
+button{border:1px solid var(--line);border-radius:4px;color:#b4c1cb;background:rgba(10,18,27,.76);padding:10px 14px;font:inherit;font-size:11px;letter-spacing:.03em;cursor:pointer;transition:background .15s,border-color .15s,color .15s;backdrop-filter:blur(12px)}
+button:hover{border-color:#6c9cab;color:#f1f9ff;background:#142632}button.active{color:#c5f7ff;background:#10303d;border-color:#416b7a}button:focus-visible{outline:2px solid #a9ebf7;outline-offset:3px}
+#views button{text-align:left;min-width:118px}#views button small{font-size:9px;opacity:.5;display:inline-block;width:20px}
+#tools{position:absolute;bottom:42px;left:40px;display:flex;gap:8px;flex-wrap:wrap;max-width:70vw}
+#details{position:absolute;right:40px;bottom:40px;text-align:right;font-size:11px;color:var(--muted)}#details b{color:#c9d7df;font-weight:500}#details .micro{font-size:10px;color:#5f7380;margin-top:6px;max-width:285px}
+#help{position:absolute;left:40px;bottom:100px;color:#6e8392;font-size:10px;letter-spacing:.03em}
+#loading{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:17px;background:#080e16;z-index:5;color:#a5c1cf}
+.spinner{width:32px;height:32px;border-radius:50%;border:1px solid #263b49;border-top-color:#84e0ee;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+#loading small{color:#647a89;font-size:11px}#error{color:#ffafb3;max-width:500px;text-align:center;padding:30px}
+#viewLabel{position:absolute;right:40px;top:88px;color:#718c9c;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+@media(max-width:720px){header{left:20px;top:22px}h1{font-size:24px}#badge{right:20px;top:25px;font-size:8px}#views{left:20px;top:145px;gap:5px}#views button{min-width:87px;padding:8px 10px;font-size:10px}#tools{left:20px;bottom:25px;max-width:92vw;gap:5px}#tools button{padding:9px 10px;font-size:10px}#details{right:20px;bottom:160px;font-size:10px}#details .micro{max-width:170px}#help{left:20px;bottom:116px;max-width:250px}#viewLabel{right:20px;top:68px}.sub{font-size:10px}}
+body.comparison header,body.comparison #badge,body.comparison #views,body.comparison #tools,body.comparison #details,body.comparison #help,body.comparison #viewLabel{display:none}
+</style></head>
+<body>
+<canvas id="canvas" aria-label="Interactive, fully rotatable 3D model of the selected spacecraft"></canvas>
+<header><div class="eyebrow">Original fan models / fleet 01</div><h1>__MODEL_ID__</h1><div class="sub">Reference-guided geometry and original paint. Drag to inspect every side.</div></header>
+<div id="badge">GLB · PBR MATERIALS</div><div id="viewLabel">Three-quarter view</div>
+<nav id="views" aria-label="Camera presets">
+<button data-view="hero" class="active"><small>01</small> Three-quarter</button>
+<button data-view="face"><small>02</small> Face</button>
+<button data-view="rear"><small>03</small> Rear / drive</button>
+<button data-view="engine"><small>04</small> Engine detail</button>
+<button data-view="nose"><small>05</small> Nose</button>
+<button data-view="blueprint"><small>06</small> Orthographic profile</button>
+</nav>
+<div id="help">Drag to orbit · Scroll to zoom · Shift/right-drag to pan</div>
+<div id="tools">
+<button id="spin" aria-pressed="false">Auto-rotate</button>
+<button id="hull" class="active" aria-pressed="true">Hull visible</button>
+<button id="glow" aria-pressed="false">Drive off</button>
+<button id="wire" aria-pressed="false">Wireframe</button>
+<button id="reset">Reset</button>
+<button id="download">Save GLB ↓</button>
+</div>
+<div id="details"><b>__TRIANGLES__ triangles</b> · __OBJECTS__ named objects<br>Embedded textures · No external dependencies<div class="micro">Independent fan approximation; unseen details interpreted. Model units are not certified physical dimensions.</div></div>
+<div id="loading"><div class="spinner"></div><div>Preparing the digital model</div><small>Geometry and textures are included in this file.</small></div>
+<script id="modelData" type="application/octet-stream">__MODEL_BASE64__</script>
+<script>
+'use strict';
+const $=s=>document.querySelector(s), canvas=$('#canvas');
+const gl=canvas.getContext('webgl2',{antialias:true,alpha:true,powerPreference:'high-performance',preserveDrawingBuffer:true});
+function fail(e){console.error(e);$('#loading').innerHTML='<div id="error"></div>';$('#error').textContent='This viewer needs WebGL 2. '+String(e.message||e);window.__viewerError=String(e)}
+if(!gl){fail('WebGL is unavailable in this browser. The GLB can still be opened in a 3D application.')}else{main().catch(fail)}
+async function main(){
+const vs=`#version 300 es
+precision highp float;
+layout(location=0) in vec3 position; layout(location=1) in vec3 normal; layout(location=2) in vec2 uv;
+uniform mat4 mvp;out vec3 vPosition;out vec3 vNormal;out vec2 vUv;
+void main(){vPosition=position;vNormal=normal;vUv=uv;gl_Position=mvp*vec4(position,1.);}`;
+const fs=`#version 300 es
+precision highp float;in vec3 vPosition;in vec3 vNormal;in vec2 vUv;out vec4 frag;
+uniform vec3 camera;uniform vec4 baseColor;uniform float metallic;uniform float roughness;uniform vec3 emissive;
+uniform sampler2D colorMap;uniform bool useTexture;uniform bool wireOnly;
+const float PI=3.14159265;
+vec3 fresnel(float ct,vec3 f0){return f0+(1.-f0)*pow(clamp(1.-ct,0.,1.),5.);}
+vec3 light(vec3 L,vec3 C,vec3 N,vec3 V,vec3 albedo,vec3 F0,float r){
+vec3 H=normalize(V+L);float nv=max(dot(N,V),.001),nl=max(dot(N,L),0.),nh=max(dot(N,H),0.),hv=max(dot(H,V),0.);
+float aa=r*r*r*r;float d=aa/(PI*pow(nh*nh*(aa-1.)+1.,2.)+.00001);
+float k=(r+1.)*(r+1.)/8.;float g=(nv/(nv*(1.-k)+k))*(nl/(nl*(1.-k)+k));
+vec3 F=fresnel(hv,F0);vec3 spec=d*g*F/(4.*nv*max(nl,.001)+.0001);
+return ((1.-F)*(1.-metallic)*albedo/PI+spec)*C*nl;
+}
+vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
+void main(){
+ if(wireOnly){frag=vec4(.24,.72,.83,1.);return;}
+ vec4 tex=useTexture?texture(colorMap,vUv):vec4(1.);
+ vec3 albedo=pow(max(tex.rgb,vec3(0.)),vec3(2.2))*baseColor.rgb;
+ vec3 N=normalize(vNormal);if(!gl_FrontFacing)N=-N;
+ vec3 V=normalize(camera-vPosition);float r=clamp(roughness,.15,.95);vec3 F0=mix(vec3(.04),albedo,metallic);
+ vec3 c=light(normalize(vec3(3.,7.,7.)),vec3(3.2,3.05,2.8),N,V,albedo,F0,r);
+ c+=light(normalize(vec3(-6.,1.,3.)),vec3(1.1,1.4,1.9),N,V,albedo,F0,r);
+ c+=light(normalize(vec3(1.,-4.,-6.)),vec3(1.7,2.05,2.7),N,V,albedo,F0,r);
+ vec3 R=reflect(-V,N);float hemi=.16+.16*(N.y*.5+.5)+.13*max(N.z,0.);
+ c+=albedo*(1.-metallic)*hemi*vec3(.82,.92,1.1);
+ float rect=pow(max(dot(R,normalize(vec3(-.5,1.,1.))),0.),mix(70.,3.,r));
+ float rim=pow(max(dot(R,normalize(vec3(1.,-.6,-1.))),0.),mix(50.,2.,r));
+ vec3 env=vec3(.30,.35,.42)+rect*vec3(1.8,1.7,1.5)+rim*vec3(.6,.9,1.3);
+ c+=env*mix(F0,fresnel(max(dot(N,V),0.),F0),.35)*(1.-r*.35);
+ c+=emissive*1.45;
+ frag=vec4(pow(aces(c*1.1),vec3(1./2.2)),1.);
+}`;
+function shader(t,s){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
+const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+const U={};for(const s of ['mvp','camera','baseColor','metallic','roughness','emissive','colorMap','useTexture','wireOnly'])U[s]=gl.getUniformLocation(program,s);
+const base64=$('#modelData').textContent.trim();const bytes=Uint8Array.from(atob(base64),c=>c.charCodeAt(0));const file=bytes.buffer;const dv=new DataView(file);
+if(dv.getUint32(0,true)!==0x46546c67)throw Error('Invalid GLB header');let offset=12,doc=null,bin=null;
+while(offset<file.byteLength){let len=dv.getUint32(offset,true),type=dv.getUint32(offset+4,true);if(type===0x4e4f534a)doc=JSON.parse(new TextDecoder().decode(new Uint8Array(file,offset+8,len)));if(type===0x004e4942)bin=new Uint8Array(file,offset+8,len);offset+=8+len}
+const types={5126:Float32Array,5125:Uint32Array,5123:Uint16Array,5121:Uint8Array};const sizes={SCALAR:1,VEC2:2,VEC3:3,VEC4:4,MAT4:16};
+function accessor(i){const a=doc.accessors[i],v=doc.bufferViews[a.bufferView],Type=types[a.componentType],components=sizes[a.type];if(!Type)throw Error('Unsupported accessor');const begin=bin.byteOffset+(v.byteOffset||0)+(a.byteOffset||0);if(v.byteStride&&v.byteStride!==components*Type.BYTES_PER_ELEMENT){const out=new Type(a.count*components);for(let k=0;k<a.count;k++)out.set(new Type(file,begin+k*v.byteStride,components),k*components);return out}return new Type(file,begin,a.count*components)}
+const textures=await Promise.all((doc.images||[]).map(async im=>{const bv=doc.bufferViews[im.bufferView],blob=new Blob([bin.slice(bv.byteOffset||0,(bv.byteOffset||0)+bv.byteLength)],{type:im.mimeType});const bitmap=await createImageBitmap(blob,{premultiplyAlpha:'none',colorSpaceConversion:'none'});const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,bitmap);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.generateMipmap(gl.TEXTURE_2D);const ext=gl.getExtension('EXT_texture_filter_anisotropic');if(ext)gl.texParameterf(gl.TEXTURE_2D,ext.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(8,gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));bitmap.close();return tex}));
+let parts=[];for(let i=0;i<doc.meshes.length;i++){const mesh=doc.meshes[i],node=doc.nodes.find(n=>n.mesh===i),name=node?.name||mesh.name||'';
+for(const p of mesh.primitives){const vao=gl.createVertexArray();gl.bindVertexArray(vao);for(const [attr,loc,num] of [['POSITION',0,3],['NORMAL',1,3],['TEXCOORD_0',2,2]]){if(p.attributes[attr]!==undefined){const a=accessor(p.attributes[attr]);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,a,gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,num,gl.FLOAT,false,0,0)}else{gl.disableVertexAttribArray(loc);if(loc===1)gl.vertexAttrib3f(loc,0,0,1);if(loc===2)gl.vertexAttrib2f(loc,0,0)}}
+const ix=accessor(p.indices),ibo=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibo);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,ix,gl.STATIC_DRAW);const lines=new Uint32Array(ix.length*2);for(let j=0,k=0;j<ix.length;j+=3){lines[k++]=ix[j];lines[k++]=ix[j+1];lines[k++]=ix[j+1];lines[k++]=ix[j+2];lines[k++]=ix[j+2];lines[k++]=ix[j]}const lineBuffer=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,lineBuffer);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,lines,gl.STATIC_DRAW);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibo);
+parts.push({name,vao,ibo,count:ix.length,type:doc.accessors[p.indices].componentType,lineBuffer,lineCount:lines.length,material:doc.materials[p.material]||{}})}}
+const v3={add:(a,b)=>a.map((x,i)=>x+b[i]),sub:(a,b)=>a.map((x,i)=>x-b[i]),mul:(a,s)=>a.map(x=>x*s),dot:(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0),cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm:a=>{let l=Math.hypot(...a)||1;return a.map(x=>x/l)}};
+function multiply(a,b){let c=new Float32Array(16);for(let j=0;j<4;j++)for(let i=0;i<4;i++)for(let k=0;k<4;k++)c[j*4+i]+=a[k*4+i]*b[j*4+k];return c}
+function perspective(fov,aspect,near,far){const f=1/Math.tan(fov/2),nf=1/(near-far);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0])}
+function look(eye,center,roll){const z=v3.norm(v3.sub(eye,center));let x=v3.norm(v3.cross([0,1,0],z)),y=v3.cross(z,x);const xr=v3.add(v3.mul(x,Math.cos(roll)),v3.mul(y,Math.sin(roll)));const yr=v3.add(v3.mul(y,Math.cos(roll)),v3.mul(x,-Math.sin(roll)));return {matrix:new Float32Array([xr[0],yr[0],z[0],0,xr[1],yr[1],z[1],0,xr[2],yr[2],z[2],0,-v3.dot(xr,eye),-v3.dot(yr,eye),-v3.dot(z,eye),1]),right:xr,up:yr}}
+const presets=__PRESETS__;
+let state={...presets.hero,target:[...presets.hero.target],spin:false,hull:true,glow:false,wire:false};let lastFrame=0,cameraBasis=null,renderedKey="",ortho=false;
+function setView(name){ortho=name==='blueprint';let p=presets[name];Object.assign(state,{...p,target:[...p.target]});document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));$('#viewLabel').textContent={hero:'Three-quarter view',face:'Face view',rear:'Rear / drive',engine:'Engine detail',nose:'Nose view',blueprint:'Orthographic profile'}[name];}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+for(const k of ['spin','hull','glow','wire'])$('#'+k).onclick=()=>{state[k]=!state[k];$('#'+k).classList.toggle('active',state[k]);$('#'+k).setAttribute('aria-pressed',String(state[k]));if(k==='hull')$('#hull').textContent=state.hull?'Hull visible':'Hull hidden';if(k==='glow')$('#glow').textContent=state.glow?'Drive on':'Drive off'};
+$('#reset').onclick=()=>setView('hero');$('#download').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([bytes],{type:'model/gltf-binary'}));a.download='__MODEL_ID__.glb';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+let dragging=false,last=[0,0],pan=false;
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);dragging=true;last=[e.clientX,e.clientY];pan=e.button===2||e.shiftKey});
+canvas.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-last[0],dy=e.clientY-last[1];last=[e.clientX,e.clientY];if(pan&&cameraBasis){const f=state.radius*.0011;state.target=v3.add(state.target,v3.add(v3.mul(cameraBasis.right,-dx*f),v3.mul(cameraBasis.up,dy*f)))}else{state.yaw-=dx*.006;state.pitch=Math.max(-1.54,Math.min(1.54,state.pitch+dy*.006));}document.querySelectorAll('[data-view]').forEach(b=>b.classList.remove('active'));$('#viewLabel').textContent='Free orbit'});
+canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('wheel',e=>{e.preventDefault();state.radius=Math.max(.22,Math.min(65,state.radius*Math.exp(e.deltaY*.001)));},{passive:false});
+window.addEventListener('keydown',e=>{if(e.key==='r'||e.key==='Home')setView('hero');if(e.key==='Escape')state.spin=false});
+gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);gl.clearColor(0,0,0,0);gl.uniform1i(U.colorMap,0);
+function draw(time){const dt=Math.min((time-lastFrame)*.001,.1);lastFrame=time;if(state.spin&&!dragging)state.yaw+=dt*.19;const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.floor(canvas.clientWidth*dpr),h=Math.floor(canvas.clientHeight*dpr);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}const frameKey=[state.yaw,state.pitch,state.roll,state.radius,...state.target,state.hull,state.glow,state.wire,ortho,w,h].join(',');if(frameKey===renderedKey){requestAnimationFrame(draw);return;}renderedKey=frameKey;gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(program);
+const radius=state.radius*Math.max(1,1.05/(w/h));const eye=v3.add(state.target,[Math.sin(state.yaw)*Math.cos(state.pitch)*radius,Math.sin(state.pitch)*radius,Math.cos(state.yaw)*Math.cos(state.pitch)*radius]);cameraBasis=look(eye,state.target,state.roll);const aspect=w/h,hh=__HALF_SPAN__*Math.max(1,1/aspect),ww=hh*aspect;const projection=ortho?new Float32Array([1/ww,0,0,0,0,1/hh,0,0,0,0,-2/250,0,0,0,-1,1]):perspective(.733,aspect,.08,250);const mvp=multiply(projection,cameraBasis.matrix);gl.uniformMatrix4fv(U.mvp,false,mvp);gl.uniform3fv(U.camera,eye);gl.uniform1i(U.wireOnly,state.wire);
+for(const p of parts){if(!state.hull&&/^(paint|white|accent)$/.test(p.name))continue;if(!state.glow&&p.name==='blue')continue;const m=p.material,br=m.pbrMetallicRoughness||{},bc=br.baseColorFactor||[1,1,1,1];gl.uniform4fv(U.baseColor,bc);gl.uniform1f(U.metallic,br.metallicFactor??1);gl.uniform1f(U.roughness,br.roughnessFactor??1);gl.uniform3fv(U.emissive,m.emissiveFactor||[0,0,0]);let ti=br.baseColorTexture?.index;gl.uniform1i(U.useTexture,ti!==undefined);if(ti!==undefined){gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,textures[doc.textures[ti].source]);}gl.bindVertexArray(p.vao);if(state.wire){gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,p.lineBuffer);gl.drawElements(gl.LINES,p.lineCount,gl.UNSIGNED_INT,0)}else{gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,p.ibo);gl.drawElements(gl.TRIANGLES,p.count,p.type,0)}}
+requestAnimationFrame(draw)}
+const params=new URLSearchParams(location.search);if(params.get('comparison')==='1')document.body.classList.add('comparison');const requestedView=params.get('view');if(requestedView&&Object.hasOwn(presets,requestedView))setView(requestedView);
+$('#loading').style.display='none';window.__ready=true;window.__modelStats={objects:parts.length,triangles:parts.reduce((n,p)=>n+p.count/3,0),textures:textures.length};window.__setView=setView;window.__viewerState=state;requestAnimationFrame(draw);
+}
+</script></body></html>

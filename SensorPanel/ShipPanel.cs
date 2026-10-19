@@ -10,7 +10,7 @@ namespace SensorPanel;
 
 // A separate presentation over the same published text/metrics. No second
 // collector, fabricated telemetry or artwork animation timer.
-internal sealed class ShipPanel : Canvas
+internal sealed partial class ShipPanel : Canvas
 {
     internal sealed record Plan(string Mode, double Width, double Height, Rect Sidebar, Rect Cpu, Rect Gpu, Rect Memory, Rect Network, Rect Board, Rect Navigation);
     private readonly Dictionary<string, TextBlock> source;
@@ -45,6 +45,9 @@ internal sealed class ShipPanel : Canvas
     public event Action? ShipOptionsRequested;
     private Holotable? holotable;
     private PanelTheme? activeTheme;
+    internal string? PresentationThemeId => activeTheme?.Id;
+    private double configuredAspect;
+    private string configuredLayout = "Auto";
     public bool HolotableOpen => holotable is not null;
     public bool HolotableAvailable => Holotable.Supports(FeaturedShipId);
     public string Mode { get; private set; } = "Landscape";
@@ -83,13 +86,22 @@ internal sealed class ShipPanel : Canvas
             new(244, h-188, 498, 84), new(760, h-188, 498, 84), new(244, h-94, 1014, 68), new(244,332,1014,h-536));
     }
 
-    public void Configure(PanelTheme theme, double aspect, string layout)
+    public void Configure(PanelTheme theme, double aspect, string layout, string? showcaseShip = null)
     {
+        configuredAspect=aspect; configuredLayout=layout;
+        if(theme.Showcase)
+        {
+            string ship=showcaseShip ?? (activeTheme?.Showcase==true ? selectedShip : theme.ShipId) ?? "Rocinante";
+            theme=PanelTheme.All.Single(item=>!item.Showcase && item.ShipId==ShipProfile.CanonicalId(ship)) with { Cycling=true };
+        }
         var plan = Calculate(aspect, layout);
-        string key = $"{theme.Id}:{plan.Width}:{plan.Height}:{plan.Mode}";
+        bool pella=theme.ShipId=="Pella";
+        if(pella || theme.RociConsole)plan=PellaPlan(plan);
+        string key = $"{theme.Id}:{theme.Showcase}:{plan.Width}:{plan.Height}:{plan.Mode}";
         if (configuration == key) return;
-        string? sceneShip = theme.Showcase && activeTheme?.Showcase == true ? selectedShip : theme.ShipId;
+        string? sceneShip = theme.ShipId;
         configuration = key; Mode = plan.Mode;
+        bool reopenHolotable=HolotableOpen;
         CloseHolotable(); activeTheme = theme;
         foreach (var element in new FrameworkElement[] { cpuDial, gpuDial, cpuGraph, gpuGraph })
         {
@@ -104,12 +116,14 @@ internal sealed class ShipPanel : Canvas
         showcaseCrew=null;
         heading=faction=mediaCredit=null; sidebarBounds=plan.Sidebar;
         Children.Clear(); bound.Clear(); Width = plan.Width; Height = plan.Height; Background = theme.Backdrop;
-        if (theme.Showcase)
+        if (theme.Showcase || pella || theme.RociConsole)
         {
             showcaseBackdrop=new ExpanseBackdrop();
             showcaseBackdrop.SetMotion(motion);
             Put(this,showcaseBackdrop,new(0,0,plan.Width,plan.Height));
         }
+        if(pella)Put(this,new PellaGrid(theme.Accent.Color),new(0,0,plan.Width,plan.Height));
+        if(theme.RociConsole)Put(this,new PellaGrid(Color.FromRgb(118,158,154)),new(0,0,plan.Width,plan.Height));
         bool portrait = Mode == "Portrait";
         double bodyX=plan.Cpu.X;
         bool reuseProjection=projection is not null;
@@ -119,7 +133,7 @@ internal sealed class ShipPanel : Canvas
             projection.BodySelected+=_=>NavigationChanged?.Invoke();
         }
         Put(this, projection, plan.Navigation);
-        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)115 : (byte)232,3,12,21));
+        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase || pella || theme.RociConsole ? (byte)115 : (byte)232,3,12,21));
         selectedShip=sceneShip;
         var navigation=ExpanseNavigation.ForShip(selectedShip);
         projection?.FocusBody(navigation.Body,reuseProjection);
@@ -143,12 +157,13 @@ internal sealed class ShipPanel : Canvas
         System.Windows.Automation.AutomationProperties.SetName(holotableAccess,"Open ship holotable");
         holotableAccess.Click+=(_,_)=>OpenHolotable();
         Put(this,holotableAccess,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-64)));
-        if (theme.Showcase)
+        if (theme.Showcase && !theme.RociConsole)
         {
             showcaseCrew=new ExpanseCrew();
             showcaseCrew.SetMotion(motion);
             Put(this,showcaseCrew,new(plan.Sidebar.X+8,plan.Sidebar.Bottom-150,plan.Sidebar.Width-16,132));
         }
+        if(theme.RociConsole)AddRociIdentity(plan.Sidebar);
         faction=Label(vessel.Faction,portrait ? 13 : 19,theme.Accent,true);
         Put(this, faction, new(plan.Sidebar.X+10, plan.Sidebar.Y+12, plan.Sidebar.Width-20, 24));
         shipChoices=new ComboBox {
@@ -189,11 +204,12 @@ internal sealed class ShipPanel : Canvas
         cpuDial.ApplyTheme(theme); gpuDial.ApplyTheme(theme.ForGpu());
         cpuGraph.ApplyTheme(theme); gpuGraph.ApplyTheme(theme.ForGpu());
         SetReadoutEffects(readoutPulse, gaugeTransitions); SetMotion(motion);
+        if(reopenHolotable)OpenHolotable();
     }
 
     public void RefreshShowcaseMedia()
     {
-        if (activeTheme?.Showcase != true || selectedShip is null) return;
+        if ((activeTheme?.Showcase != true && activeTheme?.ShipId!="Pella" && activeTheme?.RociConsole!=true) || selectedShip is null) return;
         showcaseBackdrop?.Reload(selectedShip); showcaseCrew?.Show(selectedShip);
         FitShipMedia();
         if (mediaCredit is not null)
@@ -204,21 +220,14 @@ internal sealed class ShipPanel : Canvas
         }
     }
 
-    // Scene changes replace only decorative media and identity. Published sensor
-    // bindings, histories, readout elements and the solar-system view stay attached.
+    // Cycle the actual ship console, retaining the shared readings, histories,
+    // solar view and one full-fidelity model viewport.
     public void SetShowcaseScene(string shipId)
     {
         if (activeTheme?.Showcase != true) return;
         var vessel=ShipProfile.Resolve(shipId);
         if (selectedShip==vessel.Id) return;
-        CloseHolotable(); selectedShip=vessel.Id;
-        if (heading is not null) heading.ToolTip=vessel.Name+" · "+vessel.Role;
-        var navigation=ExpanseNavigation.ForShip(vessel.Id);
-        UpdateSceneMedia(vessel,true);
-        if (shipChoices is not null)
-            shipChoices.SelectedItem=shipChoices.Items.OfType<ComboBoxItem>().Single(item=>item.Tag is ShipProfile ship && ship.Id==vessel.Id);
-        projection?.FocusBody(navigation.Body,true);
-        projection?.SetContext(navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source);
+        Configure(activeTheme,configuredAspect,configuredLayout,vessel.Id);
         ShowcaseChanged?.Invoke();
     }
 
@@ -261,7 +270,7 @@ internal sealed class ShipPanel : Canvas
     {
         if (shipMedia is not null)
         {
-            shipMedia.Height=Math.Max(80,sidebarBounds.Height-64-(showcaseCrew?.HasImage == true ? 146 : 0));
+            shipMedia.Height=Math.Max(80,sidebarBounds.Height-64-(showcaseCrew?.HasImage == true ? 146 : activeTheme?.RociConsole==true ? 146 : 0));
             if (holotableAccess is not null) holotableAccess.Height=shipMedia.Height;
         }
     }
@@ -319,11 +328,16 @@ internal sealed class ShipPanel : Canvas
     {
         var card = new Canvas { ClipToBounds = true };
         Put(this, card, bounds);
+        if(theme.RociConsole)
+        {
+            RociInstrumentPlane(card,bounds,theme);
+            return card;
+        }
         // Dark sensor planes keep the numbers legible over scene imagery.
         var plane=new StreamGeometry();
         using (var path=plane.Open()) { path.BeginFigure(new Point(8,0),true,true); path.PolyLineTo(new Point[] {new(bounds.Width-12,0),new(bounds.Width,bounds.Height-8),new(0,bounds.Height)},true,false); }
         plane.Freeze();
-        var wash=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)218 : (byte)42,theme.Surface.Color.R,theme.Surface.Color.G,theme.Surface.Color.B)); wash.Freeze();
+        var wash=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)218 : theme.ConsoleStyle=="Pella" ? (byte)188 : (byte)42,theme.Surface.Color.R,theme.Surface.Color.G,theme.Surface.Color.B)); wash.Freeze();
         card.Children.Add(new System.Windows.Shapes.Path { Data=plane, Fill=wash, Stroke=theme.Divider, StrokeThickness=.6, Opacity=theme.Showcase ? .92 : .72, IsHitTestVisible=false });
         Put(card, new Border { Background=theme.Accent, Opacity=.8 }, new(8,0,Math.Min(56,bounds.Width/4),1));
         return card;
@@ -334,9 +348,13 @@ internal sealed class ShipPanel : Canvas
         Brush ink = key.Contains("Power", StringComparison.OrdinalIgnoreCase) || key == "voltage" ? Brushes.LightSalmon
             : key == "fps" || key == "download" ? Brushes.Aquamarine
             : key is "fpsApplication" or "uptime" ? theme.Foreground : theme.Accent;
+        if(theme.ConsoleStyle=="Pella" || theme.RociConsole)ink=theme.Foreground;
         var value = Bind(key, size, ink, suffix);
         if (key == "fps") value.FontWeight=FontWeights.SemiBold;
         value.FontFamily = theme.ConsoleStyle is "Mars" or "Belt" or "Patrol" or "Landing" ? new FontFamily("Consolas") : new FontFamily("Segoe UI");
+        if(theme.RociConsole)value.FontFamily=new FontFamily("Consolas");
+        if(theme.ConsoleStyle=="Pella")
+        {value.FontFamily=new FontFamily("Bahnschrift SemiCondensed");value.FontStyle=FontStyles.Italic;}
         var host = new Viewbox { Child = value, Stretch = Stretch.Uniform, StretchDirection = StretchDirection.DownOnly,
             HorizontalAlignment = HorizontalAlignment.Left };
         Put(card, host, new(bounds.X, bounds.Y + 15, bounds.Width, bounds.Height - 15));
@@ -360,8 +378,12 @@ internal sealed class ShipPanel : Canvas
     {
         motion = enabled;
         enabled &= presentationActive;
-        shipPortrait?.SetMotion(enabled); projection?.SetMotion(enabled); holotable?.SetMotion(enabled);
-        showcaseBackdrop?.SetMotion(enabled); showcaseCrew?.SetMotion(enabled);
+        shipPortrait?.SetMotion(enabled); holotable?.SetMotion(enabled);
+        // The holotable covers these views. Restore/minimize must not restart
+        // their animation behind the active ship, for any ship theme.
+        bool monitorMotion=enabled && holotable is null;
+        projection?.SetMotion(monitorMotion);
+        showcaseBackdrop?.SetMotion(monitorMotion); showcaseCrew?.SetMotion(monitorMotion);
         if ((!enabled || !SystemParameters.ClientAreaAnimation) && shipMedia is not null)
         { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
         if (!enabled && shipMedia is not null) { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
@@ -375,16 +397,17 @@ internal sealed class ShipPanel : Canvas
     public void SetReadoutEffects(bool pulse, bool smoothGauges)
     {
         readoutPulse=pulse; gaugeTransitions=smoothGauges;
-        foreach (var entry in bound) if (entry.Label is HoloReadout reading) reading.SetPulse(pulse && presentationActive);
-        cpuDial.SetPulse(pulse && presentationActive); gpuDial.SetPulse(pulse && presentationActive);
-        cpuDial.SetMotion(smoothGauges && presentationActive); gpuDial.SetMotion(smoothGauges && presentationActive); holotable?.SetReadoutPulse(pulse && presentationActive);
+        bool monitorActive=presentationActive && holotable is null;
+        foreach (var entry in bound) if (entry.Label is HoloReadout reading) reading.SetPulse(pulse && monitorActive);
+        cpuDial.SetPulse(pulse && monitorActive); gpuDial.SetPulse(pulse && monitorActive);
+        cpuDial.SetMotion(smoothGauges && monitorActive); gpuDial.SetMotion(smoothGauges && monitorActive); holotable?.SetReadoutPulse(pulse && presentationActive);
     }
     internal void OpenHolotable()
     {
         if (holotable is not null || activeTheme is null || !HolotableAvailable) return;
         shipMedia?.Children.Remove(shipPortrait);
         holotable = new Holotable(activeTheme with { ShipId=FeaturedShipId }, source, motion, readoutPulse, CloseHolotable,shipPortrait);
-        projection?.SetMotion(false);
+        SetMotion(motion);SetReadoutEffects(readoutPulse,gaugeTransitions);
         Put(this, holotable, new(8, 8, Width - 16, Height - 36));
         SetZIndex(holotable, 10); holotable.Focus();
     }
@@ -392,9 +415,9 @@ internal sealed class ShipPanel : Canvas
     {
         if (holotable is null) return;
         holotable.ReleaseViewport(); Children.Remove(holotable); holotable = null;
-        shipPortrait.SetInteractive(false);shipPortrait.SetMotion(motion);
+        shipPortrait.SetHolotableMode(false);shipPortrait.SetMotion(motion);
         shipMedia?.Children.Add(shipPortrait);
-        projection?.SetMotion(motion);
+        SetMotion(motion);SetReadoutEffects(readoutPulse,gaugeTransitions);
     }
     internal void CheckHolotable()
     {
@@ -409,6 +432,12 @@ internal sealed class ShipPanel : Canvas
         holotable!.CheckInteraction();
         holotable.SetMotion(motion);
         CheckBindings();
+    }
+    internal void CheckHolotableFraming()
+    {
+        if(holotable is null)throw new InvalidOperationException("The holotable unexpectedly closed during layout.");
+        if(projection?.MotionActive==true)throw new InvalidOperationException("The covered solar map is still animating behind the holotable.");
+        holotable.CheckInteraction();holotable.CheckCenteredLayout();
     }
     internal void CheckBindings()
     {
@@ -444,8 +473,10 @@ internal sealed class ShipPanel : Canvas
     {
         foreach (var size in new[] { (1920, 1080), (1024, 600), (800, 800), (1920, 480), (1920, 462), (480, 800), (480, 1920), (3840, 2160) })
         foreach (var mode in new[] { "Auto", "Classic", "Wide", "Portrait" })
+        foreach (bool pella in new[] {false,true})
         {
             var plan = Calculate(size.Item1 / (double)size.Item2, mode);
+            if(pella)plan=PellaPlan(plan);
             var sections = new[] { plan.Sidebar, plan.Cpu, plan.Gpu, plan.Memory, plan.Network, plan.Board, plan.Navigation };
             var viewport = new Rect(0, 0, plan.Width, plan.Height);
             if (sections.Any(r => !viewport.Contains(r) || r.Width <= 0 || r.Height <= 0)) throw new InvalidOperationException("A ship-console section left the canvas.");
@@ -477,7 +508,7 @@ internal sealed class ConsoleDial : Canvas
         Unloaded += (_, _) => Settle();
     }
     public void ApplyTheme(PanelTheme value)
-    { theme = value; ((HoloReadout)Children[0]).SetInk(theme.Accent); ((TextBlock)Children[1]).Foreground = theme.Muted; InvalidateVisual(); }
+    { theme = value; ((HoloReadout)Children[0]).SetInk(theme.ConsoleStyle=="Pella" || theme.RociConsole ?theme.Foreground:theme.Accent); ((TextBlock)Children[1]).Foreground = theme.Muted; InvalidateVisual(); }
     public void SetMotion(bool enabled) { motion=enabled; if (!enabled) Settle(); }
     public void SetPulse(bool enabled) => ((HoloReadout)Children[0]).SetPulse(enabled);
     private void Settle() { BeginAnimation(GaugeValueProperty, null); SetValue(GaugeValueProperty, temperature ?? 0); }

@@ -1,6 +1,10 @@
 **/bin/
 **/obj/
 artifacts/
+# Local browser captures and generated review exports stay outside source commits.
+/.playwright-cli/
+/output/playwright/
+/FLEET_ROADMAP.html
 .vs/
 .idea/
 *.user

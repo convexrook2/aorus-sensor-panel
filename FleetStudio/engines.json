@@ -4,16 +4,16 @@
       {
         "position": [
           0.0,
-          -1.6711516,
-          -0.0532376
+          -1.668302043956042,
+          -0.053196281642447225
         ],
         "direction": [
           0,
           -1,
           0
         ],
-        "radius": 0.07097136000000001,
-        "length": 0.42582816000000007,
+        "radius": 0.07091627138249336,
+        "length": 0.4254976282949602,
         "basis": "Existing source-model drive component: blue",
         "addCore": false
       }

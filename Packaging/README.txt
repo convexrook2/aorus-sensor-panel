@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.8.5 | Windows x64
+Version 1.8.7 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -32,8 +32,8 @@ GETTING STARTED
 1. Run AORUS-Sensor-Panel-FAN-MADE-Setup.exe.
 2. Install the Desktop Runtime if requested, then choose Check again.
 3. Open the panel and accept Windows' administrator prompt for sensor access.
-4. From the FAN MADE tray icon, choose Open settings, then Move to display
-   and Fit to display.
+4. From the FAN MADE tray icon, choose Open settings, select Screen,
+   then choose Fullscreen.
    This saves a dedicated display for later launches.
 
 Automatic fullscreen avoids taking over the primary workspace. If no suitable

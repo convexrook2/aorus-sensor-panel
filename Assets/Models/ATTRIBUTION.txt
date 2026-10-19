@@ -135,9 +135,9 @@ Study source SHA256: a80f49b735903cede82930b16fe31c53cc424b45da357d87d63023b38f8
 Tynan: Tynan / v2 detail study
 Authored for this project; V4 production drawings by Frank Yang / North Front Studio.
 Study source SHA256: 092f61042bf558f20f35ea6abfe6f337a2587ecdc7c2e8361d3cffb19b756a0e
-Guanshiyin: Guanshiyin / v3 V05 study
-Authored for this project; V05 production drawings by Lee Fitzgerald / North Front Studio; original generated horse mural.
-Study source SHA256: d77db10d44c6660e7408177c39356db13aa7a8c41758c7c5a7f5f66d01b9d4a2
+Guanshiyin: Guanshiyin / V05 reference pass v11
+Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.
+Study source SHA256: 6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4
 Razorback: Razorback / owner v2
 Owner-supplied model, revised for this project against the existing blueprint; reference Ryan Begemann / Mallacore.
 Study source SHA256: e943a21e54606b991ffc76c98444414debc5905b58a5dd61e5019fbf469dbae3

@@ -8,6 +8,15 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+## Open Fleet Studio
+
+Use **Fleet Studio** on the Windows Desktop or in the Windows Start menu.
+It opens the separate ship viewer directly, without an editor or command.
+Close the window to exit; it has no background server or Windows startup entry.
+The latest local model bundle is included. To refresh this desktop copy after
+source changes, run `& .\FleetStudio\Install-Desktop.ps1` once from this checkout.
+See [Fleet Studio setup](FleetStudio/README.md) for development alternatives.
+
 ## Run in VS Code
 
 Open **X890.code-workspace**. The solution contains the monitor, its C# collector,
@@ -60,7 +69,8 @@ retained rather than moving rendering onto the CPU.
 
 The legacy `http://127.0.0.1:8770/` browser preview remains optional and works only
 while its separately launched server is running. Pinning a chat or URL cannot start
-that server. The desktop launch profiles above are the normal way to open the apps.
+that server. The Desktop/Start-menu icons open Fleet Studio directly; the VS Code
+profiles are development alternatives.
 
 ## Requirements
 
@@ -89,7 +99,7 @@ an em dash rather than an estimated value.
 2. Install the required Desktop Runtime if setup requests it, then choose
    **Check again**.
 3. Launch the panel and accept the administrator prompt for hardware access.
-4. From the FAN MADE tray icon, choose **Open settings → Display**, then **Move to display** and **Fit to display**
+4. From the FAN MADE tray icon, choose **Open settings**, select the **Screen**, then click **Fullscreen**
    to save a dedicated display.
 
 Automatic fullscreen avoids taking over the primary workspace. With no suitable
@@ -110,13 +120,26 @@ are preserved.
 
 ## Controls and appearance
 
-Click the settings gear or right-click the panel. The short main page contains
-**Display**, **Theme**, **Sensors**, **Advanced**, **Hide to tray** and **Close panel**.
-Display groups placement, fit, layout, scaling and always-on-top. Sensors groups
-FPS selection and polling. Advanced holds readout effects, Windows startup,
-image capture and help; AORUS animation appears only for AORUS themes.
-**Back** returns within settings; **Escape** closes the menu. Ship presentation
-controls live under the **⋯ Ship options** button beside the ship selector.
+Pella retains the release monitoring instruments: CPU/GPU temperature dials,
+clock rates, power, peaks, memory, network and cooling. The full model fills the
+left showcase, and the existing solar system remains visible in the centre.
+A cached static grid overlays the existing space/media background. The Pella
+palette and typography apply to the instruments; scope walls and targeting
+artwork are removed. See [Pella console](docs/PELLA-CONSOLE.md).
+
+The [ship reference library](docs/references/README.md) keeps credits and source
+links by ship, including the owner-selected Rocinante diagnostic blueprint for
+a future look-and-feel revisit. Reference artwork is separate from runtime assets.
+
+Click the settings gear or right-click the panel to open one settings form.
+The current screen, layout, theme, update interval and FPS source are visible
+without opening category pages. Choose values directly; **Fullscreen**,
+**Windowed**, artwork sizing and the checkboxes each take one action after
+opening settings. Startup, image capture, help and tray/exit controls are on the
+same form. Changes apply immediately; **Done**, **×** or **Escape** closes it.
+The form uses two columns where space allows and a single column on narrow
+screens. Ship presentation stays in the separate **⋯ Ship options** form beside
+the ship selector; cycling, timing and motion controls are direct there too.
 The tray menu remains available while the panel is hidden.
 
 - **Layout:** automatic landscape, wide-strip and portrait arrangements, with
@@ -125,12 +148,12 @@ The tray menu remains available while the panel is hidden.
   fills the area while changing proportions.
 - **Window:** resize with the corner grip. F11 or double-click toggles fit and
   restore; Escape leaves fit mode.
-- **Sensor polling:** 500–5000 ms, default 1000 ms. Faster polling increases
+- **Update every:** 500–5000 ms, default 1000 ms. Faster polling increases
   hardware access and may repeat values from slower sensors. Collection is
   serial and never overlaps.
 - **Sensor readouts:** optional number pulses, off by default, and independent
   smooth temperature rings.
-- **Ship options → Projection motion and ship rotation:** automatic map motion and ship rotation, separate
+- **Ship options → Animate map and ship:** automatic map motion and ship rotation, separate
   from sensor polling. Motion pauses when hidden or disabled and respects
   Windows animation preferences.
 
@@ -147,12 +170,16 @@ The CPU card shows measured CCD hotspot temperature where supported. The
 RPM and NVIDIA fan duty. Fan duty is a percentage, not RPM. Actor captions,
 unidentified-crew placeholders and the inactive "ORIGINAL COLOURS" label are removed.
 
-Choose **Settings → Theme → The Expanse** for a space showcase that cycles
-through all 21 ships. **⋯ Ship options → Expanse showcase** controls
-automatic cycling, with a default interval of 45 seconds and choices from
-15–120 seconds. Selecting a ship manually holds that ship until **Auto cycle**
-is enabled again. These controls are separate from **Projection motion and ship rotation**,
-which controls map motion and ship rotation.
+Choose **Settings → Theme → The Expanse** to cycle through all 21 ship themes,
+including each ship's console colours and graphics. Selecting The Expanse
+explicitly resumes cycling after an earlier manual hold. **Cycle ship themes**
+and **Change ship every** appear directly below the theme selector, and also in
+**⋯ Ship options**. The default interval is 45 seconds, with choices from 15–120
+seconds; changing themes preserves the selected interval. Selecting a ship
+manually pauses cycling until **Cycle ship themes** is enabled again. Readings,
+session maxima, histories and the shared solar view are retained. These controls
+are separate from **Animate map and ship**, which controls map motion and ship
+rotation. Cycling pauses while minimized, in settings or in the holotable.
 
 Personnel cards identify a verified character and their relationship to the
 selected ship. Generic types without identified crews show no portrait. Optional local
@@ -187,9 +214,15 @@ outside Uranus. Medina retains its separate Ring Space inset, distinct from
 the alien central station. See [navigation scope and credits](SensorPanel/SolarSystem.md).
 
 All 21 ships have local 3D portraits and holotables using one reusable WebView2
-GPU viewport. Click the portrait or press **H** to open the holotable. Drag to
-orbit, scroll or pinch to zoom, use **RESET VIEW** to reset, and **CLOSE** or
-**Escape** to return to the portrait. Both views retain the identical full
+GPU viewport. Its captured image follows the native display scale, so enlarging
+the panel renders more pixels instead of stretching a small ship bitmap. Resizing
+does not change model detail, shading or rotation timing.
+Click the portrait or press **H** to open the holotable: a centred,
+passive rotating showcase above a small display plinth, with the existing space
+or local media backdrop. Rotation follows **Animate map and ship** and Windows
+animation preferences, drawing at most 30 fps and stopping when minimized.
+There are no model navigation controls. **BACK TO MONITOR** or **Escape** returns
+to monitoring. Both views retain the identical full
 model and embedded PBR maps, checked against its SHA-256 value. No additional
 mesh reduction or texture resampling occurs in the full viewport.
 
@@ -249,7 +282,9 @@ local Belter texture/mesh assets with the offline Node.js tooling;
 `tools/Validate-SolarNavigation.ps1` checks the restored original diagram
 in visible native previews at three panel sizes.
 Use `tools/Build-Installer.ps1` to build and package the
-shared-runtime installer; packaging also requires Python 3 for asset checks
+shared-runtime installer into `artifacts/installer`. Keep testing installers and
+checksums in that project folder; do not copy them to the Desktop. Packaging
+also requires Python 3 for asset checks
 and Inno Setup 6. The FrameView bridge remains explicitly included by the installer
 build, which still requires the FrameView SDK and C++ tools. For development,
 NVIDIA FrameView is optional. Build its native bridge explicitly with

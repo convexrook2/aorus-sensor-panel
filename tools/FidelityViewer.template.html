@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fleet / material and shape review</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;color:#d9e3e9;background:#0c1015}*{box-sizing:border-box}body{margin:0;overflow:hidden}canvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}header{position:fixed;top:24px;left:28px;right:28px;display:flex;justify-content:space-between;gap:18px;pointer-events:none}header>*{pointer-events:auto}small{font-size:10px;letter-spacing:.18em;color:#99b5c3;text-transform:uppercase}h1{font-size:28px;font-weight:500;letter-spacing:.07em;margin:8px 0}#note{max-width:330px;font-size:11px;color:#8da1ad;line-height:1.5}button,select{background:#111c24d9;border:1px solid #34434f;color:#d8e7ef;border-radius:4px;font:12px system-ui;padding:9px 12px;cursor:pointer}button:hover,select:hover{background:#233844}button[aria-pressed=true]{border-color:#93bacb;background:#204655}button:focus-visible,select:focus-visible{outline:2px solid #aee5fa;outline-offset:3px}nav{position:fixed;left:28px;top:185px;display:flex;flex-direction:column;gap:7px}nav button{text-align:left;min-width:115px}footer{position:fixed;left:28px;right:28px;bottom:22px;display:flex;align-items:end;justify-content:space-between;gap:20px}#tools{display:flex;flex-wrap:wrap;gap:6px;max-width:750px}#detail{font-size:10px;text-align:right;line-height:1.7;color:#8ca1ad;max-width:360px}a{color:#a9c7d7}#status{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:20px;background:#0c1820e8;border:1px solid #36505f;border-radius:4px;font-size:13px}#hint{position:fixed;bottom:75px;left:28px;font-size:10px;color:#7d939e}#surface{max-width:170px}@media(max-width:800px){header{top:12px;left:14px;right:14px}h1{font-size:19px}#note,#detail,#hint{display:none}nav{left:14px;top:104px;gap:5px}nav button{min-width:88px;font-size:10px;padding:7px}footer{left:14px;right:14px;bottom:14px}#tools{gap:4px}#tools button,#tools select{font-size:10px;padding:7px}#ship{max-width:160px}}
+</style>
+<script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}</script></head>
+<body><canvas aria-label="Interactive ship model. Drag to orbit and scroll to zoom."></canvas>
+<header><div><small>Material &amp; shape study</small><h1 id="title">Fleet</h1><div id="note"></div></div><div><select id="ship" aria-label="Ship"></select></div></header>
+<nav aria-label="Camera views"><button data-view="hero">Three-quarter</button><button data-view="front">Front</button><button data-view="side">Side</button><button data-view="rear">Rear</button><button data-view="aft">Drive end</button><button data-view="nose">Bow end</button></nav>
+<div id="hint">Drag to orbit · Scroll to zoom · Right-drag to pan · <output id="renderRate">Preview idle</output><br><output id="gpuName"></output></div>
+<footer><div id="tools"><button id="rotate" aria-pressed="false">Auto-rotate</button><button id="lighting" aria-pressed="false">Studio lighting</button><button id="shadows" aria-pressed="true">Shadows</button><button id="ao" aria-pressed="true">Cavity shading</button><select id="surface" aria-label="Surface display"><option value="materials">Materials</option><option value="clay">Neutral clay</option><option value="normals">Surface normals</option><option value="wire">Wireframe</option></select><button id="before" aria-pressed="false" hidden>Previous version</button><button id="reset">Reset view</button></div><div id="detail"></div></footer>
+<div id="status" role="status">Loading model…</div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {SSAOPass} from 'three/addons/postprocessing/SSAOPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+const $=s=>document.querySelector(s),canvas=$('canvas');
+try{
+ const response=await fetch('./catalog.json');if(!response.ok)throw Error('Fleet catalogue unavailable');
+ const catalog=await response.json();
+ const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance',preserveDrawingBuffer:true});
+ renderer.setPixelRatio(devicePixelRatio);renderer.outputColorSpace=THREE.SRGBColorSpace;
+ const gl=renderer.getContext(),gpuInfo=gl.getExtension('WEBGL_debug_renderer_info');
+ $('#gpuName').textContent='WebGL 2 · '+(gpuInfo?gl.getParameter(gpuInfo.UNMASKED_RENDERER_WEBGL):'GPU renderer (browser hides adapter name)');
+ renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1.0;
+ renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#10161c');
+ const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment();
+ const environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.22;room.dispose();pmrem.dispose();
+ const camera=new THREE.OrthographicCamera(-2,2,2,-2,.01,40);camera.position.set(5,2.3,7);
+ const controls=new OrbitControls(camera,canvas);controls.enableDamping=false;controls.minZoom=.35;controls.maxZoom=16;controls.autoRotateSpeed=.5;
+ const key=new THREE.DirectionalLight(0xfff7eb,4.0);key.position.set(4,6,5);key.castShadow=true;
+ key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-2.7,right:2.7,top:2.7,bottom:-2.7,near:.1,far:18});key.shadow.bias=-.00008;key.shadow.normalBias=.004;scene.add(key,key.target);
+ const fill=new THREE.DirectionalLight(0xe7efff,.45);fill.position.set(-5,1,3);scene.add(fill);
+ const rim=new THREE.DirectionalLight(0xbcd4ed,1.2);rim.position.set(2,-1,-6);scene.add(rim);
+ const renderTarget=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType,samples:4});
+ const composer=new EffectComposer(renderer,renderTarget),renderPass=new RenderPass(scene,camera),ao=new SSAOPass(scene,camera,1,1,24);
+ ao.ssaoMaterial.defines.PERSPECTIVE_CAMERA=0;ao.depthRenderMaterial.defines.PERSPECTIVE_CAMERA=0;
+ ao.kernelRadius=.075;ao.minDistance=.0005;ao.maxDistance=.035;
+ composer.addPass(renderPass);composer.addPass(ao);composer.addPass(new OutputPass());
+ const clay=new THREE.MeshStandardMaterial({color:0x777e83,metalness:0,roughness:.63}),normals=new THREE.MeshNormalMaterial(),wire=new THREE.MeshBasicMaterial({color:0x82b7c9,wireframe:true});
+ let root=null,entry=null,dirty=true,spin=false,cinema=false,previous=false,loadId=0,last=0,rateStart=0,renderedFrames=0;
+ const originalMaterials=new Map();let extent=new THREE.Vector3(1,3.2,1);
+ function invalidate(){dirty=true;}
+ controls.addEventListener('change',invalidate);
+ function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);composer.setSize(w,h);const a=w/h;camera.left=-2.15*a;camera.right=2.15*a;camera.top=2.15;camera.bottom=-2.15;camera.updateProjectionMatrix();invalidate();}
+ addEventListener('resize',resize);resize();
+ function disposeRoot(obj){const mats=new Set(),tex=new Set(),bitmaps=new Set();obj.traverse(o=>{if(o.isMesh){o.geometry.dispose();const saved=originalMaterials.get(o)||o.material;for(const m of Array.isArray(saved)?saved:[saved]){mats.add(m);for(const v of Object.values(m))if(v?.isTexture)tex.add(v);}}});for(const t of tex){const images=Array.isArray(t.source?.data)?t.source.data:[t.source?.data];for(const img of images)if(typeof ImageBitmap!=='undefined'&&img instanceof ImageBitmap)bitmaps.add(img);t.dispose();}for(const bitmap of bitmaps)bitmap.close();for(const m of mats)m.dispose();}
+ function displaySurface(){const mode=$('#surface').value;root?.traverse(o=>{if(o.isMesh)o.material=mode==='materials'?originalMaterials.get(o):mode==='clay'?clay:mode==='normals'?normals:wire;});renderer.shadowMap.needsUpdate=true;invalidate();}
+ function view(name='hero'){
+   if(!root)return;
+   const dirs={hero:[4,1.4,6],front:[0,0,8],side:[8,0,0],rear:[0,0,-8],aft:[.001,-8,.001],nose:[.001,8,.001]};
+   camera.position.copy(new THREE.Vector3(...dirs[name]));camera.up.set(0,1,0);if(name==='aft'||name==='nose')camera.up.set(0,0,-1);
+   controls.target.set(0,0,0);camera.zoom=1;controls.update();camera.updateMatrixWorld(true);
+   const bounds=new THREE.Box3().setFromObject(root),points=[];for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z])points.push(new THREE.Vector3(x,y,z).applyMatrix4(camera.matrixWorldInverse));
+   const width=Math.max(...points.map(p=>p.x))-Math.min(...points.map(p=>p.x)),height=Math.max(...points.map(p=>p.y))-Math.min(...points.map(p=>p.y));
+   camera.zoom=Math.min((camera.right-camera.left)/(width*1.30),(camera.top-camera.bottom)/(height*1.23),4);camera.updateProjectionMatrix();
+   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));invalidate();
+ }
+ async function load(id,reset=true){
+   const token=++loadId,selected=catalog.find(m=>m.id===id)||catalog[0];$('#status').hidden=false;$('#status').textContent='Loading '+selected.title+'…';
+   const path=previous&&selected.beforeModel?selected.beforeModel:selected.model;
+   let gltf;try{gltf=await new GLTFLoader().loadAsync(path);}catch(error){if(token===loadId)throw error;return;}if(token!==loadId){disposeRoot(gltf.scene);return;}entry=selected;
+   if(root){scene.remove(root);disposeRoot(root);}originalMaterials.clear();
+   root=new THREE.Group();root.add(gltf.scene);gltf.scene.updateMatrixWorld(true);
+   const bounds=new THREE.Box3().setFromObject(gltf.scene),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+   const max=Math.max(size.x,size.y,size.z);if(!(max>0&&Number.isFinite(max)))throw Error('Invalid model bounds');
+   gltf.scene.position.sub(center);root.scale.setScalar(3.2/max);
+   const axis=size.x>=size.y&&size.x>=size.z?new THREE.Vector3(1,0,0):size.z>size.y?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
+   root.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,entry.flipLongitudinal?-1:1,0));
+   root.traverse(o=>{if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;originalMaterials.set(o,o.material);for(const m of Array.isArray(o.material)?o.material:[o.material]){for(const value of Object.values(m))if(value?.isTexture)value.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());}});
+   scene.add(root);root.updateMatrixWorld(true);extent=new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
+   $('#title').textContent=entry.title+(previous?' / previous version':'');document.title=$('#title').textContent+' / fidelity review';$('#ship').value=entry.id;
+   $('#note').textContent=entry.note||'Inspect the shape in clay and the finish under neutral light.';
+   const info=previous&&entry.beforeInfo?entry.beforeInfo:entry;$('#detail').textContent=info.triangles.toLocaleString()+' triangles · '+info.materials+' materials\n'+entry.credit;
+   $('#detail').style.whiteSpace='pre-line';$('#before').hidden=!entry.beforeModel;
+   if(entry.referenceUrl){const reference=document.createElement('a');reference.href=entry.referenceUrl;reference.target='_blank';reference.rel='noopener noreferrer';reference.textContent='Artist reference / source drawings';$('#detail').append(document.createElement('br'),reference);}
+   displaySurface();if(reset)view();$('#status').hidden=true;invalidate();
+   const url=new URL(location.href);url.searchParams.set('ship',entry.id);history.replaceState(null,'',url);
+ }
+ for(const m of catalog){const option=document.createElement('option');option.value=m.id;option.textContent=m.title;$('#ship').append(option);}
+ function failure(error){console.error(error);$('#status').hidden=false;$('#status').textContent='Unable to load this review: '+error.message;}
+ $('#ship').onchange=()=>{previous=false;$('#before').setAttribute('aria-pressed','false');load($('#ship').value).catch(failure);};
+ $('#rotate').onclick=()=>{spin=!spin;controls.autoRotate=spin;$('#rotate').setAttribute('aria-pressed',String(spin));$('#rotate').textContent=spin?'Pause rotation':'Auto-rotate';invalidate();};
+ $('#lighting').onclick=()=>{cinema=!cinema;scene.environmentIntensity=cinema?.08:.22;key.intensity=cinema?4.8:4;fill.intensity=cinema?.12:.45;rim.intensity=cinema?1.9:1.2;scene.background.set(cinema?'#050a10':'#10161c');$('#lighting').textContent=cinema?'Cinematic lighting':'Studio lighting';$('#lighting').setAttribute('aria-pressed',String(cinema));invalidate();};
+ $('#shadows').onclick=()=>{renderer.shadowMap.enabled=!renderer.shadowMap.enabled;renderer.shadowMap.needsUpdate=true;$('#shadows').setAttribute('aria-pressed',String(renderer.shadowMap.enabled));root?.traverse(o=>{if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m.needsUpdate=true;});invalidate();};
+ $('#ao').onclick=()=>{ao.enabled=!ao.enabled;$('#ao').setAttribute('aria-pressed',String(ao.enabled));invalidate();};
+ $('#surface').onchange=displaySurface;$('#reset').onclick=()=>view();
+ $('#before').onclick=()=>{previous=!previous;$('#before').setAttribute('aria-pressed',String(previous));load(entry.id,false).catch(failure);};
+ document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
+ function tick(t){requestAnimationFrame(tick);const dt=Math.min(Math.max((t-last)*.001,0),.1);last=t;if(document.hidden)return;if(spin)controls.update(dt);if(dirty||spin){ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);composer.render();dirty=false;renderedFrames++;}if(t-rateStart>=1000){$('#renderRate').textContent=renderedFrames>1?'Preview '+Math.round(renderedFrames*1000/(t-rateStart))+' fps':'Preview idle';renderedFrames=0;rateStart=t;}}
+ document.addEventListener('visibilitychange',()=>{rateStart=performance.now();renderedFrames=0;invalidate();});requestAnimationFrame(tick);
+ await load(new URL(location.href).searchParams.get('ship'));
+}catch(error){console.error(error);$('#status').hidden=false;$('#status').textContent='Unable to start review: '+error.message;}
+</script></body></html>

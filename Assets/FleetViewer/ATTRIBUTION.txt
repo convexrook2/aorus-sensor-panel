@@ -16,14 +16,14 @@ https://www.artstation.com/artwork/xYGE4O
 Tynan: Authored for this project; V4 production drawings by Frank Yang / North Front Studio.
 https://frankyang.artstation.com/projects/3oAAeo
 
-Guanshiyin: Authored for this project; V05 production drawings by Lee Fitzgerald / North Front Studio; original generated horse mural.
+Guanshiyin: Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.
 https://leefitzgerald.artstation.com/projects/X1rzxL
 
 Donnager: Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.
 https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28
 
-Rocinante: Jakub.Vildomec; CC BY 4.0.
-https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf
+Rocinante: Geometry: Martin Taichl / Martin, CC BY 4.0. Adapted PBR finish, CSL material, local lights and drive effects for X890. TV/replica photos are comparison references, not texture pixels. Not official production geometry.
+https://www.printables.com/model/136343-rocinante-from-the-expanse
 
 Dropship: Chris Kuhn / owlstraw; CC BY 4.0.
 https://sketchfab.com/3d-models/mcrn-dropship-the-expanse-1f26e13076a740cd99ec3d0f556dc479
@@ -34,7 +34,7 @@ https://sketchfab.com/3d-models/epsteins-yacht-the-expanse-137498e7aabb47dfaee3f
 AgathaKing: Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front.
 https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e
 
-Morrigan: Authored for this project; independent fan approximation.
+Morrigan: Original reconstruction from Ryan Begemann / Mallacore fan blueprint and owner-provided physical-kit / Azzecco shape views. Scipio Africanus livery study; no reference pixels in textures.
 https://rjb-mallacore.artstation.com/projects/d0bQ0w
 
 Canterbury: Authored for this project; independent fan approximation.

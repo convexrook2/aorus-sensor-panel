@@ -1,0 +1,718 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-10-19",
+  "timezone": "America/Toronto",
+  "purpose": "Per-ship reference library for monitoring interfaces and optional ship showcase studies",
+  "ownerDirections": [
+    "Keep references organised for each ship.",
+    "Use the selected Rocinante diagnostic blueprint when revisiting the Rocinante look and feel.",
+    "Finish the Pella holotable and centring work before moving to other ship interfaces.",
+    "Preserve latest models, monitoring instruments, solar system and backgrounds.",
+    "Research each ship using its own production and on-screen evidence; do not reuse one Pella targeting frame as the universal design reference."
+  ],
+  "boundaries": [
+    "Archival reference material only; no runtime dependency or asset-catalogue mutation.",
+    "New references do not prove implementation, native validation or release.",
+    "Owner endorsement selects design evidence, not permission to redistribute third-party artwork as app assets.",
+    "Imported existing model links retain their original provenance and are not newly verified UI evidence."
+  ],
+  "interfaceReferences": [
+    {
+      "localImage": "Rocinante/rocinante-sdcc-hull-scan.png",
+      "creator": "UI design and animation: Harrison Vincent. Project art direction and design: Ryan Hawthorne.",
+      "kind": "Official Prime Video SDCC 2019 immersive experience; not a TV episode frame",
+      "sourcePage": "https://www.behance.net/gallery/84032987/The-Expanse-Prime-Video-San-Diego-Comic-Con/modules/487155777",
+      "title": "Rocinante ship diagnostics / hull scan",
+      "creatorPage": "https://www.harrisonvincent.com/works/the-expanse",
+      "ships": [
+        "Rocinante",
+        "RocinanteS6"
+      ],
+      "id": "rocinante-sdcc-hull-scan",
+      "rights": "Project page displays Attribution, Non-commercial, No Derivatives. Preserve the original reference; no licence to edit or ship these pixels is inferred.",
+      "reviewStatus": "Owner selected this blueprint as a reference for a future Rocinante look-and-feel revisit on 2026-10-19; original saved and visually inspected: ROCINANTE SHIP OVERVIEW, SSMUI01-08, DIAGNOSTICS PANEL, HULL SCAN, large blue ship schematic and red highlighted sections",
+      "intendedUse": "Study ship prominence, schematic annotation, diagnostic hierarchy and framing. Preserve the latest 3D model. Compare TV-era-specific references before designing the implementation."
+    },
+    {
+      "localImage": "Shared/prime-season2-ship-display.jpg",
+      "creator": "The Expanse / Prime Video; individual screen artist not established",
+      "kind": "Official series promotional still; exact episode and on-screen vessel identity not established in this pass",
+      "sourcePage": "https://www.primevideo.com/detail/The-Expanse/0NQ0LAT2BXHNN2871ITVDX6WLX",
+      "title": "Prime Video Season 2 ship-display still",
+      "ships": [],
+      "id": "prime-season2-ship-display",
+      "reviewStatus": "Original saved and visually inspected on 2026-10-19. Ship schematic appears behind a character; exact episode, depicted ship and bridge remain unidentified.",
+      "intendedUse": "Study the on-screen presentation of a ship schematic. Do not call it a Pella reference."
+    },
+    {
+      "sourcePage": "https://rhys.artstation.com/projects/q9VKgD",
+      "kind": "Production artist Season 5 spatial HUD development",
+      "ships": [
+        "Razorback"
+      ],
+      "title": "The Expanse: Razorback HUD Design",
+      "reviewStatus": "Creator text reviewed; full image and motion comparison pending",
+      "id": "razorback-rhys-yorke-season5-hud",
+      "intendedUse": "Study layered spatial composition and how display elements reposition; retain Razorback identity.",
+      "creator": "Rhys Yorke"
+    },
+    {
+      "sourcePage": "https://www.artstation.com/artwork/q9Am1L",
+      "kind": "Production screen design portfolio",
+      "ships": [
+        "Rocinante"
+      ],
+      "title": "The Expanse: Rocinante UI",
+      "reviewStatus": "Search-indexed creator description located; direct page returned a sign-in shell, so detailed visual comparison remains pending",
+      "id": "rocinante-rhys-yorke-ui",
+      "intendedUse": "Follow up on original production screens, typography and palette before revisiting Rocinante.",
+      "creator": "Rhys Yorke"
+    },
+    {
+      "sourcePage": "https://karlcrosby.artstation.com/projects/W2ADZD",
+      "kind": "Production set and projector concept work",
+      "ships": [
+        "AgathaKing"
+      ],
+      "title": "The Expanse Season 3: Agatha King ops projector and bridge panorama",
+      "reviewStatus": "Creator page captions reviewed; panorama and image comparison pending",
+      "id": "agatha-king-karl-crosby-projector",
+      "intendedUse": "Study the physical projector and spatial presentation. This is not evidence for Pella graphics.",
+      "creator": "Karl Crosby"
+    },
+    {
+      "sourcePage": "https://www.youtube.com/watch?v=YWbRAe0N_WA",
+      "kind": "Creator hologram demonstration; use in a TV episode not established",
+      "ships": [
+        "Rocinante"
+      ],
+      "title": "THE EXPANSE | Rocinante Hologram",
+      "reviewStatus": "Creator search description located; video playback not verified",
+      "id": "rocinante-chris-danelon-hologram",
+      "intendedUse": "Inspect ship presentation from multiple angles; do not substitute its effect for the current full PBR model without an owner-reviewed study.",
+      "creator": "Chris Danelon"
+    }
+  ],
+  "savedOriginalImages": [
+    {
+      "file": "Rocinante/rocinante-sdcc-hull-scan.png",
+      "id": "rocinante-sdcc-hull-scan",
+      "savedAt": "2026-10-19T11:50:48.7604866-04:00",
+      "sha256": "b1f2c453d321119da0d9d8800e16f115b639fc01633ff3119c1bc7975ab8b7e0",
+      "sourceImageUrl": "https://mir-s3-cdn-cf.behance.net/project_modules/fs/29d74784032987.5d521b23e47a0.png",
+      "bytes": 2930837
+    },
+    {
+      "file": "Shared/prime-season2-ship-display.jpg",
+      "id": "prime-season2-ship-display",
+      "savedAt": "2026-10-19T11:50:49.0905875-04:00",
+      "sha256": "72135051dcfab99a344de687e28365684202aa92894e90bfbb2fdb74378a36c8",
+      "sourceImageUrl": "https://m.media-amazon.com/images/S/pv-target-images/68d9317a634202fdbe75a511f78300cceb300d99b60451b4fd50d6ffefaadb9c._SX1080_FMjpg_.jpg",
+      "bytes": 62146
+    }
+  ],
+  "ships": [
+    {
+      "interfaceReferenceIds": [
+        "agatha-king-karl-crosby-projector"
+      ],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "model-source",
+          "url": "https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front."
+        },
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://leefitzgerald.artstation.com/projects/X1rzxL",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front."
+        }
+      ],
+      "shipId": "AgathaKing",
+      "interfaceResearchStatus": "References collected; see individual review statuses"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://magazine.artstation.com/2016/02/scenes-concept-art-expanse/",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Anubis_(TV)",
+          "description": "TV stealth-frigate exterior and specifications",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Anubis",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://karlcrosby.artstation.com/projects/1ndxoZ",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Arboghast",
+          "description": "TV survey-vessel exterior",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Arboghast",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://www.artstation.com/artwork/xYGE4O",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; production reference Lee Fitzgerald / North Front Studio."
+        }
+      ],
+      "shipId": "BashiBazouk",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://leefitzgerald.artstation.com/projects/X1rzxL",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Nauvoo_(TV)",
+          "description": "TV exterior gallery, construction art and drive-array views",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Behemoth",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://deningart.artstation.com/projects/XP8Vl",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Canterbury_(TV)",
+          "description": "TV exterior gallery and shuttle concept image",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Canterbury",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "model-source",
+          "url": "https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references."
+        },
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://gautamsingh.artstation.com/projects/ZyEXR",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references."
+        }
+      ],
+      "shipId": "Donnager",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "model-source",
+          "url": "https://sketchfab.com/3d-models/mcrn-dropship-the-expanse-1f26e13076a740cd99ec3d0f556dc479",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Chris Kuhn / owlstraw; CC BY 4.0."
+        },
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://rjb-mallacore.artstation.com/projects/d0bQ0w",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Chris Kuhn / owlstraw; CC BY 4.0."
+        }
+      ],
+      "shipId": "Dropship",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "model-source",
+          "url": "https://sketchfab.com/3d-models/epsteins-yacht-the-expanse-137498e7aabb47dfaee3fe2652fadefa",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Chris Kuhn / owlstraw; CC BY 4.0."
+        },
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://rjb-mallacore.artstation.com/projects/PenQB4",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Chris Kuhn / owlstraw; CC BY 4.0."
+        }
+      ],
+      "shipId": "Epstein",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://leefitzgerald.artstation.com/projects/X1rzxL",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque."
+        }
+      ],
+      "shipId": "Guanshiyin",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://deningart.artstation.com/projects/RyJwRm",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Scirocco-class_(TV)",
+          "description": "TV-class concept image and named-hull gallery",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": "North Front Studio concept reference"
+        }
+      ],
+      "shipId": "Hammurabi",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://deningart.artstation.com/projects/QaqDE",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Canterbury_(TV)",
+          "description": "TV exterior gallery and shuttle concept image",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Knight",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Nauvoo_(TV)",
+          "description": "TV exterior gallery, construction art and drive-array views",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Medina",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://rjb-mallacore.artstation.com/projects/d0bQ0w",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Original reconstruction from Ryan Begemann / Mallacore fan blueprint and owner-provided physical-kit / Azzecco shape views. Scipio Africanus livery study; no reference pixels in textures."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://www.reddit.com/r/TheExpanse/comments/ts4tfm/",
+          "description": "Existing orthographic reference sheet",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": "Ryan Begemann / Mallacore"
+        }
+      ],
+      "shipId": "Morrigan",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Nauvoo_(TV)",
+          "description": "TV exterior gallery, construction art and drive-array views",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Nauvoo",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "model-source",
+          "url": "https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project."
+        },
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://kelvintam.artstation.com/projects/v2358E",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://thirupathinomula.artstation.com/projects/y4QPKK",
+          "description": "Production modeller portfolio: Pella and Ceres docking shot",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": "Thirupathi Nomula / Rocket Science VFX"
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://www.youtube.com/watch?v=vefkFrWLuNI&t=21s",
+          "description": "Production VFX turntable; Pella chapter 00:21-01:17",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": "Chris Danelon"
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE",
+          "description": "Owner-supplied fan breakdown; exterior and docking chapter 00:44-01:50",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": "Generation Films"
+        }
+      ],
+      "shipId": "Pella",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [
+        "razorback-rhys-yorke-season5-hud"
+      ],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://rjb-mallacore.artstation.com/projects/o2QJBq",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Owner-supplied model, revised for this project against the existing blueprint; reference Ryan Begemann / Mallacore."
+        }
+      ],
+      "shipId": "Razorback",
+      "interfaceResearchStatus": "References collected; see individual review statuses"
+    },
+    {
+      "interfaceReferenceIds": [
+        "rocinante-sdcc-hull-scan",
+        "rocinante-rhys-yorke-ui",
+        "rocinante-chris-danelon-hologram"
+      ],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "model-source",
+          "url": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Jakub.Vildomec; CC BY 4.0."
+        },
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://www.artstation.com/artwork/zQwR6",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Jakub.Vildomec; CC BY 4.0."
+        }
+      ],
+      "shipId": "Rocinante",
+      "interfaceResearchStatus": "References collected; see individual review statuses"
+    },
+    {
+      "interfaceReferenceIds": [
+        "rocinante-sdcc-hull-scan"
+      ],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://www.printables.com/model/136343-rocinante-from-the-expanse",
+          "credit": "Geometry: Martin Taichl / Martin, CC BY 4.0. Adapted PBR finish, CSL material, local lights and drive effects for X890. TV/replica photos are comparison references, not texture pixels. Not official production geometry.",
+          "fromCatalogues": [
+            "FleetStudio/catalog.json"
+          ]
+        }
+      ],
+      "shipId": "RocinanteS6",
+      "interfaceResearchStatus": "References collected; see individual review statuses"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://deningart.artstation.com/projects/RyJwRm",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Scirocco-class_(TV)",
+          "description": "TV-class concept image and named-hull gallery",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": "North Front Studio concept reference"
+        }
+      ],
+      "shipId": "Scirocco",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; independent fan approximation."
+        },
+        {
+          "role": "existing-geometry-reference",
+          "url": "https://expanse.fandom.com/wiki/Scopuli",
+          "description": "TV exterior gallery",
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "fromCatalogues": [
+            "Assets/Models/Source/Fleet/references.json"
+          ],
+          "credit": null
+        }
+      ],
+      "shipId": "Scopuli",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://expanse.fandom.com/wiki/Sol_gate",
+          "credit": "Authored reconstruction using TV S03E07, S03E08 and S04 exterior references. Not an official production mesh.",
+          "fromCatalogues": [
+            "FleetStudio/catalog.json"
+          ]
+        }
+      ],
+      "shipId": "SolRing",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    },
+    {
+      "interfaceReferenceIds": [],
+      "existingModelAndVisualSources": [
+        {
+          "reviewStatus": "Imported provenance; page and ship-specific contents not reverified in this pass",
+          "role": "existing-visual-reference",
+          "url": "https://frankyang.artstation.com/projects/3oAAeo",
+          "fromCatalogues": [
+            "Assets/FleetViewer/catalog.json",
+            "FleetStudio/catalog.json"
+          ],
+          "credit": "Authored for this project; V4 production drawings by Frank Yang / North Front Studio."
+        }
+      ],
+      "shipId": "Tynan",
+      "interfaceResearchStatus": "Ship-specific UI reference selection pending"
+    }
+  ],
+  "sharedReferenceIds": [
+    "prime-season2-ship-display"
+  ]
+}

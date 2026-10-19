@@ -5,18 +5,18 @@
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 3420,
-      "sha256": "7e957bf7b6a6cf88c54dc0da54853373f38e0e26b586035fb8d4366fb89ebea2"
+      "bytes": 3722,
+      "sha256": "6181ed6affa2771ced137385d02d804c53e35012d40a503d65ac2b9f5d5d7a6e"
     },
     {
       "path": "catalog.json",
-      "bytes": 24308,
-      "sha256": "a12e87da2a53a5f3bd93a8655271c13520b62e9bea89c70b336c78b9418aaa12"
+      "bytes": 26769,
+      "sha256": "69e0789276d57e0d9818e020c1e604e0d432a2eda51793bbfa2ee083036f4e21"
     },
     {
       "path": "index.html",
-      "bytes": 1095,
-      "sha256": "c738e5d0c243c62bad450c27af55647f3b9d96f4f96921be48bc01eeca186c0b"
+      "bytes": 1247,
+      "sha256": "75ac81d3d564223d03be7916f27447a92b471fdd25725aa5fad216e0ff35f226"
     },
     {
       "path": "models/AgathaKing.glb.gz",
@@ -50,8 +50,8 @@
     },
     {
       "path": "models/Donnager.glb.gz",
-      "bytes": 49176342,
-      "sha256": "d6652b9b036465cdf1a7540ed6a1107b09bef216066ea8ef012fc08ec1d902c0"
+      "bytes": 49175887,
+      "sha256": "10807a4529dc595e153bc20eafdf02e3fd88d8c26be6adc7a59341afaac77944"
     },
     {
       "path": "models/Dropship.glb.gz",
@@ -65,8 +65,8 @@
     },
     {
       "path": "models/Guanshiyin.glb.gz",
-      "bytes": 5549263,
-      "sha256": "1175c35584bc7857fbf4aaca268a1344b9ad81b80b4dfd55ed4d57cd6417402e"
+      "bytes": 5620908,
+      "sha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb"
     },
     {
       "path": "models/Hammurabi.glb.gz",
@@ -85,8 +85,8 @@
     },
     {
       "path": "models/Morrigan.glb.gz",
-      "bytes": 583770,
-      "sha256": "bb1cd19d5fa34239b74516c8efeee23554fd6aa3011d3442ffacb180fe0e985b"
+      "bytes": 2102363,
+      "sha256": "251b760884aa4410f3818ac7f49c931288994c26467a2d197ce215bc82f68ad0"
     },
     {
       "path": "models/Nauvoo.glb.gz",
@@ -95,8 +95,8 @@
     },
     {
       "path": "models/Pella.glb.gz",
-      "bytes": 36896133,
-      "sha256": "8ce14295c1429ca48dc4db850c8c45c4259cafb9f03faeaf4e6a3425dd65ba53"
+      "bytes": 36936450,
+      "sha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f"
     },
     {
       "path": "models/Razorback.glb.gz",
@@ -105,8 +105,8 @@
     },
     {
       "path": "models/Rocinante.glb.gz",
-      "bytes": 10300971,
-      "sha256": "8db6f0d749458584f67b26ee3f1f443fd2f28b0970cfc00db6e83e428e67f476"
+      "bytes": 22290404,
+      "sha256": "f7195068905ac8103100f0c9d9cea29de668dc9642823652f24af7e26bc04092"
     },
     {
       "path": "models/Scirocco.glb.gz",
@@ -220,8 +220,8 @@
     },
     {
       "path": "viewer.js",
-      "bytes": 12327,
-      "sha256": "b55a931d243b1f9d1a243add3d5a575c37104200644fdd751baeba395063d763"
+      "bytes": 16636,
+      "sha256": "9170cd5db2a465a29ef570d6da73585ffd0351b8e20024fa278d8b51096ab1a0"
     }
   ]
 }

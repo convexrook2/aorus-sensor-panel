@@ -25,48 +25,51 @@ internal sealed class Holotable : Grid
         RowDefinitions.Add(new(){Height=GridLength.Auto});
         RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});
         RowDefinitions.Add(new(){Height=GridLength.Auto});
-        var header=new StackPanel { Margin=new Thickness(22,16,22,8) };
-        header.Children.Add(new TextBlock { Text=theme.Vessel!.Name+"  /  HOLOTABLE",FontSize=22,
-            FontFamily=new FontFamily("Bahnschrift"),Foreground=theme.Accent });
         if(!Supports(theme.ShipId))throw new InvalidOperationException("This ship has no 3D holotable model.");
-        header.Children.Add(new TextBlock { Text="3D MODEL / "+ModelCredit(theme.ShipId!)+" · FULL MODEL / PBR",
-            FontSize=10,Foreground=theme.Muted });
-        var buttons=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Right,Margin=new Thickness(0,8,0,0) };
-        buttons.Children.Add(Command("RESET VIEW",theme,viewport.Reset));
-        buttons.Children.Add(Command("CLOSE  ×",theme,close));
-        header.Children.Add(buttons);Children.Add(header);
+        var backdrop=new ExpanseBackdrop();backdrop.SetMotion(false);backdrop.Show(theme.ShipId!);
+        SetRowSpan(backdrop,3);Children.Add(backdrop);
+        if(theme.ConsoleStyle=="Pella")
+        {
+            var grid=new PellaGrid(theme.Accent.Color){Opacity=.28};
+            SetRowSpan(grid,3);Children.Add(grid);
+        }
+        var header=new DockPanel { Margin=new Thickness(30,22,30,0) };
+        var back=Command("BACK TO MONITOR  ×",theme,close);
+        back.VerticalAlignment=VerticalAlignment.Top;DockPanel.SetDock(back,Dock.Right);header.Children.Add(back);
+        var identity=new StackPanel();
+        identity.Children.Add(new TextBlock { Text=theme.Vessel!.Faction+"  /  HOLOTABLE",FontSize=11,
+            FontFamily=new FontFamily("Bahnschrift"),Foreground=theme.Accent });
+        identity.Children.Add(new TextBlock { Text=theme.Vessel.Name,FontSize=32,
+            FontFamily=new FontFamily("Bahnschrift SemiCondensed"),Foreground=theme.Foreground });
+        header.Children.Add(identity);Children.Add(header);
 
-        stage=new Grid();stage.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});
-        stage.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
-        viewport.SetInteractive(true);viewport.SetMotion(motion);viewport.CloseRequested+=close;
+        // Give the ship the full central stage. A one-sided instrument rail
+        // displaced the viewport's centre to the left of the holotable.
+        stage=new Grid();
+        viewport.SetHolotableMode(true,theme.Accent.Color);viewport.SetMotion(motion);viewport.CloseRequested+=close;
         stage.Children.Add(viewport);SetRow(stage,1);Children.Add(stage);
-        var footer=new StackPanel { Margin=new Thickness(22,0,22,18) };
+        var footer=new StackPanel { Margin=new Thickness(30,0,30,20),Background=new SolidColorBrush(Color.FromArgb(170,4,12,19)) };
         var readings=new System.Windows.Controls.Primitives.UniformGrid { Columns=3 };
         foreach(var item in new[]{("CPU","cpuTemperature"),("GPU","gpuTemperature"),("FPS","fps"),("CPU POWER","cpuPower"),("GPU POWER","gpuPower"),("MEMORY","memory")})
         {
             var cell=new StackPanel { Margin=new Thickness(6,3,6,5) };
             cell.Children.Add(new TextBlock { Text=item.Item1,FontSize=10,Foreground=theme.Muted });
-            var reading=new HoloReadout(item.Item1.StartsWith("GPU")?theme.SecondaryAccent??theme.Accent:theme.Accent,readoutPulse)
-                { FontSize=25,FontFamily=new FontFamily("Consolas") };
+            var reading=new HoloReadout(theme.Foreground,readoutPulse)
+                { FontSize=21,FontFamily=new FontFamily("Bahnschrift SemiCondensed") };
             reading.SetBinding(TextBlock.TextProperty,new Binding(nameof(TextBlock.Text)){Source=source[item.Item2],NotifyOnTargetUpdated=true});
             readouts.Add(reading);bindings.Add((reading,source[item.Item2]));cell.Children.Add(reading);readings.Children.Add(cell);
         }
         footer.Children.Add(readings);
-        footer.Children.Add(new TextBlock { Text="DRAG / TOUCH TO ORBIT   ·   SCROLL / PINCH TO ZOOM   ·   ARROWS TO ROTATE   ·   HOME TO RESET   ·   ESC TO CLOSE",
-            FontSize=9,Foreground=theme.Muted,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(6,8,0,0) });
+        footer.Children.Add(new TextBlock { Text="MODEL / "+ModelCredit(theme.ShipId!)+"     ·     ESC TO RETURN",
+            FontSize=9,Foreground=theme.Muted,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(6,9,0,0) });
         SetRow(footer,2);Children.Add(footer);
         bool? previousPortrait=null;
         SizeChanged+=(_,_)=>
         {
             bool portrait=ActualWidth<ActualHeight;if(previousPortrait==portrait)return;previousPortrait=portrait;
-            if(readings.Parent is Panel parent)parent.Children.Remove(readings);
-            readings.Columns=portrait?3:1;
-            readings.Width=portrait?double.NaN:Math.Clamp(ActualWidth*.2,180,280);
-            readings.VerticalAlignment=portrait?VerticalAlignment.Stretch:VerticalAlignment.Center;
-            readings.Margin=portrait?new Thickness(0):new Thickness(12,4,24,4);
-            if(portrait)footer.Children.Insert(0,readings);else{SetColumn(readings,1);stage.Children.Add(readings);}
+            readings.Columns=portrait?3:6;
         };
-        KeyDown+=(_,e)=>{if(e.Key==Key.Escape){close();e.Handled=true;}else if(e.Key==Key.Home){viewport.Reset();e.Handled=true;}};
+        KeyDown+=(_,e)=>{if(e.Key==Key.Escape){close();e.Handled=true;}};
     }
 
     internal static Button Command(string title,PanelTheme theme,Action action)
@@ -80,8 +83,8 @@ internal sealed class Holotable : Grid
     public void SetReadoutPulse(bool enabled){foreach(var reading in readouts)reading.SetPulse(enabled);}
     internal void CheckInteraction()
     {
-        if(!viewport.Interactive||!ReferenceEquals(viewport.Parent,stage))
-            throw new InvalidOperationException("The holotable did not reuse the full model viewport.");
+        if(viewport.Interactive||!viewport.IsHolotable||viewport.IsHitTestVisible||!ReferenceEquals(viewport.Parent,stage))
+            throw new InvalidOperationException("The passive holotable did not reuse the full model viewport without navigation controls.");
         viewport.Check();CheckBindings();
     }
     internal void CheckBindings()
@@ -89,10 +92,16 @@ internal sealed class Holotable : Grid
         if(bindings.Any(pair=>pair.Reading.Text!=pair.Source.Text))
             throw new InvalidOperationException("Holotable readings diverged from the sensor presentation.");
     }
+    internal void CheckCenteredLayout()
+    {
+        var centre=viewport.TranslatePoint(new Point(viewport.ActualWidth/2,viewport.ActualHeight/2),this);
+        if(viewport.ActualWidth<=0 || viewport.ActualHeight<=0 || Math.Abs(centre.X-ActualWidth/2)>.5)
+            throw new InvalidOperationException("The holotable viewport is not centred in the full display.");
+    }
     internal static bool Supports(string? ship)=>ShipPortrait.Supports(ship);
     internal static string ModelCredit(string ship)=>ship switch
     {
-        "Razorback"=>"OWNER-SUPPLIED V2","Rocinante"=>"JAKUB.VILDOMEC",
+        "Razorback"=>"OWNER-SUPPLIED V2","Rocinante"=>"MARTIN TAICHL / CC BY 4.0",
         "Truman" or "AgathaKing"=>"MOHAMEDHUSSIEN",
         "Pella"=>"MARTIN TAICHL / CC BY 4.0 · ADAPTED",
         "Donnager" or "Dropship" or "Epstein"=>"CHRIS KUHN / OWLSTRAW",

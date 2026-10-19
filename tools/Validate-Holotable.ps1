@@ -26,6 +26,6 @@ try {
         Write-Host "PASS: $size solar navigation, ship selector/focus, projected readings, source bindings, missing values, independent effects, left ship fit, settings bounds."
     }
     if ($Package) { & .\tools\Build-Installer.ps1 }
-    Write-Host 'Validation completed. Native manual drag/pinch and live hardware performance are separate checks.'
+    Write-Host 'Validation completed. The holotable is a passive showcase; live rotation, minimize/restore and hardware performance are separate checks.'
 }
 finally { Stop-Transcript }

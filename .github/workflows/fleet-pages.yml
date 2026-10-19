@@ -1,0 +1,36 @@
+name: Publish Fleet Studio
+
+on:
+  # Publishing requires a separate explicit owner action.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fleet-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify exact model assets and catalogue
+        run: python3 FleetStudio/tools/verify_assets.py
+      - name: Check viewer syntax
+        run: node --check FleetStudio/review.js
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: FleetStudio
+      - name: Publish stable viewer URL
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,5 +1,5 @@
 {
-  "revision": "Fleet Studio / Agatha King v4 and Pella v26 / 2026-10-17",
+  "revision": "Fleet Studio / Guanshiyin v11 retained / 2026-10-18",
   "catalogue_entries": 23,
   "assets": [
     {
@@ -14,34 +14,6 @@
       "lights": 16,
       "compressed_bytes": 4228604,
       "uncompressed_bytes": 12233476,
-      "geometry_and_image_bytes_exact": true
-    },
-    {
-      "file": "models/Guanshiyin-767ab3a21a2f.glb.gz",
-      "sha256": "b276c8fecbb502702e542197bd15b00065faeffeab63d03aeb2e4399c15f0d3e",
-      "gzip_sha256": "df0ae4ac4149a69aecedd1bcd10a4f78d46045c954ccc4c09a245e9e6d70ff3d",
-      "source_sha256": "767ab3a21a2f072ce933e7197ecfa98bd772ffcc7f04ff5faf1da8f1f32f4bbd",
-      "binary_sha256": "4a0e26907804cf91ad4990bf9fcdbc2131c441f8578b502921ace3892b20af3f",
-      "triangles": 95676,
-      "materials": 17,
-      "images": 5,
-      "lights": 64,
-      "compressed_bytes": 5823245,
-      "uncompressed_bytes": 7402440,
-      "geometry_and_image_bytes_exact": true
-    },
-    {
-      "file": "models/Guanshiyin-before-f3baa42a8c09.glb.gz",
-      "sha256": "23792eb45916f6a0a98015bdf2be0f2e001be980f12cb81a90cf683bb5d96533",
-      "gzip_sha256": "9b4a71e9b1aad1ab9ef1c999b45d49139504cbaa8d7d5c94bc43fcca024994be",
-      "source_sha256": "f3baa42a8c09977526ead25dd0e1d8482db0cbbf93c1fa3904dce1b21a780184",
-      "binary_sha256": "c80ccd44bb51a32b222a1be5751e20635e19cf0f30d29bede3066ce81a68f583",
-      "triangles": 90838,
-      "materials": 17,
-      "images": 5,
-      "lights": 64,
-      "compressed_bytes": 5691927,
-      "uncompressed_bytes": 6887172,
       "geometry_and_image_bytes_exact": true
     },
     {
@@ -98,20 +70,6 @@
       "lights": 25,
       "compressed_bytes": 36868395,
       "uncompressed_bytes": 115080236,
-      "geometry_and_image_bytes_exact": true
-    },
-    {
-      "file": "models/Pella-before-615c0ae12013.glb.gz",
-      "sha256": "af39d9ebacfc2e2f7cb836127853e7b478571ff62c4d109012778f9c2727980c",
-      "gzip_sha256": "4e12248f43fecc3ca48fd0972cc970dc0f07f43a7ec7079e9de72fe926debc34",
-      "source_sha256": "615c0ae12013bced3fe71db2817e3990ef4428e764ac77d600a6bf08b5a420d4",
-      "binary_sha256": "469d9a7249c7af2b4988c5c3044feadc0de3fd465433d7ede5c75614988babbf",
-      "triangles": 1022795,
-      "materials": 21,
-      "images": 16,
-      "lights": 25,
-      "compressed_bytes": 36858713,
-      "uncompressed_bytes": 115012564,
       "geometry_and_image_bytes_exact": true
     },
     {
@@ -252,20 +210,6 @@
       "lights": 0,
       "compressed_bytes": 47294510,
       "uncompressed_bytes": 61834156,
-      "geometry_and_image_bytes_exact": true
-    },
-    {
-      "file": "models/AgathaKing-before-fbcfdece477d.glb.gz",
-      "sha256": "defdde8f492f122a50d299ad4c82773c477b124ccafa37d2a1314a6ccadc2f18",
-      "gzip_sha256": "23ccaa40705a4910a9acd33ca29c8d43c53963fb31d22b26aba2ae02a97fb05b",
-      "source_sha256": "fbcfdece477d278d893acda72b441f2a1186302db8ee2daeae56a148b0a9e480",
-      "binary_sha256": "a73cc34e611b9dab43b72faef24efb9392895852b941de2a7b02fdb8ff805930",
-      "triangles": 293253,
-      "materials": 1,
-      "images": 4,
-      "lights": 0,
-      "compressed_bytes": 35439426,
-      "uncompressed_bytes": 49982668,
       "geometry_and_image_bytes_exact": true
     },
     {
@@ -421,20 +365,48 @@
       "compressed_bytes": 36896133,
       "uncompressed_bytes": 115243532,
       "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Guanshiyin-6808d1f10962.glb.gz",
+      "sha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
+      "gzip_sha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb",
+      "source_sha256": "6808d1f10962200d9037788f35cd7d4f69666ed1b9fecc21f4b28509edc95ec7",
+      "binary_sha256": "ec96986fd7d455c727ccf141fd3b87a3015774322cb26cc6cf21aa71038e4276",
+      "triangles": 98140,
+      "materials": 18,
+      "images": 7,
+      "lights": 64,
+      "compressed_bytes": 5620908,
+      "uncompressed_bytes": 7214944,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Pella-2a6126d5a157.glb.gz",
+      "sha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
+      "gzip_sha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f",
+      "source_sha256": "ba35d65e86fc9fd082f3cda5d4351a23a18e8aaf01e9bac0c14e387ce3f26a75",
+      "binary_sha256": "5c07cd691f1200391b784b47c84b32b97d2a703313dede5576089e2eedd4fb86",
+      "triangles": 1023479,
+      "materials": 21,
+      "images": 16,
+      "lights": 34,
+      "compressed_bytes": 36936450,
+      "uncompressed_bytes": 115246572,
+      "geometry_and_image_bytes_exact": true
     }
   ],
   "current": {
-    "file": "models/Pella-ba35d65e86fc.glb.gz",
-    "sha256": "ba35d65e86fc9fd082f3cda5d4351a23a18e8aaf01e9bac0c14e387ce3f26a75",
-    "gzip_sha256": "8ce14295c1429ca48dc4db850c8c45c4259cafb9f03faeaf4e6a3425dd65ba53",
+    "file": "models/Pella-2a6126d5a157.glb.gz",
+    "sha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
+    "gzip_sha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f",
     "source_sha256": "ba35d65e86fc9fd082f3cda5d4351a23a18e8aaf01e9bac0c14e387ce3f26a75",
     "binary_sha256": "5c07cd691f1200391b784b47c84b32b97d2a703313dede5576089e2eedd4fb86",
     "triangles": 1023479,
     "materials": 21,
     "images": 16,
-    "lights": 25,
-    "compressed_bytes": 36896133,
-    "uncompressed_bytes": 115243532,
+    "lights": 34,
+    "compressed_bytes": 36936450,
+    "uncompressed_bytes": 115246572,
     "geometry_and_image_bytes_exact": true
   },
   "previous": {
