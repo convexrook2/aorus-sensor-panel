@@ -8,9 +8,9 @@ The independent C# WPF host loads these local files using WebView2 virtual-host
 mapping. It does not start Python or listen on a network port and never starts
 with Windows. Build with `dotnet build FleetStudio.Desktop/FleetStudio.Desktop.csproj`.
 
-Efficient quality starts with rotation/effects paused, pixel ratio 1 and no
-postprocessing. The renderer wakes only for interaction/loading or explicitly
-enabled animation (30 fps limit). Full shading is opt-in. Minimizing destroys
+Full shading is the default. Optional Efficient quality uses pixel ratio 1 and no
+postprocessing. Rotation/effects start paused; the renderer wakes for interaction/loading or explicitly
+enabled animation (30 fps limit). Minimizing destroys
 the WebView2/model; restoring reloads the selected ship and quality but resets
 camera/effects. Closing exits the app. The monitor does not launch it. Geometry
 and source assets are shared on disk, not loaded by an idle Fleet Studio service.

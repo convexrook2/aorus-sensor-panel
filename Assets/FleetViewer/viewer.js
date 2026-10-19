@@ -34,7 +34,7 @@ try {
  composer.addPass(renderPass);composer.addPass(ao);composer.addPass(new OutputPass());
  const controls=new OrbitControls(camera,canvas);controls.enableDamping=false;controls.minZoom=.15;controls.maxZoom=16;
  let root=null,entry=null,interactive=false,motion=true,active=true,dirty=true,frame=0,last=0,frames=0,loadToken=0;
- let radius=1,height=3.2,modelSha='',modelStats={},raf=0,seconds=0;
+ let radius=1,height=3.2,modelSha='',modelStats={},raf=0,seconds=0,pendingId=null,viewWidth=0,viewHeight=0,viewRatio=0;
  const gl=renderer.getContext(),gpuInfo=gl.getExtension('WEBGL_debug_renderer_info');
  const gpu=gpuInfo?gl.getParameter(gpuInfo.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);
  function invalidate(){dirty=true;schedule();}
@@ -46,11 +46,11 @@ try {
    camera.left=-halfHeight*aspect;camera.right=halfHeight*aspect;camera.top=halfHeight;camera.bottom=-halfHeight;
    camera.updateProjectionMatrix();
  }
- function resize(){renderer.setPixelRatio(devicePixelRatio);renderer.setSize(innerWidth,innerHeight,false);composer.setPixelRatio(devicePixelRatio);composer.setSize(innerWidth,innerHeight);fit();invalidate();}
+ function resize(){if(viewWidth===innerWidth&&viewHeight===innerHeight&&viewRatio===devicePixelRatio)return;viewWidth=innerWidth;viewHeight=innerHeight;viewRatio=devicePixelRatio;renderer.setPixelRatio(devicePixelRatio);renderer.setSize(innerWidth,innerHeight,false);composer.setPixelRatio(devicePixelRatio);composer.setSize(innerWidth,innerHeight);fit();invalidate();}
  function reset(){
    if(root)root.rotation.y=interactive?0:-.62;
    camera.up.set(0,1,0);camera.position.set(...(interactive?[4,1.4,6]:[0,.05,8]));
-   controls.target.set(0,0,0);camera.zoom=1;controls.update();fit();invalidate();
+   controls.target.set(0,0,0);camera.zoom=1;controls.update();fit();renderer.shadowMap.needsUpdate=true;invalidate();
  }
  function disposeRoot(obj){
    const geometries=new Set(),materials=new Set(),textures=new Set(),images=new Set();
@@ -67,9 +67,11 @@ try {
    return {triangles,meshes,materials:materials.size,textures:textures.size,maps};
  }
  async function load(id){
-   if(entry?.id===id&&root)return;
+   if(entry?.id===id&&root||pendingId===id)return;
    const selected=catalog.find(row=>row.id===id);if(!selected)throw Error('Unknown ship: '+id);
    const token=++loadToken;status.hidden=false;status.textContent='Loading '+selected.title.split(' / ')[0]+'…';
+   pendingId=id;
+   try {
    // Release the previous GPU resources before allocating the next full model.
    if(root){scene.remove(root);disposeRoot(root);root=null;}entry=null;invalidate();
    const response=await fetch(selected.model);if(!response.ok)throw Error('Missing model: '+id);
@@ -98,9 +100,9 @@ try {
    status.hidden=true;renderer.shadowMap.needsUpdate=true;invalidate();
    // Signal only after an actual full-quality frame has reached the canvas.
    render();post({type:'model-ready',...diagnose()});
+   } finally {if(token===loadToken)pendingId=null;}
  }
  function render(){
-   renderer.shadowMap.needsUpdate=true;
    ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);
    ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);
    composer.render();dirty=false;frames++;
@@ -108,11 +110,11 @@ try {
  function tick(t){
    raf=0;const dt=last?Math.min((t-last)/1000,.1):0;last=t;
    if(!active||document.hidden)return;
-   if(root&&motion&&!interactive){root.rotation.y+=dt*Math.PI*2/30;seconds+=dt;dirty=true;}
+   if(root&&motion&&!interactive){root.rotation.y+=dt*Math.PI*2/30;seconds+=dt;renderer.shadowMap.needsUpdate=true;dirty=true;}
    if(dirty)render();frame++;
    if(motion&&!interactive||dirty)schedule();
  }
- function diagnose(){return {id:entry?.id??null,sourceSha256:modelSha,expectedSha256:entry?.sha256,
+ function diagnose(){return {id:entry?.id??null,title:entry?.title??null,sourceSha256:modelSha,expectedSha256:entry?.sha256,
    ...modelStats,expectedTriangles:entry?.triangles,expectedMaps:entry?.renderMaps,gpu,webgl2:gl instanceof WebGL2RenderingContext,
    shadows:renderer.shadowMap.enabled,ambientOcclusion:ao.enabled,interactive,motion,active,
    transparent:true,pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,
@@ -135,7 +137,7 @@ try {
  }
  window.chrome?.webview?.addEventListener('message',event=>receive(event.data));
  window.x890Fleet={diagnose};
- addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{last=0;invalidate();});
+ addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{last=0;if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden)invalidate();});
  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();failure(Error('Graphics context was lost. Reopen the panel to restore it.'));});
  addEventListener('keydown',event=>{
    if(!interactive)return;

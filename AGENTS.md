@@ -14,9 +14,11 @@ This repository belongs to Lennon. X890 Sensor is primarily a monitoring app; th
 - Normal desktop use is `FleetStudio.Desktop` (WPF/WebView2 local virtual-host
   mapping), launched explicitly from `X890.code-workspace` or `Start-Desktop.cmd`.
   It has no SensorCollector reference and no Python/HTTP server. Close exits;
-  minimize disposes the browser/model and restore reloads. The monitor defaults
-  to efficient still artwork with no WebView2; `--full-graphics` is deliberate
-  visual-review mode. Keep automatic motion and expensive rendering opt-in.
+  minimize disposes the browser/model and restore reloads. Preserve the current
+  monitor design, latest model bundle and full shading. Do not substitute older
+  still artwork, replace the solar scene or remove controls for efficiency.
+  Optimize lifecycle, duplicate work and inactive rendering instead. Run the LIVE
+  profile for owner acceptance; an empty saved-data preview is not live proof.
   The following loopback rules apply to the optional legacy browser preview.
 
 - Reserve `127.0.0.1:8770` for the standalone, read-only Fleet Studio server. The reusable URL is `http://127.0.0.1:8770/`; `/fleet-preview` redirects there. Port `8771` may be used for a short, separately stopped validation server. Verify `/health` before assuming that a listener on `8770` is Fleet Studio.

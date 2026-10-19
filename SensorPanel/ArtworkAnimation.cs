@@ -15,6 +15,8 @@ internal sealed class ArtworkAnimation : IDisposable
     private readonly Stopwatch elapsed = new();
     private BitmapSource[] leftFrames = [], rightFrames = [], brandFrames = [];
     private bool disposed, enabled = true;
+    private Task? loading;
+    private int generation;
     public int TickCount { get; private set; }
     public int FrameIndex { get; private set; }
     public int UniqueFrameCount { get; private set; }
@@ -27,8 +29,11 @@ internal sealed class ArtworkAnimation : IDisposable
         timer.Stop();
     }
 
-    public async Task LoadAsync()
+    public Task LoadAsync() => loading ??= LoadFramesAsync();
+
+    private async Task LoadFramesAsync()
     {
+        int version=generation;
         // Freeze decoded images off the UI thread and share duplicate PNGs.
         var result = await Task.Run(() =>
         {
@@ -48,9 +53,14 @@ internal sealed class ArtworkAnimation : IDisposable
             var l = Load("L", "Comp ", 175); var r = Load("R", "Comp ", 175); var x = Load("X", "X", 4);
             return (l, r, x, unique: cache.Count);
         });
-        if (disposed) return;
+        if (disposed || version!=generation) return;
         (leftFrames, rightFrames, brandFrames, UniqueFrameCount) = result;
         elapsed.Start(); if (enabled) timer.Start();
+    }
+    public void ReleaseFrames()
+    {
+        generation++; timer.Stop(); elapsed.Reset();
+        leftFrames=[]; rightFrames=[]; brandFrames=[]; loading=null;
     }
 
     private void Update()

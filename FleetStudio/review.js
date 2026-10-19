@@ -17,9 +17,9 @@ try{
  const response=await fetch('./catalog.json',{cache:'no-store'});if(!response.ok)throw Error('Catalogue unavailable');
  const catalog=await response.json();
  const engineResponse=await fetch('./engines.json');if(!engineResponse.ok)throw Error('Drive catalogue unavailable');const engines=await engineResponse.json();
- let efficient=new URL(location.href).searchParams.get('quality')!=='full';
- renderer=new THREE.WebGLRenderer({canvas:$('canvas'),antialias:false,powerPreference:'low-power'});
- renderer.setPixelRatio(efficient?1:Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
+ let efficient=new URL(location.href).searchParams.get('quality')==='efficient';
+ renderer=new THREE.WebGLRenderer({canvas:$('canvas'),antialias:true,powerPreference:'low-power'});
+ renderer.setPixelRatio(efficient?1:devicePixelRatio);renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1;
  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
  renderer.debug.onShaderError=()=>fail(Error('A GPU shader failed to compile'));
@@ -45,7 +45,7 @@ try{
  const schedule=()=>{if(!document.hidden&&!scheduled)scheduled=requestAnimationFrame(tick);};
  const invalidate=()=>{dirty=true;schedule();};controls.addEventListener('change',invalidate);
  function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?3.0:2.55;renderer.setSize(w,h,false);if(!efficient)composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
- function quality(){efficient=$('#quality').value==='efficient';renderer.setPixelRatio(efficient?1:Math.min(devicePixelRatio,2));ao.enabled=!efficient;$('#ao').disabled=efficient;$('#ao').setAttribute('aria-pressed',ao.enabled);if(efficient)composer.setSize(1,1);document.body.dataset.quality=efficient?'efficient':'full';const url=new URL(location.href);url.searchParams.set('quality',efficient?'efficient':'full');history.replaceState(null,'',url);resize();}
+ function quality(){efficient=$('#quality').value==='efficient';renderer.setPixelRatio(efficient?1:devicePixelRatio);ao.enabled=!efficient;$('#ao').disabled=efficient;$('#ao').setAttribute('aria-pressed',ao.enabled);if(efficient)composer.setSize(1,1);document.body.dataset.quality=efficient?'efficient':'full';const url=new URL(location.href);url.searchParams.set('quality',efficient?'efficient':'full');history.replaceState(null,'',url);resize();}
  $('#quality').value=efficient?'efficient':'full';$('#quality').onchange=quality;quality();
  $('#rotate').setAttribute('aria-pressed','false');$('#rotate').textContent='Resume rotation';$('#effect').setAttribute('aria-pressed','false');
  addEventListener('resize',resize);resize();

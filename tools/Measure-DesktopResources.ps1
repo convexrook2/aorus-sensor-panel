@@ -11,6 +11,21 @@ $roots = @($processes | Where-Object {
     ($_.ExecutablePath -and $_.ExecutablePath.StartsWith($binaryRoot,[StringComparison]::OrdinalIgnoreCase) -and $_.Name -eq "$projectName.exe") -or
     ($_.Name -eq 'dotnet.exe' -and $_.CommandLine -and $_.CommandLine.IndexOf($binaryRoot,[StringComparison]::OrdinalIgnoreCase) -ge 0 -and $_.CommandLine.IndexOf("$projectName.dll",[StringComparison]::OrdinalIgnoreCase) -ge 0)
 })
+if ($roots.Count -eq 0 -and $App -eq 'Monitor') {
+    # Windows may hide an elevated process's path from this terminal. Correlate
+    # the live app's own receipt with its PID/name and OS creation time.
+    $receiptPath=Join-Path $repoPath 'artifacts\live-runtime-check.json'
+    if (Test-Path -LiteralPath $receiptPath) {
+        $receipt=Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
+        $expected=Join-Path $binaryRoot 'Debug\net10.0-windows\SensorPanel.exe'
+        $candidate=@($processes | Where-Object { $_.ProcessId -eq $receipt.processId -and $_.Name -eq 'SensorPanel.exe' })
+        if ($receipt.preview -eq $false -and $receipt.executablePath -eq $expected -and $candidate.Count -eq 1 -and
+            [math]::Abs((([datetime]$candidate[0].CreationDate).ToUniversalTime()-([datetime]$receipt.startedAt).ToUniversalTime()).TotalSeconds) -lt 15) {
+            $roots=$candidate
+            Write-Host 'Root identity: live app receipt + visible source launch + OS PID/name/creation time (elevated path hidden).'
+        }
+    }
+}
 if ($roots.Count -ne 1) { throw "Expected one verified $App process in this checkout; found $($roots.Count)." }
 $ids = [Collections.Generic.HashSet[int]]::new()
 [void]$ids.Add([int]$roots[0].ProcessId)

@@ -76,7 +76,7 @@ internal sealed class ShipArtwork : Image
     {
         ship=ShipProfile.CanonicalId(ship);
         if (images.TryGetValue(ship, out var existing)) return existing;
-        if (PanelRuntime.Efficient) images.Clear();
+        images.Clear();
         if (ship == "Epstein" || ship is not ("Rocinante" or "Donnager" or "Truman" or "Tynan" or "Razorback" or "Morrigan" or "Dropship"))
         {
             // Render the actual downloaded hull once for its faded backdrop.
@@ -86,7 +86,7 @@ internal sealed class ShipArtwork : Image
             scene.Children.Add(new DirectionalLight(Colors.White, new Vector3D(-1, -2, -3)));
             scene.Children.Add(new DirectionalLight(Colors.White, new Vector3D(2, -1, 1)));
             var hull = new Model3DGroup();
-            foreach (var part in ShipModel.Load(ship,cacheResult:!PanelRuntime.Efficient))
+            foreach (var part in ShipModel.Load(ship,cacheResult:false))
                 hull.Children.Add(new GeometryModel3D(part.Mesh, part.Original) { BackMaterial = part.DoubleSided ? part.Original : null });
             hull.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), -58));
             scene.Children.Add(hull);

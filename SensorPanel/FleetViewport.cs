@@ -24,6 +24,7 @@ internal sealed class FleetViewport : Grid, IDisposable
     private Task? initialization;
     private TaskCompletionSource modelReady = Completion();
     private bool engineReady, disposed, failed, loaded, motion=true, interactive, layoutPending;
+    private (bool Active,bool Motion)? activity;
     private string ship="Rocinante";
     internal event Action? CloseRequested;
     internal bool Interactive => interactive;
@@ -156,8 +157,17 @@ internal sealed class FleetViewport : Grid, IDisposable
             SendScene();PublishActivity();Send(new{type="resize"});
         }));
     }
-    private void PublishActivity()=>Send(new{type="activity",motion=motion&&SystemParameters.ClientAreaAnimation,
-        active=loaded&&IsVisible&&IsEnabled});
+    private void PublishActivity()
+    {
+        if (!engineReady || disposed || failed) return;
+        bool active=loaded&&IsVisible&&IsEnabled&&owner?.WindowState!=WindowState.Minimized&&owner?.IsVisible==true;
+        var current=(Active:active,Motion:motion&&SystemParameters.ClientAreaAnimation);
+        if (activity==current) return;
+        activity=current;
+        if(browser?.CoreWebView2 is {} core)
+            core.MemoryUsageTargetLevel=active ? CoreWebView2MemoryUsageTargetLevel.Normal : CoreWebView2MemoryUsageTargetLevel.Low;
+        Send(new{type="activity",motion=current.Motion,active});
+    }
     internal void SetShip(string id)
     {
         id=ShipProfile.CanonicalId(id);

@@ -14,7 +14,13 @@ Open **X890.code-workspace**. The solution contains the monitor, its C# collecto
 and a separate Fleet Studio desktop app. Install the .NET 10 SDK and the Microsoft
 C# extension for development; the shipped monitor only needs the Desktop Runtime.
 
-- **Run and Debug → X890 · UI preview (no sensors) → F5** builds and opens a normal
+- **Run and Debug → X890 · LIVE monitor → F5** builds and launches the actual
+  monitor from this checkout. Windows may ask you to approve hardware access;
+  the elevated app continues independently of the initial debugger process.
+  Its title identifies LIVE monitoring and a development build. A local runtime
+  receipt records fresh samples and the actual full-model renderer.
+- **X890 · UI preview (no sensors)** is an optional saved-data layout tool. It
+  builds and opens a normal
   desktop window with a labelled empty snapshot. Dashes are expected; this does
   not read hardware or require administrator access.
 - **Terminal → Run Task → Run X890 monitor (live)** builds and opens the live monitor.
@@ -31,22 +37,24 @@ the SDK and do not install or register anything.
 
 The normal monitor uses WPF and the existing SensorCollector backend
 (LibreHardwareMonitor/PawnIO, NVIDIA NVML and optional game FPS via PresentMon).
-It collects serially at the saved polling interval, default 1000 ms. The default
-efficient mode uses still ship artwork, creates no WebView2, skips decoding the
-AORUS animation sequence, and disables automatic showcase cycling, map motion,
-number pulses and gauge transitions. Existing full visual checks and the explicit
-`--full-graphics` option retain the prior animated monitor/holotable path. This
-does not overwrite saved appearance preferences. Still artwork for some ships is
-rasterized once from the bundled model without retaining its mesh cache. Only the
-current still image is cached. The normal ship dashboard uses bounded 2D CPU/GPU
-clock histories in place of the solar map; `--full-graphics` restores the native
-WPF Sol map as well as the embedded ship viewport.
+It collects serially at the saved polling interval, default 1000 ms. The current
+ship viewport, solar navigation, holotable, full geometry/PBR maps, native pixel
+ratio, shadows and ambient occlusion remain the normal design. Saved motion,
+showcase and readout choices remain available; no still-art or graph substitute
+is used to save resources. The old `--full-graphics` argument is unnecessary.
+
+Efficiency comes from avoiding duplicate model requests, redrawing only when a
+scene changes, reusing shadow maps when the hull/light is unchanged, and pausing
+visual activity when minimized or hidden. Inactive WebViews request lower memory
+usage without changing their geometry or shading. AORUS animation frames are
+decoded only when that theme is visible and animated; ship themes release them.
+Live collection continues independently of visual activity.
 
 Fleet Studio uses JavaScript/Three.js inside a WPF/WebView2 window and reads its
-bundled files through a local virtual host. Efficient quality is the default:
-pixel ratio 1, no postprocessing, rotation/effects initially paused, and rendering
-only when something changes. Deliberate animation is capped at 30 fps. Full shading
-is available inside Fleet Studio. An open 3D viewer still uses RAM/GPU resources;
+bundled files through a local virtual host. Full shading is the default, with
+an optional Efficient quality setting chosen inside the viewer. Rotation/effects
+start paused, and the scene redraws when something changes. Deliberate animation
+is capped at 30 fps. An open 3D viewer still uses RAM/GPU resources;
 close it when finished. Its model geometry is unchanged. Hardware acceleration is
 retained rather than moving rendering onto the CPU.
 

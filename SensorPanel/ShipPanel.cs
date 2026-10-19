@@ -18,9 +18,10 @@ internal sealed class ShipPanel : Canvas
     private readonly ConsoleDial cpuDial, gpuDial;
     private readonly HistoryGraph cpuGraph = new(), gpuGraph = new();
     private string configuration = "";
-    private bool motion = !PanelRuntime.Efficient && PanelPreferences.HolographicMotion;
-    private bool readoutPulse = !PanelRuntime.Efficient && PanelPreferences.ReadoutPulse;
-    private bool gaugeTransitions = !PanelRuntime.Efficient && PanelPreferences.GaugeTransitions;
+    private bool motion = PanelPreferences.HolographicMotion;
+    private bool readoutPulse = PanelPreferences.ReadoutPulse;
+    private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
+    private bool presentationActive = true;
     private readonly FleetViewport shipPortrait = new();
     internal FleetViewport ShipViewport => shipPortrait;
     private Grid? shipMedia;
@@ -44,7 +45,7 @@ internal sealed class ShipPanel : Canvas
     private Holotable? holotable;
     private PanelTheme? activeTheme;
     public bool HolotableOpen => holotable is not null;
-    public bool HolotableAvailable => !PanelRuntime.Efficient && Holotable.Supports(FeaturedShipId);
+    public bool HolotableAvailable => Holotable.Supports(FeaturedShipId);
     public string Mode { get; private set; } = "Landscape";
 
     public ShipPanel(Dictionary<string, TextBlock> source)
@@ -111,28 +112,13 @@ internal sealed class ShipPanel : Canvas
         bool portrait = Mode == "Portrait";
         double bodyX=plan.Cpu.X;
         bool reuseProjection=projection is not null;
-        if (!PanelRuntime.Efficient && projection is null)
+        if (projection is null)
         {
             projection=new SolarSystemView();
             projection.BodySelected+=_=>NavigationChanged?.Invoke();
         }
-        if (projection is not null)
-        {
-            Put(this, projection, plan.Navigation);
-            projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)115 : (byte)232,3,12,21));
-        }
-        else
-        {
-            // The always-on monitor uses the existing bounded 2D histories.
-            // Solar textures, meshes and a 3D viewport are visual-review opt-ins.
-            var area=plan.Navigation;
-            double column=(area.Width-36)/2;
-            Put(this,new Border { Background=theme.Surface, CornerRadius=new CornerRadius(8) },area);
-            Put(this,Label("CPU CLOCK / MHz · LAST 60 SAMPLES",11,theme.Muted),new(area.X+12,area.Y+10,column,18));
-            Put(this,Label("GPU CLOCK / MHz · LAST 60 SAMPLES",11,theme.Muted),new(area.X+24+column,area.Y+10,column,18));
-            Put(this,cpuGraph,new(area.X+12,area.Y+36,column,Math.Max(12,area.Height-48)));
-            Put(this,gpuGraph,new(area.X+24+column,area.Y+36,column,Math.Max(12,area.Height-48)));
-        }
+        Put(this, projection, plan.Navigation);
+        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase ? (byte)115 : (byte)232,3,12,21));
         selectedShip=sceneShip;
         var navigation=ExpanseNavigation.ForShip(selectedShip);
         projection?.FocusBody(navigation.Body,reuseProjection);
@@ -151,7 +137,7 @@ internal sealed class ShipPanel : Canvas
         // Keep the portrait decorative; a separate accessible button owns input.
         var hitArea=new FrameworkElementFactory(typeof(Border));
         hitArea.SetValue(Border.BackgroundProperty,Brushes.Transparent);
-        holotableAccess=new Button { Cursor=Cursors.Hand, ToolTip=PanelRuntime.Efficient ? "Open the separate Fleet Studio desktop app to inspect ships" : "Open ship holotable (H)",
+        holotableAccess=new Button { Cursor=Cursors.Hand, ToolTip="Open ship holotable (H)",
             Template=new ControlTemplate(typeof(Button)) { VisualTree=hitArea } };
         System.Windows.Automation.AutomationProperties.SetName(holotableAccess,"Open ship holotable");
         holotableAccess.Click+=(_,_)=>OpenHolotable();
@@ -235,7 +221,7 @@ internal sealed class ShipPanel : Canvas
         shipPortrait.SetMotion(false);
         shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1;
         shipMedia.Children.Clear();
-        bool model=!PanelRuntime.Efficient && ShipPortrait.Supports(vessel.Id);
+        bool model=ShipPortrait.Supports(vessel.Id);
         if (holotableAccess is not null) holotableAccess.IsEnabled=model;
         if (model)
         {
@@ -366,18 +352,25 @@ internal sealed class ShipPanel : Canvas
     public void SetMotion(bool enabled)
     {
         motion = enabled;
+        enabled &= presentationActive;
         shipPortrait?.SetMotion(enabled); projection?.SetMotion(enabled); holotable?.SetMotion(enabled);
         showcaseBackdrop?.SetMotion(enabled); showcaseCrew?.SetMotion(enabled);
         if ((!enabled || !SystemParameters.ClientAreaAnimation) && shipMedia is not null)
         { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
         if (!enabled && shipMedia is not null) { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
     }
+    public void SetActive(bool active)
+    {
+        presentationActive=active;
+        SetMotion(motion);
+        SetReadoutEffects(readoutPulse,gaugeTransitions);
+    }
     public void SetReadoutEffects(bool pulse, bool smoothGauges)
     {
         readoutPulse=pulse; gaugeTransitions=smoothGauges;
-        foreach (var entry in bound) if (entry.Label is HoloReadout reading) reading.SetPulse(pulse);
-        cpuDial.SetPulse(pulse); gpuDial.SetPulse(pulse);
-        cpuDial.SetMotion(smoothGauges); gpuDial.SetMotion(smoothGauges); holotable?.SetReadoutPulse(pulse);
+        foreach (var entry in bound) if (entry.Label is HoloReadout reading) reading.SetPulse(pulse && presentationActive);
+        cpuDial.SetPulse(pulse && presentationActive); gpuDial.SetPulse(pulse && presentationActive);
+        cpuDial.SetMotion(smoothGauges && presentationActive); gpuDial.SetMotion(smoothGauges && presentationActive); holotable?.SetReadoutPulse(pulse && presentationActive);
     }
     internal void OpenHolotable()
     {

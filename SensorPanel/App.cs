@@ -34,14 +34,17 @@ internal static class App
             bool checkThemes = args.Contains("--preview-check-themes");
             bool checkShips = args.Contains("--preview-check-ships");
             bool checkNavigation = args.Contains("--preview-check-navigation");
-            PanelRuntime.Efficient = !args.Contains("--full-graphics") && !checkThemes && !checkShips && !checkNavigation;
             if (checkNavigation && (preview is null || !args.Contains("--sensor-preview")))
                 throw new ArgumentException("--preview-check-navigation requires a saved preview on the sensor display.");
             if ((checkThemes || checkShips) && (preview is null || !args.Contains("--sensor-preview")))
                 throw new ArgumentException("--preview-check-themes requires a saved preview and the secondary sensor display.");
             if (preview is null && !args.Contains("--readme") && !args.Contains("--remove-install-startup") && !IsElevated())
             {
-                var launch = new ProcessStartInfo(Environment.ProcessPath ?? throw new InvalidOperationException("Cannot resolve the app executable.")) { UseShellExecute = true, Verb = "runas" };
+                // Debuggers can host the DLL in dotnet.exe. Elevate the apphost,
+                // so the relaunch cannot turn into `dotnet --windowed`.
+                string executable = Path.ChangeExtension(typeof(App).Assembly.Location,".exe");
+                if (!File.Exists(executable)) throw new FileNotFoundException("Build the SensorPanel apphost before launching live hardware monitoring.",executable);
+                var launch = new ProcessStartInfo(executable) { UseShellExecute = true, Verb = "runas" };
                 foreach (string argument in args) launch.ArgumentList.Add(argument);
                 using var elevated = Process.Start(launch);
                 return 0;
@@ -79,7 +82,7 @@ internal static class App
                     throw new ArgumentException("Preview dimensions must be 1–8192 pixels.");
                 previewSize=new Size(width,height);
             }
-            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed")));
+            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed"),args.Contains("--runtime-check")));
         }
         catch (Exception ex)
         {
@@ -121,12 +124,6 @@ internal static class App
             if (!names.Contains($"aorus/animations/x/x{frame}.png"))
                 throw new InvalidOperationException($"The built panel is missing brand frame {frame}.");
     }
-}
-
-internal static class PanelRuntime
-{
-    // Full 3D remains available for deliberate visual review, never by default.
-    internal static bool Efficient { get; set; } = true;
 }
 
 internal static class PanelPaths

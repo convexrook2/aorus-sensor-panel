@@ -1,5 +1,10 @@
 # Desktop runtime receipt — 2026-10-19
 
+**Superseded for product acceptance.** The owner rejected the old still-art and
+2D graph substitutions. The current runtime restores the latest model viewport,
+solar navigation and full shading. The observations below describe the rejected
+runtime milestone and must not be used as current-design or live acceptance.
+
 Owner scope: make X890 runnable/viewable from VS Code with an efficient always-on
 monitor and separate on-demand Fleet Studio. No ship/model work is authorized by
 this change. Existing unrelated assets, model revisions/deletions and studies
