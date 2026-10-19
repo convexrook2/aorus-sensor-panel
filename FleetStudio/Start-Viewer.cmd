@@ -20,10 +20,11 @@ exit /b 0
 
 :fallback
 if /I "%~1"=="--check" exit /b 2
-title Fleet Studio - keep this window open
+title Fleet Studio - close this window when finished
 cd /d "%~dp0"
 echo Fleet Studio: %FLEET_URL%
-echo Keep this window open while viewing ships. Press Ctrl+C to stop.
+echo On-demand viewer: keep this console open while viewing ships.
+echo When finished, close the viewer tab AND this console. Ctrl+C also stops the server.
 echo.
 where py >nul 2>nul
 if errorlevel 1 (python "%FLEET_SERVER%" --port 8770 --open) else (py -3 "%FLEET_SERVER%" --port 8770 --open)

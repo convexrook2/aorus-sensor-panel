@@ -50,39 +50,45 @@ executable, game FPS acquisition, original SOL layout and installer are unchange
 
 ## Preview
 
-Open **http://127.0.0.1:8770/** in any browser for the regular local viewer.
-It is a static site served from this folder; it does not need a separate build
-or the sensor-monitoring app. The local server must be running on this PC.
+**Default: on demand, with no Fleet Studio background process while unused.**
+Double-click **Start-Viewer.cmd** to start a visible server console and open
+**http://127.0.0.1:8770/** in the default browser. The URL works in any browser
+while that console is running; typing the URL alone cannot start a stopped
+server. No build or sensor-monitoring app is needed.
 
-To keep the address available after each Windows sign-in, run
-`Install-LocalServer.ps1` once. It registers the **Fleet Studio Local Viewer**
-task for the current user, using `pythonw.exe` with no console window. The task
-retries a failed server up to three times, one minute apart, and can run on
-battery power. Its log is at
-`%LOCALAPPDATA%\FleetStudio\server.log`. It does not open a browser at sign-in.
-The server is available while this user is signed in and the PC is running.
+When finished, **close the viewer tab and the server console**, or press Ctrl+C
+in the console. Closing only the browser tab leaves the server using some RAM;
+hiding a viewer tab pauses drawing but can retain model/GPU memory. The server
+only serves local files and does not render ships. Stored project files use
+disk space but do not run when closed. Nothing should start at Windows sign-in
+in the default mode.
 
-Double-click **Start-Viewer.cmd** to open the site in the default browser. It
-checks `/health`, starts the registered task if needed, and waits for readiness
-before opening the browser. It starts a visible fallback server only when the
-task is absent; that console must remain open. If the task fails or points to a
-different checkout, the launcher reports the failure instead of starting a
-competing server. The older
+To remove a previous sign-in setup, first identify and stop the exact matching
+Fleet Studio task/process, then run `Install-LocalServer.ps1 -Remove`. Removal
+refuses a running task or a task pointing to another checkout. It leaves models,
+logs and preferences in place. Installing the optional sign-in task again needs
+an explicit choice to keep a background server running; do not install it for
+normal on-demand use.
+
+The launcher checks `/health` before starting another server. If an optional
+registered task exists, it validates its path, starts it if needed, and waits
+for readiness. A failed or mismatched task is reported rather than bypassed
+with a competing server. The older
 `/Fleet-Studio/Successor/`, `/Fleet-Studio/Review/`, and `/fleet-preview`
 links redirect to the same viewer and retain the selected ship.
 
-`Start-Viewer.cmd --check` runs the same readiness/task recovery check without
-opening a browser or starting a fallback. Exit codes are 0 for ready, 2 for a
-missing task, and 1 for a task/startup failure. Sign-in never opens a viewer tab.
+`Start-Viewer.cmd --check` checks readiness without opening a browser or
+starting an on-demand server. Exit codes are 0 for ready, 2 for an absent task
+and stopped server (normal when on-demand mode is idle), and 1 for a task/startup
+failure. The optional sign-in task never opens a viewer tab.
 
 For diagnosis, inspect `Get-ScheduledTask -TaskName 'Fleet Studio Local Viewer'`
 and `Get-Content "$env:LOCALAPPDATA\FleetStudio\server.log" -Tail 20` in a visible
-PowerShell terminal. New server starts and requests include timestamps and PIDs;
-the visible fallback also prints logs to its console. A running Python process
-keeps its loaded server code until deliberately restarted. Identify its exact
-executable, command line and owner before stopping it. Sign-in persistence still
-requires an actual sign-out/sign-in observation; task registration alone does
-not prove it.
+PowerShell terminal if an optional task is installed. Logs are at
+`%LOCALAPPDATA%\FleetStudio\server.log`; the visible server also prints them to
+its console. New starts and requests include timestamps and PIDs. A running
+Python process keeps its loaded server code until deliberately restarted.
+Identify its exact executable, command line and owner before stopping it.
 
 From the repository root, run in a visible terminal:
 

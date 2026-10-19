@@ -1,11 +1,30 @@
 param(
-    [string]$PythonwPath
+    [string]$PythonwPath,
+    [switch]$Remove
 )
 
 $ErrorActionPreference = 'Stop'
 $taskName = 'Fleet Studio Local Viewer'
 $serverPath = Join-Path $PSScriptRoot 'serve.py'
 $logPath = Join-Path $env:LOCALAPPDATA 'FleetStudio\server.log'
+
+if ($Remove) {
+    $task = Get-ScheduledTask -TaskName $taskName -TaskPath '\' -ErrorAction SilentlyContinue
+    if (-not $task) {
+        Write-Output 'No Fleet Studio sign-in task is installed. Use Start-Viewer.cmd on demand.'
+        return
+    }
+    $expectedArgs = '"' + $serverPath + '" --port 8770 --log-file "' + $logPath + '"'
+    if (@($task.Actions).Count -ne 1 -or $task.Actions[0].Arguments -ne $expectedArgs -or $task.Actions[0].WorkingDirectory -ne $PSScriptRoot) {
+        throw 'The named task belongs to another viewer path. Inspect it before removing it.'
+    }
+    if ($task.State -eq 'Running') {
+        throw 'The viewer task is running. Verify its PID, executable, command line and owner, then stop that task before removing it.'
+    }
+    Unregister-ScheduledTask -TaskName $taskName -TaskPath '\' -Confirm:$false
+    Write-Output 'Removed Fleet Studio sign-in startup. Use Start-Viewer.cmd on demand.'
+    return
+}
 
 if (-not (Test-Path -LiteralPath $serverPath -PathType Leaf)) {
     throw "Fleet Studio server was not found: $serverPath"
