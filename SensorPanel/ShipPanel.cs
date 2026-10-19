@@ -42,6 +42,7 @@ internal sealed class ShipPanel : Canvas
     public event Action<string>? ShipSelectionRequested;
     public event Action? NavigationChanged;
     public event Action? ShowcaseChanged;
+    public event Action? ShipOptionsRequested;
     private Holotable? holotable;
     private PanelTheme? activeTheme;
     public bool HolotableOpen => holotable is not null;
@@ -167,7 +168,13 @@ internal sealed class ShipPanel : Canvas
             if (shipChoices.SelectedItem is not ComboBoxItem { Tag: ShipProfile choice } || choice.Id==selectedShip) return;
             ShipSelectionRequested?.Invoke(choice.Id);
         };
-        Put(this,shipChoices,new(plan.Sidebar.X+5,plan.Sidebar.Y-34,plan.Sidebar.Width-10,26));
+        Put(this,shipChoices,new(plan.Sidebar.X+5,plan.Sidebar.Y-34,plan.Sidebar.Width-38,26));
+        var shipOptions=new Button { Content="⋯", FontSize=17, Foreground=theme.Foreground,
+            Background=theme.Surface, BorderBrush=theme.Divider, Padding=new Thickness(0),
+            Cursor=Cursors.Hand, ToolTip="Ship options" };
+        System.Windows.Automation.AutomationProperties.SetName(shipOptions,"Ship options");
+        shipOptions.Click+=(_,_)=>ShipOptionsRequested?.Invoke();
+        Put(this,shipOptions,new(plan.Sidebar.Right-29,plan.Sidebar.Y-34,24,26));
         Hardware(plan.Cpu, theme, false); Hardware(plan.Gpu, theme.ForGpu(), true);
         SmallCard(plan.Memory, theme, false); SmallCard(plan.Network, theme.ForGpu(), true);
         CoolingCard(plan.Board, theme);

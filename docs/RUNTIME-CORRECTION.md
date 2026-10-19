@@ -43,16 +43,33 @@ title distinguishes LIVE monitoring, saved preview and development builds.
   There were zero separate Fleet Studio/server processes. This is an active
   animated-scene sample, not minimized performance or a promise of low cost.
 
-Windows elevation prevents the current UI connector from operating the live
-controls. The owner reported Pella visible, but the subsequent captured LIVE
-window and display-state receipt still identified Anubis. The discrepancy is
-unresolved; Pella is not counted as rendered proof. The current native catalogue
-contains Pella v26 (1,023,503 triangles, source SHA-256
+After the settings rebuild, a new actual LIVE launch from VS Code opened PID
+40824. Its native window now visibly shows Pella beside fresh hardware readings.
+Its runtime receipt passed with 143 available readings and confirmed Pella v26
+(1,023,503 triangles, source SHA-256
 `2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0`)
-and Guanshiyin v11 (98,140 triangles, source SHA-256
+with all expected PBR maps, shadows and AO, no geometry reduction or texture
+resampling. The prior Anubis/Pella observation mismatch is resolved by this new
+capture and renderer receipt. The current native catalogue also contains
+Guanshiyin v11 (98,140 triangles, source SHA-256
 `6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4`);
-these match their Fleet Studio catalogue source hashes. Pella/Guanshiyin live
-interactions, minimize/restore resource
+both match their Fleet Studio catalogue source hashes. Windows elevation still
+prevents the current UI connector from operating live controls.
+Guanshiyin live interactions, minimize/restore resource
 measurement, owner acceptance, installed-package changes and release remain
 separate until actually observed. The latest asset/model work predating this fix
 remains protected in the working checkout.
+
+## Simpler settings
+
+The owner rejected the long scrolling settings menu. Its main page now has six
+entries: Display, Theme, Sensors, Advanced, Hide to tray and Close panel.
+Display contains placement/fit/layout/scaling; Sensors contains FPS/polling.
+Advanced holds occasional controls. Ship rotation and showcase controls moved
+to the local ellipsis button beside the ship selector. All existing commands
+remain available; no ship assets, collector logic or saved preferences changed.
+The panel uses a solid themed background instead of a live blurred backdrop.
+The focused Debug build passed visibly in VS Code and the actual live app
+reopened. The owner opened its gear menu; a native capture showed all six entries
+inside a compact panel without a scrollbar, beside Pella and current live readings.
+Individual submenu actions were not exercised in that capture.

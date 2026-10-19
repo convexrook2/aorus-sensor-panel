@@ -2,8 +2,6 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
-using System.Windows.Shapes;
 
 namespace SensorPanel;
 
@@ -19,12 +17,11 @@ internal sealed class PanelSettings
         HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(12, 12, 12, 48), Visibility = Visibility.Collapsed };
     private readonly Button gear;
     private readonly StackPanel rows = new();
+    private readonly ScrollViewer scroll;
     private readonly TextBlock heading = new() { FontSize = 15, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center };
     private readonly Button back, close;
     private readonly Stack<MenuItem> navigation = new();
-    private readonly VisualBrush backdrop;
     private readonly Border tint = new();
-    private Rect lastViewbox;
     public bool IsOpen => pane.Visibility == Visibility.Visible;
     public bool IsPointerOver => pane.IsMouseOver || gear.IsMouseOver;
     internal Rect Bounds => new(pane.TranslatePoint(new Point(), Overlay), new Size(pane.ActualWidth, pane.ActualHeight));
@@ -35,7 +32,7 @@ internal sealed class PanelSettings
     }
     internal void NavigateBack() => back.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
-    public PanelSettings(Window owner, FrameworkElement panel, ContextMenu commands, Func<PanelTheme> currentTheme)
+    public PanelSettings(Window owner, ContextMenu commands, Func<PanelTheme> currentTheme)
     {
         this.owner = owner; this.commands = commands; this.currentTheme = currentTheme;
         Overlay.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/SettingsStyles.xaml") });
@@ -51,8 +48,6 @@ internal sealed class PanelSettings
 
         var surface = new Grid { ClipToBounds = true };
         surface.SizeChanged += (_, _) => surface.Clip = new RectangleGeometry(new Rect(surface.RenderSize), 9, 9);
-        backdrop = new VisualBrush(panel) { ViewboxUnits = BrushMappingMode.Absolute, Stretch = Stretch.Fill };
-        surface.Children.Add(new Rectangle { Fill = backdrop, Effect = new BlurEffect { Radius = 14, RenderingBias = RenderingBias.Performance } });
         surface.Children.Add(tint);
         var content = new DockPanel { Margin = new Thickness(10) };
         var title = new Grid { Margin = new Thickness(0, 0, 0, 7) };
@@ -66,19 +61,19 @@ internal sealed class PanelSettings
         Grid.SetColumn(heading, 1); Grid.SetColumn(close, 2);
         title.Children.Add(back); title.Children.Add(heading); title.Children.Add(close);
         DockPanel.SetDock(title, Dock.Top); content.Children.Add(title);
-        var scroll = new ScrollViewer { Content = rows, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        scroll = new ScrollViewer { Content = rows, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
         content.Children.Add(scroll);
         surface.Children.Add(content); pane.Child = surface; Overlay.Children.Add(pane);
         Overlay.SizeChanged += (_, _) => Resize();
-        pane.LayoutUpdated += (_, _) => UpdateBackdrop();
         ApplyTheme();
     }
 
-    public void Open()
+    public void Open(MenuItem? page = null)
     {
         commands.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         navigation.Clear(); pane.Visibility = Visibility.Visible;
+        if (page is not null) navigation.Push(page);
         Resize(); Rebuild();
     }
     private void Toggle() { if (IsOpen) Close(); else Open(); }
@@ -87,16 +82,8 @@ internal sealed class PanelSettings
 
     private void Resize()
     {
-        pane.Width = Math.Min(320, Math.Max(180, Overlay.ActualWidth - 24));
+        pane.Width = Math.Min(290, Math.Max(180, Overlay.ActualWidth - 24));
         pane.MaxHeight = Math.Max(80, Math.Min(500, Overlay.ActualHeight - 72));
-    }
-    private void UpdateBackdrop()
-    {
-        if (!IsOpen || pane.ActualWidth <= 0 || pane.ActualHeight <= 0) return;
-        var origin = pane.TranslatePoint(new Point(), Overlay);
-        var rectangle = new Rect(origin, new Size(pane.ActualWidth, pane.ActualHeight));
-        if (rectangle == lastViewbox) return;
-        lastViewbox = rectangle; backdrop.Viewbox = rectangle;
     }
     public void ApplyTheme()
     {
@@ -104,8 +91,7 @@ internal sealed class PanelSettings
         Overlay.Resources["SettingsHoverSurface"] = theme.Surface;
         Overlay.Resources["SettingsScrollThumb"] = theme.Divider;
         pane.BorderBrush = theme.Divider;
-        var color = theme.Background.Color; color.A = 220;
-        tint.Background = new SolidColorBrush(color);
+        tint.Background = theme.Background;
         heading.Foreground = gear.Foreground = back.Foreground = close.Foreground = theme.Foreground;
         gear.Background = theme.Surface;
         if (IsOpen) Rebuild();
@@ -114,6 +100,7 @@ internal sealed class PanelSettings
     {
         var theme = currentTheme();
         rows.Children.Clear();
+        scroll.ScrollToTop();
         var page = navigation.Count > 0 ? navigation.Peek() : null;
         page?.RaiseEvent(new RoutedEventArgs(MenuItem.SubmenuOpenedEvent));
         heading.Text = page?.Header?.ToString() ?? "Settings";
@@ -127,6 +114,7 @@ internal sealed class PanelSettings
                 continue;
             }
             if (entry is not MenuItem item) continue;
+            if (item.Visibility != Visibility.Visible) continue;
             if (item.HasItems) item.RaiseEvent(new RoutedEventArgs(MenuItem.SubmenuOpenedEvent));
             var content = new Grid();
             content.ColumnDefinitions.Add(new ColumnDefinition());

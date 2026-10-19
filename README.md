@@ -89,7 +89,7 @@ an em dash rather than an estimated value.
 2. Install the required Desktop Runtime if setup requests it, then choose
    **Check again**.
 3. Launch the panel and accept the administrator prompt for hardware access.
-4. From the FAN MADE tray icon, choose **Open settings**, then **Move to display** and **Fit to display**
+4. From the FAN MADE tray icon, choose **Open settings → Display**, then **Move to display** and **Fit to display**
    to save a dedicated display.
 
 Automatic fullscreen avoids taking over the primary workspace. With no suitable
@@ -110,10 +110,14 @@ are preserved.
 
 ## Controls and appearance
 
-Click the settings gear or right-click the panel. The compact themed menu
-includes display placement, layout, scaling, polling, theme, FPS selection,
-README and tray controls. **Back** returns within settings; **Escape** closes
-the menu. The tray menu remains available while the panel is hidden.
+Click the settings gear or right-click the panel. The short main page contains
+**Display**, **Theme**, **Sensors**, **Advanced**, **Hide to tray** and **Close panel**.
+Display groups placement, fit, layout, scaling and always-on-top. Sensors groups
+FPS selection and polling. Advanced holds readout effects, Windows startup,
+image capture and help; AORUS animation appears only for AORUS themes.
+**Back** returns within settings; **Escape** closes the menu. Ship presentation
+controls live under the **⋯ Ship options** button beside the ship selector.
+The tray menu remains available while the panel is hidden.
 
 - **Layout:** automatic landscape, wide-strip and portrait arrangements, with
   manual overrides.
@@ -126,7 +130,7 @@ the menu. The tray menu remains available while the panel is hidden.
   serial and never overlaps.
 - **Sensor readouts:** optional number pulses, off by default, and independent
   smooth temperature rings.
-- **Holographic display:** automatic map motion and ship rotation, separate
+- **Ship options → Projection motion and ship rotation:** automatic map motion and ship rotation, separate
   from sensor polling. Motion pauses when hidden or disabled and respects
   Windows animation preferences.
 
@@ -144,10 +148,10 @@ RPM and NVIDIA fan duty. Fan duty is a percentage, not RPM. Actor captions,
 unidentified-crew placeholders and the inactive "ORIGINAL COLOURS" label are removed.
 
 Choose **Settings → Theme → The Expanse** for a space showcase that cycles
-through all 21 ships. **Settings → Expanse showcase** controls
+through all 21 ships. **⋯ Ship options → Expanse showcase** controls
 automatic cycling, with a default interval of 45 seconds and choices from
 15–120 seconds. Selecting a ship manually holds that ship until **Auto cycle**
-is enabled again. These controls are separate from **Holographic display**,
+is enabled again. These controls are separate from **Projection motion and ship rotation**,
 which controls map motion and ship rotation.
 
 Personnel cards identify a verified character and their relationship to the

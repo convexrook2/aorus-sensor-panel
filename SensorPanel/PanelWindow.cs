@@ -29,6 +29,7 @@ internal sealed class PanelWindow : Window
     private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
     private MenuItem? animationCommand;
     private PanelSettings? settings;
+    private MenuItem? shipOptions;
     private string layoutMode = PanelPreferences.Layout;
     private PanelTheme theme = PanelTheme.Resolve(PanelPreferences.Theme);
     private readonly Dictionary<TextBlock, bool> mutedLabels = new();
@@ -103,6 +104,7 @@ internal sealed class PanelWindow : Window
             ApplyTheme(); SaveDisplayState();
         };
         shipPanel.NavigationChanged += () => { if (IsLoaded) SaveDisplayState(); };
+        shipPanel.ShipOptionsRequested += () => settings?.Open(shipOptions);
         showcaseClock.Tick += (_, _) =>
         {
             if (CanCycleShowcase && settings?.IsOpen != true && shipPanel.HolotableOpen != true)
@@ -130,7 +132,7 @@ internal sealed class PanelWindow : Window
             else if (e.Key == Key.F11) ToggleFit(); else if (e.Key == Key.Escape && fit) ToggleFit();
         };
         ContextMenu = BuildMenu();
-        settings = new PanelSettings(this, viewport, ContextMenu, () => theme);
+        settings = new PanelSettings(this, ContextMenu, () => theme);
         surface.Children.Add(settings.Overlay);
         ContextMenuOpening += (_, e) => { e.Handled = true; settings.Open(); };
         PreviewMouseDown += (_, e) =>
@@ -442,6 +444,27 @@ internal sealed class PanelWindow : Window
         menu.Items.Add(startup);
         menu.Items.Add(new Separator());
         var exit = new MenuItem { Header = "Close panel (Alt+F4)" }; exit.Click += (_, _) => Close(); menu.Items.Add(exit);
+        MenuItem Group(string title, params MenuItem[] items)
+        {
+            var group=new MenuItem { Header=title };
+            foreach (var item in items) { menu.Items.Remove(item); group.Items.Add(item); }
+            return group;
+        }
+        var displayOptions=Group("Display",displays,full,restore,layout,scaling,top);
+        var sensors=Group("Sensors",fpsApplications,polling);
+        var advanced=Group("Advanced",animate,readoutEffects,startup,save,readme);
+        // Ship presentation belongs next to the ship selector, not in monitoring settings.
+        menu.Items.Remove(showcase); menu.Items.Remove(holographic);
+        holographic.Items.Remove(holoMotion);
+        shipOptions=new MenuItem { Header="Ship options" };
+        shipOptions.Items.Add(holoMotion); shipOptions.Items.Add(showcase);
+        menu.Items.Clear();
+        foreach (var item in new[] {displayOptions,themes,sensors,advanced,hide,exit}) menu.Items.Add(item);
+        menu.Opened += (_,_) =>
+        {
+            animate.Visibility=theme.ShipConsole ? Visibility.Collapsed : Visibility.Visible;
+            readoutEffects.Visibility=theme.ShipConsole ? Visibility.Visible : Visibility.Collapsed;
+        };
         return menu;
     }
 
@@ -930,7 +953,7 @@ internal sealed class PanelWindow : Window
                         checkingThemes=true; showcaseCycle=false; showcaseSeconds=PanelPreferences.ExpanseSceneSeconds; UpdateShowcaseClock();
                     }
                     showcaseChecked=true;
-                    settings.Open(); settings.SelectVisibleOption("Expanse showcase"); await SavePreview("expanse-controls");
+                    settings.Open(shipOptions); settings.SelectVisibleOption("Expanse showcase"); await SavePreview("expanse-controls");
                     settings.Close();
                 }
                 settings.Open();
@@ -958,16 +981,17 @@ internal sealed class PanelWindow : Window
             shipPanel.CheckBindings();
             if (baseline.Any(pair => text[pair.Key].Text != pair.Value))
                 throw new InvalidOperationException("Restoring readings after an unavailable sample failed.");
-            settings.Open(); settings.SelectVisibleOption("Sensor readouts");
+            settings.Open(); settings.SelectVisibleOption("Advanced"); settings.SelectVisibleOption("Sensor readouts");
             await SavePreview("sensor-readout-controls"); settings.NavigateBack();
-            settings.SelectVisibleOption("Holographic display");
-            await SavePreview("holographic-controls"); settings.NavigateBack();
+            settings.Open(shipOptions);
+            await SavePreview("holographic-controls"); settings.Open();
             settings.SelectVisibleOption("Theme");
             settings.SelectVisibleOption(choices[^1].Name);
             settings.NavigateBack();
             foreach (string group in new[] { "Move to display", "Layout", "Scale artwork", $"Sensor polling · {pollingIntervalMs} ms" })
             {
-                settings.SelectVisibleOption(group); await Task.Delay(100); settings.NavigateBack();
+                settings.SelectVisibleOption(group.StartsWith("Sensor polling",StringComparison.Ordinal) ? "Sensors" : "Display");
+                settings.SelectVisibleOption(group); await Task.Delay(100); settings.NavigateBack(); settings.NavigateBack();
             }
             settings.Close();
             File.WriteAllText(Path.Combine(output, "navigation-check.json"), JsonSerializer.Serialize(new
