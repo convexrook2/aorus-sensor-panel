@@ -50,6 +50,40 @@ executable, game FPS acquisition, original SOL layout and installer are unchange
 
 ## Preview
 
+Open **http://127.0.0.1:8770/** in any browser for the regular local viewer.
+It is a static site served from this folder; it does not need a separate build
+or the sensor-monitoring app. The local server must be running on this PC.
+
+To keep the address available after each Windows sign-in, run
+`Install-LocalServer.ps1` once. It registers the **Fleet Studio Local Viewer**
+task for the current user, using `pythonw.exe` with no console window. The task
+retries a failed server up to three times, one minute apart, and can run on
+battery power. Its log is at
+`%LOCALAPPDATA%\FleetStudio\server.log`. It does not open a browser at sign-in.
+The server is available while this user is signed in and the PC is running.
+
+Double-click **Start-Viewer.cmd** to open the site in the default browser. It
+checks `/health`, starts the registered task if needed, and waits for readiness
+before opening the browser. It starts a visible fallback server only when the
+task is absent; that console must remain open. If the task fails or points to a
+different checkout, the launcher reports the failure instead of starting a
+competing server. The older
+`/Fleet-Studio/Successor/`, `/Fleet-Studio/Review/`, and `/fleet-preview`
+links redirect to the same viewer and retain the selected ship.
+
+`Start-Viewer.cmd --check` runs the same readiness/task recovery check without
+opening a browser or starting a fallback. Exit codes are 0 for ready, 2 for a
+missing task, and 1 for a task/startup failure. Sign-in never opens a viewer tab.
+
+For diagnosis, inspect `Get-ScheduledTask -TaskName 'Fleet Studio Local Viewer'`
+and `Get-Content "$env:LOCALAPPDATA\FleetStudio\server.log" -Tail 20` in a visible
+PowerShell terminal. New server starts and requests include timestamps and PIDs;
+the visible fallback also prints logs to its console. A running Python process
+keeps its loaded server code until deliberately restarted. Identify its exact
+executable, command line and owner before stopping it. Sign-in persistence still
+requires an actual sign-out/sign-in observation; task registration alone does
+not prove it.
+
 From the repository root, run in a visible terminal:
 
 ```powershell

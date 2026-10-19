@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fleet lighting · interactive preview</title>
+  <style>
+    :root { color-scheme: dark; font: 14px system-ui, sans-serif; background: #07111a; color: #d7e6eb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+    header { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; padding: 12px 18px; border-bottom: 1px solid #28404b; }
+    h1 { margin: 0; font-size: 16px; font-weight: 600; }
+    nav { display: flex; flex-wrap: wrap; gap: 6px; }
+    button { padding: 6px 10px; border: 1px solid #47606b; border-radius: 5px; background: #132936; color: inherit; cursor: pointer; }
+    button[aria-pressed="true"] { border-color: #a8d5e6; background: #285268; }
+    main { min-height: 0; background: radial-gradient(circle at 50% 48%, #18313e, #07111a 70%); }
+    iframe { display: block; width: 100%; height: 100%; border: 0; background: transparent; }
+    small { color: #9bb0b9; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fleet lighting preview</h1>
+    <nav aria-label="Featured models">
+      <button type="button" data-ship="Pella" aria-pressed="true">Pella</button>
+      <button type="button" data-ship="Guanshiyin" aria-pressed="false">Guanshiyin</button>
+      <button type="button" data-ship="AgathaKing" aria-pressed="false">Agatha King</button>
+      <button type="button" data-ship="Morrigan" aria-pressed="false">Morrigan</button>
+      <button type="button" data-ship="Donnager" aria-pressed="false">Donnager</button>
+      <button type="button" data-ship="SolRing" aria-pressed="false">Sol Ring</button>
+    </nav>
+    <small>Use the viewer controls below for lighting, ship lights, plumes, and the gate aperture.</small>
+  </header>
+  <main><iframe title="Interactive Fleet Studio lighting and plume preview" src="../../?ship=Pella"></iframe></main>
+  <script>
+    const frame = document.querySelector('iframe');
+    const featured = [...document.querySelectorAll('button[data-ship]')];
+    function selectFeatured(id) {
+      for (const button of featured) button.setAttribute('aria-pressed', String(button.dataset.ship === id));
+    }
+    frame.addEventListener('load', () => {
+      frame.contentDocument.querySelector('#ship')?.addEventListener('change', event => {
+        selectFeatured(event.currentTarget.value);
+      });
+    });
+    for (const button of featured) {
+      button.addEventListener('click', () => {
+        frame.src = '../../?ship=' + encodeURIComponent(button.dataset.ship);
+        selectFeatured(button.dataset.ship);
+      });
+    }
+  </script>
+</body>
+</html>
