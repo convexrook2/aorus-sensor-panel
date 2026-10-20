@@ -156,7 +156,7 @@
         "url": "https://kelvintam.artstation.com/projects/v2358E"
       },
       {
-        "label": "Generation Films / exterior pass at 0:54\u20131:04, docking at 1:51\u20131:54",
+        "label": "Generation Films / exterior pass at 0:54–1:04, docking at 1:51–1:54",
         "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE&t=54s"
       },
       {
@@ -289,12 +289,12 @@
   },
   {
     "id": "RocinanteS6",
-    "title": "Rocinante / Season 6 CSL refit",
-    "model": "models/RocinanteS6-1e9758d6f391.glb.gz",
-    "sha256": "cc3018a5ba94efdbaa17a1fd548c533e5bc4d51d5cb1300bec1f414e224840f9",
+    "title": "Rocinante / Season 6",
+    "model": "models/RocinanteS6-d391bc43b084.glb.gz",
+    "sha256": "d391bc43b0843a328e435f0eefe16a34a0c8724cdaf0fe275f449fcd330e3eb3",
     "triangles": 687992,
-    "materials": 9,
-    "images": 3,
+    "materials": 93,
+    "images": 10,
     "beforeModel": "models/Rocinante-1d65e23b0762.glb.gz",
     "beforeEngineId": "Rocinante",
     "beforeLabel": "Compare Tachi",
@@ -305,7 +305,7 @@
     "beforeTitle": "Rocinante / original Tachi source",
     "beforeCredit": "Jakub.Vildomec; CC BY 4.0.",
     "beforeNote": "Original Tachi source shown for era and geometry comparison. The separate Season 6 CSL refit is available by switching Compare Tachi off.",
-    "note": "Separate final-TV-era CSL refit study with railgun, PDCs and landing gear. Detachable display plate and stand connector removed. Charcoal/red/grey paint uses the owner-selected replica gallery; blue-violet CSL finish follows the final Season 6 close-up. Full source detail retained; interpreted material boundaries still under review.",
+    "note": "Owner-finished Season 6 revision: smooth armour, paired existing relief markings, red lettering, shared grey panel finish and bluish-grey optical sheen. Nine modeled light fixtures and the correctly anchored blue-white drive exhaust are retained. Full geometry and maps preserved; original Tachi remains a separate comparison.",
     "credit": "Geometry: Martin Taichl / Martin, CC BY 4.0. Adapted PBR finish, CSL material, local lights and drive effects for X890. TV/replica photos are comparison references, not texture pixels. Not official production geometry.",
     "referenceUrl": "https://www.printables.com/model/136343-rocinante-from-the-expanse",
     "relatedSources": [

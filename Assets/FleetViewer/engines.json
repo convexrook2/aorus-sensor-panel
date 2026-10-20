@@ -1,0 +1,29 @@
+{
+  "RocinanteS6": {
+    "engines": [
+      {
+        "position": [
+          0.0007659383,
+          -3.0020000447,
+          0.0108564086
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.49,
+        "length": 2.2,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Final review GLB source-world Main drive bell outlet: centre X .0007659383, Y -3.0000000447, Z .0108564086; inner radius .49962912. Start .002 beyond outlet, then apply viewer root fit once. Existing throat geometry retained.",
+        "style": "rocinante-s6"
+      }
+    ],
+    "finish": "Finished S6 revision; source-world outlet anchor and opt-in Roci plume style"
+  }
+}

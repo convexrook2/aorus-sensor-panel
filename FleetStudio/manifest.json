@@ -1,5 +1,5 @@
 {
-  "revision": "Fleet Studio / Guanshiyin v11 retained / 2026-10-18",
+  "revision": "Fleet Studio / finished Rocinante Season 6 / 1.8.9 / 2026-10-20",
   "catalogue_entries": 23,
   "assets": [
     {
@@ -393,6 +393,20 @@
       "compressed_bytes": 36936450,
       "uncompressed_bytes": 115246572,
       "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/RocinanteS6-d391bc43b084.glb.gz",
+      "sha256": "d391bc43b0843a328e435f0eefe16a34a0c8724cdaf0fe275f449fcd330e3eb3",
+      "gzip_sha256": "c87d9f612c8e47e61536d11998e2d0c6669a046ade29301a48bad07fb5e172d9",
+      "source_sha256": "d391bc43b0843a328e435f0eefe16a34a0c8724cdaf0fe275f449fcd330e3eb3",
+      "binary_sha256": "f5a6dff5b7272512b6787e7ac4a304ee499b123c2abdbb8a1d120cf7e1d70cdf",
+      "triangles": 687992,
+      "materials": 93,
+      "images": 10,
+      "lights": 0,
+      "compressed_bytes": 37799454,
+      "uncompressed_bytes": 106433364,
+      "geometry_and_image_bytes_exact": true
     }
   ],
   "current": {
@@ -423,7 +437,7 @@
     "uncompressed_bytes": 115080236,
     "geometry_and_image_bytes_exact": true
   },
-  "scope": "Browser previews only. Native app, installer, monitoring, FPS and SOL unchanged.",
+  "scope": "Full reviewed model bundles shared by Fleet Studio and the native monitor; exact source identity is retained.",
   "reference_images_or_video_bundled": false,
   "rollback": "Comparison assets and earlier authoring revisions retained.",
   "permanent_url": "https://convexrook2.github.io/aorus-sensor-panel/"

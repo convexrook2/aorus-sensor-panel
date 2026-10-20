@@ -231,6 +231,11 @@ to monitoring. Both views retain the identical full
 model and embedded PBR maps, checked against its SHA-256 value. No additional
 mesh reduction or texture resampling occurs in the full viewport.
 
+The owner-finished **Rocinante Season 6** includes smooth armour, paired relief
+markings, red lettering, a bluish-grey optical finish and the corrected blue-white
+drive exhaust. Its exact full model and editable source are preserved; see
+[finished Roci baseline](docs/ROCINANTE-S6-FINISHED.md).
+
 Agatha King has six illuminated drive throats. Pella has thin layered armour
 over its smooth dark finish and recessed backing. These remain credited fan
 studies; earlier approximations are labelled in the catalogue. Source and

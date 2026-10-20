@@ -28,6 +28,7 @@ try{
  scene.environment=environment.texture;scene.environmentIntensity=.22;room.dispose();pmrem.dispose();
  const camera=new THREE.OrthographicCamera(-2,2,2,-2,.01,60);
  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;
+ const plumeFrameCenter=new THREE.Vector3();
  controls.autoRotate=false;controls.autoRotateSpeed=.65;controls.minZoom=.3;controls.maxZoom=40;
  const key=new THREE.DirectionalLight(0xfff7eb,4);key.position.set(4,6,5);key.castShadow=true;
  key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-2.5,right:2.5,top:2.5,bottom:-2.5,near:.1,far:18});
@@ -41,10 +42,11 @@ try{
  composer.addPass(new UnrealBloomPass(new THREE.Vector2(1,1),.18,.35,1.5));composer.addPass(new OutputPass());
  const clay=new THREE.MeshStandardMaterial({color:0x7f868a,roughness:.63,metalness:0});
  const normals=new THREE.MeshNormalMaterial(),wire=new THREE.MeshBasicMaterial({color:0x9ad7e3,wireframe:true});
+ let lightPass=null;
  let dirty=true,spin=false,animateField=false,previous=false,loadId=0,last=0,seconds=0,effectTime=0,frames=0,rateTime=0,rateFrames=0,shipLit=true,plumesOn=false,scheduled=0,lastRender=0;
  const schedule=()=>{if(!document.hidden&&!scheduled)scheduled=requestAnimationFrame(tick);};
  const invalidate=()=>{dirty=true;schedule();};controls.addEventListener('change',invalidate);
- function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?3.0:2.55;renderer.setSize(w,h,false);if(!efficient)composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
+ function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?(entry?.id==='RocinanteS6'?3.6:3.0):2.55;renderer.setSize(w,h,false);if(!efficient)composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
  function quality(){efficient=$('#quality').value==='efficient';renderer.setPixelRatio(efficient?1:devicePixelRatio);ao.enabled=!efficient;$('#ao').disabled=efficient;$('#ao').setAttribute('aria-pressed',ao.enabled);if(efficient)composer.setSize(1,1);document.body.dataset.quality=efficient?'efficient':'full';const url=new URL(location.href);url.searchParams.set('quality',efficient?'efficient':'full');history.replaceState(null,'',url);resize();}
  $('#quality').value=efficient?'efficient':'full';$('#quality').onchange=quality;quality();
  $('#rotate').setAttribute('aria-pressed','false');$('#rotate').textContent='Resume rotation';$('#effect').setAttribute('aria-pressed','false');
@@ -59,12 +61,16 @@ try{
    $('#engine-state').textContent=state.engineCount?state.engineCount+' drive'+(state.engineCount===1?'':'s')+' · ship lights '+(shipLit?'lit':'unlit')+' · plumes '+(plumesOn?'on':'off'):'Gate rim lights '+(shipLit?'on':'off')+' · aperture controlled separately';
    document.body.dataset.lit=String(shipLit);document.body.dataset.plumes=String(plumesOn&&state.engineCount>0);document.body.dataset.engineCount=state.engineCount;
    document.body.dataset.activeEmitters=state.activeEmitters;document.body.dataset.activeSourceLights=state.activeSourceLights;document.body.dataset.visiblePlumes=state.visiblePlumes;
+   // Fit the actual ship plus exhaust around their combined centre. This is
+   // review framing only; the model, source transforms and drive stay intact.
+   root.updateMatrixWorld(true);const nextCenter=entry?.id==='RocinanteS6'&&plumesOn&&state.engineCount?new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3()):new THREE.Vector3();
+   const shift=nextCenter.clone().sub(plumeFrameCenter);camera.position.add(shift);controls.target.add(shift);plumeFrameCenter.copy(nextCenter);controls.update();
    resize();invalidate();
  }
  function view(name='hero'){
    if(!root)return;const gate=entry.orientation==='gate';
    const dirs={hero:gate?[2.5,.9,7]:[4,1.4,6],front:[0,0,8],side:[8,0,0],rear:[0,0,-8],opposite:[-8,0,0],aft:[.001,-8,.001],nose:[.001,8,.001],rim:[.5,1.6,2]};
-   controls.target.set(0,0,0);camera.up.set(0,1,0);camera.position.set(...dirs[name]);camera.zoom=1;
+   controls.target.copy(plumeFrameCenter);camera.up.set(0,1,0);camera.position.set(...dirs[name]).add(plumeFrameCenter);camera.zoom=1;
    if(name==='aft'||name==='nose')camera.up.set(0,0,-1);
    if(name==='rim'){controls.target.set(0,1.55,0);camera.position.set(.25,1.8,1.8);camera.zoom=7;}
    camera.updateProjectionMatrix();controls.update();document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));invalidate();
@@ -82,6 +88,8 @@ try{
    $('#artist').href=entry.referenceUrl||entry.sourceUrl||'#';
  }
  async function load(id,reset=true){
+   finishLightPass();
+   clipVideo.pause();clipPanel.hidden=true;
    const token=++loadId,requestedPrevious=previous,selected=catalog.find(e=>e.id===id)||catalog[0];
    const file=requestedPrevious&&selected.beforeModel?selected.beforeModel:selected.model;
    const expected=requestedPrevious&&selected.beforeModel?selected.beforeSha256:selected.sha256;
@@ -125,7 +133,7 @@ try{
    $('#technical').textContent=info.triangles.toLocaleString()+' triangles · '+info.materials+' materials · '+lights+' local lights · '+shipEffects.emitterMaterials+' emissive materials · full geometry';
    $('#before').hidden=!entry.beforeModel;$('#before').textContent=entry.beforeLabel||'Previous version';$('#portal').hidden=$('#effect').hidden=$('#rim-view').hidden=entry.id!=='SolRing';
    if(field)field.visible=$('#portal').getAttribute('aria-pressed')==='true';
-   references();surface();lighting();shipState();if(reset)view();$('#status').hidden=true;
+   lightButton.hidden=entry.id!=='RocinanteS6';references();surface();lighting();shipState();if(reset)view();$('#status').hidden=true;
    document.body.dataset.loaded=entry.id;document.body.dataset.shipLights=lights;document.body.dataset.portalAnimated=Boolean(portal);
    const url=new URL(location.href);url.searchParams.set('ship',entry.id);history.replaceState(null,'',url);invalidate();
    }catch(error){if(token===loadId)throw error;}
@@ -143,11 +151,13 @@ try{
  const toggleReferences=open=>{$('#reference-panel').hidden=!open;$('#references').setAttribute('aria-expanded',open);};
  $('#references').onclick=()=>toggleReferences($('#reference-panel').hidden);$('#close-references').onclick=()=>toggleReferences(false);
  addEventListener('keydown',e=>{if(e.key==='Escape')toggleReferences(false);});
- function tick(t){scheduled=0;if(document.hidden)return;const active=spin||Boolean(portal&&animateField&&field.visible)||Boolean(plumesOn&&shipEffects?.engineCount);
+ function tick(t){scheduled=0;if(document.hidden)return;const active=Boolean(lightPass)||spin||Boolean(portal&&animateField&&field.visible)||Boolean(plumesOn&&shipEffects?.engineCount);
    if(!dirty&&!active)return;
    if(active&&!dirty&&t-lastRender<1000/30){schedule();return;}
    const dt=Math.min(Math.max((t-last)*.001,0),.1);last=t;lastRender=t;
-   if(spin)controls.update(dt);if(portal&&animateField&&field.visible){seconds+=dt;portal.uniforms.time.value=seconds;dirty=true;}
+   // OWNER_LIGHT_PASS: one visible, on-demand white-light sweep for review.
+   if(lightPass){const f=Math.min((t-lightPass.started)/8000,1),angle=(-120+360*f)*Math.PI/180;key.position.set(8*Math.cos(angle),4.5,8*Math.sin(angle));renderer.shadowMap.needsUpdate=true;dirty=true;if(f>=1)finishLightPass();}
+   if(spin&&!lightPass)controls.update(dt);if(portal&&animateField&&field.visible){seconds+=dt;portal.uniforms.time.value=seconds;dirty=true;}
    if(plumesOn){effectTime+=dt;if(shipEffects?.tick(effectTime))dirty=true;}
    if(dirty||active){if(efficient)renderer.render(scene,camera);else{ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);composer.render();}dirty=false;frames++;rateFrames++;}
    $('#motion').dataset.frames=frames;$('#motion').dataset.cameraAngle=controls.getAzimuthalAngle().toFixed(4);$('#motion').dataset.fieldTime=seconds.toFixed(3);$('#motion').dataset.plumeTime=effectTime.toFixed(3);
@@ -155,6 +165,45 @@ try{
    else if(t-rateTime>=1000){const fps=Math.round(rateFrames*1000/(t-rateTime));$('#motion').textContent=(spin?'Rotating':'Effects active')+' · '+fps+' fps · 30 fps limit';rateFrames=0;rateTime=t;}
    if(active)schedule();
  }
+ // Local review control: preserve the normal renderer and all saved settings.
+ const lightButton=document.createElement('button');lightButton.id='light-pass';lightButton.textContent='Light pass (8s)';$('.controls').append(lightButton);
+ // OWNER_LIGHT_CLIP: capture the existing rendered canvas at its normal cadence.
+ let lightRecorder=null,lightClipURL=null,lightStopTimer=0;
+ const clipPanel=document.createElement('aside');clipPanel.hidden=true;clipPanel.id='light-clip-panel';clipPanel.setAttribute('aria-label','Recorded light pass');Object.assign(clipPanel.style,{position:'fixed',right:'18px',top:'110px',width:'min(620px,60vw)',padding:'14px',background:'#101c25',border:'1px solid #587184',borderRadius:'8px',zIndex:20});
+ const clipHead=document.createElement('h2');clipHead.textContent='Light pass clip';clipHead.style.margin='0 0 8px';
+ const clipVideo=document.createElement('video');clipVideo.controls=true;clipVideo.loop=true;clipVideo.muted=true;clipVideo.playsInline=true;clipVideo.style.width='100%';clipVideo.setAttribute('aria-label','Recorded model moving into and out of white light');
+ const clipStatus=document.createElement('p');clipStatus.textContent='Same model and material, with a moving white light.';
+ const clipClose=document.createElement('button');clipClose.textContent='Hide clip';clipClose.onclick=()=>{clipVideo.pause();clipPanel.hidden=true;};clipPanel.append(clipHead,clipVideo,clipStatus,clipClose);document.body.append(clipPanel);lightButton.textContent='Record light pass (8s)';
+ clipStatus.setAttribute('role','status');clipStatus.setAttribute('aria-live','polite');
+ clipVideo.onerror=()=>{clipStatus.textContent='The recorded clip could not be played: '+(clipVideo.error?.message||'video decoding failed');clipPanel.hidden=false;};
+ function startLightRecording(){
+   let stream;
+   clipVideo.pause();clipVideo.hidden=true;clipPanel.hidden=false;clipStatus.textContent='Recording the model under a moving white light. Replay opens after 8 seconds.';
+   try{
+     if(!window.MediaRecorder||!renderer.domElement.captureStream)throw Error('Canvas recording is unavailable');
+     const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));
+     if(!mime)throw Error('No supported recording codec');
+     stream=renderer.domElement.captureStream(30);
+     const chunks=[],modelHash=previous?entry.beforeSha256:entry.sha256,recordingLoad=loadId,recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:10000000});lightRecorder=recorder;
+     recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+     recorder.onstop=()=>{
+       stream.getTracks().forEach(t=>t.stop());if(lightRecorder===recorder)lightRecorder=null;clearTimeout(lightStopTimer);lightStopTimer=0;
+       lightButton.disabled=false;lightButton.textContent='Record light pass (8s)';
+       if(recordingLoad!==loadId)return;
+       const blob=new Blob(chunks,{type:recorder.mimeType});clipPanel.hidden=false;
+       if(!blob.size){clipStatus.textContent='Recording produced no video frames. Try Record light pass again.';return;}
+       if(lightClipURL)URL.revokeObjectURL(lightClipURL);lightClipURL=URL.createObjectURL(blob);clipVideo.src=lightClipURL;clipVideo.hidden=false;
+       clipPanel.dataset.modelHash=modelHash;clipPanel.dataset.bytes=blob.size;clipStatus.textContent='Recorded from this model under a moving white light.';
+       if(!document.hidden)clipVideo.play().catch(error=>{clipStatus.textContent='Clip ready. Press Play to replay it. '+error.message;});
+     };
+     recorder.onerror=e=>{clipStatus.textContent='Recording failed: '+(e.error?.message||'unknown error');clipPanel.hidden=false;finishLightPass();};
+     recorder.start(250);
+   }catch(error){stream?.getTracks().forEach(t=>t.stop());lightRecorder=null;clipStatus.textContent=error.message+'; the live light sweep still runs.';}
+ }
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)clipVideo.pause();});
+ function finishLightPass(){if(!lightPass)return;const s=lightPass;lightPass=null;clearTimeout(lightStopTimer);lightStopTimer=0;if(lightRecorder?.state==='recording'){clipStatus.textContent='Preparing the recorded clip...';lightRecorder.stop();}key.position.copy(s.keyPosition);key.intensity=s.keyIntensity;fill.intensity=s.fillIntensity;rim.intensity=s.rimIntensity;scene.environmentIntensity=s.environment;camera.position.copy(s.cameraPosition);camera.up.copy(s.cameraUp);camera.zoom=s.cameraZoom;controls.target.copy(s.target);camera.updateProjectionMatrix();controls.update();lightButton.disabled=false;lightButton.textContent='Record light pass (8s)';renderer.shadowMap.needsUpdate=true;invalidate();}
+ lightButton.onclick=()=>{if(!root||lightPass||lightRecorder)return;lightPass={started:performance.now(),keyPosition:key.position.clone(),keyIntensity:key.intensity,fillIntensity:fill.intensity,rimIntensity:rim.intensity,environment:scene.environmentIntensity,cameraPosition:camera.position.clone(),cameraUp:camera.up.clone(),cameraZoom:camera.zoom,target:controls.target.clone()};view('hero');camera.zoom=1.3;camera.updateProjectionMatrix();key.intensity=6;fill.intensity=.02;rim.intensity=.05;scene.environmentIntensity=.025;lightButton.disabled=true;lightButton.textContent='Recording light pass...';startLightRecording();lightStopTimer=setTimeout(finishLightPass,8000);invalidate();};
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)finishLightPass();});
  document.addEventListener('visibilitychange',()=>{if(scheduled)cancelAnimationFrame(scheduled);scheduled=0;last=performance.now();rateTime=last;rateFrames=0;if(!document.hidden)invalidate();});
  await load(new URL(location.href).searchParams.get('ship')||'Pella');
 }catch(error){fail(error);}

@@ -10,8 +10,13 @@
     },
     {
       "path": "catalog.json",
-      "bytes": 26769,
-      "sha256": "69e0789276d57e0d9818e020c1e604e0d432a2eda51793bbfa2ee083036f4e21"
+      "bytes": 26751,
+      "sha256": "2cb6cd12472a71a8bf3f7f802184909c4cc38fc2349607644a86df80ca6668b7"
+    },
+    {
+      "path": "engines.json",
+      "bytes": 763,
+      "sha256": "b5f20ddbca0f990c55577449992e5f7677ccea1c2cb125b0e3b1ea6a912f901d"
     },
     {
       "path": "index.html",
@@ -105,8 +110,8 @@
     },
     {
       "path": "models/Rocinante.glb.gz",
-      "bytes": 22290404,
-      "sha256": "f7195068905ac8103100f0c9d9cea29de668dc9642823652f24af7e26bc04092"
+      "bytes": 37799454,
+      "sha256": "c87d9f612c8e47e61536d11998e2d0c6669a046ade29301a48bad07fb5e172d9"
     },
     {
       "path": "models/Scirocco.glb.gz",
@@ -122,6 +127,16 @@
       "path": "models/Tynan.glb.gz",
       "bytes": 4670499,
       "sha256": "1c5ae2705ae229f0afc10ced9d8764e68ce5607ebe29e026b89d81491cd7c17b"
+    },
+    {
+      "path": "rocinante-effects.js",
+      "bytes": 6515,
+      "sha256": "7a207e81dc1969306fbbbfb34cb56a3f4e55cdefd28ce251e5fcc2c211825b20"
+    },
+    {
+      "path": "vendor/three/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
     },
     {
       "path": "vendor/three/build/three.core.js",
@@ -179,14 +194,14 @@
       "sha256": "817f6c3cdcd0fd41515d112359ea0532568eefb5aabd3b33903957ebca1b8a6a"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
-      "bytes": 3228,
-      "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
-    },
-    {
       "path": "vendor/three/examples/jsm/postprocessing/SSAOPass.js",
       "bytes": 13443,
       "sha256": "59944f833d10330f6bdd205260ad06a8ef2bd12a115e4101d81578b249627e3f"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+      "bytes": 3228,
+      "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
     },
     {
       "path": "vendor/three/examples/jsm/shaders/CopyShader.js",
@@ -214,14 +229,9 @@
       "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
     },
     {
-      "path": "vendor/three/LICENSE",
-      "bytes": 1081,
-      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
-    },
-    {
       "path": "viewer.js",
-      "bytes": 16636,
-      "sha256": "9170cd5db2a465a29ef570d6da73585ffd0351b8e20024fa278d8b51096ab1a0"
+      "bytes": 17255,
+      "sha256": "b911fb4f7691da8cbf496214607c9ea2d2effb30cb7a9d5b0e9fd5c19cd8cd2a"
     }
   ]
 }

@@ -1,0 +1,12 @@
+Rocinante Season 6
+Geometry: Martin Taichl / Martin, CC BY 4.0.
+https://www.printables.com/model/136343-rocinante-from-the-expanse
+https://creativecommons.org/licenses/by/4.0/
+
+Modified for X890: PBR finishes, paired existing relief paint, existing lettering
+colours, bluish-grey optical armour, emissive fixtures and separate drive effects.
+This is credited fan artwork, not official production geometry. Reference images
+and video frames are not bundled as model textures.
+
+Other model credits and source links are retained in FleetStudio/catalog.json.
+Three.js: MIT. See vendor/three/LICENSE.

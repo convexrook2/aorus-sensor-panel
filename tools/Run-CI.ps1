@@ -26,6 +26,8 @@ try {
     }
     & .\tools\Check-PublicContent.ps1
     $version = ([xml](Get-Content .\SensorPanel\SensorPanel.csproj -Raw)).Project.PropertyGroup.Version
+    $studioVersion = ([xml](Get-Content .\FleetStudio.Desktop\FleetStudio.Desktop.csproj -Raw)).Project.PropertyGroup.Version
+    if ($studioVersion -ne $version) { throw 'Fleet Studio and monitor versions disagree.' }
     if ((Get-Content .\Packaging\SensorPanel.iss -Raw) -notmatch ('#define AppVersion "'+[regex]::Escape($version)+'"') -or
         (Get-Content .\Packaging\README.txt -Raw) -notmatch ('Version '+[regex]::Escape($version)+' \|') -or
         !(Test-Path -LiteralPath ".\Packaging\ReleaseNotes-$version.md")) { throw 'Release version/notes disagree.' }
@@ -33,7 +35,9 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Monitor fleet integrity failed.' }
     & $PythonExecutable .\FleetStudio\tools\verify_assets.py
     if ($LASTEXITCODE -ne 0) { throw 'Fleet Studio asset integrity failed.' }
-    foreach ($script in @('Assets/FleetViewer/viewer.js','FleetStudio/review.js','FleetStudio/portal.js','FleetStudio/ship-effects.js')) {
+    node .\tools\Check-RocinanteRelease.mjs
+    if ($LASTEXITCODE -ne 0) { throw 'Finished Rocinante identity/outlet checks failed.' }
+    foreach ($script in @('Assets/FleetViewer/viewer.js','Assets/FleetViewer/rocinante-effects.js','FleetStudio/review.js','FleetStudio/portal.js','FleetStudio/ship-effects.js')) {
         node --check $script
         if ($LASTEXITCODE -ne 0) { throw "JavaScript syntax failed: $script" }
     }

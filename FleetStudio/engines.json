@@ -3,7 +3,7 @@
     "engines": [
       {
         "position": [
-          0.0,
+          0,
           -1.668302043956042,
           -0.053196281642447225
         ],
@@ -146,9 +146,9 @@
     "engines": [
       {
         "position": [
-          0.0,
+          0,
           -8.94,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -167,9 +167,9 @@
     "engines": [
       {
         "position": [
-          0.0,
+          0,
           -2.1700001,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -188,9 +188,9 @@
     "engines": [
       {
         "position": [
-          0.0,
+          0,
           -2.2,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -288,7 +288,7 @@
           -1
         ],
         "radius": 35.5,
-        "length": 96.0,
+        "length": 96,
         "addCore": true,
         "basis": "Measured engines_main_skirt source-model outlet"
       }
@@ -378,7 +378,7 @@
           0
         ],
         "radius": 29.5,
-        "length": 82.0,
+        "length": 82,
         "addCore": true,
         "color": [
           1,
@@ -667,7 +667,7 @@
         "position": [
           -0.060000000000000005,
           -1.248,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -688,7 +688,7 @@
         "position": [
           -0.48,
           -1.2493,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -734,7 +734,7 @@
       },
       {
         "position": [
-          0.0,
+          0,
           -1.2493,
           -0.48
         ],
@@ -750,7 +750,7 @@
       },
       {
         "position": [
-          0.0,
+          0,
           -1.2493,
           0.48
         ],
@@ -800,7 +800,7 @@
         "position": [
           0.48,
           -1.2493,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -821,7 +821,7 @@
         "position": [
           -0.48,
           -1.2493,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -867,7 +867,7 @@
       },
       {
         "position": [
-          0.0,
+          0,
           -1.2493,
           -0.48
         ],
@@ -883,7 +883,7 @@
       },
       {
         "position": [
-          0.0,
+          0,
           -1.2493,
           0.48
         ],
@@ -933,7 +933,7 @@
         "position": [
           0.48,
           -1.2493,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -954,7 +954,7 @@
         "position": [
           -0.48,
           -1.2493,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -1000,7 +1000,7 @@
       },
       {
         "position": [
-          0.0,
+          0,
           -1.2493,
           -0.48
         ],
@@ -1016,7 +1016,7 @@
       },
       {
         "position": [
-          0.0,
+          0,
           -1.2493,
           0.48
         ],
@@ -1066,7 +1066,7 @@
         "position": [
           0.48,
           -1.2493,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -1085,9 +1085,9 @@
     "engines": [
       {
         "position": [
-          0.0,
+          0,
           -1.2212,
-          0.0
+          0
         ],
         "direction": [
           0,
@@ -1244,21 +1244,28 @@
     "engines": [
       {
         "position": [
-          0,
-          -1.597311583948297,
-          0
+          0.0007659383,
+          -3.0020000447,
+          0.0108564086
         ],
         "direction": [
           0,
           -1,
           0
         ],
-        "radius": 0.21624828324536952,
-        "length": 0.68,
-        "basis": "Measured single source-model drive bell outlet"
+        "radius": 0.49,
+        "length": 2.2,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Final review GLB source-world Main drive bell outlet: centre X .0007659383, Y -3.0000000447, Z .0108564086; inner radius .49962912. Start .002 beyond outlet, then apply viewer root fit once. Existing throat geometry retained.",
+        "style": "rocinante-s6"
       }
     ],
-    "finish": "Separate inspection revision; original source retained"
+    "finish": "Finished S6 revision; source-world outlet anchor and opt-in Roci plume style"
   },
   "SolRing": {
     "engines": [],
@@ -1268,7 +1275,7 @@
     "engines": [
       {
         "position": [
-          0.0,
+          0,
           -1.3212,
           -0.05
         ],

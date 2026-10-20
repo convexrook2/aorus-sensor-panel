@@ -6,6 +6,7 @@ import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {SSAOPass} from 'three/addons/postprocessing/SSAOPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {makeShipEffects} from './rocinante-effects.js';
 
 const canvas=document.querySelector('canvas'),status=document.querySelector('#status');
 const post=message=>window.chrome?.webview?.postMessage(message);
@@ -15,6 +16,7 @@ try {
  const previewFetch=window.chrome?.webview?{}:{cache:'no-store'};
  const response=await fetch('./catalog.json',previewFetch);if(!response.ok)throw Error('Missing fleet catalogue');
  const catalog=await response.json();
+ const engines=await (await fetch('./engines.json',previewFetch)).json();
  // Same PBR pipeline as Fleet Studio. Meshes and image data are not resampled.
  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance',preserveDrawingBuffer:true});
  renderer.setPixelRatio(devicePixelRatio);renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -50,6 +52,7 @@ try {
  const controls=new OrbitControls(camera,canvas);controls.enableDamping=false;controls.minZoom=.15;controls.maxZoom=16;
  // Inspection rotates and zooms about the ship, never translates it off-screen.
  controls.enablePan=false;controls.zoomToCursor=false;
+ let shipEffects=null;
  let root=null,entry=null,interactive=false,holotable=false,motion=true,active=true,dirty=true,frame=0,last=0,lastRender=0,frames=0,loadToken=0;
  let radius=1,height=3.2,modelSha='',modelStats={},raf=0,seconds=0,pendingId=null,viewWidth=0,viewHeight=0,viewRatio=0;
  let lastFrameStats={},profile=null;
@@ -96,6 +99,7 @@ try {
    pendingId=id;
    try {
    // Release the previous GPU resources before allocating the next full model.
+   shipEffects?.dispose();shipEffects=null;
    if(root){scene.remove(root);disposeRoot(root);root=null;}entry=null;invalidate();
    const response=await fetch(selected.model,previewFetch);if(!response.ok)throw Error('Missing model: '+id);
    const raw=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
@@ -117,6 +121,12 @@ try {
      if((o.isPointLight||o.isSpotLight)&&entry.lightUnitScale){o.intensity*=entry.lightUnitScale*(3.2/max)**2;if(o.distance)o.distance*=3.2/max;}
      if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;for(const m of Array.isArray(o.material)?o.material:[o.material])for(const t of Object.values(m))if(t?.isTexture)t.anisotropy=renderer.capabilities.getMaxAnisotropy();
    });
+   // This finished Roci alone has a reviewed runtime exhaust. Source model
+   // statistics are captured above, before separate effect meshes are added.
+   if(entry.id==='Rocinante'){
+     shipEffects=makeShipEffects(oriented,gltf.scene,engines.RocinanteS6.engines,center,3.2/max);
+     shipEffects.setLights(true);shipEffects.setPlumes(true);
+   }
    // Centre after the source's orientation/scale too, including non-identity
    // scene transforms. Both portrait rotation and inspection orbit share this pivot.
    oriented.updateMatrixWorld(true);
@@ -130,6 +140,7 @@ try {
    } finally {if(token===loadToken)pendingId=null;}
  }
  function render(){
+   shipEffects?.tick(seconds);
    ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);
    ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);
    // Diagnostic timer queries exist only during an explicitly requested review.
@@ -175,7 +186,7 @@ try {
    displayStage:displayStage.visible,rotationRadians:root?.rotation.y??0,frameLimit:holotable?30:null,
    transparent:true,pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,
    frames,animationSeconds:seconds,modelReady:!!root,renderPipeline:'Fleet Studio / Three.js PBR',
-   toneMapping:'AgX',geometryReduced:false,texturesResampled:false,lastFrameStats,
+   engineEffects:shipEffects?.stats()??null,toneMapping:'AgX',geometryReduced:false,texturesResampled:false,lastFrameStats,
    renderProfile:profile?{state:profile.state,samples:profile.cpu.length,gpuSamples:profile.gpu.length,gpuTimerSupported:!!timerQuery,
      gpuMilliseconds:profile.gpu.length?profile.gpu.reduce((a,b)=>a+b,0)/profile.gpu.length:null,
      cpuSubmissionMilliseconds:profile.cpu.length?profile.cpu.reduce((a,b)=>a+b,0)/profile.cpu.length:null}:null,

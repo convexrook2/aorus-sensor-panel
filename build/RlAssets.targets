@@ -21,7 +21,7 @@
     <ItemGroup>
       <RlReadableNotices Include="$(MSBuildThisFileDirectory)..\Assets\SolarNavigation\*.txt;$(MSBuildThisFileDirectory)..\Assets\SolarNavigation\*.md" Condition="'$(MSBuildProjectName)' == 'SensorPanel'" />
       <RlReadableNotices Include="$(MSBuildThisFileDirectory)..\Assets\FleetViewer\ATTRIBUTION.txt;$(MSBuildThisFileDirectory)..\Assets\FleetViewer\vendor\three\LICENSE" Condition="'$(MSBuildProjectName)' == 'SensorPanel'" />
-      <RlReadableNotices Include="$(MSBuildThisFileDirectory)..\FleetStudio\vendor\three\LICENSE" Condition="'$(MSBuildProjectName)' == 'FleetStudio.Desktop'" />
+      <RlReadableNotices Include="$(MSBuildThisFileDirectory)..\FleetStudio\vendor\three\LICENSE;$(MSBuildThisFileDirectory)..\FleetStudio\ATTRIBUTION.txt" Condition="'$(MSBuildProjectName)' == 'FleetStudio.Desktop'" />
     </ItemGroup>
     <Copy SourceFiles="@(RlReadableNotices)" DestinationFolder="$(PublishDir)Licenses/AssetCredits" />
     <Exec Command="dotnet &quot;$(RlTool)&quot; pack --key &quot;$(RlKeyFile)&quot; --source &quot;$(PublishDir).&quot; --output &quot;$(PublishDir)assets.rl&quot; --product &quot;$(RlProductId)&quot; --roots &quot;$(RlAssetRoots)&quot; --remove-loose" />

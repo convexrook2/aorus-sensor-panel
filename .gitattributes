@@ -8,3 +8,6 @@ FleetStudio/vendor/** -diff linguist-vendored=true
 
 # The desktop bundle manifest hashes exact file bytes across platforms.
 Assets/FleetViewer/** -text whitespace=cr-at-eol
+
+# The same effect module is copied into both source bundles and checked bytewise.
+FleetStudio/ship-effects.js text eol=lf
