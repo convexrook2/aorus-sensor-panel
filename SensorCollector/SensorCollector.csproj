@@ -20,6 +20,6 @@
   <Target Name="BuildFrameViewBridge" BeforeTargets="CoreCompile" Condition="'$(BuildFrameViewBridge)' == 'true'"
           Inputs="$(MSBuildProjectDirectory)\Native\FrameViewBridge.cpp;$(MSBuildProjectDirectory)\..\tools\Build-FrameViewBridge.ps1;C:\Program Files\NVIDIA Corporation\FrameViewSDK\SDK\Public_Release\FvSDK.h;C:\Program Files\NVIDIA Corporation\FrameViewSDK\SDK\Public_Release\FvSDK_x64.lib"
           Outputs="$(MSBuildProjectDirectory)\$(OutDir)NvidiaFrameViewBridge.dll">
-    <Exec Command="powershell.exe -NoProfile -File &quot;$(MSBuildProjectDirectory)\..\tools\Build-FrameViewBridge.ps1&quot; -OutputDirectory &quot;$(MSBuildProjectDirectory)\$(OutDir).&quot;" />
+    <Exec Command="pwsh.exe -NoProfile -File &quot;$(MSBuildProjectDirectory)\..\tools\Build-FrameViewBridge.ps1&quot; -OutputDirectory &quot;$(MSBuildProjectDirectory)\$(OutDir).&quot;" />
   </Target>
 </Project>
