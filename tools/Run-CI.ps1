@@ -1,3 +1,4 @@
+param([string]$PythonExecutable = 'python')
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $repoRoot
@@ -28,9 +29,9 @@ try {
     if ((Get-Content .\Packaging\SensorPanel.iss -Raw) -notmatch ('#define AppVersion "'+[regex]::Escape($version)+'"') -or
         (Get-Content .\Packaging\README.txt -Raw) -notmatch ('Version '+[regex]::Escape($version)+' \|') -or
         !(Test-Path -LiteralPath ".\Packaging\ReleaseNotes-$version.md")) { throw 'Release version/notes disagree.' }
-    python .\tools\Sync-FleetViewer.py --check
+    & $PythonExecutable .\tools\Sync-FleetViewer.py --check
     if ($LASTEXITCODE -ne 0) { throw 'Monitor fleet integrity failed.' }
-    python .\FleetStudio\tools\verify_assets.py
+    & $PythonExecutable .\FleetStudio\tools\verify_assets.py
     if ($LASTEXITCODE -ne 0) { throw 'Fleet Studio asset integrity failed.' }
     foreach ($script in @('Assets/FleetViewer/viewer.js','FleetStudio/review.js','FleetStudio/portal.js','FleetStudio/ship-effects.js')) {
         node --check $script

@@ -62,6 +62,14 @@ Jenkins Pipeline/Git plugins. Release packaging additionally requires Inno Setup
 6, Visual Studio x64 C++ tools and the FrameView SDK with its notices. Managed
 CI does not need administrator access, PawnIO or a game/GPU capture session.
 
+If the Jenkins service account lacks Python on PATH, the X890 runner reads
+`$JENKINS_HOME/X890-CI-toolchain.json`, with a `PythonExecutable` property pointing
+to an existing executable on that agent. This per-job file stays outside Git
+and the disposable workspace. It does not install software or change the
+controller/system PATH or another project's environment. Normal local runs use
+their existing Python command. Keep this path current when moving the agent or
+updating a versioned interpreter installation.
+
 ## Visible local check
 
 From X890's VS Code terminal on the owner's selected project monitor:

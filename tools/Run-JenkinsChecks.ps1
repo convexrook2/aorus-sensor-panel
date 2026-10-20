@@ -13,6 +13,7 @@ foreach($name in @('gate-tests.xml','navigation-tests.xml','jenkins-checks.json'
 }
 $results=[Collections.Generic.List[object]]::new()
 $passed=$false
+$pythonExecutable='python'
 $commandLog=Join-Path $ciRoot 'commands.txt'
 Set-Content -LiteralPath $commandLog -Value ''
 function Invoke-Gate([string]$Name,[scriptblock]$Action){
@@ -35,13 +36,24 @@ function Read-JsonReport([string]$Command,[string[]]$Arguments,[string]$Report,[
 try{
     Invoke-Gate 'Windows toolchain preflight' {
         if($env:OS -ne 'Windows_NT' -or $PSVersionTable.PSVersion.Major -lt 7){throw 'Windows x64 and PowerShell 7+ are required.'}
-        foreach($tool in @('git','dotnet','python','node','npm.cmd','pwsh.exe')){
+        foreach($tool in @('git','dotnet','node','npm.cmd','pwsh.exe')){
             if(!(Get-Command $tool -ErrorAction SilentlyContinue)){throw "Missing CI prerequisite: $tool"}
         }
+        $python=Get-Command python -ErrorAction SilentlyContinue
+        if($python){$script:pythonExecutable=$python.Source}
+        elseif($env:JENKINS_HOME){
+            # Per-job toolchain metadata lives outside checkout/deletion and Git.
+            # It points to an existing interpreter; no install or global PATH edit.
+            $configPath=Join-Path $env:JENKINS_HOME 'X890-CI-toolchain.json'
+            if(!(Test-Path -LiteralPath $configPath)){throw 'Python is missing from agent PATH; configure X890-CI-toolchain.json.'}
+            $config=Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+            $script:pythonExecutable=[IO.Path]::GetFullPath($config.PythonExecutable)
+            if(!(Test-Path -LiteralPath $script:pythonExecutable -PathType Leaf)){throw 'Configured X890 Python interpreter is missing.'}
+        }else{throw 'Python is unavailable.'}
         Invoke-Checked dotnet @('--version')
         if(!((& dotnet --list-sdks) -match '^10\.')){throw '.NET 10 SDK is required.'}
         Invoke-Checked node @('--version')
-        Invoke-Checked python @('--version')
+        Invoke-Checked $script:pythonExecutable @('--version')
         Invoke-Checked npm.cmd @('--version')
         Write-Host "PowerShell $($PSVersionTable.PSVersion)"
     }
@@ -49,7 +61,7 @@ try{
     Invoke-Gate 'Release build, sensor/resource contracts, authenticated assets and protected publish' {
         # A child console command keeps every native tool's output in this visible
         # terminal and the log, including output missed by PS transcription alone.
-        Invoke-Checked pwsh.exe @('-NoLogo','-NoProfile','-NonInteractive','-File','.\tools\Run-CI.ps1')
+        Invoke-Checked pwsh.exe @('-NoLogo','-NoProfile','-NonInteractive','-File','.\tools\Run-CI.ps1','-PythonExecutable',$script:pythonExecutable)
         $core=Get-Content -LiteralPath (Join-Path $ciRoot 'result.json') -Raw | ConvertFrom-Json
         if(!$core.Passed){throw 'Core CI receipt did not pass.'}
     }
