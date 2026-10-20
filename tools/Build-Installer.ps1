@@ -1,6 +1,16 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
+$python = Get-Command python -ErrorAction SilentlyContinue
+if ($python) { $pythonExecutable = $python.Source }
+elseif ($env:JENKINS_HOME) {
+    # Reuse the same per-job interpreter as the CI checks without changing PATH.
+    $configPath = Join-Path $env:JENKINS_HOME 'X890-CI-toolchain.json'
+    if (!(Test-Path -LiteralPath $configPath)) { throw 'Python is missing from agent PATH; configure X890-CI-toolchain.json.' }
+    $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+    $pythonExecutable = [IO.Path]::GetFullPath($config.PythonExecutable)
+    if (!(Test-Path -LiteralPath $pythonExecutable -PathType Leaf)) { throw 'Configured X890 Python interpreter is missing.' }
+} else { throw 'Python is unavailable.' }
 function Get-ArtifactHash([string]$Path) {
     $stream = [IO.File]::OpenRead($Path); $sha = [Security.Cryptography.SHA256]::Create()
     try { [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-','') }
@@ -18,7 +28,7 @@ try {
     $sourceStatus = @(git status --porcelain)
     Write-Host "Building installer $version from $sourceHead with $($sourceStatus.Count) working-tree entries. Does not install or launch live sensors."
     & '.\tools\Check-PublicContent.ps1'
-    python '.\tools\Sync-FleetViewer.py' --check
+    & $pythonExecutable '.\tools\Sync-FleetViewer.py' --check
     if ($LASTEXITCODE -ne 0) { throw 'Desktop fleet asset checks failed.' }
     # Preserve accepted branding pixels. Regenerate only when preparing a checkout
     # that genuinely lacks the existing generated icon/PNG.
