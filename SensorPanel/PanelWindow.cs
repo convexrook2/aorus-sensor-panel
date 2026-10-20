@@ -158,7 +158,7 @@ internal sealed partial class PanelWindow : Window
             Start();
             RefreshVisualActivity();
             if (runtimeCheck && previewPath is null) _=CheckLiveRuntimeAsync(checkHolotable);
-            if(Environment.GetCommandLineArgs().Contains("--check-native-quality"))_=CheckNativeQualityAsync();
+            if(Environment.GetCommandLineArgs().Any(a=>a is "--check-native-quality" or "--check-protected-assets"))_=CheckNativeQualityAsync();
             if(Environment.GetCommandLineArgs().Contains("--check-expanse-cycle"))_=CheckExpanseCycleAsync();
             UpdateShowcaseClock();
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));

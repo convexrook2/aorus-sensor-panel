@@ -14,7 +14,6 @@ internal static class SolarBodyAssets
     private static readonly Dictionary<string, Model3DGroup> cache = new();
     private static readonly Dictionary<string, string> sources = new();
     private static readonly MeshGeometry3D sphere = Sphere();
-    private static readonly string root = Path.Combine(AppContext.BaseDirectory, "SolarNavigation");
     internal static IReadOnlyDictionary<string, string> Sources => sources;
 
     internal static Model3DGroup Load(string id)
@@ -43,15 +42,16 @@ internal static class SolarBodyAssets
         model.Freeze(); cache.Add(id, model); return model;
     }
 
-    private static string Asset(string relative)
+    private static byte[] Asset(string relative)
     {
-        string path = Path.Combine(root, relative);
-        if (!sources.ContainsKey(relative)) sources.Add(relative, Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))));
-        return path;
+        byte[] data=Rookline.AssetProtection.AppAssets.Read("SolarNavigation/"+relative);
+        if (!sources.ContainsKey(relative)) sources.Add(relative, Convert.ToHexString(SHA256.HashData(data)));
+        return data;
     }
     internal static BitmapImage Bitmap(string file)
     {
-        var bitmap = new BitmapImage(); bitmap.BeginInit(); bitmap.UriSource = new Uri(Asset("textures/" + file));
+        using var stream=new MemoryStream(Asset("textures/"+file),false);
+        var bitmap = new BitmapImage(); bitmap.BeginInit(); bitmap.StreamSource=stream;
         bitmap.CacheOption = BitmapCacheOption.OnLoad; bitmap.DecodePixelWidth = 2048; bitmap.EndInit(); bitmap.Freeze();
         return bitmap;
     }
@@ -78,7 +78,7 @@ internal static class SolarBodyAssets
 
     private static void Packed(Model3DGroup model, string name, double sourceRadiusKm)
     {
-        using var file = File.OpenRead(Asset("models/" + name + ".fnm")); using var reader = new BinaryReader(file);
+        using var file = new MemoryStream(Asset("models/" + name + ".fnm"),false); using var reader = new BinaryReader(file);
         string magic = Encoding.ASCII.GetString(reader.ReadBytes(4));
         int version = magic switch { "FNM1" => 1, "FNM2" => 2, "FNM3" => 3, _ => throw new InvalidDataException("Unknown solar mesh format.") };
         int vertices = reader.ReadInt32(), triangles = reader.ReadInt32();

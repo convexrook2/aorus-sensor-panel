@@ -41,8 +41,7 @@ internal sealed class ArtworkAnimation : IDisposable
             BitmapSource[] Load(string folder, string prefix, int count)
                 => Enumerable.Range(0, count).Select(index =>
                 {
-                    var uri = new Uri($"pack://application:,,,/Aorus/Animations/{folder}/{prefix}{index}.png");
-                    using var stream = Application.GetResourceStream(uri)?.Stream ?? throw new FileNotFoundException(uri.ToString());
+                    using var stream = Rookline.AssetProtection.AppAssets.Open($"AORUS/@Resources/GIFs/{(folder=="X"?"GIF1":folder)}/{prefix}{index}.png");
                     using var copy = new MemoryStream(); stream.CopyTo(copy);
                     string hash = Convert.ToHexString(SHA256.HashData(copy.ToArray()));
                     if (cache.TryGetValue(hash, out var existing)) return existing;

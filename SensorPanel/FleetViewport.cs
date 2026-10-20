@@ -74,8 +74,7 @@ internal sealed class FleetViewport : Grid, IDisposable
     {
         try
         {
-            string assets=Path.Combine(AppContext.BaseDirectory,"FleetViewer");
-            if(!File.Exists(Path.Combine(assets,"index.html"))) throw new FileNotFoundException("The full ship artwork bundle is missing.");
+            if(!Rookline.AssetProtection.AppAssets.Exists("FleetViewer/index.html")) throw new FileNotFoundException("The full ship artwork bundle is missing.");
             string profile=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"X890Sensor","FleetWebView2");
             var environment=await CoreWebView2Environment.CreateAsync(userDataFolder:profile);
             if(disposed)return;
@@ -88,7 +87,7 @@ internal sealed class FleetViewport : Grid, IDisposable
             await browser.EnsureCoreWebView2Async(environment);
             if(disposed)return;
             var core=browser.CoreWebView2;
-            core.SetVirtualHostNameToFolderMapping(Host,assets,CoreWebView2HostResourceAccessKind.Deny);
+            Rookline.AssetProtection.AppAssets.Host(core,Host,"FleetViewer");
             core.Settings.AreDefaultContextMenusEnabled=false;
             core.Settings.IsStatusBarEnabled=false;
             core.Settings.AreBrowserAcceleratorKeysEnabled=false;
@@ -260,7 +259,7 @@ internal sealed class FleetViewport : Grid, IDisposable
     internal void Check()
     {
         if(failed||disposed)throw new InvalidOperationException("Full ship renderer unavailable; inspect fleet-view-error.txt.");
-        if(!File.Exists(Path.Combine(AppContext.BaseDirectory,"FleetViewer","catalog.json")))
+        if(!Rookline.AssetProtection.AppAssets.Exists("FleetViewer/catalog.json"))
             throw new InvalidOperationException("The full ship catalogue is missing.");
     }
     public void Dispose()

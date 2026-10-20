@@ -12,12 +12,15 @@ For initial setup or to refresh that copy from current source, run
 to test the Desktop shortcut. Setup publishes Release files, checks the current
 model bundle hashes and creates the Desktop and Start-menu shortcuts. It does
 not add Windows startup entries. The desktop copy updates when setup is rerun.
+Published assets are authenticated/encrypted in `assets.rl`, loaded in memory;
+source files remain editable. See [the shared .rl standard](../docs/RL-ASSET-STANDARD.md).
 
 For development, open `X890.code-workspace` in VS Code, select
 **Fleet Studio · desktop** in Run and Debug, and press F5. Alternatively
 double-click `Start-Desktop.cmd`; these development paths build from source.
-The independent C# WPF host loads these local files using WebView2 virtual-host
-mapping. It does not start Python or listen on a network port and never starts
+The independent C# WPF host uses WebView2 virtual-host mapping in development
+and in-memory protected resource responses in published copies. It does not
+start Python or listen on a network port and never starts
 with Windows. Build with `dotnet build FleetStudio.Desktop/FleetStudio.Desktop.csproj`.
 
 Full shading is the default. Optional Efficient quality uses pixel ratio 1 and no

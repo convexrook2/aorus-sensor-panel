@@ -10,7 +10,7 @@ $lines.Add('Independent project. GIGABYTE/AORUS trademarks and supplied artwork 
 $lines.Add('The unmodified LibreHardwareMonitor 0.9.6 library is MPL-2.0; corresponding source: https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/tree/v0.9.6')
 $lines.Add('PresentMon 2.6.0: MIT; source https://github.com/GameTechDev/PresentMon/tree/v2.6.0 ; full license in PresentMon-LICENSE.txt.')
 $lines.Add('X890 PresentMon compatibility build: upstream frame analysis with an alternate DXGI event input; source/patch/build instructions in tools/PresentMon. Full upstream and dependency notices in PresentMon-COMPAT-NOTICES.txt.')
-$lines.Add('Original native SOL / NAVIGATION schematic with detailed Belter Charts assets by skylercole and contributors, Apache-2.0. Offline geometry tools: Three.js, MIT. Texture/model attributions, adaptation details and schematic scale notes accompany the SolarNavigation folder.')
+$lines.Add('Original native SOL / NAVIGATION schematic with detailed Belter Charts assets by skylercole and contributors, Apache-2.0. Offline geometry tools: Three.js, MIT. Texture/model attributions, adaptation details and schematic scale notes are readable in Licenses/AssetCredits; the exact asset bytes are packaged in assets.rl.')
 $lines.Add('Optional NVIDIA FrameView SDK bridge: NVIDIA SDK license with FrameView supplement; full terms and supplied third-party notices in Licenses/NVIDIA-FrameView-SDK-*.txt. The existing SDK service is required only for the optional collector --frameview mode.')
 foreach ($notice in @(
     @{Source='C:\Program Files\NVIDIA Corporation\FrameViewSDK\EULA.txt';Name='NVIDIA-FrameView-SDK-EULA.txt'},

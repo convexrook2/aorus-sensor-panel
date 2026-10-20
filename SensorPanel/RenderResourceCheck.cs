@@ -11,6 +11,8 @@ internal sealed partial class PanelWindow
     // There is no listener, polling task or automatic minimize in normal use.
     private async Task CheckRenderResourcesAsync(CancellationToken token)
     {
+        if(Environment.GetCommandLineArgs().Contains("--measure-fleet-pair"))
+        { await CheckFleetPairAsync(token); return; }
         string phasePath=Path.Combine(PanelPaths.Artifacts,"render-resource-phase.json");
         string commandPath=Path.Combine(PanelPaths.Artifacts,"render-resource-command.json");
         string session=Guid.NewGuid().ToString("N");

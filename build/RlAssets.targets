@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+    <RlProductId Condition="'$(MSBuildProjectName)' == 'SensorPanel'">X890.Sensor</RlProductId>
+    <RlProductId Condition="'$(MSBuildProjectName)' == 'FleetStudio.Desktop'">X890.FleetStudio</RlProductId>
+    <RlAssetRoots Condition="'$(MSBuildProjectName)' == 'SensorPanel'">FleetViewer;SolarNavigation;Models;Ships;AORUS</RlAssetRoots>
+    <RlAssetRoots Condition="'$(MSBuildProjectName)' == 'FleetStudio.Desktop'">FleetStudio</RlAssetRoots>
+    <RlKeyFile Condition="'$(RlKeyFile)' == ''">$(LOCALAPPDATA)\LennonBuildKeys\$(RlProductId)-v2.key</RlKeyFile>
+    <RlGeneratedKey>$(MSBuildProjectDirectory)\obj\RlAssets\$(Configuration)\ProductAssetKey.g.cs</RlGeneratedKey>
+    <RlTool>$(MSBuildThisFileDirectory)..\tools\RlPack\bin\$(Configuration)\net10.0\RlPack.dll</RlTool>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\tools\RlPack\RlPack.csproj" ReferenceOutputAssembly="false" Private="false" PrivateAssets="all" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\Shared\RlArchive.cs" Link="AssetProtection/RlArchive.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\Shared\AppAssets.cs" Link="AssetProtection/AppAssets.cs" />
+    <Compile Include="$(RlGeneratedKey)" Visible="false" />
+  </ItemGroup>
+  <Target Name="PrepareRlAssetKey" BeforeTargets="CoreCompile" DependsOnTargets="ResolveProjectReferences">
+    <Exec Command="dotnet &quot;$(RlTool)&quot; key --key &quot;$(RlKeyFile)&quot; --generated &quot;$(RlGeneratedKey)&quot; --product &quot;$(RlProductId)&quot;" />
+  </Target>
+  <Target Name="ProtectPublishedRlAssets" AfterTargets="Publish">
+    <ItemGroup>
+      <RlReadableNotices Include="$(MSBuildThisFileDirectory)..\Assets\SolarNavigation\*.txt;$(MSBuildThisFileDirectory)..\Assets\SolarNavigation\*.md" Condition="'$(MSBuildProjectName)' == 'SensorPanel'" />
+      <RlReadableNotices Include="$(MSBuildThisFileDirectory)..\Assets\FleetViewer\ATTRIBUTION.txt;$(MSBuildThisFileDirectory)..\Assets\FleetViewer\vendor\three\LICENSE" Condition="'$(MSBuildProjectName)' == 'SensorPanel'" />
+      <RlReadableNotices Include="$(MSBuildThisFileDirectory)..\FleetStudio\vendor\three\LICENSE" Condition="'$(MSBuildProjectName)' == 'FleetStudio.Desktop'" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RlReadableNotices)" DestinationFolder="$(PublishDir)Licenses/AssetCredits" />
+    <Exec Command="dotnet &quot;$(RlTool)&quot; pack --key &quot;$(RlKeyFile)&quot; --source &quot;$(PublishDir).&quot; --output &quot;$(PublishDir)assets.rl&quot; --product &quot;$(RlProductId)&quot; --roots &quot;$(RlAssetRoots)&quot; --remove-loose" />
+    <Message Text="Protected assets.rl published; source assets remain editable and no loose protected asset folders remain in this publish output." Importance="high" />
+  </Target>
+</Project>

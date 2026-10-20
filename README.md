@@ -60,7 +60,8 @@ decoded only when that theme is visible and animated; ship themes release them.
 Live collection continues independently of visual activity.
 
 Fleet Studio uses JavaScript/Three.js inside a WPF/WebView2 window and reads its
-bundled files through a local virtual host. Full shading is the default, with
+bundled files through a local virtual host in development or in-memory encrypted
+archive responses after publishing. Full shading is the default, with
 an optional Efficient quality setting chosen inside the viewer. Rotation/effects
 start paused, and the scene redraws when something changes. Deliberate animation
 is capped at 30 fps. An open 3D viewer still uses RAM/GPU resources;
@@ -73,6 +74,10 @@ that server. The Desktop/Start-menu icons open Fleet Studio directly; the VS Cod
 profiles are development alternatives.
 
 ## Requirements
+
+Published builds protect creative assets in `assets.rl`; editable source files
+remain in this checkout. See the [.rl asset standard](docs/RL-ASSET-STANDARD.md)
+for coverage, build keys and the limits of client-side copying protection.
 
 - Windows x64 and a display exposed as a Windows monitor. USB panels using a
   proprietary data protocol require a separate vendor integration.
@@ -266,6 +271,11 @@ Resource use varies with hardware, display size, theme and workload; there
 is no universal performance or game-FPS guarantee.
 
 ## Build and validation
+
+[Jenkins CI](docs/CI.md) defines repeatable source/build/asset checks for the
+Windows agent. Run `& .\tools\Run-JenkinsChecks.ps1` visibly in VS Code for the same local
+gates. Release installer compilation is a separate explicit option; successful
+CI does not replace installed, live hardware or native visual acceptance.
 
 Clone the repository and install the .NET 10 SDK. Restore/build the actual
 application projects from the repository root (archived builds are not projects

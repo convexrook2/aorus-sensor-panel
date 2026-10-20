@@ -11,7 +11,9 @@ internal sealed partial class ShipPanel
     // The existing collector bindings, solar scene and full model stay live.
     private void AddRociIdentity(Rect sidebar)
     {
-        var emblem=new BitmapImage(new Uri("pack://application:,,,/Ships/Rocinante-Crew.png"));
+        using var stream=Rookline.AssetProtection.AppAssets.Open("Ships/Rocinante-Crew.png");
+        var emblem=new BitmapImage();emblem.BeginInit();emblem.StreamSource=stream;
+        emblem.CacheOption=BitmapCacheOption.OnLoad;emblem.EndInit();
         emblem.Freeze();
         var logo=new Image { Source=emblem, Stretch=Stretch.Uniform, IsHitTestVisible=false };
         Put(this,new Border { Background=PanelTheme.Resolve("Rocinante").Divider },new(sidebar.X+12,sidebar.Bottom-155,sidebar.Width-24,1));

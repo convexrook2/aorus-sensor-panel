@@ -11,7 +11,11 @@ internal static class Artwork
 {
     public static BitmapImage Load(string path)
     {
-        var image = new BitmapImage(new Uri("pack://application:,,,/Aorus/" + path));
+        if(path.StartsWith("Animations/",StringComparison.Ordinal))
+            path=path.StartsWith("Animations/X/",StringComparison.Ordinal)?path.Replace("Animations/X/","GIFs/GIF1/",StringComparison.Ordinal):path.Replace("Animations/","GIFs/",StringComparison.Ordinal);
+        using var stream=Rookline.AssetProtection.AppAssets.Open("AORUS/@Resources/"+path);
+        var image = new BitmapImage(); image.BeginInit(); image.StreamSource=stream;
+        image.CacheOption=BitmapCacheOption.OnLoad; image.EndInit();
         image.Freeze();
         return image;
     }

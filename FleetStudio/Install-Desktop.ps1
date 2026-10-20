@@ -19,23 +19,33 @@ foreach($link in @($desktopLink,$startLink)){
 $running=@(Get-CimInstance Win32_Process -Filter "Name='FleetStudio.Desktop.exe'" | Where-Object {$_.ExecutablePath -eq $appExe})
 if($running.Count){throw 'The desktop copy is open. Close Fleet Studio before refreshing it.'}
 Write-Host 'Preparing the on-demand desktop app. This is a one-time setup, not a startup service.'
-dotnet publish .\FleetStudio.Desktop\FleetStudio.Desktop.csproj -c Release --self-contained false -p:UseAppHost=true -o $appFolder
-if($LASTEXITCODE -ne 0){throw 'Fleet Studio desktop publish failed; shortcuts were not changed.'}
+$stage=Join-Path $receiptFolder ('publish-'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
+dotnet publish .\FleetStudio.Desktop\FleetStudio.Desktop.csproj -c Release --self-contained false -p:UseAppHost=true -p:DebugType=None -p:DebugSymbols=false -o $stage
+if($LASTEXITCODE -ne 0){throw 'Fleet Studio publish failed; installed files and shortcuts were not changed.'}
+$archive=Join-Path $stage 'assets.rl'
+if(!(Test-Path -LiteralPath $archive) -or (Test-Path -LiteralPath (Join-Path $stage 'FleetStudio'))){throw 'Encrypted desktop publish is incomplete.'}
+dotnet .\tools\RlPack\bin\Release\net10.0\RlPack.dll verify --key (Join-Path $env:LOCALAPPDATA 'LennonBuildKeys\X890.FleetStudio-v2.key') --archive $archive --source $repoPath --product X890.FleetStudio
+if($LASTEXITCODE -ne 0){throw 'Encrypted Fleet Studio assets differ from source.'}
+# Remove only positively identified former loose assets. Preserve unknown edits.
+$oldRoot=[IO.Path]::GetFullPath((Join-Path $appFolder 'FleetStudio'))
+$ownedOldFiles=@()
+if(Test-Path -LiteralPath $oldRoot){
+    if((Get-Item -LiteralPath $oldRoot).Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Installed assets are a link; preserve them for manual review.'}
+    foreach($file in Get-ChildItem -LiteralPath $oldRoot -File -Recurse){
+        $absolute=[IO.Path]::GetFullPath($file.FullName)
+        if(!$absolute.StartsWith($oldRoot+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Old asset path escaped the installation.'}
+        if($file.Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Linked old asset requires manual review.'}
+        $original=Join-Path (Join-Path $repoPath 'FleetStudio') $absolute.Substring($oldRoot.Length+1)
+        if(!(Test-Path -LiteralPath $original) -or (Get-FileHash -LiteralPath $absolute).Hash -ne (Get-FileHash -LiteralPath $original).Hash){throw "Unknown or changed old asset preserved: $absolute"}
+        $ownedOldFiles+=$absolute
+    }
+}
+New-Item -ItemType Directory -Path $appFolder -Force | Out-Null
+Copy-Item -Path (Join-Path $stage '*') -Destination $appFolder -Recurse -Force
+if((Get-FileHash -LiteralPath $archive).Hash -ne (Get-FileHash -LiteralPath (Join-Path $appFolder 'assets.rl')).Hash){throw 'Installed encrypted archive copy failed.'}
+foreach($ownedPath in $ownedOldFiles){Remove-Item -LiteralPath $ownedPath}
 if(!(Test-Path -LiteralPath $appExe)){throw 'Fleet Studio desktop executable is missing.'}
-$sourceAssets=Join-Path $repoPath 'FleetStudio'
-$destinationAssets=Join-Path $appFolder 'FleetStudio'
-$manifest=Get-Content -LiteralPath (Join-Path $sourceAssets 'manifest.json') -Raw|ConvertFrom-Json
-$checks=[Collections.Generic.List[object]]::new()
-foreach($asset in $manifest.assets){
-    $path=Join-Path $destinationAssets $asset.file
-    $hash=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
-    if($hash -ne $asset.gzip_sha256){throw "Packaged model hash mismatch: $($asset.file)"}
-    $checks.Add([pscustomobject]@{File=$asset.file;Sha256=$hash})
-}
-foreach($file in Get-ChildItem -LiteralPath $sourceAssets -File | Where-Object Extension -in @('.html','.css','.js','.json')){
-    $deployed=Join-Path $destinationAssets $file.Name
-    if((Get-FileHash -LiteralPath $file.FullName).Hash -ne (Get-FileHash -LiteralPath $deployed).Hash){throw "Packaged interface mismatch: $($file.Name)"}
-}
+$checks=@([pscustomobject]@{File='assets.rl';Sha256=(Get-FileHash -LiteralPath $archive).Hash})
 foreach($link in @($desktopLink,$startLink)){
     $shortcut=$shell.CreateShortcut($link)
     $shortcut.TargetPath=$appExe

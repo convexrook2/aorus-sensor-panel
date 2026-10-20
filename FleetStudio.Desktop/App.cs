@@ -10,10 +10,10 @@ namespace FleetStudio.Desktop;
 internal static class App
 {
     [STAThread]
-    private static int Main() => new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }.Run(new StudioWindow());
+    private static int Main(string[] args) => new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }.Run(new StudioWindow(args.Contains("--check-protected-assets")));
 }
 
-internal sealed class StudioWindow : Window
+internal sealed partial class StudioWindow : Window
 {
     private const string Host = "fleet-studio.example";
     private readonly Grid surface = new();
@@ -27,9 +27,12 @@ internal sealed class StudioWindow : Window
     private string address = "https://" + Host + "/index.html";
     private int generation;
     private bool closed;
+    private readonly bool protectedCheck;
+    private bool checkStarted;
 
-    internal StudioWindow()
+    internal StudioWindow(bool protectedCheck=false)
     {
+        this.protectedCheck=protectedCheck;
         Title = "X890 Fleet Studio · on demand";
         Width = 1200; Height = 800; MinWidth = 800; MinHeight = 600;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -51,8 +54,7 @@ internal sealed class StudioWindow : Window
         status.Text = "Opening local ship viewer…";
         try
         {
-            string assets = Path.Combine(AppContext.BaseDirectory, "FleetStudio");
-            if (!File.Exists(Path.Combine(assets, "index.html"))) throw new FileNotFoundException("Fleet Studio files are missing. Rebuild the desktop project.");
+            if (!Rookline.AssetProtection.AppAssets.Exists("FleetStudio/index.html")) throw new FileNotFoundException("Fleet Studio files are missing. Rebuild the desktop project.");
             string profile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "X890Sensor", "FleetStudioWebView2");
             var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: profile);
             if (closed || version != generation) return;
@@ -61,7 +63,7 @@ internal sealed class StudioWindow : Window
             await view.EnsureCoreWebView2Async(environment);
             if (closed || version != generation) return;
             var core = view.CoreWebView2;
-            core.SetVirtualHostNameToFolderMapping(Host, assets, CoreWebView2HostResourceAccessKind.Deny);
+            Rookline.AssetProtection.AppAssets.Host(core,Host,"FleetStudio");
             core.Settings.AreDefaultContextMenusEnabled = false;
             core.Settings.IsStatusBarEnabled = false;
             core.Settings.IsSwipeNavigationEnabled = false;
@@ -82,6 +84,7 @@ internal sealed class StudioWindow : Window
             {
                 status.Visibility = e.IsSuccess ? Visibility.Collapsed : Visibility.Visible;
                 if (!e.IsSuccess) status.Text = "Viewer could not open: " + e.WebErrorStatus;
+                if(protectedCheck&&!checkStarted){checkStarted=true;_=CheckProtectedAsync();}
             };
             core.ProcessFailed += (_, e) =>
             {

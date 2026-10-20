@@ -17,4 +17,5 @@
     <Content Include="../FleetStudio/models/**/*" Link="FleetStudio/models/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../FleetStudio/vendor/**/*" Link="FleetStudio/vendor/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+  <Import Project="../build/RlAssets.targets" />
 </Project>

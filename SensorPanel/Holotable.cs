@@ -111,7 +111,7 @@ internal sealed class Holotable : Grid
     {
         foreach(string ship in ShipProfile.All.Select(profile=>profile.Id))
         {
-            if(!File.Exists(Path.Combine(AppContext.BaseDirectory,"FleetViewer","models",ship+".glb.gz")))
+            if(!Rookline.AssetProtection.AppAssets.Exists("FleetViewer/models/"+ship+".glb.gz"))
                 throw new InvalidDataException("The full ship model is missing: "+ship);
         }
     }

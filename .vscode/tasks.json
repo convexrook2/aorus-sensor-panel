@@ -2,6 +2,22 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Validate X890 CI gates (no install)",
+      "type": "shell",
+      "command": "& './tools/Run-JenkinsChecks.ps1'",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build X890 release installer (no install)",
+      "type": "shell",
+      "command": "& './tools/Build-Installer.ps1'",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "Check desktop fleet assets",
       "type": "shell",
       "command": "python",

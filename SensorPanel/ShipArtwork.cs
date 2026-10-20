@@ -4,7 +4,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.IO;
-using System.Resources;
 
 namespace SensorPanel;
 
@@ -97,29 +96,18 @@ internal sealed class ShipArtwork : Image
             var rendered = new RenderTargetBitmap(1600, 900, 96, 96, PixelFormats.Pbgra32);
             rendered.Render(view); rendered.Freeze(); images.Add(ship, rendered); return rendered;
         }
-        // A stream also supports the pre-window resource check, before WPF's
-        // application pack-URI parser has been initialised.
-        using var package = typeof(App).Assembly.GetManifestResourceStream("SensorPanel.g.resources")
-            ?? throw new InvalidOperationException("The image resource package is missing.");
-        using var reader = new ResourceReader(package);
-        var entries = reader.GetEnumerator();
-        while (entries.MoveNext())
-        {
-            if (!string.Equals((string)entries.Key, "ships/" + ship + ".jpg", StringComparison.OrdinalIgnoreCase)) continue;
-            using var asset = (Stream)entries.Value!;
-            var crop = Crop(ship);
-            var image = new BitmapImage();
-            image.BeginInit(); image.StreamSource = asset;
-            image.SourceRect = crop;
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.DecodePixelWidth = Math.Min(crop.Width, (int)Math.Round(1600.0 * crop.Width / Math.Max(crop.Width, crop.Height)));
-            image.EndInit(); image.Freeze();
-            // Remove the blueprint's blue wash so each faction palette survives
-            // behind the original white ship lines, without redrawing anything.
-            var neutral = new FormatConvertedBitmap(image, PixelFormats.Gray8, null, 0); neutral.Freeze();
-            images.Add(ship, neutral); return neutral;
-        }
-        throw new InvalidOperationException("Missing embedded ship image: " + ship);
+        using var asset=Rookline.AssetProtection.AppAssets.Open("Ships/"+ship+".jpg");
+        var crop = Crop(ship);
+        var image = new BitmapImage();
+        image.BeginInit(); image.StreamSource = asset;
+        image.SourceRect = crop;
+        image.CacheOption = BitmapCacheOption.OnLoad;
+        image.DecodePixelWidth = Math.Min(crop.Width, (int)Math.Round(1600.0 * crop.Width / Math.Max(crop.Width, crop.Height)));
+        image.EndInit(); image.Freeze();
+        // Remove the blueprint's blue wash so each faction palette survives
+        // behind the original white ship lines, without redrawing anything.
+        var neutral = new FormatConvertedBitmap(image, PixelFormats.Gray8, null, 0); neutral.Freeze();
+        images.Add(ship, neutral); return neutral;
     }
     internal static void Check()
     {

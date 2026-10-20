@@ -1,10 +1,14 @@
 param(
+    [ValidateSet('Pella','Rocinante')][string]$Ship = 'Pella',
+    [ValidateSet('Monitor','Holotable')][string]$View = 'Monitor',
     [ValidateSet('Visible','Minimized','Restored','ReleaseFullscreen','ReleaseMinimized')][string]$State = 'Visible',
     [ValidateRange(10,45)][int]$Seconds = 30,
     [ValidateRange(0,30)][int]$SettleSeconds = 8,
+    [string]$ExpectedExecutable,
     [switch]$RequireHolotable
 )
 $ErrorActionPreference='Stop'
+if($RequireHolotable -and !$PSBoundParameters.ContainsKey('View')){$View='Holotable'}
 $repoPath=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 . (Join-Path $PSScriptRoot 'Read-MonitorWindowState.ps1')
 $outputFolder=Join-Path $repoPath 'artifacts\performance'
@@ -19,6 +23,7 @@ $renderCandidate=Join-Path $repoPath 'artifacts\pella-render-review\SensorPanel.
 $renderCandidateV2=Join-Path $repoPath 'artifacts\pella-render-review-v2\SensorPanel.exe'
 $smoothCandidate=Join-Path $repoPath 'artifacts\pella-smooth-review\SensorPanel.exe'
 $allowedPath=$receipt.executablePath.StartsWith($binaryRoot,[StringComparison]::OrdinalIgnoreCase) -or $receipt.executablePath -in @($showcaseCandidate,$renderCandidate,$renderCandidateV2,$smoothCandidate)
+if($ExpectedExecutable){$allowedPath=$receipt.executablePath -eq [IO.Path]::GetFullPath($ExpectedExecutable)}
 if ($receipt.preview -ne $false -or !$receipt.passed -or $root.Count -ne 1 -or
     !$allowedPath -or ($root[0].ExecutablePath -and $root[0].ExecutablePath -ne $receipt.executablePath) -or
     [math]::Abs((([datetime]$root[0].CreationDate).ToUniversalTime()-([datetime]$receipt.startedAt).ToUniversalTime()).TotalSeconds) -gt 15) {
@@ -27,10 +32,12 @@ if ($receipt.preview -ne $false -or !$receipt.passed -or $root.Count -ne 1 -or
 if($State.StartsWith('Release') -and $receipt.executablePath -notlike '*\bin\Release\*') { throw 'The selected sample requires the actual Release build.' }
 $ids=[Collections.Generic.HashSet[int]]::new()
 [void]$ids.Add([int]$root[0].ProcessId)
+$identityById=@{}
+foreach($item in $all){$identityById[[int]$item.ProcessId]=$item}
 do {
     $added=$false
     foreach($item in $all) {
-        if($ids.Contains([int]$item.ParentProcessId) -and $ids.Add([int]$item.ProcessId)) { $added=$true }
+        if($ids.Contains([int]$item.ParentProcessId) -and $item.CreationDate -ge $identityById[[int]$item.ParentProcessId].CreationDate -and $ids.Add([int]$item.ProcessId)) { $added=$true }
     }
 } while($added)
 $tree=@($all | Where-Object { $ids.Contains([int]$_.ProcessId) })
@@ -40,7 +47,7 @@ Write-Host "State: $State; root $($root[0].ProcessId); $($tree.Count) processes;
 Write-Host 'CPU is percent of the whole machine. GPU is the busiest hardware engine across this process tree.'
 Write-Host 'RAM/graphics memory sums can include shared allocations more than once. No app setting or model is changed.'
 if($SettleSeconds) { Start-Sleep -Seconds $SettleSeconds }
-function Check-Pella {
+function Check-SelectedShip {
     # The app rewrites this small receipt in place. Retry an empty/partial read,
     # but never accept a complete receipt identifying another ship/process.
     $displayState=$null
@@ -50,16 +57,17 @@ function Check-Pella {
         if($null -ne $displayState -and $null -ne $displayState.processId) { break }
         Start-Sleep -Milliseconds 50
     }
-    if($displayState.processId -ne $receipt.processId -or $displayState.preview -ne $false -or $displayState.featuredShip -ne 'Pella') {
-        throw "The live receipt identifies process $($displayState.processId), ship '$($displayState.featuredShip)', preview '$($displayState.preview)'; expected live Pella in process $($receipt.processId)."
+    if($displayState.processId -ne $receipt.processId -or $displayState.preview -ne $false -or $displayState.featuredShip -ne $Ship) {
+        throw "The live receipt identifies process $($displayState.processId), ship '$($displayState.featuredShip)', preview '$($displayState.preview)'; expected live $Ship in process $($receipt.processId)."
     }
     $expectActive=$State -notin @('Minimized','ReleaseMinimized')
     $nativeWindow=Read-MonitorWindowState -MonitorProcessId $receipt.processId
     if([bool]$nativeWindow.PresentationActive -ne $expectActive){throw 'The native window does not match the requested visible/minimized state.'}
-    if($RequireHolotable -and (!$displayState.holotableOpen -or !$displayState.holographicMotion)){throw 'The rotating Pella holotable is not selected.'}
+    if($RequireHolotable -and (!$displayState.holotableOpen -or !$displayState.holographicMotion)){throw 'The rotating holotable is not selected.'}
+    if($View -eq 'Monitor' -and $displayState.holotableOpen){throw 'The normal monitoring view is covered by the holotable.'}
     return $displayState
 }
-$displayBefore=Check-Pella
+$displayBefore=Check-SelectedShip
 $nativeBefore=Read-MonitorWindowState -MonitorProcessId $receipt.processId
 if($State -eq 'ReleaseFullscreen' -and !$displayBefore.fitsTarget) { throw 'Place the live panel on its intended display and choose Fit to display before the fullscreen sample.' }
 function Read-Processes {
@@ -84,7 +92,7 @@ $engineRows=[Collections.Generic.List[object]]::new()
 $counterIssues=[Collections.Generic.HashSet[string]]::new()
 $previous=$null; $previousAt=$null
 Get-Counter -Counter $counterPaths -SampleInterval 1 -MaxSamples ($Seconds+1) -ErrorAction Continue -ErrorVariable counterErrors | ForEach-Object {
-    $set=$_; $now=[datetimeoffset]::Now; $null=Check-Pella; $current=Read-Processes
+    $set=$_; $now=[datetimeoffset]::Now; $null=Check-SelectedShip; $current=Read-Processes
     if($null -ne $previous) {
         $dt=($now-$previousAt).TotalSeconds
         $cpu=0.0; $working=0L; $private=0L
@@ -107,7 +115,10 @@ Get-Counter -Counter $counterPaths -SampleInterval 1 -MaxSamples ($Seconds+1) -E
         if($current.Count -ne $previous.Count) { throw 'A monitored process exited while sampling; repeat for a stable tree.' }
         $engines=@{}; $dedicated=0.0; $shared=0.0; $validEngines=0; $validMemory=0; $boardDedicated=0.0; $boardShared=0.0
         foreach($counter in $set.CounterSamples) {
-            if($counter.Status -notin @(0,1)) { [void]$counterIssues.Add("$($counter.Path): status $($counter.Status)"); continue }
+            if($counter.Status -notin @(0,1)) {
+                if($counter.InstanceName -match '^pid_(\d+)_' -and $ids.Contains([int]$Matches[1])){throw "Invalid GPU counter for tracked PID: $($counter.Path)"}
+                [void]$counterIssues.Add("$($counter.Path): status $($counter.Status)"); continue
+            }
             if($counter.Path -like '*\GPU Engine(*)\*') { $validEngines++ }
             if($counter.Path -like '*\GPU Process Memory(*)\*') { $validMemory++ }
             if($counter.Path -like '*\GPU Adapter Memory(*)\Dedicated Usage'){$boardDedicated+=$counter.CookedValue}
@@ -142,7 +153,7 @@ Get-Counter -Counter $counterPaths -SampleInterval 1 -MaxSamples ($Seconds+1) -E
 }
 if($rows.Count -ne $Seconds) { throw "Expected $Seconds samples; collected $($rows.Count)." }
 $after=@(Get-CimInstance Win32_Process)
-$extra=@($after | Where-Object { $ids.Contains([int]$_.ParentProcessId) -and !$ids.Contains([int]$_.ProcessId) })
+$extra=@($after | Where-Object { $ids.Contains([int]$_.ParentProcessId) -and $_.CreationDate -ge $identityById[[int]$_.ParentProcessId].CreationDate -and !$ids.Contains([int]$_.ProcessId) })
 if($extra.Count) { throw 'New descendants appeared during measurement; repeat with the complete tree.' }
 foreach($item in $tree) {
     $same=@($after | Where-Object { $_.ProcessId -eq $item.ProcessId -and $_.CreationDate -eq $item.CreationDate })
@@ -160,8 +171,11 @@ $parts=@($details | Group-Object Id | ForEach-Object {
         PrivateResidentMiBAverage=[math]::Round(($_.Group | Measure-Object PrivateResidentMiB -Average).Average,1) }
 })
 $result=[pscustomobject]@{
-    State=$State; RunId=$runId; RootPid=$root[0].ProcessId; Ship='Pella'; ExecutablePath=$receipt.executablePath
-    DisplayStateBefore=$displayBefore; DisplayStateAfter=(Check-Pella)
+    State=$State; View=$View; RunId=$runId; RootPid=$root[0].ProcessId; Ship=$Ship; ExecutablePath=$receipt.executablePath
+    AssemblySha256=(Get-FileHash -LiteralPath ([IO.Path]::ChangeExtension($receipt.executablePath,'.dll'))).Hash
+    ProtectedArchiveSha256=$(if(Test-Path -LiteralPath (Join-Path ([IO.Path]::GetDirectoryName($receipt.executablePath)) 'assets.rl')){(Get-FileHash -LiteralPath (Join-Path ([IO.Path]::GetDirectoryName($receipt.executablePath)) 'assets.rl')).Hash}else{$null})
+    Hardware=[pscustomobject]@{LogicalProcessors=[Environment]::ProcessorCount;Cpu=@(Get-CimInstance Win32_Processor | Select-Object -ExpandProperty Name);Gpu=@(Get-CimInstance Win32_VideoController | Select-Object Name,DriverVersion)}
+    DisplayStateBefore=$displayBefore; DisplayStateAfter=(Check-SelectedShip)
     NativeWindowBefore=$nativeBefore; NativeWindowAfter=(Read-MonitorWindowState -MonitorProcessId $receipt.processId)
     WindowStateBasis='Read-only IsIconic/IsWindowVisible with HWND-to-PID verification; cached presentationActive is not a live minimize indicator'
     StartedAt=$rows[0].Time; CompletedAt=$rows[-1].Time; Samples=$rows.Count
@@ -175,11 +189,11 @@ $result=[pscustomobject]@{
     WholeAdapterMemoryScope='All applications and desktop on all Windows GPU adapters; context only, not attributed to this app.'
     GpuEngines=@($engineRows | Group-Object Engine | ForEach-Object { [pscustomobject]@{ Engine=$_.Name; Average=($_.Group | Measure-Object Percent -Average).Average; Maximum=($_.Group | Measure-Object Percent -Maximum).Maximum } })
     ProcessTree=$parts; ProcessIdentity=@($tree | Select-Object ProcessId,ParentProcessId,Name,CreationDate,ExecutablePath,CommandLine)
-    IdentityBasis='Exact runtime receipt path and PID correlated with OS name/creation time; stable descendants verified at end'
+    IdentityBasis='Exact runtime receipt path and PID correlated with OS name/creation time; child creation must not predate parent (PID reuse excluded); stable descendants verified at end'
     CounterWarnings=@($counterIssues); CounterErrors=@($counterErrors | ForEach-Object { $_.ToString() })
     Limits='Short Windows counter sample. RAM working sets and per-process GPU memory may double-count shared pages. Private bytes are committed memory, not physical RAM. GPU percentage is busiest engine, not sum of independent engines. Desktop compositor/kernel driver costs outside this tree are excluded.'
 }
-$prefix=Join-Path $outputFolder "pella-$($State.ToLowerInvariant())-$runId"
+$prefix=Join-Path $outputFolder "$($Ship.ToLowerInvariant())-$($View.ToLowerInvariant())-$($State.ToLowerInvariant())-$runId"
 $rows | Export-Csv "$prefix.csv" -NoTypeInformation
 $details | Export-Csv "$prefix-processes.csv" -NoTypeInformation
 $engineRows | Export-Csv "$prefix-engines.csv" -NoTypeInformation

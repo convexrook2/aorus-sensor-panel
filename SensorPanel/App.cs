@@ -130,10 +130,10 @@ internal static class App
             throw new InvalidOperationException("The themed settings styles are missing from the panel resource package.");
         foreach (string folder in new[] { "l", "r" })
             for (int frame = 0; frame < 175; frame++)
-                if (!names.Contains($"aorus/animations/{folder}/comp {frame}.png"))
+                if (!Rookline.AssetProtection.AppAssets.Exists($"AORUS/@Resources/GIFs/{folder.ToUpperInvariant()}/Comp {frame}.png"))
                     throw new InvalidOperationException($"The built panel is missing {folder} animation frame {frame}; rebuild the resource package.");
         for (int frame = 0; frame < 4; frame++)
-            if (!names.Contains($"aorus/animations/x/x{frame}.png"))
+            if (!Rookline.AssetProtection.AppAssets.Exists($"AORUS/@Resources/GIFs/GIF1/X{frame}.png"))
                 throw new InvalidOperationException($"The built panel is missing brand frame {frame}.");
     }
 }

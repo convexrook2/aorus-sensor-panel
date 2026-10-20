@@ -48,7 +48,7 @@ internal sealed class SolarEphemeris
     {
         try
         {
-            using var file = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "SolarNavigation", "nasa-horizons.json.gz"));
+            using var file = Rookline.AssetProtection.AppAssets.Open("SolarNavigation/nasa-horizons.json.gz");
             using var gzip = new GZipStream(file, CompressionMode.Decompress);
             // Bound decompression before parsing a data file supplied with an installation.
             using var json = new MemoryStream(); var buffer = new byte[65536]; int read;
@@ -99,7 +99,7 @@ internal sealed class SolarEphemeris
 
     internal object Check()
     {
-        using var checkpoints = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "SolarNavigation", "nasa-checkpoints.json")));
+        using var checkpoints = JsonDocument.Parse(Rookline.AssetProtection.AppAssets.Read("SolarNavigation/nasa-checkpoints.json"));
         double maximumErrorKm = 0;
         foreach (var checkpoint in checkpoints.RootElement.EnumerateArray())
         {

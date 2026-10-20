@@ -1,6 +1,5 @@
 using System.IO;
 using System.IO.Compression;
-using System.Resources;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
@@ -21,50 +20,42 @@ internal static class ShipModel
     {
         ship=ShipProfile.CanonicalId(ship);
         if (cache.TryGetValue(ship, out var existing)) return existing;
-        using var package = typeof(App).Assembly.GetManifestResourceStream("SensorPanel.g.resources")!;
-        using var resources = new ResourceReader(package);
-        var entries = resources.GetEnumerator();
-        while (entries.MoveNext())
+        using var asset=Rookline.AssetProtection.AppAssets.Open("Models/"+ship+".ship");
+        using var archive=new ZipArchive(asset, ZipArchiveMode.Read);
+        using var json=Required(archive, "scene.json", 100_000).Open();
+        var scene=JsonSerializer.Deserialize<SceneInfo>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive=true })
+            ?? throw new InvalidDataException("Missing ship metadata.");
+        if (scene.Format!=1 || scene.Triangles is < 1 or > 150000 || scene.Parts is < 1 or > 200 || scene.Materials.Length is < 1 or > 100)
+            throw new InvalidDataException("Ship scene exceeded its native render budget.");
+        var materials=scene.Materials.Select(m => MakeMaterial(m, archive)).ToArray();
+        using var geometry=Required(archive, "mesh.bin", 40_000_000).Open();
+        using var reader=new BinaryReader(geometry);
+        if (reader.ReadUInt32()!=0x31435348 || reader.ReadInt32()!=scene.Parts) throw new InvalidDataException("Invalid ship scene header.");
+        var parts=new List<ShipModelPart>(); int triangles=0;
+        for (int part=0; part<scene.Parts; part++)
         {
-            if (!string.Equals((string)entries.Key, "models/"+ship+".ship", StringComparison.OrdinalIgnoreCase)) continue;
-            using var asset=(Stream)entries.Value!;
-            using var archive=new ZipArchive(asset, ZipArchiveMode.Read);
-            using var json=Required(archive, "scene.json", 100_000).Open();
-            var scene=JsonSerializer.Deserialize<SceneInfo>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive=true })
-                ?? throw new InvalidDataException("Missing ship metadata.");
-            if (scene.Format!=1 || scene.Triangles is < 1 or > 150000 || scene.Parts is < 1 or > 200 || scene.Materials.Length is < 1 or > 100)
-                throw new InvalidDataException("Ship scene exceeded its native render budget.");
-            var materials=scene.Materials.Select(m => MakeMaterial(m, archive)).ToArray();
-            using var geometry=Required(archive, "mesh.bin", 40_000_000).Open();
-            using var reader=new BinaryReader(geometry);
-            if (reader.ReadUInt32()!=0x31435348 || reader.ReadInt32()!=scene.Parts) throw new InvalidDataException("Invalid ship scene header.");
-            var parts=new List<ShipModelPart>(); int triangles=0;
-            for (int part=0; part<scene.Parts; part++)
+            int material=reader.ReadInt32(), vertices=reader.ReadInt32(), indices=reader.ReadInt32();
+            if (material<0 || material>=materials.Length || vertices is < 3 or > 20000 || indices is < 3 or > 60000 || indices%3!=0)
+                throw new InvalidDataException("Invalid ship part bounds.");
+            var mesh=new MeshGeometry3D { Positions=new Point3DCollection(vertices), Normals=new Vector3DCollection(vertices),
+                TextureCoordinates=new PointCollection(vertices), TriangleIndices=new Int32Collection(indices) };
+            double Number() { float value=reader.ReadSingle(); return float.IsFinite(value) ? value : throw new InvalidDataException("Nonfinite ship coordinate."); }
+            for (int i=0; i<vertices; i++)
             {
-                int material=reader.ReadInt32(), vertices=reader.ReadInt32(), indices=reader.ReadInt32();
-                if (material<0 || material>=materials.Length || vertices is < 3 or > 20000 || indices is < 3 or > 60000 || indices%3!=0)
-                    throw new InvalidDataException("Invalid ship part bounds.");
-                var mesh=new MeshGeometry3D { Positions=new Point3DCollection(vertices), Normals=new Vector3DCollection(vertices),
-                    TextureCoordinates=new PointCollection(vertices), TriangleIndices=new Int32Collection(indices) };
-                double Number() { float value=reader.ReadSingle(); return float.IsFinite(value) ? value : throw new InvalidDataException("Nonfinite ship coordinate."); }
-                for (int i=0; i<vertices; i++)
-                {
-                    mesh.Positions.Add(new(Number(), Number(), Number()));
-                    mesh.Normals.Add(new(Number(), Number(), Number()));
-                    mesh.TextureCoordinates.Add(new(Number(), Number()));
-                }
-                if (mesh.Normals.All(n => n.LengthSquared<1e-12)) mesh.Normals.Clear();
-                for (int i=0; i<indices; i++) { int index=reader.ReadInt32(); if (index<0 || index>=vertices) throw new InvalidDataException("Invalid ship triangle."); mesh.TriangleIndices.Add(index); }
-                mesh.Freeze(); triangles+=indices/3;
-                var info=scene.Materials[material];
-                Color? emission=info.EmissiveTexture is null && info.Emissive.Any(c=>c>0) ? Colour(info.Emissive) : null;
-                parts.Add(new(mesh, materials[material], info.DoubleSided, info.Name, emission));
+                mesh.Positions.Add(new(Number(), Number(), Number()));
+                mesh.Normals.Add(new(Number(), Number(), Number()));
+                mesh.TextureCoordinates.Add(new(Number(), Number()));
             }
-            if (triangles!=scene.Triangles || geometry.ReadByte()!=-1) throw new InvalidDataException("Ship geometry does not match its manifest.");
-            if (cacheResult) cache.Add(ship, parts);
-            return parts;
+            if (mesh.Normals.All(n => n.LengthSquared<1e-12)) mesh.Normals.Clear();
+            for (int i=0; i<indices; i++) { int index=reader.ReadInt32(); if (index<0 || index>=vertices) throw new InvalidDataException("Invalid ship triangle."); mesh.TriangleIndices.Add(index); }
+            mesh.Freeze(); triangles+=indices/3;
+            var info=scene.Materials[material];
+            Color? emission=info.EmissiveTexture is null && info.Emissive.Any(c=>c>0) ? Colour(info.Emissive) : null;
+            parts.Add(new(mesh, materials[material], info.DoubleSided, info.Name, emission));
         }
-        throw new InvalidDataException("Missing original ship model: "+ship);
+        if (triangles!=scene.Triangles || geometry.ReadByte()!=-1) throw new InvalidDataException("Ship geometry does not match its manifest.");
+        if (cacheResult) cache.Add(ship, parts);
+        return parts;
     }
     private static ZipArchiveEntry Required(ZipArchive archive, string name, long limit)
     {

@@ -25,8 +25,9 @@ This repository belongs to Lennon. X890 Sensor is primarily a monitoring app; th
 
 ## Fleet Studio local service
 
-- Normal desktop use is `FleetStudio.Desktop` (WPF/WebView2 local virtual-host
-  mapping), opened explicitly from its Windows Desktop or Start-menu shortcut.
+- Normal desktop use is `FleetStudio.Desktop` (WPF/WebView2 local content;
+  virtual-host mapping in development, protected archive responses in publish),
+  opened explicitly from its Windows Desktop or Start-menu shortcut.
   `FleetStudio/Install-Desktop.ps1` prepares or refreshes that per-user built copy;
   `X890.code-workspace` and `Start-Desktop.cmd` remain development launch paths.
   It has no SensorCollector reference and no Python/HTTP server. Close exits;
@@ -77,6 +78,12 @@ This repository belongs to Lennon. X890 Sensor is primarily a monitoring app; th
 - For Sol Ring, a Fleet Studio v3 model and the solar-map gate marker are separate from the installed app's rotating showcase. Do not call the gate installed until its own native routing, orientation, aperture behavior, packaged assets, and rendered validation are actually complete.
 
 ## Evidence and validation
+
+- Published creative assets use the shared authenticated RLAR v2 `.rl` standard
+  in `docs/RL-ASSET-STANDARD.md`. Keep source assets editable, keys outside Git,
+  notices readable and normal models/quality unchanged. Do not extract a loose
+  installed asset tree or claim client-side encryption makes theft impossible.
+  Rookline v1 and adoption by other projects require their own migration scope.
 
 - Distinguish source or syntax checks, local browser rendering, native UI, installed package, live monitoring data, CI, and release evidence. State the exact command or UI flow and scope before validation. If Lennon is working in VS Code, use its visible validation surface for builds, tests, launches, logs, and failures as directed by his global AGENTS instructions; do not silently substitute a hidden run.
 - Give a direct, verified local URL when asking Lennon to review a preview. Verify that the page loads and its actual controls work. A process or open port alone is not proof of a rendered model.
