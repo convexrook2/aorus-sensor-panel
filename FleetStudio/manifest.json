@@ -1,5 +1,5 @@
 {
-  "revision": "Fleet Studio / finished Rocinante Season 6 / 1.8.9 / 2026-10-20",
+  "revision": "Fleet Studio / accepted Anubis source assembly and production-reference finish / 2026-10-20",
   "catalogue_entries": 23,
   "assets": [
     {
@@ -406,6 +406,21 @@
       "lights": 0,
       "compressed_bytes": 37799454,
       "uncompressed_bytes": 106433364,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Anubis-067fc6b196b6.glb.gz",
+      "sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+      "gzip_sha256": "8ac24693b2aedde4e788aab431195427ccc23aa9698c613de9610c27a9e56e58",
+      "source_sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+      "binary_sha256": "2bd7b311fa9efe125ccce049cd5e0c6d6a519d0a13b2e23bc0afe46965b493e2",
+      "triangles": 180410,
+      "rendered_triangles": 198192,
+      "materials": 7,
+      "images": 1,
+      "lights": 0,
+      "compressed_bytes": 5549740,
+      "uncompressed_bytes": 18154612,
       "geometry_and_image_bytes_exact": true
     }
   ],

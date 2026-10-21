@@ -29,10 +29,18 @@ for expected in assets:
         require(bool(mesh['primitives']),f'{key}: empty mesh')
         for p in mesh['primitives']:
             require(p.get('mode',4)==4,f'{key}: non-triangle primitive')
-            index=doc['accessors'][p['indices']];require(index['count']%3==0,f'{key}: incomplete triangle');triangles+=index['count']//3
+            draw=doc['accessors'][p.get('indices',p['attributes']['POSITION'])];require(draw['count']%3==0,f'{key}: incomplete triangle');triangles+=draw['count']//3
             positions=doc['accessors'][p['attributes']['POSITION']]
             for a in p['attributes'].values():require(doc['accessors'][a]['count']==positions['count'],f'{key}: attribute count')
     require(triangles==expected['triangles'],f'{key}: triangle count')
+    if 'rendered_triangles' in expected:
+        mesh_counts=[sum(doc['accessors'][p.get('indices',p['attributes']['POSITION'])]['count']//3 for p in m['primitives']) for m in doc['meshes']]
+        def visit(node_id,ancestors):
+            require(node_id not in ancestors,f'{key}: cyclic scene graph')
+            node=doc['nodes'][node_id]
+            return (mesh_counts[node['mesh']] if 'mesh' in node else 0)+sum(visit(child,ancestors|{node_id}) for child in node.get('children',[]))
+        rendered=sum(visit(node_id,set()) for node_id in doc['scenes'][doc.get('scene',0)]['nodes'])
+        require(rendered==expected['rendered_triangles'],f'{key}: rendered instance count')
     require(len(doc.get('materials',[]))==expected['materials'] and len(doc.get('images',[]))==expected['images'],f'{key}: material/image counts')
     require(all('bufferView'in im and 'uri'not in im for im in doc.get('images',[])),f'{key}: non-embedded image')
     require(len(doc.get('extensions',{}).get('KHR_lights_punctual',{}).get('lights',[]))==expected['lights'],f'{key}: point light count')

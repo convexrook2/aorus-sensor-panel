@@ -2,19 +2,232 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Release sensor panel 1.8.10 (CI, publish, install)",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/Complete-SensorRelease.ps1",
+        "-BuildNumber",
+        "9"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Finalize accepted Anubis fleet (no install)",
+      "dependsOn": [
+        "Check Anubis main fleet (no install)",
+        "Build Fleet Studio"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Check fleet light glow (no install)",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/tools/Check-FleetLightGlow.mjs"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check Anubis bow candidate (no install)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "${workspaceFolder}/tools/Check-AnubisAdoption.py",
+        "--candidate"
+      ],
+      "dependsOn": "Assemble Anubis source review (offline only)",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Correct Anubis interior bow glow (no install)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "${workspaceFolder}/tools/Adopt-Anubis.py",
+        "--correct-bow"
+      ],
+      "dependsOn": "Check Anubis bow candidate (no install)",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Finish Anubis bow light in main fleet (no install)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "${workspaceFolder}/tools/Adopt-Anubis.py",
+        "--finish-bow"
+      ],
+      "dependsOn": "Assemble Anubis source review (offline only)",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check Anubis main fleet (no install)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "${workspaceFolder}/tools/Check-AnubisAdoption.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Adopt Anubis into main fleet (no install)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "${workspaceFolder}/tools/Adopt-Anubis.py"
+      ],
+      "dependsOn": "Assemble Anubis source review (offline only)",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Assemble Anubis source review (offline only)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "${workspaceFolder}/Sources/Anubis/prepare-review.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Prepare Anubis Fleet Studio review",
+      "dependsOn": [
+        "Check Anubis bow candidate (no install)",
+        "Build Fleet Studio"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Render Roci colour candidate (offline only)",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "${workspaceFolder}/output/rocinante-colour-finish-20261020/run-study.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Validate X890 CI gates (no install)",
       "type": "shell",
       "command": "& './tools/Run-JenkinsChecks.ps1'",
-      "options": { "cwd": "${workspaceFolder}" },
-      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
       "problemMatcher": "$msCompile"
     },
     {
       "label": "Build X890 release installer (no install)",
       "type": "shell",
       "command": "& './tools/Build-Installer.ps1'",
-      "options": { "cwd": "${workspaceFolder}" },
-      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false,
+        "close": false
+      },
       "problemMatcher": "$msCompile"
     },
     {

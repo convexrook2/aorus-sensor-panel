@@ -25,6 +25,10 @@ This repository belongs to Lennon. X890 Sensor is primarily a monitoring app; th
 
 ## Fleet Studio local service
 
+- Fleet Studio is for development and reference review. Sensor-panel releases
+  add the accepted ships to the sensor panel; they do not authorize launching,
+  installing or deploying Fleet Studio.
+
 - Normal desktop use is `FleetStudio.Desktop` (WPF/WebView2 local content;
   virtual-host mapping in development, protected archive responses in publish),
   opened explicitly from its Windows Desktop or Start-menu shortcut.
@@ -78,6 +82,16 @@ This repository belongs to Lennon. X890 Sensor is primarily a monitoring app; th
 - For Sol Ring, a Fleet Studio v3 model and the solar-map gate marker are separate from the installed app's rotating showcase. Do not call the gate installed until its own native routing, orientation, aperture behavior, packaged assets, and rendered validation are actually complete.
 
 ## Evidence and validation
+
+- Preserve the owner's window layout exactly. Do not move, resize, maximize,
+  restore, minimize, snap or transfer VS Code windows between monitors. Use the
+  existing visible window where Lennon placed it. Do not move other windows
+  to rearrange his workspace for validation. This applies to every chat and
+  delegated helper. A request to continue, test or launch is not permission to
+  change window placement. If an automation tool changes placement as a side
+  effect of focusing or sending input, stop using that input route; do not
+  repeat it or try to reposition the window back yourself. Use a route known
+  to preserve placement, or give Lennon the exact visible Task/profile to run.
 
 - Published creative assets use the shared authenticated RLAR v2 `.rl` standard
   in `docs/RL-ASSET-STANDARD.md`. Keep source assets editable, keys outside Git,

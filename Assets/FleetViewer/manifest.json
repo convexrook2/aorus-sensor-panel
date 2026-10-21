@@ -1,27 +1,32 @@
 {
   "lossless": true,
   "ships": 21,
-  "source": "Reviewed Fleet Studio catalogue; scoped model updates",
+  "source": "Reviewed Fleet Studio catalogue; accepted Anubis and shared light glow",
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 3722,
-      "sha256": "6181ed6affa2771ced137385d02d804c53e35012d40a503d65ac2b9f5d5d7a6e"
+      "bytes": 3903,
+      "sha256": "94b9804ddf86ae0a8546b75b719d28409d929529b01dafc968d29854bc972478"
     },
     {
       "path": "catalog.json",
-      "bytes": 26751,
-      "sha256": "2cb6cd12472a71a8bf3f7f802184909c4cc38fc2349607644a86df80ca6668b7"
+      "bytes": 28354,
+      "sha256": "63f20d06120feabb18df45aa4af59dbf42dc5aee4a0aedb4fe9d993a8f9f6af7"
     },
     {
       "path": "engines.json",
-      "bytes": 763,
-      "sha256": "b5f20ddbca0f990c55577449992e5f7677ccea1c2cb125b0e3b1ea6a912f901d"
+      "bytes": 1434,
+      "sha256": "c362ee8df65a6b8386502586caa914ef55b224fde9e21a930ae753fd9aac45a8"
     },
     {
       "path": "index.html",
       "bytes": 1247,
       "sha256": "75ac81d3d564223d03be7916f27447a92b471fdd25725aa5fad216e0ff35f226"
+    },
+    {
+      "path": "light-glow.js",
+      "bytes": 7655,
+      "sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045"
     },
     {
       "path": "models/AgathaKing.glb.gz",
@@ -30,8 +35,8 @@
     },
     {
       "path": "models/Anubis.glb.gz",
-      "bytes": 554272,
-      "sha256": "2f544c1ad09f1e3af217f383d6235758b4ae536e204f491d45fa4a1251255c4c"
+      "bytes": 5549740,
+      "sha256": "8ac24693b2aedde4e788aab431195427ccc23aa9698c613de9610c27a9e56e58"
     },
     {
       "path": "models/Arboghast.glb.gz",
@@ -130,13 +135,8 @@
     },
     {
       "path": "rocinante-effects.js",
-      "bytes": 6515,
-      "sha256": "7a207e81dc1969306fbbbfb34cb56a3f4e55cdefd28ce251e5fcc2c211825b20"
-    },
-    {
-      "path": "vendor/three/LICENSE",
-      "bytes": 1081,
-      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+      "bytes": 8831,
+      "sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853"
     },
     {
       "path": "vendor/three/build/three.core.js",
@@ -194,19 +194,29 @@
       "sha256": "817f6c3cdcd0fd41515d112359ea0532568eefb5aabd3b33903957ebca1b8a6a"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/SSAOPass.js",
-      "bytes": 13443,
-      "sha256": "59944f833d10330f6bdd205260ad06a8ef2bd12a115e4101d81578b249627e3f"
-    },
-    {
       "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
       "bytes": 3228,
       "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
     },
     {
+      "path": "vendor/three/examples/jsm/postprocessing/SSAOPass.js",
+      "bytes": 13443,
+      "sha256": "59944f833d10330f6bdd205260ad06a8ef2bd12a115e4101d81578b249627e3f"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "bytes": 15445,
+      "sha256": "8718ac279d97af5460327e1483fc21e44aa6611601d45c835bda0ae36bcb3b06"
+    },
+    {
       "path": "vendor/three/examples/jsm/shaders/CopyShader.js",
       "bytes": 729,
       "sha256": "a33057d5ac91c43304c186ac0e8816e62bb2ed471d3a00ff3018dfd5c0389718"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
+      "bytes": 1359,
+      "sha256": "defd5558ebf217de21275573c7e4365cbe62da34e46bd7f86ca2517a909536b6"
     },
     {
       "path": "vendor/three/examples/jsm/shaders/OutputShader.js",
@@ -229,9 +239,14 @@
       "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
     },
     {
+      "path": "vendor/three/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
       "path": "viewer.js",
-      "bytes": 17255,
-      "sha256": "b911fb4f7691da8cbf496214607c9ea2d2effb30cb7a9d5b0e9fd5c19cd8cd2a"
+      "bytes": 17551,
+      "sha256": "764108eacda29493ee678a67d4bc634a56f7c2240d1b98f0aafd9a291a852c5a"
     }
   ]
 }

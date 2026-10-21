@@ -147,3 +147,14 @@ Donnager v2 finish: Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from
 https://gautamsingh.artstation.com/projects/ZyEXR
 New authored colour, roughness and micro-normal surface finish; licensed fan geometry and lettering retained. Full PBR maps stay in the study; native package keeps the new colour finish.
 Study source SHA256: 671582ddaed980fb984319a0d9c4c802458284b5be7efb3f88de284695254e47
+
+Anubis / main full-model fleet (2026-10-20)
+Geometry: Martin Taichl / Martin / taichl, CC BY 4.0.
+https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse
+https://creativecommons.org/licenses/by/4.0/
+X890 adaptation: registered multipart assembly, procedural PBR finish, existing
+recessed cap emission and independent drive effect. Source hull geometry retained.
+Sources/Anubis/identity.json pins the complete 198,192-triangle rendered assembly.
+The legacy Anubis.ship and Source/Fleet/Anubis.glb remain earlier project-authored
+approximations for fallback/history; their authorship does not describe this new
+licensed full-model fleet entry. Production reference imagery is not redistributed.

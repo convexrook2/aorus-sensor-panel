@@ -5,7 +5,7 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {SSAOPass} from 'three/addons/postprocessing/SSAOPass.js';
-import {UnrealBloomPass} from './vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import {EmissiveGlowPass} from './light-glow.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {makePortal} from './portal.js';
 import {makeShipEffects} from './ship-effects.js';
@@ -39,14 +39,15 @@ try{
  composer=new EffectComposer(renderer,target);composer.addPass(new RenderPass(scene,camera));
  const ao=new SSAOPass(scene,camera,1,1,24);ao.ssaoMaterial.defines.PERSPECTIVE_CAMERA=0;ao.depthRenderMaterial.defines.PERSPECTIVE_CAMERA=0;
  ao.kernelRadius=.06;ao.minDistance=.0005;ao.maxDistance=.03;composer.addPass(ao);
- composer.addPass(new UnrealBloomPass(new THREE.Vector2(1,1),.18,.35,1.5));composer.addPass(new OutputPass());
+ const lightGlow=new EmissiveGlowPass(scene,camera);composer.addPass(lightGlow);composer.addPass(new OutputPass());
+ addEventListener('pagehide',()=>lightGlow.dispose(),{once:true});
  const clay=new THREE.MeshStandardMaterial({color:0x7f868a,roughness:.63,metalness:0});
  const normals=new THREE.MeshNormalMaterial(),wire=new THREE.MeshBasicMaterial({color:0x9ad7e3,wireframe:true});
  let lightPass=null;
  let dirty=true,spin=false,animateField=false,previous=false,loadId=0,last=0,seconds=0,effectTime=0,frames=0,rateTime=0,rateFrames=0,shipLit=true,plumesOn=false,scheduled=0,lastRender=0;
  const schedule=()=>{if(!document.hidden&&!scheduled)scheduled=requestAnimationFrame(tick);};
  const invalidate=()=>{dirty=true;schedule();};controls.addEventListener('change',invalidate);
- function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?(entry?.id==='RocinanteS6'?3.6:3.0):2.55;renderer.setSize(w,h,false);if(!efficient)composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
+ function resize(){const w=innerWidth,h=innerHeight,a=w/h,frame=plumesOn&&shipEffects?.engineCount?(['RocinanteS6','Anubis'].includes(entry?.id)?3.6:3.0):2.55;renderer.setSize(w,h,false);if(!efficient)composer.setSize(w,h);camera.left=-frame*a;camera.right=frame*a;camera.top=frame;camera.bottom=-frame;camera.updateProjectionMatrix();invalidate();}
  function quality(){efficient=$('#quality').value==='efficient';renderer.setPixelRatio(efficient?1:devicePixelRatio);ao.enabled=!efficient;$('#ao').disabled=efficient;$('#ao').setAttribute('aria-pressed',ao.enabled);if(efficient)composer.setSize(1,1);document.body.dataset.quality=efficient?'efficient':'full';const url=new URL(location.href);url.searchParams.set('quality',efficient?'efficient':'full');history.replaceState(null,'',url);resize();}
  $('#quality').value=efficient?'efficient':'full';$('#quality').onchange=quality;quality();
  $('#rotate').setAttribute('aria-pressed','false');$('#rotate').textContent='Resume rotation';$('#effect').setAttribute('aria-pressed','false');
@@ -63,7 +64,7 @@ try{
    document.body.dataset.activeEmitters=state.activeEmitters;document.body.dataset.activeSourceLights=state.activeSourceLights;document.body.dataset.visiblePlumes=state.visiblePlumes;
    // Fit the actual ship plus exhaust around their combined centre. This is
    // review framing only; the model, source transforms and drive stay intact.
-   root.updateMatrixWorld(true);const nextCenter=entry?.id==='RocinanteS6'&&plumesOn&&state.engineCount?new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3()):new THREE.Vector3();
+   root.updateMatrixWorld(true);const nextCenter=['RocinanteS6','Anubis'].includes(entry?.id)&&plumesOn&&state.engineCount?new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3()):new THREE.Vector3();
    const shift=nextCenter.clone().sub(plumeFrameCenter);camera.position.add(shift);controls.target.add(shift);plumeFrameCenter.copy(nextCenter);controls.update();
    resize();invalidate();
  }
@@ -103,13 +104,13 @@ try{
    if(hash!==expected)throw Error('Model checksum differs from catalogue');
    const gltf=await new GLTFLoader().parseAsync(buffer,'./');
    if(token!==loadId){dispose(gltf.scene);return;}
-   if(root){shipEffects?.dispose();scene.remove(root);dispose(root);}originals.clear();field=null;portal=null;entry=selected;
+   lightGlow.reset();if(root){shipEffects?.dispose();scene.remove(root);dispose(root);}originals.clear();field=null;portal=null;entry=selected;
    root=new THREE.Group();root.add(gltf.scene);gltf.scene.updateMatrixWorld(true);
    const bounds=new THREE.Box3().setFromObject(gltf.scene),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
    const maximum=Math.max(size.x,size.y,size.z);if(!(maximum>0&&Number.isFinite(maximum)))throw Error('Invalid mesh bounds');
    const scale=3.2/maximum;gltf.scene.position.sub(center);root.scale.setScalar(scale);
    document.body.dataset.sourceMaximum=maximum.toFixed(6);document.body.dataset.fitScale=scale.toFixed(6);document.body.dataset.modelFile=file;
-   if(entry.orientation!=='gate'){const axis=size.x>=size.y&&size.x>=size.z?new THREE.Vector3(1,0,0):size.z>size.y?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);root.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,entry.flipLongitudinal?-1:1,0));}
+   if(entry.orientation!=='gate'){const axis=size.x>=size.y&&size.x>=size.z?new THREE.Vector3(1,0,0):size.z>size.y?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);const flip=requestedPrevious?(entry.beforeFlipLongitudinal??entry.flipLongitudinal):entry.flipLongitudinal;root.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,flip?-1:1,0));}
    let lights=0;
    root.traverse(o=>{
      // Inspection exposure calibration: Blender's glTF exporter converts watts
@@ -133,7 +134,7 @@ try{
    $('#technical').textContent=info.triangles.toLocaleString()+' triangles · '+info.materials+' materials · '+lights+' local lights · '+shipEffects.emitterMaterials+' emissive materials · full geometry';
    $('#before').hidden=!entry.beforeModel;$('#before').textContent=entry.beforeLabel||'Previous version';$('#portal').hidden=$('#effect').hidden=$('#rim-view').hidden=entry.id!=='SolRing';
    if(field)field.visible=$('#portal').getAttribute('aria-pressed')==='true';
-   lightButton.hidden=entry.id!=='RocinanteS6';references();surface();lighting();shipState();if(reset)view();$('#status').hidden=true;
+   lightButton.hidden=!['RocinanteS6','Anubis'].includes(entry.id);references();surface();lighting();shipState();if(reset)view();$('#status').hidden=true;
    document.body.dataset.loaded=entry.id;document.body.dataset.shipLights=lights;document.body.dataset.portalAnimated=Boolean(portal);
    const url=new URL(location.href);url.searchParams.set('ship',entry.id);history.replaceState(null,'',url);invalidate();
    }catch(error){if(token===loadId)throw error;}

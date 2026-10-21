@@ -1,0 +1,48 @@
+{
+  "accepted": true,
+  "accepted_local_date": "2026-10-20",
+  "timezone": "America/Toronto",
+  "owner_statement": "Accepted. A bit bright, but accepted.",
+  "brightness_instruction": "Preserve this accepted brightness; subsequent comparison image records the difference and does not reopen the accepted settings.",
+  "scope": "Anubis full interior and rear-background lighting plus shared fleet emission-only glow shown in the Fleet Studio source review",
+  "candidate_sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+  "accepted_source_files": [
+    {
+      "path": "FleetStudio/ship-effects.js",
+      "sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853"
+    },
+    {
+      "path": "FleetStudio/light-glow.js",
+      "sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045"
+    },
+    {
+      "path": "FleetStudio/review.js",
+      "sha256": "9d634a65c3d47098a54382734c90f9afdd3b043b0988b48f66cc2a5f82e46458"
+    },
+    {
+      "path": "Assets/FleetViewer/rocinante-effects.js",
+      "sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853"
+    },
+    {
+      "path": "Assets/FleetViewer/light-glow.js",
+      "sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045"
+    },
+    {
+      "path": "Sources/Anubis/review-finish.py",
+      "sha256": "845d86695d5fcca217ca402daa60f0a038bd1dd3d363aca11ce18b90a2573a1c"
+    }
+  ],
+  "reviewed_glow_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+  "reviewed_effects_sha256": "b32e1305b2df2326be8de07fecb870c4632952aa847e4b6ec0a7977ef6468a6d",
+  "review_effects_match_source_after_line_ending_normalization": true,
+  "comparison_reference": "output/anubis-research-20261020/reference-captures/owner-accepted-brightness-comparison.png",
+  "evidence_class": "Owner visual acceptance; no inference of complete check logs, installed sensor app, CI or release",
+  "main_fleet_adoption": "Completed through owner-run Anubis main fleet profile; source, Studio, native and Debug desktop copies share exact accepted GLB; rollback artifacts/anubis-main-fleet-20261020-234357",
+  "installed": false,
+  "published": false,
+  "receipt_retention": {
+    "original_local_receipt": "output/fleet-light-glow-20261020/owner-acceptance.json",
+    "change": "Acceptance retained under Sources. The identical material recipe is now addressed at Sources/Anubis/review-finish.py; accepted model, lighting values and all source hashes are unchanged.",
+    "local_reference_images_redistributed": false
+  }
+}

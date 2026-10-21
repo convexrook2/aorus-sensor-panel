@@ -38,7 +38,7 @@ def inspect(data):
         'emissive':sum('emissiveTexture' in m for m in materials)}
     # Match viewer.js: each mesh instance in the active glTF scene contributes
     # triangles. A repeated mesh shares source vertices but is drawn twice.
-    mesh_triangles=[sum(doc['accessors'][p['indices']]['count']//3 for p in m['primitives'])
+    mesh_triangles=[sum(doc['accessors'][p.get('indices',p['attributes']['POSITION'])]['count']//3 for p in m['primitives'])
         for m in doc['meshes']]
     nodes=doc['nodes']
     def visit(node_id,ancestors):

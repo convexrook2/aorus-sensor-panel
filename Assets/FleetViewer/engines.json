@@ -25,5 +25,32 @@
       }
     ],
     "finish": "Finished S6 revision; source-world outlet anchor and opt-in Roci plume style"
+  },
+  "Anubis": {
+    "engines": [
+      {
+        "position": [
+          173.6,
+          -30,
+          0
+        ],
+        "direction": [
+          1,
+          0,
+          0
+        ],
+        "radius": 26,
+        "length": 190,
+        "color": [
+          0.09,
+          0.42,
+          1
+        ],
+        "style": "anubis-production",
+        "addCore": false,
+        "evidence": "Existing outlet X173.5, axis +X through Y=-30/Z=0. Length is display tuning, not a production measurement."
+      }
+    ],
+    "finish": "Source-unit outlet and reviewed blue-white exhaust; existing cap emission only"
   }
 }

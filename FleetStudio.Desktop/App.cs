@@ -10,7 +10,33 @@ namespace FleetStudio.Desktop;
 internal static class App
 {
     [STAThread]
-    private static int Main(string[] args) => new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }.Run(new StudioWindow(args.Contains("--check-protected-assets")));
+    private static int Main(string[] args)
+    {
+        try
+        {
+            string? reviewRoot = null;
+            int reviewIndex = Array.IndexOf(args, "--review-root");
+            bool protectedCheck = args.Contains("--check-protected-assets");
+            if (reviewIndex >= 0)
+            {
+                if (protectedCheck || reviewIndex + 1 >= args.Length ||
+                    args.Count(a => a == "--review-root") != 1 ||
+                    !Path.IsPathFullyQualified(args[reviewIndex + 1]))
+                    throw new ArgumentException("Use --review-root with one absolute viewer folder, separately from protected-asset checks.");
+                reviewRoot = Path.GetFullPath(args[reviewIndex + 1]);
+                foreach (string file in new[] { "index.html", "catalog.json", "engines.json" })
+                    if (!File.Exists(Path.Combine(reviewRoot, file)))
+                        throw new FileNotFoundException("Local review file is missing: " + file);
+            }
+            return new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }
+                .Run(new StudioWindow(protectedCheck, reviewRoot));
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Fleet Studio could not start", MessageBoxButton.OK, MessageBoxImage.Error);
+            return 2;
+        }
+    }
 }
 
 internal sealed partial class StudioWindow : Window
@@ -28,12 +54,14 @@ internal sealed partial class StudioWindow : Window
     private int generation;
     private bool closed;
     private readonly bool protectedCheck;
+    private readonly string? reviewRoot;
     private bool checkStarted;
 
-    internal StudioWindow(bool protectedCheck=false)
+    internal StudioWindow(bool protectedCheck=false, string? reviewRoot=null)
     {
         this.protectedCheck=protectedCheck;
-        Title = "X890 Fleet Studio · on demand";
+        this.reviewRoot=reviewRoot;
+        Title = reviewRoot is null ? "X890 Fleet Studio · on demand" : "X890 Fleet Studio · local model review";
         Width = 1200; Height = 800; MinWidth = 800; MinHeight = 600;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Background = System.Windows.Media.Brushes.Black;
@@ -54,7 +82,7 @@ internal sealed partial class StudioWindow : Window
         status.Text = "Opening local ship viewer…";
         try
         {
-            if (!Rookline.AssetProtection.AppAssets.Exists("FleetStudio/index.html")) throw new FileNotFoundException("Fleet Studio files are missing. Rebuild the desktop project.");
+            if (reviewRoot is null && !Rookline.AssetProtection.AppAssets.Exists("FleetStudio/index.html")) throw new FileNotFoundException("Fleet Studio files are missing. Rebuild the desktop project.");
             string profile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "X890Sensor", "FleetStudioWebView2");
             var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: profile);
             if (closed || version != generation) return;
@@ -63,7 +91,8 @@ internal sealed partial class StudioWindow : Window
             await view.EnsureCoreWebView2Async(environment);
             if (closed || version != generation) return;
             var core = view.CoreWebView2;
-            Rookline.AssetProtection.AppAssets.Host(core,Host,"FleetStudio");
+            if (reviewRoot is null) Rookline.AssetProtection.AppAssets.Host(core,Host,"FleetStudio");
+            else core.SetVirtualHostNameToFolderMapping(Host, reviewRoot, CoreWebView2HostResourceAccessKind.Deny);
             core.Settings.AreDefaultContextMenusEnabled = false;
             core.Settings.IsStatusBarEnabled = false;
             core.Settings.IsSwipeNavigationEnabled = false;

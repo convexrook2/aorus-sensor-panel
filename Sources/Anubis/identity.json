@@ -1,0 +1,19 @@
+{
+  "glb_sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+  "accepted_base_sha256": "070a255c154c3d62aa2fdbfeb0028e701bfaa06d3db546d717c669537e753be4",
+  "triangles": 198192,
+  "unique_triangles": 180410,
+  "materials": 7,
+  "images": 1,
+  "red_cap_faces": 516,
+  "blue_bow_faces": 80,
+  "license": "CC BY 4.0",
+  "author": "Martin Taichl / Martin / taichl",
+  "source_url": "https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse",
+  "source_geometry_modified": false,
+  "hull_fittings_finish_owner_accepted": "2026-10-20",
+  "red_finish_native_validation": "Red-only Fleet Studio review completed earlier; exact 516-face selection preserved",
+  "bow_finish_owner_status": "Accepted in Fleet Studio; owner noted a bit bright and accepted as shown",
+  "lighting_owner_acceptance": "Sources/Anubis/owner-acceptance.json",
+  "red_baseline_file": "Anubis-red-only.glb.gz"
+}

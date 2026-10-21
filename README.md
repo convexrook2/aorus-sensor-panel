@@ -10,6 +10,10 @@ Hardware support depends on the available sensor interfaces and drivers.
 
 ## Open Fleet Studio
 
+Fleet Studio is a development and reference-review tool. Sensor-panel releases
+update the ships inside the sensor panel; they do not launch, install or deploy
+Fleet Studio.
+
 Use **Fleet Studio** on the Windows Desktop or in the Windows Start menu.
 It opens the separate ship viewer directly, without an editor or command.
 Close the window to exit; it has no background server or Windows startup entry.

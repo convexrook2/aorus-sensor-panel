@@ -462,33 +462,52 @@
   },
   {
     "id": "Anubis",
-    "title": "Anubis / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier simplified project-authored fan study. Detailed topology and hidden surfaces remain interpreted; no new refinement in this pass.",
-    "referenceUrl": "https://magazine.artstation.com/2016/02/scenes-concept-art-expanse/",
-    "triangles": 2754,
-    "materials": 9,
+    "title": "Anubis / production-reference finish",
+    "flipLongitudinal": true,
+    "model": "models/Anubis.glb.gz",
+    "sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+    "triangles": 198192,
+    "materials": 7,
     "images": 1,
+    "note": "Owner-accepted hull, fittings and lighting. Localized red collar emission follows existing cheek caps beneath the raised spine; individual production lenses merge in the glow, so source cap geometry is retained. Blue-cyan glow follows the complete existing inner bow lining, with uneven bright patches, perimeter spill and concealed fills illuminating the real background and port surround. Shared emission-only glow preserves source colours and maps. The owner noted that the result is a bit bright and accepted it as shown; brightness is preserved. Cyan segmented drive and compact blue-white exhaust preserved. The source creator describes this fan kit as bulkier than the production ship; no hull redesign, mirroring or smoothing was applied.",
+    "credit": "Geometry: Martin Taichl / Martin / taichl, CC BY 4.0. Source geometry retained; X890 registered fittings, procedural charcoal finish, existing emissive cap materials and separate drive effect. Unofficial fan recreation.",
+    "referenceUrl": "https://www.youtube.com/watch?v=vefkFrWLuNI&t=184s",
+    "relatedSources": [
+      {
+        "label": "Production Anubis turntable / 3:04",
+        "url": "https://www.youtube.com/watch?v=vefkFrWLuNI&t=184s"
+      },
+      {
+        "label": "Anton Perfilev / screenshots only",
+        "url": "https://sketchfab.com/3d-models/amun-ra-class-stealth-ship-the-expanse-4956e4648f4e407ab06ef83abbbdc91a"
+      },
+      {
+        "label": "Martin Taichl source kit / CC BY 4.0",
+        "url": "https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse"
+      }
+    ],
     "maps": {
-      "colour": 1,
+      "colour": 2,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
       "emissive": 0
     },
-    "model": "models/Anubis.glb.gz",
-    "sha256": "7fd35b3de9e64b214a6597691549295f83653b149ec0f74974cb4ae733da812b",
-    "sourceBytes": 638232,
-    "compressedBytes": 554272,
+    "sourceUrl": "https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceId": "Anubis",
+    "sourceBytes": 18154612,
+    "compressedBytes": 5549740,
     "compression": "gzip-lossless",
-    "compressedSha256": "2f544c1ad09f1e3af217f383d6235758b4ae536e204f491d45fa4a1251255c4c",
+    "compressedSha256": "8ac24693b2aedde4e788aab431195427ccc23aa9698c613de9610c27a9e56e58",
     "renderMaps": {
-      "colour": 1,
+      "colour": 2,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
       "emissive": 0
-    }
+    },
+    "lightUnitScale": 0.0014641288433382138
   },
   {
     "id": "Nauvoo",

@@ -1,3 +1,6 @@
+> Fleet Studio is a development and reference-review tool. Sensor-panel releases
+> do not launch, install or deploy Fleet Studio.
+
 # Fleet Studio
 
 ## Desktop app (normal launch)
@@ -30,6 +33,41 @@ the WebView2/model; restoring reloads the selected ship and quality but resets
 camera/effects. Closing exits the app. The monitor does not launch it. Geometry
 and source assets are shared on disk, not loaded by an idle Fleet Studio service.
 The browser-preview instructions below remain available for web QA only.
+
+### Isolated local model review
+
+`--review-root <absolute viewer folder>` opens a complete local review root in
+the native window, labelled **local model review**. The folder must contain
+`index.html`, `catalog.json`, `engines.json` and its referenced model, scripts,
+vendor files and local reference images. This is an explicit per-launch choice;
+normal launches keep using the bundled catalogue and protected published assets.
+It cannot be combined with `--check-protected-assets`.
+
+The **Anubis bow review** VS Code profile first runs
+`python -u Sources/Anubis/prepare-review.py`, checks the isolated
+candidate, then builds the desktop host and opens a bow close-up beside the
+owner-supplied production reference. That comparison keeps the previous
+Anubis available beside local research references, and includes the remaining
+fleet for comparison with Guanshiyin's accepted lights. This profile remains a separate
+inspection route; normal **Fleet Studio · desktop** launches now include the
+owner-accepted assembly as **Anubis / production-reference finish**. The main
+native fleet uses the identical lossless GLB. See [Anubis source and identity](../Sources/Anubis/README.md).
+The owner accepted the corrected full-interior bow lighting and shared fleet glow,
+noting it is a bit bright but accepted. **Anubis main fleet → F5** imports that
+exact pinned revision with rollback, runs the main-fleet checks and launches the
+normal catalogue. Finalization completed on 2026-10-20; both source fleets and
+the Debug desktop copy use the accepted 067fc6... GLB. Repeating that profile
+checks the accepted asset without reimporting it. Select **Anubis** in the normal
+model dropdown. The earlier rejected asset remains retained for rollback.
+Neither development launch installs or publishes the app.
+
+Full shading uses the same emission-only light-glow pass in Studio and the native
+fleet renderer. Existing emissive colours, maps, strength and fixture geometry
+provide the glow; ordinary lit paint and reflections do not enter that buffer.
+The pass retains dark hull occlusion and native transparency. It does not add
+generic point lights to other ships. Their existing source lights remain intact.
+Owner visual acceptance applies to the source review; installed sensor, CI and
+release evidence remain separate.
 
 Hosting target: **https://convexrook2.github.io/aorus-sensor-panel/**.
 GitHub Pages was not enabled at the 2026-10-17 checkpoint; this address is not

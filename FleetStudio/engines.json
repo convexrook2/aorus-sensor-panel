@@ -665,22 +665,28 @@
     "engines": [
       {
         "position": [
-          -0.060000000000000005,
-          -1.248,
+          173.6,
+          -30,
           0
         ],
         "direction": [
+          1,
           0,
-          -1,
           0
         ],
-        "radius": 0.13056,
-        "length": 0.672000002861023,
-        "basis": "Existing source-model drive component: blue",
-        "addCore": false
+        "radius": 26,
+        "length": 190,
+        "color": [
+          0.09,
+          0.42,
+          1
+        ],
+        "style": "anubis-production",
+        "addCore": false,
+        "evidence": "Existing outlet X173.5, axis +X through Y=-30/Z=0. Length is display tuning, not a production measurement."
       }
     ],
-    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+    "finish": "Source-unit outlet and reviewed blue-white exhaust; existing cap emission only"
   },
   "Nauvoo": {
     "engines": [
@@ -1458,6 +1464,27 @@
         "length": 0.58,
         "addCore": true,
         "basis": "Six source stern outlets; fitted to visible circular centres in axial browser inspection"
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "AnubisOriginal": {
+    "engines": [
+      {
+        "position": [
+          -0.060000000000000005,
+          -1.248,
+          0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.13056,
+        "length": 0.672000002861023,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
       }
     ],
     "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"

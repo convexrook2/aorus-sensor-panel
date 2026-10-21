@@ -10,3 +10,9 @@ and video frames are not bundled as model textures.
 
 Other model credits and source links are retained in FleetStudio/catalog.json.
 Three.js: MIT. See vendor/three/LICENSE.
+
+Anubis / production-reference finish
+Martin Taichl / Martin / taichl; CC BY 4.0.
+https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse
+https://creativecommons.org/licenses/by/4.0/
+X890 changes: source-part assembly, registered fittings, procedural PBR finish, existing cap emission and separate drive effect. Source hull geometry retained. Unofficial fan model, not official production geometry. Production and paid-model references were inspected only; their images and assets are not redistributed.

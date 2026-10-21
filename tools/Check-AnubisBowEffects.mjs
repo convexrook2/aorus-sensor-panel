@@ -1,0 +1,67 @@
+// Source/control regression only. Native GPU appearance requires Fleet Studio.
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import * as THREE from '../FleetStudio/vendor/three/build/three.module.js';
+const rootURL=new URL('../',import.meta.url);
+const source=fs.readFileSync(new URL('FleetStudio/ship-effects.js',rootURL),'utf8');
+const threeURL=new URL('FleetStudio/vendor/three/build/three.module.js',rootURL).href;
+const {makeShipEffects}=await import('data:text/javascript;base64,'+Buffer.from(source.replace("from 'three'",'from '+JSON.stringify(threeURL))).toString('base64'));
+const args=process.argv.slice(2);
+assert.ok(args.length===0||(args.length===2&&args[0]==='--model'),'Usage: node tools/Check-AnubisBowEffects.mjs [--model path/to/model.glb]');
+const modelPath=args.length?path.resolve(args[1]):new URL('Sources/Anubis/Anubis.glb',rootURL);
+const raw=fs.readFileSync(modelPath);
+const length=raw.readUInt32LE(12),doc=JSON.parse(raw.subarray(20,20+length));
+const fixture=doc.materials.find(m=>m.extras?.anubisInteriorGlow);
+assert.ok(fixture,'The interior finish marker must exist on the selected source');
+const radiance=fixture.emissiveFactor.map(v=>v*fixture.extensions.KHR_materials_emissive_strength.emissiveStrength);
+assert.ok(radiance[0]*.2126+radiance[1]*.7152+radiance[2]*.0722>1.5,'Interior hot patches must exceed the existing Studio bloom threshold');
+const material=new THREE.MeshStandardMaterial({emissive:new THREE.Color(...fixture.emissiveFactor),emissiveIntensity:fixture.extensions.KHR_materials_emissive_strength.emissiveStrength});
+material.userData={...fixture.extras};
+const geometry=new THREE.BufferGeometry();
+geometry.setAttribute('position',new THREE.Float32BufferAttribute([-68,-3,5,-68,-3,-5,-24,-3,5],3));
+const before=geometry.attributes.position.array.slice();
+const model=new THREE.Group(),mesh=new THREE.Mesh(geometry,material);model.add(mesh);
+const root=new THREE.Group(),center=new THREE.Vector3(50,-20,0),scale=.0128;
+model.position.sub(center);root.scale.setScalar(scale);root.add(model);
+const effects=makeShipEffects(root,model,[],center,scale);
+const spills=[],halos=[];root.traverse(o=>{if(o.isPointLight)spills.push(o);if(o.isSprite)halos.push(o);});
+assert.equal(spills.length,10);assert.equal(halos.length,0,'Floating light dots must not replace illumination of real surfaces');
+const mouth=spills.filter(light=>light.userData.bowRegion==='mouth'),background=spills.filter(light=>light.userData.bowRegion==='background');
+assert.equal(mouth.length,8);assert.equal(background.length,2);
+const sourcePositions=mouth.map(light=>light.position.clone().add(center));
+assert.ok(sourcePositions.some(p=>p.y>-5)&&sourcePositions.some(p=>p.y<-11),'Spill must cover both upper and lower lining');
+assert.ok(sourcePositions.some(p=>p.z<-14)&&sourcePositions.some(p=>p.z>14),'Spill must cover both sidewalls');
+for(const light of mouth){
+ assert.equal(light.castShadow,false);
+ const p=light.position.clone().add(center);
+ assert.ok(p.x>-67&&p.x<-64&&p.y>-12&&p.y<-3&&Math.abs(p.z)<16,'Every light source must stay inside the existing mouth');
+ assert.ok(light.distance<=6.5*scale+1e-12,'Spill must stay confined to the cavity');
+ assert.ok(light.intensity>0&&light.intensity<=24*scale*scale+1e-12,'Intensity must use source-to-display area scaling');
+}
+for(const light of background){
+ const p=light.position.clone().add(center);
+ assert.deepEqual([p.x,p.y],[-32,-8]);assert.ok(Math.abs(p.z)===8);
+ assert.equal(light.castShadow,false);assert.ok(Math.abs(light.distance-16*scale)<1e-12);
+ assert.ok(Math.abs(light.intensity-480*scale*scale)<1e-12);
+ assert.ok(p.distanceTo(new THREE.Vector3(-27.8635788,-8,0))*scale<light.distance,'Background fill must reach the actual port surround');
+ assert.ok(p.x-light.distance/scale>-65.5,'The rear fill must not wash out the front perimeter');
+}
+assert.equal(effects.stats().activeBowSpillLights,10);
+effects.setLights(false);assert.equal(material.emissiveIntensity,0);assert.ok([...spills,...halos].every(o=>!o.visible));
+effects.setPlumes(true);assert.ok([...spills,...halos].every(o=>!o.visible),'Plumes must not enable bow lighting');
+assert.equal(effects.tick(10),false,'Static bow glow must not require continuous animation');
+effects.setLights(true);assert.ok(material.emissiveIntensity>0);assert.ok([...spills,...halos].every(o=>o.visible));
+const shader={vertexShader:'#include <begin_vertex>',fragmentShader:'#include <emissivemap_fragment>'};
+material.onBeforeCompile(shader);
+assert.ok(shader.fragmentShader.includes('exp(-mouthDepth*mouthDepth)'),'Depth attenuation must stay defined on both sides of the mouth');
+assert.ok(shader.fragmentShader.includes('perimeterAngle'),'Uneven hot patches must follow the full perimeter rather than a top-only stripe');
+assert.ok(shader.vertexShader.includes('vBowSource=position'));
+assert.deepEqual(geometry.attributes.position.array,before,'No source position may change');
+effects.dispose();assert.deepEqual(root.children,[model],'Disposal must detach all separate lights');
+const plain=new THREE.Group();plain.add(new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({emissive:0x0000ff})));
+const otherRoot=new THREE.Group();otherRoot.add(plain);
+const other=makeShipEffects(otherRoot,plain,[],center,scale);
+assert.equal(other.stats().activeBowSpillLights,0,'Unmarked ships must not receive Anubis lights');other.dispose();
+geometry.dispose();material.dispose();plain.children[0].material.dispose();
+console.log('PASS: Anubis full-perimeter and rear-background light coverage, no floating dot sprites, light/plume independence, static idle behavior, source-position preservation and disposal. No GPU or native appearance tested.');

@@ -37,7 +37,11 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Fleet Studio asset integrity failed.' }
     node .\tools\Check-RocinanteRelease.mjs
     if ($LASTEXITCODE -ne 0) { throw 'Finished Rocinante identity/outlet checks failed.' }
-    foreach ($script in @('Assets/FleetViewer/viewer.js','Assets/FleetViewer/rocinante-effects.js','FleetStudio/review.js','FleetStudio/portal.js','FleetStudio/ship-effects.js')) {
+    # Canonical adopted source only; this also runs the bow-light and shared
+    # emission-glow contracts without depending on a generated review bundle.
+    & $PythonExecutable .\tools\Check-AnubisAdoption.py
+    if ($LASTEXITCODE -ne 0) { throw 'Adopted Anubis identity/bow and shared fleet-glow contracts failed.' }
+    foreach ($script in @('Assets/FleetViewer/viewer.js','Assets/FleetViewer/rocinante-effects.js','Assets/FleetViewer/light-glow.js','FleetStudio/review.js','FleetStudio/portal.js','FleetStudio/ship-effects.js','FleetStudio/light-glow.js')) {
         node --check $script
         if ($LASTEXITCODE -ne 0) { throw "JavaScript syntax failed: $script" }
     }

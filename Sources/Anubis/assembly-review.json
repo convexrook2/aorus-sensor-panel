@@ -1,0 +1,1374 @@
+{
+  "stage": "Accepted assembly preserved; owner-requested interior bow correction prepared for native review",
+  "sourceParts": [
+    {
+      "part": "amun1",
+      "triangles": 30708,
+      "sourceSha256": "9b2bfb355f679732bf95efd368936be858f309c904c30411ef67ea2826a05e16",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          133.50982666015625,
+          -77.30924987792969,
+          -47.30924987792969
+        ],
+        "max": [
+          190.0,
+          17.309247970581055,
+          47.30924987792969
+        ]
+      },
+      "materialTriangles": {
+        "0": 30520,
+        "3": 34,
+        "4": 154
+      }
+    },
+    {
+      "part": "amun2",
+      "triangles": 25220,
+      "sourceSha256": "1344ccd9e88ad7ecce67af1438ccdc7bca61fb6880d8bf443c0cff7d5073a6da",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -79.63884735107422,
+          -65.51861572265625,
+          -64.25182342529297
+        ],
+        "max": [
+          36.32780838012695,
+          2.800278902053833,
+          -13.358333587646484
+        ]
+      },
+      "materialTriangles": {
+        "0": 25220
+      }
+    },
+    {
+      "part": "amun2a",
+      "triangles": 3780,
+      "sourceSha256": "6eb32f57d7a064c2fc7d3a2bebe583068da3d9ae0b134abefc4efed51c44b4cf",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -78.74819946289062,
+          -57.47925567626953,
+          -42.7883186340332
+        ],
+        "max": [
+          36.04618835449219,
+          4.2453718185424805,
+          -9.164877891540527
+        ]
+      },
+      "materialTriangles": {
+        "0": 3780
+      }
+    },
+    {
+      "part": "amun3",
+      "triangles": 7332,
+      "sourceSha256": "60ad0e639bf14d80d6165541f8cae7d66a9e1b083563afb0ce1d05a36e2dec24",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -9.17974853515625,
+          -9.218178749084473,
+          -47.82457733154297
+        ],
+        "max": [
+          130.58787536621094,
+          21.607322692871094,
+          -19.67638397216797
+        ]
+      },
+      "materialTriangles": {
+        "0": 7332
+      }
+    },
+    {
+      "part": "amun3a",
+      "triangles": 2074,
+      "sourceSha256": "b74755d0b6796cd3ae0c118f8abb575da2af57cbca262a3c328f11be816d240e",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          10.357440948486328,
+          -25.4303035736084,
+          -50.790367126464844
+        ],
+        "max": [
+          139.7273406982422,
+          5.578246116638184,
+          -19.67638397216797
+        ]
+      },
+      "materialTriangles": {
+        "0": 2074
+      }
+    },
+    {
+      "part": "amun4",
+      "triangles": 11636,
+      "sourceSha256": "8d0cfd28476ee92bbbdd0b70add1978065b2db7e58576fa0bb112477374f9e1c",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          32.56919479370117,
+          -86.11212158203125,
+          -64.4784927368164
+        ],
+        "max": [
+          167.6886749267578,
+          -25.05499839782715,
+          -29.835142135620117
+        ]
+      },
+      "materialTriangles": {
+        "0": 11636
+      }
+    },
+    {
+      "part": "amun4a",
+      "triangles": 2502,
+      "sourceSha256": "ad91263ff7aa174f2c0933c5183e3b360d739be24a28bae8480a5cb9bf66cb30",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          70.68412780761719,
+          -86.52918243408203,
+          -51.57059860229492
+        ],
+        "max": [
+          171.5352783203125,
+          -33.554996490478516,
+          -20.346057891845703
+        ]
+      },
+      "materialTriangles": {
+        "0": 2502
+      }
+    },
+    {
+      "part": "amun5",
+      "triangles": 14150,
+      "sourceSha256": "62fbb97279136f22b12af7716b4a8a59d1f054422b283b13c6eff0234ff7f99c",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -28.01061248779297,
+          -38.79153823852539,
+          17.304731369018555
+        ],
+        "max": [
+          158.3974609375,
+          27.773996353149414,
+          78.76954650878906
+        ]
+      },
+      "materialTriangles": {
+        "0": 14150
+      }
+    },
+    {
+      "part": "amun6",
+      "triangles": 7392,
+      "sourceSha256": "169eceac7704323120c2c941025c7c2b19a4a8c0e43f4012f2a74858add4852c",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -49.6861457824707,
+          -67.59088134765625,
+          23.818897247314453
+        ],
+        "max": [
+          113.61287689208984,
+          -9.809135437011719,
+          59.0
+        ]
+      },
+      "materialTriangles": {
+        "0": 7392
+      }
+    },
+    {
+      "part": "amun7",
+      "triangles": 19008,
+      "sourceSha256": "93fc0da0559fa6a859b2ebdc59b80f1f22a8d2b4907c0a6e83ac4cfe3679434c",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -1.2801991701126099,
+          -0.5,
+          -25.67638397216797
+        ],
+        "max": [
+          149.997314453125,
+          39.88385009765625,
+          28.481504440307617
+        ]
+      },
+      "materialTriangles": {
+        "0": 18492,
+        "5": 516
+      }
+    },
+    {
+      "part": "amun7a",
+      "triangles": 16792,
+      "sourceSha256": "0a2930eca8733996397073e00ef98f26a57882882b4bd4130a3a8925b6d343fd",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -100.0,
+          -0.5,
+          -24.37553596496582
+        ],
+        "max": [
+          8.71980094909668,
+          25.432954788208008,
+          24.085613250732422
+        ]
+      },
+      "materialTriangles": {
+        "0": 16792
+      }
+    },
+    {
+      "part": "amun8",
+      "triangles": 21730,
+      "sourceSha256": "9d26383177cecaba27ce9b36c5845671d1ee68ea20a33314e5f1ec6cf50ddb4d",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -72.86357879638672,
+          -67.45172882080078,
+          -43.63862609863281
+        ],
+        "max": [
+          133.50979614257812,
+          -16.0,
+          29.238588333129883
+        ]
+      },
+      "materialTriangles": {
+        "0": 21730
+      }
+    },
+    {
+      "part": "amun9",
+      "triangles": 5388,
+      "sourceSha256": "8525feeeff9bedb109d65db3af539a8bd20bfd3a31beb9e5e35890c9231718a0",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -64.70081329345703,
+          -21.0,
+          -25.825780868530273
+        ],
+        "max": [
+          138.50979614257812,
+          -0.5,
+          28.481504440307617
+        ]
+      },
+      "materialTriangles": {
+        "0": 5388
+      }
+    },
+    {
+      "part": "amun10",
+      "triangles": 1348,
+      "sourceSha256": "d0b965f5e7ed0377f9d6c2be94b1e7a0dffe97a540822ece5c2dfa2129c63733",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -74.86357879638672,
+          -16.0,
+          -18.299999237060547
+        ],
+        "max": [
+          -18.86357879638672,
+          -0.5,
+          18.299999237060547
+        ]
+      },
+      "materialTriangles": {
+        "0": 1268,
+        "6": 80
+      }
+    },
+    {
+      "part": "amun11",
+      "triangles": 6006,
+      "sourceSha256": "addd282bdf5750a0bc38683410763dbe6ba69a2596eff16a04dfe228c34d8f41",
+      "identityTransform": true,
+      "bounds": {
+        "min": [
+          -70.84423065185547,
+          -18.353410720825195,
+          19.254962921142578
+        ],
+        "max": [
+          7.660681247711182,
+          2.6756105422973633,
+          34.684879302978516
+        ]
+      },
+      "materialTriangles": {
+        "0": 6006
+      }
+    },
+    {
+      "part": "am5_4x",
+      "triangles": 588,
+      "sourceSha256": "d8af1f4e8df4fc46ad0c8244231122801b8fab15069ea2d4896bf80619fbb147",
+      "identityTransform": false,
+      "bounds": {
+        "min": [
+          -6.5,
+          0.0,
+          -6.5
+        ],
+        "max": [
+          6.5,
+          5.5,
+          6.5
+        ]
+      },
+      "materialTriangles": {
+        "1": 588
+      }
+    },
+    {
+      "part": "am6_4x",
+      "triangles": 4086,
+      "sourceSha256": "f1cdcc45eb05d5b693cfe86d1f977363e7936aaef8e6ffb4014122696ff75270",
+      "identityTransform": false,
+      "bounds": {
+        "min": [
+          -6.0,
+          -3.5,
+          -5.0
+        ],
+        "max": [
+          6.0,
+          10.551690101623535,
+          20.80774688720703
+        ]
+      },
+      "materialTriangles": {
+        "1": 4086
+      }
+    },
+    {
+      "part": "am4_14x",
+      "triangles": 280,
+      "sourceSha256": "908d71d792f339c6a51cea9035ecd24834ce085da2e1b49b7f4cd67d3b30feec",
+      "identityTransform": false,
+      "bounds": {
+        "min": [
+          -9.097125053405762,
+          -6.5,
+          0.0
+        ],
+        "max": [
+          9.097125053405762,
+          6.5,
+          7.0
+        ]
+      },
+      "materialTriangles": {
+        "1": 274,
+        "0": 6
+      }
+    },
+    {
+      "part": "am8c_2x",
+      "triangles": 120,
+      "sourceSha256": "fc9312008710934ee13298c4637f0246658d714b7bedb91f187ef5e0b2a44e1e",
+      "identityTransform": false,
+      "bounds": {
+        "min": [
+          -29.049697875976562,
+          0.0,
+          -7.879759788513184
+        ],
+        "max": [
+          29.07985496520996,
+          15.984720230102539,
+          7.891717433929443
+        ]
+      },
+      "materialTriangles": {
+        "0": 120
+      }
+    },
+    {
+      "part": "am7c",
+      "triangles": 270,
+      "sourceSha256": "c4a0f5b6ce5168a91bf13c8e8372be70530956672ad8b84accca6a405ba1e1cf",
+      "identityTransform": false,
+      "bounds": {
+        "min": [
+          -19.82938575744629,
+          -23.34235382080078,
+          -4.0
+        ],
+        "max": [
+          19.750659942626953,
+          23.310914993286133,
+          1.5
+        ]
+      },
+      "materialTriangles": {
+        "0": 270
+      }
+    }
+  ],
+  "triangles": 198192,
+  "bounds": {
+    "min": [
+      -100.0,
+      -86.52918243408203,
+      -64.4784927368164
+    ],
+    "max": [
+      190.0,
+      39.88385009765625,
+      78.76954650878906
+    ]
+  },
+  "fittings": [
+    {
+      "name": "amun2 / PDC housing",
+      "part": "am5_4x",
+      "matrix": [
+        [
+          0.265343617,
+          0,
+          -0.964153911,
+          -21.733887
+        ],
+        [
+          0.931301164,
+          -0.258819045,
+          0.256302252,
+          -30.298189
+        ],
+        [
+          -0.249541395,
+          -0.965925826,
+          -0.068675982,
+          -53.187607
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Radius 2.5 source peg/socket fit; housing underside local Y=0. Creator assembly 8:55."
+    },
+    {
+      "name": "amun2 / PDC gun",
+      "part": "am6_4x",
+      "matrix": [
+        [
+          0.265343617,
+          0,
+          -0.964153911,
+          -21.733887
+        ],
+        [
+          0.931301164,
+          -0.258819045,
+          0.256302252,
+          -31.7216937475
+        ],
+        [
+          -0.249541395,
+          -0.965925826,
+          -0.068675982,
+          -58.500199043
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Source peg inserted 3.5 into housing; shoulder at local Y=5.5. Fore/aft parked yaw follows creator 8:45; gun elevation unchanged."
+    },
+    {
+      "name": "amun5 / PDC housing",
+      "part": "am5_4x",
+      "matrix": [
+        [
+          -0.003391698,
+          0.0174524,
+          -0.999841943,
+          48.418612
+        ],
+        [
+          -0.663018015,
+          0.7484468,
+          0.01531337,
+          8.564266
+        ],
+        [
+          0.748595757,
+          0.662965159,
+          0.00903275,
+          41.561658
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Radius 2.5 source peg/socket fit; housing underside local Y=0. Creator assembly 8:55."
+    },
+    {
+      "name": "amun5 / PDC gun",
+      "part": "am6_4x",
+      "matrix": [
+        [
+          -0.003391698,
+          0.0174524,
+          -0.999841943,
+          48.514600200000004
+        ],
+        [
+          -0.663018015,
+          0.7484468,
+          0.01531337,
+          12.6807234
+        ],
+        [
+          0.748595757,
+          0.662965159,
+          0.00903275,
+          45.2079663745
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Source peg inserted 3.5 into housing; shoulder at local Y=5.5. Fore/aft parked yaw follows creator 8:45; gun elevation unchanged."
+    },
+    {
+      "name": "amun7 / PDC housing",
+      "part": "am5_4x",
+      "matrix": [
+        [
+          0,
+          0,
+          -1,
+          130.252064
+        ],
+        [
+          0,
+          1,
+          0,
+          25.8762
+        ],
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Radius 2.5 source peg/socket fit; housing underside local Y=0. Creator assembly 8:55."
+    },
+    {
+      "name": "amun7 / PDC gun",
+      "part": "am6_4x",
+      "matrix": [
+        [
+          0,
+          0,
+          1,
+          130.252064
+        ],
+        [
+          0,
+          1,
+          0,
+          31.3762
+        ],
+        [
+          -1,
+          0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Source peg inserted 3.5 into housing; shoulder at local Y=5.5. Fore/aft parked yaw follows creator 8:45; gun elevation unchanged."
+    },
+    {
+      "name": "amun8 / PDC housing",
+      "part": "am5_4x",
+      "matrix": [
+        [
+          0,
+          0,
+          -1,
+          111.323807
+        ],
+        [
+          0,
+          -1,
+          0,
+          -55.6001
+        ],
+        [
+          -1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Radius 2.5 source peg/socket fit; housing underside local Y=0. Creator assembly 8:55."
+    },
+    {
+      "name": "amun8 / PDC gun",
+      "part": "am6_4x",
+      "matrix": [
+        [
+          0,
+          0,
+          1,
+          111.323807
+        ],
+        [
+          0,
+          -1,
+          0,
+          -61.1001
+        ],
+        [
+          1,
+          0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Source peg inserted 3.5 into housing; shoulder at local Y=5.5. Fore/aft parked yaw follows creator 8:45; gun elevation unchanged."
+    },
+    {
+      "name": "amun3a / breaching pod 01",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          0.9882210580889519,
+          0.07411397290667866,
+          0.13388898150908646,
+          53.420889
+        ],
+        [
+          0.0905326443696633,
+          -0.9885126386364202,
+          -0.12102315298940922,
+          -14.403689
+        ],
+        [
+          0.12338144371415201,
+          0.1317189518484336,
+          -0.9835787396395683,
+          -41.477578
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun3a / breaching pod 02",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          0.9882210580889519,
+          0.07411397290667866,
+          0.13388898150908646,
+          91.124201
+        ],
+        [
+          0.0905326443696633,
+          -0.9885126386364202,
+          -0.12102315298940922,
+          -10.949615
+        ],
+        [
+          0.12338144371415201,
+          0.1317189518484336,
+          -0.9835787396395683,
+          -36.770244
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun3a / breaching pod 03",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9882210580889519,
+          -0.07411397290667866,
+          0.13388898150908646,
+          34.5519
+        ],
+        [
+          -0.0905326443696633,
+          0.9885126386364202,
+          -0.12102315298940922,
+          -16.132313
+        ],
+        [
+          -0.12338144371415201,
+          -0.1317189518484336,
+          -0.9835787396395683,
+          -43.833411
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun3a / breaching pod 04",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9882210580889519,
+          -0.07411397290667866,
+          0.13388898150908646,
+          72.272546
+        ],
+        [
+          -0.0905326443696633,
+          0.9885126386364202,
+          -0.12102315298940922,
+          -12.676652
+        ],
+        [
+          -0.12338144371415201,
+          -0.1317189518484336,
+          -0.9835787396395683,
+          -39.123911
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun3a / breaching pod 05",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9882210580889519,
+          -0.07411397290667866,
+          0.13388898150908646,
+          109.99319
+        ],
+        [
+          -0.0905326443696633,
+          0.9885126386364202,
+          -0.12102315298940922,
+          -9.220991
+        ],
+        [
+          -0.12338144371415201,
+          -0.1317189518484336,
+          -0.9835787396395683,
+          -34.414414
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun4 / breaching pod 06",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9561412152745103,
+          0.0,
+          -0.2929060881125254,
+          45.447003
+        ],
+        [
+          0.1465734262697693,
+          0.865787987071621,
+          -0.47846357453207583,
+          -52.647994
+        ],
+        [
+          0.2535945724279662,
+          -0.500410992527613,
+          -0.8278155781287317,
+          -39.919079
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun4 / breaching pod 07",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9561412152745103,
+          0.0,
+          -0.2929060881125254,
+          81.943154
+        ],
+        [
+          0.1465734262697693,
+          0.865787987071621,
+          -0.47846357453207583,
+          -58.242748
+        ],
+        [
+          0.2535945724279662,
+          -0.500410992527613,
+          -0.8278155781287317,
+          -49.598855
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun4 / breaching pod 08",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          0.9561412152745103,
+          0.0,
+          -0.2929060881125254,
+          63.686691
+        ],
+        [
+          -0.1465734262697693,
+          -0.865787987071621,
+          -0.47846357453207583,
+          -55.444086
+        ],
+        [
+          -0.2535945724279662,
+          0.500410992527613,
+          -0.8278155781287317,
+          -44.756742
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun5 / breaching pod 09",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          0.9563131252063141,
+          0.15239907121869342,
+          -0.24947891624306145,
+          53.804696
+        ],
+        [
+          -0.20916184781970446,
+          0.9528864453001391,
+          -0.21967872855584353,
+          -22.634508
+        ],
+        [
+          0.20424624347776793,
+          0.2622631225600443,
+          0.94313388581382,
+          48.3939
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun5 / breaching pod 10",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          0.9927887607185948,
+          0.062213987649747005,
+          -0.10246900180812725,
+          113.823589
+        ],
+        [
+          -0.1190506147740387,
+          0.4114979183125276,
+          -0.9036019114335583,
+          -22.749404
+        ],
+        [
+          -0.01405089722260819,
+          0.9092848194956152,
+          0.4159371218370226,
+          50.914183
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun5 / breaching pod 11",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9927887607185948,
+          -0.062213987649747005,
+          -0.10246900180812725,
+          94.8848
+        ],
+        [
+          0.1190506147740387,
+          -0.4114979183125276,
+          -0.9036019114335583,
+          -20.478356
+        ],
+        [
+          0.01405089722260819,
+          -0.9092848194956152,
+          0.4159371218370226,
+          51.182224
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun5 / breaching pod 12",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9927887607185948,
+          -0.062213987649747005,
+          -0.10246900180812725,
+          132.779799
+        ],
+        [
+          0.1190506147740387,
+          -0.4114979183125276,
+          -0.9036019114335583,
+          -25.022542
+        ],
+        [
+          0.01405089722260819,
+          -0.9092848194956152,
+          0.4159371218370226,
+          50.645895
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun6 / breaching pod 13",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9563133637858533,
+          -0.15239907121869342,
+          -0.24947800170809792,
+          35.56172
+        ],
+        [
+          0.20916163773794447,
+          -0.9528864453001391,
+          -0.2196789285799757,
+          -18.644472
+        ],
+        [
+          -0.20424534154630544,
+          -0.2622631225600443,
+          0.9431340811367641,
+          44.497642
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun6 / breaching pod 14",
+      "part": "am4_14x",
+      "matrix": [
+        [
+          -0.9563133637858533,
+          -0.15239907121869342,
+          -0.24947800170809792,
+          72.064443
+        ],
+        [
+          0.20916163773794447,
+          -0.9528864453001391,
+          -0.2196789285799757,
+          -26.628213
+        ],
+        [
+          -0.20424534154630544,
+          -0.2622631225600443,
+          0.9431340811367641,
+          52.293739
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Matched triangular source socket and 13-unit height; underside seated on existing 0.5-unit support ridge. Kit has approximately 0.1-unit hidden press-fit tolerance at one wall; no mesh scaled or reshaped."
+    },
+    {
+      "name": "amun3 / closed torpedo cover",
+      "part": "am8c_2x",
+      "matrix": [
+        [
+          -0.998966508487,
+          0.045452336798,
+          9.559e-08,
+          46.560184507057
+        ],
+        [
+          0.039898169521,
+          0.876894173547,
+          0.479024784817,
+          3.648644981447
+        ],
+        [
+          0.021772712032,
+          0.478529720581,
+          -0.8778013759,
+          -34.634386828326
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "All five asymmetric source socket walls match with uniform 0.10000-unit clearance, residual below 0.000003. Bottom local Y=0 seats on actual recess floor, 14.5 below mouth. Closed source variant retained, no superposed open carrier."
+    },
+    {
+      "name": "amun6 / closed torpedo cover",
+      "part": "am8c_2x",
+      "matrix": [
+        [
+          0.888491034418,
+          -0.283076139071,
+          0.361180815171,
+          44.096922498033
+        ],
+        [
+          -0.436604499788,
+          -0.763774695218,
+          0.475420577709,
+          -32.817396379092
+        ],
+        [
+          0.141280545453,
+          -0.580100090014,
+          -0.802199285117,
+          40.213548064511
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "All five asymmetric source socket walls match with uniform 0.10000-unit clearance, residual below 0.000003. Bottom local Y=0 seats on actual recess floor, 14.5 below mouth. Closed source variant retained, no superposed open carrier."
+    },
+    {
+      "name": "amun2 / closed hangar cover",
+      "part": "am7c",
+      "matrix": [
+        [
+          0.977286640946,
+          -5.5986e-08,
+          0.211921734207,
+          12.4765090063
+        ],
+        [
+          0.059486156939,
+          -0.959795861807,
+          -0.274323350792,
+          -39.269311501935
+        ],
+        [
+          0.203401618878,
+          0.280698955569,
+          -0.937995670449,
+          -52.291377692964
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "evidence": "Underside flange Z=0 seats actual amun2 rim; four main inner-profile walls match within 0.000001, outer flange overlaps 1.5. Source corner chamfer clears unchamfered socket. Closed top Z=1, plug Z=-4 fits cavity floor Z=-26. Independent registrations agree within 0.000002; open alternative omitted."
+    }
+  ],
+  "engine": {
+    "position": [
+      173.6,
+      -30,
+      0
+    ],
+    "direction": [
+      1,
+      0,
+      0
+    ],
+    "radius": 26,
+    "length": 190,
+    "color": [
+      0.09,
+      0.42,
+      1
+    ],
+    "style": "anubis-production",
+    "addCore": false,
+    "evidence": "Existing outlet X173.5, axis +X through Y=-30/Z=0. Length is display tuning, not a production measurement."
+  },
+  "sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+  "originalSha256": "7fd35b3de9e64b214a6597691549295f83653b149ec0f74974cb4ae733da812b",
+  "referenceScreenshots": [
+    {
+      "image": "references/owner-bow-interior-production.png",
+      "caption": "OWNER-SUPPLIED PRODUCTION CLOSE-UP: localized blue/cyan interior highlights and soft spill inside the bow opening; outer armour remains dark. Exact source lens segmentation is unresolved."
+    },
+    {
+      "image": "references/owner-bow-interior-guide.png",
+      "caption": "OWNER CORRECTION: glow belongs inside the existing bow recess along its stepped inner edges. Cyan markup is placement guidance, not a new tube or literal uniform neon line. Exterior strip was rejected."
+    },
+    {
+      "image": "references/development-native1080-275.png",
+      "caption": "PRIMARY FINAL DESIGN SHEET: Chris Danelon / Early Development of Anubis 4:35, decoded1920x1080. Narration4:29-4:34 identifies final ship design. Asymmetric sides, bow, drive, railgun, pod rows and closed/open torpedo configurations."
+    },
+    {
+      "image": "references/production-native1080-01.png",
+      "caption": "PRIMARY: Chris Danelon 3:05, manually selected 1080p; decoded 1920 x 1080. Unequal bow silhouette. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-02.png",
+      "caption": "PRIMARY: Chris Danelon 3:10, manually selected 1080p; decoded 1920 x 1080. Oblique drive and segmented cyan rim. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-03.png",
+      "caption": "PRIMARY: Chris Danelon 3:15, manually selected 1080p; decoded 1920 x 1080. Armour finish and inset panels. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-04.png",
+      "caption": "PRIMARY: Chris Danelon 3:20, manually selected 1080p; decoded 1920 x 1080. Raised spine and red lamp group. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-05.png",
+      "caption": "PRIMARY: Chris Danelon 3:25, manually selected 1080p; decoded 1920 x 1080. End-quarter structure. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-06.png",
+      "caption": "PRIMARY: Chris Danelon 3:30, manually selected 1080p; decoded 1920 x 1080. Pod flank and triangular framing. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-07.png",
+      "caption": "PRIMARY: Chris Danelon 3:35, manually selected 1080p; decoded 1920 x 1080. Railgun-side projection. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-08.png",
+      "caption": "PRIMARY: Chris Danelon 3:40, manually selected 1080p; decoded 1920 x 1080. Opposite armour facets. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-09.png",
+      "caption": "PRIMARY: Chris Danelon 3:45, manually selected 1080p; decoded 1920 x 1080. Drive aperture and compact hot core. Source camera crops some angles."
+    },
+    {
+      "image": "references/production-native1080-10.png",
+      "caption": "PRIMARY: Chris Danelon 3:50, manually selected 1080p; decoded 1920 x 1080. Second flank and recessed hardware. Source camera crops some angles."
+    },
+    {
+      "image": "references/creator-fit-475.png",
+      "caption": "KIT ASSEMBLY: Martin Taichl 7:55 / Breaching pod rows. CAD colours are not TV paint evidence."
+    },
+    {
+      "image": "references/creator-fit-505.png",
+      "caption": "KIT ASSEMBLY: Martin Taichl 8:25 / Two torpedoes per carrier. CAD colours are not TV paint evidence."
+    },
+    {
+      "image": "references/creator-fit-525.png",
+      "caption": "KIT ASSEMBLY: Martin Taichl 8:45 / Four PDC assemblies and parked directions. CAD colours are not TV paint evidence."
+    },
+    {
+      "image": "references/creator-fit-535.png",
+      "caption": "KIT ASSEMBLY: Martin Taichl 8:55 / PDC socket and gun shoulder. CAD colours are not TV paint evidence."
+    },
+    {
+      "image": "references/development-native1080-265.png",
+      "caption": "DEVELOPMENT CONTEXT: 4:25 matte finish sheet, before final asymmetry tweaks. Do not substitute its earlier geometry for the final4:35 design or production turntable."
+    },
+    {
+      "image": "references/sketchfab-aft-detail-08.png",
+      "caption": "Aft detail: drive recess and adjoining armour."
+    },
+    {
+      "image": "references/sketchfab-bow-end-11.png",
+      "caption": "Bow-end cross-section and railgun-side structure."
+    },
+    {
+      "image": "references/sketchfab-bow-quarter-07.png",
+      "caption": "Bow quarter: projecting spine and unequal shoulder profile."
+    },
+    {
+      "image": "references/sketchfab-drive-end-10.png",
+      "caption": "Drive-end cross-section; fan-reference view, not production dimensions."
+    },
+    {
+      "image": "references/sketchfab-drive-quarter-03.png",
+      "caption": "Drive-quarter reference: unequal armour volumes around the drive."
+    },
+    {
+      "image": "references/sketchfab-hangar-flank-04.png",
+      "caption": "Opposite hangar flank; separate recessed frame and outer armour."
+    },
+    {
+      "image": "references/sketchfab-oblique-01.png",
+      "caption": "Anton Perfilev fan model: oblique whole hull, screenshot only."
+    },
+    {
+      "image": "references/sketchfab-opposite-surface-06.png",
+      "caption": "Opposite broad surface; dark lighting limits detail evidence."
+    },
+    {
+      "image": "references/sketchfab-pod-flank-02.png",
+      "caption": "Pod-side recesses. Detached demonstration parts are not mounted fittings."
+    },
+    {
+      "image": "references/sketchfab-spine-view-05.png",
+      "caption": "Long spine and adjacent angled armour; perspective view."
+    },
+    {
+      "image": "references/sketchfab-underside-drive-09.png",
+      "caption": "Underside toward drive: separate surfaces and deep recesses."
+    }
+  ],
+  "sourceGeometryModified": false,
+  "runtimeAdopted": false,
+  "sketchfabModelDownloaded": false,
+  "redCollarFaces": 516,
+  "blueBowFaces": 80,
+  "blueBowFaceGroups": {
+    "upper": 34,
+    "lower": 34,
+    "sides": 4,
+    "step_returns": 8
+  },
+  "redCollarEvidence": "Two cheek groups beneath the raised spine, between the pod-bearing banks; production turntable. Source cap geometry retained; individual TV lens count obscured by glow. Other top-row, opposite-spine and aft-bracket caps remain dark."
+}

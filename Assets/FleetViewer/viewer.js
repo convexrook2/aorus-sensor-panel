@@ -7,6 +7,7 @@ import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {SSAOPass} from 'three/addons/postprocessing/SSAOPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {makeShipEffects} from './rocinante-effects.js';
+import {EmissiveGlowPass} from './light-glow.js';
 
 const canvas=document.querySelector('canvas'),status=document.querySelector('#status');
 const post=message=>window.chrome?.webview?.postMessage(message);
@@ -36,7 +37,9 @@ try {
  const composer=new EffectComposer(renderer,target),renderPass=new RenderPass(scene,camera),ao=new SSAOPass(scene,camera,1,1,24);
  ao.ssaoMaterial.defines.PERSPECTIVE_CAMERA=0;ao.depthRenderMaterial.defines.PERSPECTIVE_CAMERA=0;
  ao.kernelRadius=.075;ao.minDistance=.0005;ao.maxDistance=.035;
- composer.addPass(renderPass);composer.addPass(ao);composer.addPass(new OutputPass());
+ const lightGlow=new EmissiveGlowPass(scene,camera);
+ composer.addPass(renderPass);composer.addPass(ao);composer.addPass(lightGlow);composer.addPass(new OutputPass());
+ addEventListener('pagehide',()=>lightGlow.dispose(),{once:true});
  // A small physical display plinth belongs to the holotable, not to the ship.
  // Its geometry never enters model provenance/statistics or the portrait.
  const displayStage=new THREE.Group();displayStage.visible=false;scene.add(displayStage);
@@ -99,7 +102,7 @@ try {
    pendingId=id;
    try {
    // Release the previous GPU resources before allocating the next full model.
-   shipEffects?.dispose();shipEffects=null;
+   lightGlow.reset();shipEffects?.dispose();shipEffects=null;
    if(root){scene.remove(root);disposeRoot(root);root=null;}entry=null;invalidate();
    const response=await fetch(selected.model,previewFetch);if(!response.ok)throw Error('Missing model: '+id);
    const raw=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
@@ -121,10 +124,11 @@ try {
      if((o.isPointLight||o.isSpotLight)&&entry.lightUnitScale){o.intensity*=entry.lightUnitScale*(3.2/max)**2;if(o.distance)o.distance*=3.2/max;}
      if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;for(const m of Array.isArray(o.material)?o.material:[o.material])for(const t of Object.values(m))if(t?.isTexture)t.anisotropy=renderer.capabilities.getMaxAnisotropy();
    });
-   // This finished Roci alone has a reviewed runtime exhaust. Source model
+   // Reviewed ships opt into their own registered exhaust. Source model
    // statistics are captured above, before separate effect meshes are added.
-   if(entry.id==='Rocinante'){
-     shipEffects=makeShipEffects(oriented,gltf.scene,engines.RocinanteS6.engines,center,3.2/max);
+   if(entry.id==='Rocinante'||entry.id==='Anubis'){
+     const drive=entry.id==='Rocinante'?engines.RocinanteS6:engines.Anubis;
+     shipEffects=makeShipEffects(oriented,gltf.scene,drive.engines,center,3.2/max);
      shipEffects.setLights(true);shipEffects.setPlumes(true);
    }
    // Centre after the source's orientation/scale too, including non-identity

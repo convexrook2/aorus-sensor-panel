@@ -1,0 +1,533 @@
+{
+  "acquiredAt": "2026-10-20T21:53:00.566014+00:00",
+  "author": "Martin Taichl / Martin / taichl",
+  "printables": "https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse",
+  "original": "https://www.thingiverse.com/thing:5214940/files",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "primaryLicenseObserved": true,
+  "authorAccuracyCaveat": true,
+  "acquisitionMethod": "Original Printables individual-file download controls, with browser download receipts; original Thingiverse CDN URLs recorded for provenance.",
+  "status": "Candidate multipart printing kit; not assembled, not accepted as TV-accurate, not adopted into runtime.",
+  "files": [
+    {
+      "file": "source-printables-123750\\xxx_-_am5_4x.stl",
+      "url": "https://cdn.thingiverse.com/assets/bd/fa/63/2f/1e/xxx_-_am5_4x.stl",
+      "bytes": 29484,
+      "sha256": "d8af1f4e8df4fc46ad0c8244231122801b8fab15069ea2d4896bf80619fbb147",
+      "triangles": 588,
+      "bounds": {
+        "min": [
+          -6.5,
+          0.0,
+          -6.5
+        ],
+        "max": [
+          6.5,
+          5.5,
+          6.5
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am4_14x.stl",
+      "url": "https://cdn.thingiverse.com/assets/69/02/7b/52/e2/xxx_-_am4_14x.stl",
+      "bytes": 14084,
+      "sha256": "908d71d792f339c6a51cea9035ecd24834ce085da2e1b49b7f4cd67d3b30feec",
+      "triangles": 280,
+      "bounds": {
+        "min": [
+          -9.097125053405762,
+          -6.5,
+          0.0
+        ],
+        "max": [
+          9.097125053405762,
+          6.5,
+          7.0
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am8c_2x.stl",
+      "url": "https://cdn.thingiverse.com/assets/19/22/4a/67/3a/xxx_-_am8c_2x.stl",
+      "bytes": 6084,
+      "sha256": "fc9312008710934ee13298c4637f0246658d714b7bedb91f187ef5e0b2a44e1e",
+      "triangles": 120,
+      "bounds": {
+        "min": [
+          -29.049697875976562,
+          0.0,
+          -7.879759788513184
+        ],
+        "max": [
+          29.07985496520996,
+          15.984720230102539,
+          7.891717433929443
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am9.stl",
+      "url": "https://cdn.thingiverse.com/assets/3b/67/91/c3/6d/xxx_-_am9.stl",
+      "bytes": 115484,
+      "sha256": "725a2c06a3e5340282c9dda1fe4152ab7f4f375741c75dce6633862e0e11be7d",
+      "triangles": 2308,
+      "bounds": {
+        "min": [
+          -75.0,
+          -2.0,
+          -50.0
+        ],
+        "max": [
+          75.0,
+          65.0,
+          50.0
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun6.stl",
+      "url": "https://cdn.thingiverse.com/assets/02/9e/f8/2c/f1/xxx_-_amun6.stl",
+      "bytes": 369684,
+      "sha256": "169eceac7704323120c2c941025c7c2b19a4a8c0e43f4012f2a74858add4852c",
+      "triangles": 7392,
+      "bounds": {
+        "min": [
+          -49.6861457824707,
+          -67.59088134765625,
+          23.818897247314453
+        ],
+        "max": [
+          113.61287689208984,
+          -9.809135437011719,
+          59.0
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun3.stl",
+      "url": "https://cdn.thingiverse.com/assets/7b/01/54/ea/e3/xxx_-_amun3.stl",
+      "bytes": 366684,
+      "sha256": "60ad0e639bf14d80d6165541f8cae7d66a9e1b083563afb0ce1d05a36e2dec24",
+      "triangles": 7332,
+      "bounds": {
+        "min": [
+          -9.17974853515625,
+          -9.218178749084473,
+          -47.82457733154297
+        ],
+        "max": [
+          130.58787536621094,
+          21.607322692871094,
+          -19.67638397216797
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun2a.stl",
+      "url": "https://cdn.thingiverse.com/assets/1c/f1/c3/a7/07/xxx_-_amun2a.stl",
+      "bytes": 189084,
+      "sha256": "6eb32f57d7a064c2fc7d3a2bebe583068da3d9ae0b134abefc4efed51c44b4cf",
+      "triangles": 3780,
+      "bounds": {
+        "min": [
+          -78.74819946289062,
+          -57.47925567626953,
+          -42.7883186340332
+        ],
+        "max": [
+          36.04618835449219,
+          4.2453718185424805,
+          -9.164877891540527
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am6_4x.stl",
+      "url": "https://cdn.thingiverse.com/assets/33/67/ba/c4/be/xxx_-_am6_4x.stl",
+      "bytes": 204384,
+      "sha256": "f1cdcc45eb05d5b693cfe86d1f977363e7936aaef8e6ffb4014122696ff75270",
+      "triangles": 4086,
+      "bounds": {
+        "min": [
+          -6.0,
+          -3.5,
+          -5.0
+        ],
+        "max": [
+          6.0,
+          10.551690101623535,
+          20.80774688720703
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun11.stl",
+      "url": "https://cdn.thingiverse.com/assets/f7/60/77/0e/b4/xxx_-_amun11.stl",
+      "bytes": 300384,
+      "sha256": "addd282bdf5750a0bc38683410763dbe6ba69a2596eff16a04dfe228c34d8f41",
+      "triangles": 6006,
+      "bounds": {
+        "min": [
+          -70.84423065185547,
+          -18.353410720825195,
+          19.254962921142578
+        ],
+        "max": [
+          7.660681247711182,
+          2.6756105422973633,
+          34.684879302978516
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am7.stl",
+      "url": "https://cdn.thingiverse.com/assets/bf/76/83/8e/d4/xxx_-_am7.stl",
+      "bytes": 18084,
+      "sha256": "137093bf68f69c4dd235b702650241fc409dfa87b7316ba770a6be8f71ce0345",
+      "triangles": 360,
+      "bounds": {
+        "min": [
+          -19.82938575744629,
+          -23.34235382080078,
+          -20.0
+        ],
+        "max": [
+          23.857847213745117,
+          23.310914993286133,
+          9.662582397460938
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am8_2x.stl",
+      "url": "https://cdn.thingiverse.com/assets/07/4d/89/9d/41/xxx_-_am8_2x.stl",
+      "bytes": 59584,
+      "sha256": "c3a4584c52535c528f8d8196818dfe8842e63e2e656cd3c20edad88fe7d105d9",
+      "triangles": 1190,
+      "bounds": {
+        "min": [
+          -27.75524139404297,
+          0.0,
+          -7.2721123695373535
+        ],
+        "max": [
+          27.751890182495117,
+          24.469499588012695,
+          6.853518009185791
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun7.stl",
+      "url": "https://cdn.thingiverse.com/assets/cb/99/25/6e/c3/xxx_-_amun7.stl",
+      "bytes": 950484,
+      "sha256": "93fc0da0559fa6a859b2ebdc59b80f1f22a8d2b4907c0a6e83ac4cfe3679434c",
+      "triangles": 19008,
+      "bounds": {
+        "min": [
+          -1.2801991701126099,
+          -0.5,
+          -25.67638397216797
+        ],
+        "max": [
+          149.997314453125,
+          39.88385009765625,
+          28.481504440307617
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am_torpedo_4x.stl",
+      "url": "https://cdn.thingiverse.com/assets/f8/a6/75/9a/ed/xxx_-_am_torpedo_4x.stl",
+      "bytes": 79884,
+      "sha256": "ebc58f42d193cb2560fb442dd8dfbc0050a25b359d913a41bc046427f79df6c9",
+      "triangles": 1596,
+      "bounds": {
+        "min": [
+          -24.886518478393555,
+          8.22973346710205,
+          -2.929570436477661
+        ],
+        "max": [
+          22.200349807739258,
+          13.77026653289795,
+          4.990000247955322
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_am7c.stl",
+      "url": "https://cdn.thingiverse.com/assets/68/f0/4e/0e/28/xxx_-_am7c.stl",
+      "bytes": 13584,
+      "sha256": "c4a0f5b6ce5168a91bf13c8e8372be70530956672ad8b84accca6a405ba1e1cf",
+      "triangles": 270,
+      "bounds": {
+        "min": [
+          -19.82938575744629,
+          -23.34235382080078,
+          -4.0
+        ],
+        "max": [
+          19.750659942626953,
+          23.310914993286133,
+          1.5
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun3a.stl",
+      "url": "https://cdn.thingiverse.com/assets/00/8c/cc/cc/bc/xxx_-_amun3a.stl",
+      "bytes": 103784,
+      "sha256": "b74755d0b6796cd3ae0c118f8abb575da2af57cbca262a3c328f11be816d240e",
+      "triangles": 2074,
+      "bounds": {
+        "min": [
+          10.357440948486328,
+          -25.4303035736084,
+          -50.790367126464844
+        ],
+        "max": [
+          139.7273406982422,
+          5.578246116638184,
+          -19.67638397216797
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun4.stl",
+      "url": "https://cdn.thingiverse.com/assets/4b/2d/29/05/ba/xxx_-_amun4.stl",
+      "bytes": 581884,
+      "sha256": "8d0cfd28476ee92bbbdd0b70add1978065b2db7e58576fa0bb112477374f9e1c",
+      "triangles": 11636,
+      "bounds": {
+        "min": [
+          32.56919479370117,
+          -86.11212158203125,
+          -64.4784927368164
+        ],
+        "max": [
+          167.6886749267578,
+          -25.05499839782715,
+          -29.835142135620117
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun1.stl",
+      "url": "https://cdn.thingiverse.com/assets/e5/45/6c/7c/b1/xxx_-_amun1.stl",
+      "bytes": 1535484,
+      "sha256": "9b2bfb355f679732bf95efd368936be858f309c904c30411ef67ea2826a05e16",
+      "triangles": 30708,
+      "bounds": {
+        "min": [
+          133.50982666015625,
+          -77.30924987792969,
+          -47.30924987792969
+        ],
+        "max": [
+          190.0,
+          17.309247970581055,
+          47.30924987792969
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun10.stl",
+      "url": "https://cdn.thingiverse.com/assets/65/37/8f/9e/92/xxx_-_amun10.stl",
+      "bytes": 67484,
+      "sha256": "d0b965f5e7ed0377f9d6c2be94b1e7a0dffe97a540822ece5c2dfa2129c63733",
+      "triangles": 1348,
+      "bounds": {
+        "min": [
+          -74.86357879638672,
+          -16.0,
+          -18.299999237060547
+        ],
+        "max": [
+          -18.86357879638672,
+          -0.5,
+          18.299999237060547
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun4a.stl",
+      "url": "https://cdn.thingiverse.com/assets/d9/12/21/2a/5c/xxx_-_amun4a.stl",
+      "bytes": 125184,
+      "sha256": "ad91263ff7aa174f2c0933c5183e3b360d739be24a28bae8480a5cb9bf66cb30",
+      "triangles": 2502,
+      "bounds": {
+        "min": [
+          70.68412780761719,
+          -86.52918243408203,
+          -51.57059860229492
+        ],
+        "max": [
+          171.5352783203125,
+          -33.554996490478516,
+          -20.346057891845703
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun11_con.stl",
+      "url": "https://cdn.thingiverse.com/assets/78/3c/f4/a4/c2/xxx_-_amun11_con.stl",
+      "bytes": 1884,
+      "sha256": "0cc006270cd2121f066ac0bf8290b9c6e2e5766f6504161a314ef50112089c44",
+      "triangles": 36,
+      "bounds": {
+        "min": [
+          -4.5,
+          0.0,
+          -4.5
+        ],
+        "max": [
+          4.5,
+          7.0,
+          4.5
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_pin_10x10.stl",
+      "url": "https://cdn.thingiverse.com/assets/44/90/56/e1/cf/xxx_-_pin_10x10.stl",
+      "bytes": 845484,
+      "sha256": "92615a58f7a772d5d8141f9212502c89b8f759de7be6c8cc73dc626393fcbe9b",
+      "triangles": 16908,
+      "bounds": {
+        "min": [
+          -7.394117832183838,
+          0.0,
+          -51.208030700683594
+        ],
+        "max": [
+          51.27876663208008,
+          10.0,
+          35.808712005615234
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun8.stl",
+      "url": "https://cdn.thingiverse.com/assets/93/c0/0e/8e/d0/xxx_-_amun8.stl",
+      "bytes": 1086584,
+      "sha256": "9d26383177cecaba27ce9b36c5845671d1ee68ea20a33314e5f1ec6cf50ddb4d",
+      "triangles": 21730,
+      "bounds": {
+        "min": [
+          -72.86357879638672,
+          -67.45172882080078,
+          -43.63862609863281
+        ],
+        "max": [
+          133.50979614257812,
+          -16.0,
+          29.238588333129883
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun9.stl",
+      "url": "https://cdn.thingiverse.com/assets/0e/6c/fb/36/a7/xxx_-_amun9.stl",
+      "bytes": 269484,
+      "sha256": "8525feeeff9bedb109d65db3af539a8bd20bfd3a31beb9e5e35890c9231718a0",
+      "triangles": 5388,
+      "bounds": {
+        "min": [
+          -64.70081329345703,
+          -21.0,
+          -25.825780868530273
+        ],
+        "max": [
+          138.50979614257812,
+          -0.5,
+          28.481504440307617
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun7a.stl",
+      "url": "https://cdn.thingiverse.com/assets/03/87/f1/b5/df/xxx_-_amun7a.stl",
+      "bytes": 839684,
+      "sha256": "0a2930eca8733996397073e00ef98f26a57882882b4bd4130a3a8925b6d343fd",
+      "triangles": 16792,
+      "bounds": {
+        "min": [
+          -100.0,
+          -0.5,
+          -24.37553596496582
+        ],
+        "max": [
+          8.71980094909668,
+          25.432954788208008,
+          24.085613250732422
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun5.stl",
+      "url": "https://cdn.thingiverse.com/assets/85/22/2b/6e/90/xxx_-_amun5.stl",
+      "bytes": 707584,
+      "sha256": "62fbb97279136f22b12af7716b4a8a59d1f054422b283b13c6eff0234ff7f99c",
+      "triangles": 14150,
+      "bounds": {
+        "min": [
+          -28.01061248779297,
+          -38.79153823852539,
+          17.304731369018555
+        ],
+        "max": [
+          158.3974609375,
+          27.773996353149414,
+          78.76954650878906
+        ]
+      },
+      "sourceBytesUnmodified": true
+    },
+    {
+      "file": "source-printables-123750\\xxx_-_amun2.stl",
+      "url": "https://cdn.thingiverse.com/assets/31/e1/fc/30/df/xxx_-_amun2.stl",
+      "bytes": 1261084,
+      "sha256": "1344ccd9e88ad7ecce67af1438ccdc7bca61fb6880d8bf443c0cff7d5073a6da",
+      "triangles": 25220,
+      "bounds": {
+        "min": [
+          -79.63884735107422,
+          -65.51861572265625,
+          -64.25182342529297
+        ],
+        "max": [
+          36.32780838012695,
+          2.800278902053833,
+          -13.358333587646484
+        ]
+      },
+      "sourceBytesUnmodified": true
+    }
+  ]
+}
