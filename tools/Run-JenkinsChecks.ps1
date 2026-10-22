@@ -4,6 +4,13 @@ $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $repoRoot=Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $repoRoot
+. (Join-Path $PSScriptRoot 'FleetAssetSnapshot.ps1')
+if($env:JENKINS_URL){
+    $initialChanges=@(git status --porcelain)
+    if($LASTEXITCODE -ne 0){throw 'Cannot verify initial Jenkins source state.'}
+    Assert-CleanCiSource $initialChanges
+}
+$assetBaseline=Get-FleetAssetSnapshot $repoRoot
 $ciRoot=Join-Path $repoRoot 'artifacts\ci'
 New-Item -ItemType Directory -Path $ciRoot -Force | Out-Null
 foreach($name in @('gate-tests.xml','navigation-tests.xml','jenkins-checks.json')){
@@ -13,6 +20,7 @@ foreach($name in @('gate-tests.xml','navigation-tests.xml','jenkins-checks.json'
 }
 $results=[Collections.Generic.List[object]]::new()
 $passed=$false
+$assetGuardChecked=$false
 $pythonExecutable='python'
 $commandLog=Join-Path $ciRoot 'commands.txt'
 Set-Content -LiteralPath $commandLog -Value ''
@@ -66,8 +74,8 @@ try{
         if(!$core.Passed){throw 'Core CI receipt did not pass.'}
     }
     Invoke-Gate 'Navigation tests, dependency audit and isolated engineering build' {
-        Invoke-Checked npm.cmd @('--prefix','NavigationWeb','ci','--ignore-scripts','--no-fund')
-        Invoke-Checked npm.cmd @('--prefix','NavigationWeb','audit','--audit-level=high')
+        Invoke-Checked npm.cmd @('--prefix','NavigationWeb','ci','--ignore-scripts','--no-fund','--no-audit')
+        Invoke-Checked npm.cmd @('--prefix','NavigationWeb','audit','--audit-level=high','--fetch-retries=1','--fetch-timeout=20000')
         Invoke-Checked npm.cmd @('--prefix','NavigationWeb','test','--','--reporter=default','--reporter=junit',('--outputFile.junit='+(Join-Path $ciRoot 'navigation-tests.xml')))
         # The normal Vite build targets accepted assets; CI must always override
         # that output into artifacts, never regenerate the runtime visual bundle.
@@ -98,17 +106,25 @@ try{
         foreach($migration in $migrations){Write-Host "REVIEW: $($migration.Package) compatibility-range migration $($migration.Compatible) -> $($migration.Latest)"}
         if($compatible.Count){throw ('Compatible navigation updates required: '+(($compatible | ForEach-Object {"$($_.Name): $($_.Value.current) -> $($_.Value.wanted)"}) -join '; '))}
     }
-    Invoke-Gate 'Accepted assets and tracked source remain unchanged' {
-        $assets=@(git diff --name-only -- Assets FleetStudio/models)
-        if($LASTEXITCODE -ne 0 -or $assets.Count){throw 'Accepted asset files changed during CI.'}
+    Invoke-Gate 'Accepted asset inputs remain unchanged during checks' {
+        Assert-FleetAssetSnapshot $assetBaseline (Get-FleetAssetSnapshot $repoRoot)
+        $script:assetGuardChecked=$true
         if($env:JENKINS_URL){
-            $changes=@(git status --porcelain --untracked-files=no)
-            if($LASTEXITCODE -ne 0 -or $changes.Count){throw 'CI changed tracked source files.'}
+            $changes=@(git status --porcelain)
+            if($LASTEXITCODE -ne 0){throw 'Cannot verify final Jenkins source state.'}
+            Assert-CleanCiSource $changes
         }
     }
     $passed=$true
     Write-Host 'PASS: X890 Jenkins checks. No installer compiled or executed; no live sensors or release publication.'
 }finally{
+    # A failed network or build gate must not prevent preservation accounting.
+    if(!$assetGuardChecked){
+        $assetTimer=[Diagnostics.Stopwatch]::StartNew();$assetFailure=$null
+        try{Assert-FleetAssetSnapshot $assetBaseline (Get-FleetAssetSnapshot $repoRoot);$assetGuardChecked=$true}
+        catch{$assetFailure=$_.Exception.Message;$passed=$false;Write-Warning $assetFailure}
+        $results.Add([pscustomobject]@{Name='Asset input immutability after incomplete checks';Seconds=$assetTimer.Elapsed.TotalSeconds;Failure=$assetFailure})
+    }
     # These are aggregate check groups; navigation's report contains its actual
     # individual test cases. Do not invent assertion counts for console checks.
     $xml=[xml]'<testsuites><testsuite name="X890 CI gates" /></testsuites>'
@@ -123,6 +139,6 @@ try{
         $suite.AppendChild($case) | Out-Null
     }
     $xml.Save((Join-Path $ciRoot 'gate-tests.xml'))
-    [pscustomobject]@{Passed=$passed;CompletedAt=[datetimeoffset]::Now;PreflightOnly=[bool]$PreflightOnly;Groups=$results;Installed=$false;LiveSensorsTested=$false} |
+    [pscustomobject]@{Passed=$passed;CompletedAt=[datetimeoffset]::Now;PreflightOnly=[bool]$PreflightOnly;Groups=$results;AssetInputs=$assetBaseline.Count;AssetInputsUnchanged=$assetGuardChecked;ExactCommitCI=[bool]$env:JENKINS_URL;Installed=$false;LiveSensorsTested=$false} |
         ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $ciRoot 'jenkins-checks.json')
 }

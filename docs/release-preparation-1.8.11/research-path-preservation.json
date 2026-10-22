@@ -1,0 +1,151 @@
+{
+  "date": "2026-10-21",
+  "scope": "15 path-bearing research/continuity records only; model/renderer/research content preserved",
+  "privateArchive": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8",
+  "files": [
+    {
+      "path": "Sources/Knight/review-receipt.json",
+      "originalSha256": "88172e118e79894833bfba5895539927c1fb5f6d664ddb075016c31754eca087",
+      "originalBytes": 437,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/Sources/Knight/review-receipt.json",
+      "portableSha256": "3efaf0ad81009d0132fdb8189afc6b65c71102ed2cdd36a74fc63c93d631fd29",
+      "portableBytes": 394,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "Sources/Knight/source-acquisition.json",
+      "originalSha256": "22307ef4e0a88ee946f13a94d7753425a334231ecaed482f7abcee1877a6cdae",
+      "originalBytes": 2925,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/Sources/Knight/source-acquisition.json",
+      "portableSha256": "2448c6a4ae031cbf24b2388e3134311dff11c90c0262bc656cd3c1db5136d069",
+      "portableBytes": 2907,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "docs/ARBOGHAST-REJECTED-HANDOFF-20261021.md",
+      "originalSha256": "456b46cbd017852706ada9db3ce45ae473a2b789e36d136f7d210237bf1e4d37",
+      "originalBytes": 9369,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/docs/ARBOGHAST-REJECTED-HANDOFF-20261021.md",
+      "portableSha256": "568699ef04e65cdc56a32415e07f93571096c32f4e526a56dcee1db7e896ea8e",
+      "portableBytes": 9331,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "docs/ROCINANTE-REJECTED-STUDY-HANDOFF-20261020.md",
+      "originalSha256": "baa04bcc369d3597e5f23efcd3acf1834cefe9bcfee7345f866d9b3065087b44",
+      "originalBytes": 12521,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/docs/ROCINANTE-REJECTED-STUDY-HANDOFF-20261020.md",
+      "portableSha256": "61564f00ca0d018a6a85821be398366d8e6a0f067dc6bde34751f893196b259b",
+      "portableBytes": 12458,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "docs/references/Rocinante/owner-finishing-corrections-20261020.json",
+      "originalSha256": "e08dd0f54ef6339935b4fb32b8cbe183fff23cb6e5f54063bb4157fbcf1e9291",
+      "originalBytes": 3995,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/docs/references/Rocinante/owner-finishing-corrections-20261020.json",
+      "portableSha256": "05e89a985f9424d4f8b1897df0be4a64be71498538b6414c668cb867f779bf44",
+      "portableBytes": 3797,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/anubis-research-20261020/browser-downloads.json",
+      "originalSha256": "b818c5cdcebbd7e7721ee03c031dcea630017df3b4663d205cd4325ee23e7dab",
+      "originalBytes": 2626,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/anubis-research-20261020/browser-downloads.json",
+      "portableSha256": "a351eccdd1c9d9d95b86473832faf09c2d1a75b6c808de19dd2f30a3e8d9c749",
+      "portableBytes": 2548,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/arboghast-research-20261021/bookmarked-hud-sources.json",
+      "originalSha256": "e90d433747029e0e686e5807b3e62d596b4196b5dcbff11aeb42bcec9e0a8b43",
+      "originalBytes": 6937,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/arboghast-research-20261021/bookmarked-hud-sources.json",
+      "portableSha256": "2d11d01a4984e3509f7be6455ead4c0849a21ec964987a34553f85d17c59c813",
+      "portableBytes": 6904,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/arboghast-research-20261021/rejected-closeout.json",
+      "originalSha256": "82c403e0b0021c9a1b011023ea315c5635ba4f2662efd156201fb62970d3effc",
+      "originalBytes": 754,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/arboghast-research-20261021/rejected-closeout.json",
+      "portableSha256": "2f1191a40b2544d3228465ab701a0c0120d9a59077d9eab266bc2f3d87409da4",
+      "portableBytes": 625,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/arboghast-research-20261021/review-summary.json",
+      "originalSha256": "40c2d206575d67c8c972c1ca1eb95eb3428756a8f62c951d1048efcd096cdf8a",
+      "originalBytes": 2667,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/arboghast-research-20261021/review-summary.json",
+      "portableSha256": "1c89c472860d4f9d99da65e248785d19b634b683a5baf71d061704ba38bbf586",
+      "portableBytes": 2624,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/knight-research-20261021/download-baseline.json",
+      "originalSha256": "527f417fa460873f08455a163750261aa7f9a59db2acc44badaffa29aaa3f964",
+      "originalBytes": 12257,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/knight-research-20261021/download-baseline.json",
+      "portableSha256": "15c5ae63f271622cd37d6976cd3075df46633a518c587d3ec92dd230097cf696",
+      "portableBytes": 11681,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/knight-research-20261021/references/syfy-photo-downloads.json",
+      "originalSha256": "2381faa935218ad15c140629afa1385842dc0ac733e2cd8e360bbf7cf0c274d3",
+      "originalBytes": 1082,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/knight-research-20261021/references/syfy-photo-downloads.json",
+      "portableSha256": "15c86c98a56bf921899ff1b411c625099181777f792c98f7899e563d007f1a5d",
+      "portableBytes": 1046,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/knight-research-20261021/review/browser-check.json",
+      "originalSha256": "b13b774630a9be563569641e96720cb1e9294d60529cc9a0b948a48b029cb259",
+      "originalBytes": 3232,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/knight-research-20261021/review/browser-check.json",
+      "portableSha256": "36c08484c9d25d431abb03d9e1dc14de49fbe5c363a8f909daea2891423d8bba",
+      "portableBytes": 2963,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/knight-research-20261021/review/native-launch.json",
+      "originalSha256": "d2453520acc1afd0f0e3c49d2eb2a8692e9949d60ffd84f9a73e9efb0975beb1",
+      "originalBytes": 413,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/knight-research-20261021/review/native-launch.json",
+      "portableSha256": "7bb1e7fbd9a716eeb6589ae0a77041a108d1b30aa8c268cf6e13a9a72b0ed1f0",
+      "portableBytes": 327,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/knight-research-20261021/review/views.json",
+      "originalSha256": "03547cc02d02e48c21f8fb57939136cef8a661e156a827985684ea37295959c7",
+      "originalBytes": 2246,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/knight-research-20261021/review/views.json",
+      "portableSha256": "6c8c9140bc62f4e427aad2e5314258aa6d39a1f0187e03d1437b7fca3ffed636",
+      "portableBytes": 1980,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    },
+    {
+      "path": "output/rocinante-hull-study-20261020/Review-Study.ps1",
+      "originalSha256": "6cbf4a81f06b5cd546c3c0c855c70bc750f7b3769f1cf818c67bfbf609178cf5",
+      "originalBytes": 1033,
+      "privateOriginal": "artifacts/release-1.8.11-checks/research-preservation-20261021-2c650fd8/originals/output/rocinante-hull-study-20261020/Review-Study.ps1",
+      "portableSha256": "261edd641ced8f9c764e84678a1436ef2a7da63e3f86ffe0fba4abac8dcf0694",
+      "portableBytes": 1075,
+      "edits": "Local path prefixes only; originals retained byte-for-byte"
+    }
+  ],
+  "portableMeaning": {
+    ".": "Current X890 Sensor repository root",
+    "..": "Workspace directory containing project repositories",
+    "<USERPROFILE>": "Historical local profile root; exact original preserved privately",
+    "<LOCALAPPDATA>": "Historical local application-data root; exact original preserved privately"
+  },
+  "publicGuardChanged": false,
+  "modelOrReferenceImageEdited": false,
+  "studyResumed": false
+}

@@ -15,6 +15,8 @@ internal static class App
             // WPF hosts the window; WinForms supplies only the tray. Configure
             // process DPI before either framework creates an HWND.
             System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.PerMonitorV2);
+            string? portraitOutput=Argument(args,"--export-fleet-portraits");
+            if(portraitOutput is not null)return FleetPortraitExport.Run(portraitOutput);
             if (args.Contains("--check-mapping")) { CheckArtworkPackage(); return PanelMetrics.Check(); }
             if (args.Contains("--check-displays"))
             {
@@ -95,6 +97,11 @@ internal static class App
             if(checkHolotable && (preview is not null || !args.Contains("--windowed") || !args.Contains("--runtime-check")))
                 throw new ArgumentException("--check-holotable-live requires --windowed --runtime-check and actual live monitoring.");
             return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed"),args.Contains("--runtime-check"),checkHolotable));
+        }
+        catch (System.ComponentModel.Win32Exception ex) when(ex.NativeErrorCode==1223)
+        {
+            // Declining the hardware-access prompt is an ordinary cancellation.
+            return 1223;
         }
         catch (Exception ex)
         {

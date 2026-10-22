@@ -1,252 +1,377 @@
 {
   "lossless": true,
-  "ships": 21,
-  "source": "Reviewed Fleet Studio catalogue; accepted Anubis and shared light glow",
+  "ships": 22,
+  "source": "Reviewed Fleet Studio catalogue; scoped model updates",
   "files": [
     {
+      "bytes": 4067,
       "path": "ATTRIBUTION.txt",
-      "bytes": 3903,
-      "sha256": "94b9804ddf86ae0a8546b75b719d28409d929529b01dafc968d29854bc972478"
+      "sha256": "0715f65949762627d10f5647e791069788b807587465b6629cf7b412e89425c9"
     },
     {
+      "bytes": 29574,
       "path": "catalog.json",
-      "bytes": 28354,
-      "sha256": "63f20d06120feabb18df45aa4af59dbf42dc5aee4a0aedb4fe9d993a8f9f6af7"
+      "sha256": "51c90f6ec7fa147a9ef20e2de7248832096d67f2da17e6d99bc9531f53a4e8ec"
     },
     {
-      "path": "engines.json",
       "bytes": 1434,
+      "path": "engines.json",
       "sha256": "c362ee8df65a6b8386502586caa914ef55b224fde9e21a930ae753fd9aac45a8"
     },
     {
-      "path": "index.html",
       "bytes": 1247,
+      "path": "index.html",
       "sha256": "75ac81d3d564223d03be7916f27447a92b471fdd25725aa5fad216e0ff35f226"
     },
     {
-      "path": "light-glow.js",
       "bytes": 7655,
+      "path": "light-glow.js",
       "sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045"
     },
     {
-      "path": "models/AgathaKing.glb.gz",
       "bytes": 47329112,
+      "path": "models/AgathaKing.glb.gz",
       "sha256": "6503f7822cef0b57d478f81af895b2f441614b588488124d85e0bc5b16137541"
     },
     {
-      "path": "models/Anubis.glb.gz",
       "bytes": 5549740,
+      "path": "models/Anubis.glb.gz",
       "sha256": "8ac24693b2aedde4e788aab431195427ccc23aa9698c613de9610c27a9e56e58"
     },
     {
-      "path": "models/Arboghast.glb.gz",
       "bytes": 650454,
+      "path": "models/Arboghast.glb.gz",
       "sha256": "58090c012e65391e51f69f845ea492fc213882d0b83a5d1047ba36de626736ff"
     },
     {
-      "path": "models/BashiBazouk.glb.gz",
       "bytes": 3594133,
+      "path": "models/BashiBazouk.glb.gz",
       "sha256": "2260165936b60062bee086aeedc40f71faca35d433184cb5d470c25712353826"
     },
     {
-      "path": "models/Behemoth.glb.gz",
       "bytes": 1027882,
+      "path": "models/Behemoth.glb.gz",
       "sha256": "1c802282b5941e5e782f2dcf88870e018239ffa95688166b824ecc1518b02c28"
     },
     {
-      "path": "models/Canterbury.glb.gz",
       "bytes": 690616,
+      "path": "models/Canterbury.glb.gz",
       "sha256": "8b79b7eb833e9c7590960e16e06503f5c09a6e86a3b0e2749561aacd35358048"
     },
     {
-      "path": "models/Donnager.glb.gz",
       "bytes": 49175887,
+      "path": "models/Donnager.glb.gz",
       "sha256": "10807a4529dc595e153bc20eafdf02e3fd88d8c26be6adc7a59341afaac77944"
     },
     {
-      "path": "models/Dropship.glb.gz",
       "bytes": 3603402,
+      "path": "models/Dropship.glb.gz",
       "sha256": "74153e8cdd1619348baf1dcdae8e18060a00da08f195e5daba3b6977dd62b8ad"
     },
     {
-      "path": "models/Epstein.glb.gz",
       "bytes": 8326493,
+      "path": "models/Epstein.glb.gz",
       "sha256": "2f8d41e53cc92f295e9525ea43d4e478f64239755446eddf6893b006768ed5f1"
     },
     {
-      "path": "models/Guanshiyin.glb.gz",
       "bytes": 5620908,
+      "path": "models/Guanshiyin.glb.gz",
       "sha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb"
     },
     {
-      "path": "models/Hammurabi.glb.gz",
       "bytes": 656928,
+      "path": "models/Hammurabi.glb.gz",
       "sha256": "02d4ee36f9e3d97e54570d62d82434c196273edb8d14d67dcb2b04179864dd37"
     },
     {
-      "path": "models/Knight.glb.gz",
       "bytes": 566992,
+      "path": "models/Knight.glb.gz",
       "sha256": "a6fde7aa786841e46ea04af8ed179df1f1764b4b03037d20c55a6e90f393dcf9"
     },
     {
-      "path": "models/Medina.glb.gz",
       "bytes": 1037274,
+      "path": "models/Medina.glb.gz",
       "sha256": "430cc1391a63ff635f24af2625bf9ce0af2bf605e85bde2321d4e22c1ab780f4"
     },
     {
-      "path": "models/Morrigan.glb.gz",
       "bytes": 2102363,
+      "path": "models/Morrigan.glb.gz",
       "sha256": "251b760884aa4410f3818ac7f49c931288994c26467a2d197ce215bc82f68ad0"
     },
     {
-      "path": "models/Nauvoo.glb.gz",
       "bytes": 1007130,
+      "path": "models/Nauvoo.glb.gz",
       "sha256": "9de2f7120f29684ec4a677106b066102407c5f0601ddc32aef17a3478a62e36a"
     },
     {
-      "path": "models/Pella.glb.gz",
       "bytes": 36936450,
+      "path": "models/Pella.glb.gz",
       "sha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f"
     },
     {
-      "path": "models/Razorback.glb.gz",
       "bytes": 2769209,
+      "path": "models/Razorback.glb.gz",
       "sha256": "e7e92b3c0e8648c6ef69f654c87b6d75a2d7478975f2bec6f821f9ea304abeaf"
     },
     {
-      "path": "models/Rocinante.glb.gz",
       "bytes": 37799454,
+      "path": "models/Rocinante.glb.gz",
       "sha256": "c87d9f612c8e47e61536d11998e2d0c6669a046ade29301a48bad07fb5e172d9"
     },
     {
-      "path": "models/Scirocco.glb.gz",
       "bytes": 657572,
+      "path": "models/Scirocco.glb.gz",
       "sha256": "938c9a58ca7afe6dfaa433a0c073f86fa0ee239318bd17df1d8f3aaedce6bbff"
     },
     {
-      "path": "models/Scopuli.glb.gz",
       "bytes": 569457,
+      "path": "models/Scopuli.glb.gz",
       "sha256": "f0f8aa2d443ffb6db5c15ecc1f069f5a0bfd6c7431585f2a0c90d3d6c17dcb07"
     },
     {
-      "path": "models/Tynan.glb.gz",
+      "bytes": 4228604,
+      "path": "models/SolRing.glb.gz",
+      "sha256": "7152881b089c5ceecede9d6adf5d1605d9048378f73b1a4f6d08d997c94db505"
+    },
+    {
       "bytes": 4670499,
+      "path": "models/Tynan.glb.gz",
       "sha256": "1c5ae2705ae229f0afc10ced9d8764e68ce5607ebe29e026b89d81491cd7c17b"
     },
     {
-      "path": "rocinante-effects.js",
+      "bytes": 1822,
+      "path": "portal.js",
+      "sha256": "867bdd60d7008f9cca469c5ce743f111a3e912fc44423c739e6f4a65d3f244fb"
+    },
+    {
+      "bytes": 1119635,
+      "path": "portraits/AgathaKing.png",
+      "sha256": "ed43e2444fce32776a4ea720e3ceb5eca67efdf7d393155b597970bf874f4051"
+    },
+    {
+      "bytes": 384908,
+      "path": "portraits/Anubis.png",
+      "sha256": "f87db9ab96267ad97290b6e5faf534fdd47073073d23c4481e40668f8e58aae9"
+    },
+    {
+      "bytes": 200663,
+      "path": "portraits/Arboghast.png",
+      "sha256": "7d763617f512fb6d4d9ff2649f9c7db99f56480a17852dd324c315f15e440568"
+    },
+    {
+      "bytes": 721377,
+      "path": "portraits/BashiBazouk.png",
+      "sha256": "f313e9c5b7d94496670f9f8ba908b7d0705f4068379ae54460bbc96d25ed276b"
+    },
+    {
+      "bytes": 772414,
+      "path": "portraits/Behemoth.png",
+      "sha256": "9e2d196f134b664508600f3d06f4e7a8fc7a748286001817f4422d92e59e292a"
+    },
+    {
+      "bytes": 702312,
+      "path": "portraits/Canterbury.png",
+      "sha256": "9a3466d2107d9a5b7e8c44f8dd3bee480408a7684124a1156d91185c4bfe4e24"
+    },
+    {
+      "bytes": 951009,
+      "path": "portraits/Donnager.png",
+      "sha256": "f14131f2c91e72eda67973ea7ad78eb5f6df8811837e65362ccf1b01302f7b93"
+    },
+    {
+      "bytes": 545593,
+      "path": "portraits/Dropship.png",
+      "sha256": "f4a58c0e2bac43faeb2c3d59ec8a00e048344787ce6dc42bc5ed665b59855f61"
+    },
+    {
+      "bytes": 445112,
+      "path": "portraits/Epstein.png",
+      "sha256": "d4a897fc70f7c12f8a4ab2a3a6cb282e8ce0bd53812fd9f87d8c0786a2c02b9d"
+    },
+    {
+      "bytes": 609105,
+      "path": "portraits/Guanshiyin.png",
+      "sha256": "0898ead3d9efa6c4b9977b4d88b2c9d93d2e11f712972dac2abcc3366ba45344"
+    },
+    {
+      "bytes": 782870,
+      "path": "portraits/Hammurabi.png",
+      "sha256": "19d32d66acc42297e49c06de2fb84cbd116c769be021cfbfab4163b079a6b087"
+    },
+    {
+      "bytes": 5794,
+      "path": "portraits/index.json",
+      "sha256": "ea8825f036afdc06a1cd6af90a7c891069f048cbc7088fb270891d4c13ad8278"
+    },
+    {
+      "bytes": 463149,
+      "path": "portraits/Knight.png",
+      "sha256": "39fcb882c1c30d3145a2290883415c63a6bb30de40d1e921a302877c162a7ccb"
+    },
+    {
+      "bytes": 564416,
+      "path": "portraits/Medina.png",
+      "sha256": "2bde18ecbf613d6427916a2f8d58c017fa7954db2381c129470ed86009d1905a"
+    },
+    {
+      "bytes": 652618,
+      "path": "portraits/Morrigan.png",
+      "sha256": "ad64671acbf18c1b7be797d14b029197489c2865520f697c261fbee2af7c6c64"
+    },
+    {
+      "bytes": 771711,
+      "path": "portraits/Nauvoo.png",
+      "sha256": "2891c984e72d0f633924be966fd5fee98d572ea4b52e8ad5e450ade005b2733e"
+    },
+    {
+      "bytes": 531193,
+      "path": "portraits/Pella.png",
+      "sha256": "33d2d2488f74ba23150a9d2571a4fff22110f5bd9a989efb17f046cde36c4a73"
+    },
+    {
+      "bytes": 479498,
+      "path": "portraits/Razorback.png",
+      "sha256": "897fe3532a063eae9ac544f47a78a2309aae29df0bdba75760a41c268ec0f852"
+    },
+    {
+      "bytes": 442644,
+      "path": "portraits/Rocinante.png",
+      "sha256": "74e65f59d7318922cb7a95136830f926f4a98c72e04ab72c45010c2012a3a71b"
+    },
+    {
+      "bytes": 783375,
+      "path": "portraits/Scirocco.png",
+      "sha256": "7e9e29e41b0a1cc2adc8e6f0562649d771428c103d9cd9195a23a698b3ac81a2"
+    },
+    {
+      "bytes": 649833,
+      "path": "portraits/Scopuli.png",
+      "sha256": "c8b5ac85b1a12d165d0df3a9244b7cb6cefc97d67ba1ee05f0d42a9f2a8b7058"
+    },
+    {
+      "bytes": 305691,
+      "path": "portraits/SolRing.png",
+      "sha256": "3862fd457bbc87078334eeff818031bd7d5da78b244ad1465c6771be38138d2d"
+    },
+    {
+      "bytes": 573419,
+      "path": "portraits/Tynan.png",
+      "sha256": "37b5c69e3b7c7518fb1778a6124ad7b7e30c9ad9823d1fd9d699c4ab2296ffec"
+    },
+    {
       "bytes": 8831,
+      "path": "rocinante-effects.js",
       "sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853"
     },
     {
-      "path": "vendor/three/build/three.core.js",
       "bytes": 1443056,
+      "path": "vendor/three/build/three.core.js",
       "sha256": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759"
     },
     {
-      "path": "vendor/three/build/three.module.js",
       "bytes": 650153,
+      "path": "vendor/three/build/three.module.js",
       "sha256": "bbf5ed13fe4373f5bd38b14ea8e62e9f157327da5638edc6d3863e08b167c9c7"
     },
     {
-      "path": "vendor/three/examples/jsm/controls/OrbitControls.js",
       "bytes": 40504,
+      "path": "vendor/three/examples/jsm/controls/OrbitControls.js",
       "sha256": "faabb4e8dfd9235ee4a9fd7c9a3d75f90f1689dbd4944bd6fd32117dacec5f93"
     },
     {
-      "path": "vendor/three/examples/jsm/environments/RoomEnvironment.js",
       "bytes": 4960,
+      "path": "vendor/three/examples/jsm/environments/RoomEnvironment.js",
       "sha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4"
     },
     {
-      "path": "vendor/three/examples/jsm/loaders/GLTFLoader.js",
       "bytes": 114959,
+      "path": "vendor/three/examples/jsm/loaders/GLTFLoader.js",
       "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2"
     },
     {
-      "path": "vendor/three/examples/jsm/math/SimplexNoise.js",
       "bytes": 15148,
+      "path": "vendor/three/examples/jsm/math/SimplexNoise.js",
       "sha256": "4b1455617135e6b477de76244de07547d95570643379b72f4758e50161b06072"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/EffectComposer.js",
       "bytes": 8501,
+      "path": "vendor/three/examples/jsm/postprocessing/EffectComposer.js",
       "sha256": "4e079a5886152d7e529a59aef644e968ab4d32c6a33ce016b36bf29b2eac26f7"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/MaskPass.js",
       "bytes": 4694,
+      "path": "vendor/three/examples/jsm/postprocessing/MaskPass.js",
       "sha256": "7cd08eee9d5d6f5578beaddbdcbe9c384f6873810af27f22ab7db3ceeb127aa3"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/OutputPass.js",
       "bytes": 4184,
+      "path": "vendor/three/examples/jsm/postprocessing/OutputPass.js",
       "sha256": "02e4a261af34de71338185e9e87f0cbe5cba9115608d984363e1269dec1d2272"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/Pass.js",
       "bytes": 4218,
+      "path": "vendor/three/examples/jsm/postprocessing/Pass.js",
       "sha256": "444b409c235ead986893c472e720da1b779a56985c7d10b279c7944b52bd61c5"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/RenderPass.js",
       "bytes": 4280,
+      "path": "vendor/three/examples/jsm/postprocessing/RenderPass.js",
       "sha256": "817f6c3cdcd0fd41515d112359ea0532568eefb5aabd3b33903957ebca1b8a6a"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
       "bytes": 3228,
+      "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
       "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/SSAOPass.js",
       "bytes": 13443,
+      "path": "vendor/three/examples/jsm/postprocessing/SSAOPass.js",
       "sha256": "59944f833d10330f6bdd205260ad06a8ef2bd12a115e4101d81578b249627e3f"
     },
     {
-      "path": "vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
       "bytes": 15445,
+      "path": "vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
       "sha256": "8718ac279d97af5460327e1483fc21e44aa6611601d45c835bda0ae36bcb3b06"
     },
     {
-      "path": "vendor/three/examples/jsm/shaders/CopyShader.js",
       "bytes": 729,
+      "path": "vendor/three/examples/jsm/shaders/CopyShader.js",
       "sha256": "a33057d5ac91c43304c186ac0e8816e62bb2ed471d3a00ff3018dfd5c0389718"
     },
     {
-      "path": "vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
       "bytes": 1359,
+      "path": "vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
       "sha256": "defd5558ebf217de21275573c7e4365cbe62da34e46bd7f86ca2517a909536b6"
     },
     {
-      "path": "vendor/three/examples/jsm/shaders/OutputShader.js",
       "bytes": 1876,
+      "path": "vendor/three/examples/jsm/shaders/OutputShader.js",
       "sha256": "353479f77a8d7e2629d49ccac9fc2f5dbfdda5442e0adf867b00377a2fcb0cb2"
     },
     {
-      "path": "vendor/three/examples/jsm/shaders/SSAOShader.js",
       "bytes": 6968,
+      "path": "vendor/three/examples/jsm/shaders/SSAOShader.js",
       "sha256": "034dad98927ed8f2677a19ce56d4da1212ce5070ed2666157106025dc260bb55"
     },
     {
-      "path": "vendor/three/examples/jsm/utils/BufferGeometryUtils.js",
       "bytes": 37621,
+      "path": "vendor/three/examples/jsm/utils/BufferGeometryUtils.js",
       "sha256": "5c552223a9309883743b80538d6e9cdb45e3227f30d3ec56fb2c39b46e78d595"
     },
     {
-      "path": "vendor/three/examples/jsm/utils/SkeletonUtils.js",
       "bytes": 11535,
+      "path": "vendor/three/examples/jsm/utils/SkeletonUtils.js",
       "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
     },
     {
-      "path": "vendor/three/LICENSE",
       "bytes": 1081,
+      "path": "vendor/three/LICENSE",
       "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
     },
     {
+      "bytes": 19410,
       "path": "viewer.js",
-      "bytes": 17551,
-      "sha256": "764108eacda29493ee678a67d4bc634a56f7c2240d1b98f0aafd9a291a852c5a"
+      "sha256": "eb14365c40ac5b97da58f544f359b9171477474f39629935d117da3de708f53b"
     }
   ]
 }

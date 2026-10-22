@@ -70,7 +70,7 @@ def verify():
         print('PASS:',row['id'],f'{triangles:,}','triangles, full maps and exact hashes')
     print('PASS:',len(catalog),'desktop ships,',len(listed),'bundle files; no native build or launch')
 
-def sync(ships,rollback):
+def sync(ships,rollback,add=False):
     # Explicit native-id=studio-id mapping keeps separate era assets intact.
     sources=dict(item.split('=',1) if '=' in item else (item,item) for item in ships)
     require(len(sources)==len(ships),'Duplicate requested native ship')
@@ -83,27 +83,30 @@ def sync(ships,rollback):
     source_manifest={x['file']:x for x in read(STUDIO/'manifest.json')['assets']}
     for ship in ships:
         old=next((x for x in catalog if x['id']==ship),None)
-        require(old is not None and sources[ship] in source,'Ship absent from an existing catalogue: '+ship)
+        require(sources[ship] in source,'Ship absent from Studio catalogue: '+ship)
+        require(old is not None or add,'New native models require --add: '+ship)
+        if old is None:require(not local(DEST,'models/'+ship+'.glb.gz').exists(),'Unlisted native model already exists: '+ship)
         entry=source[sources[ship]];data=local(STUDIO,entry['model']).read_bytes()
         require(sha(data)==source_manifest[entry['model']]['gzip_sha256'],'Reviewed compressed source checksum')
         raw,doc,maps,triangles=inspect(data)
         require(sha(raw)==entry['sha256'] and triangles==entry['triangles'],'Reviewed source checksum/count')
         row={k:v for k,v in entry.items() if not k.startswith('before') and k!='references'}
-        row.update(id=ship,sourceId=sources[ship],model=old['model'],sourceBytes=len(raw),compressedBytes=len(data),compression='gzip-lossless',
+        row.update(id=ship,sourceId=sources[ship],model=old['model'] if old else 'models/'+ship+'.glb.gz',sourceBytes=len(raw),compressedBytes=len(data),compression='gzip-lossless',
             compressedSha256=sha(data),renderMaps=maps,lightUnitScale=1/683)
         planned.append((ship,old,row,data))
     rollback.mkdir(parents=True)
-    names=['catalog.json','manifest.json','ATTRIBUTION.txt']+[x[1]['model'] for x in planned]
+    names=['catalog.json','manifest.json','ATTRIBUTION.txt']+[x[1]['model'] for x in planned if x[1]]
     backups=[]
     for name in names:
         source_path=local(DEST,name);target=local(rollback,name);target.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(source_path,target)
         require(sha(target.read_bytes())==sha(source_path.read_bytes()),'Rollback copy mismatch')
         backups.append({'path':name,'sha256':sha(target.read_bytes())})
-    write(rollback/'receipt.json',{'files':backups,'ships':ships})
+    write(rollback/'receipt.json',{'files':backups,'ships':ships,'created':[x[2]['model'] for x in planned if not x[1]]})
     for ship,old,row,data in planned:
-        target=local(DEST,old['model']);temp=target.with_name(target.name+'.new');temp.write_bytes(data);temp.replace(target)
-        catalog[catalog.index(old)]=row
+        target=local(DEST,row['model']);temp=target.with_name(target.name+'.new');temp.write_bytes(data);temp.replace(target)
+        if old:catalog[catalog.index(old)]=row
+        else:catalog.append(row)
     for old,new in zip(before,catalog):
         require(old['id'] in ships or old==new,'Unrequested catalogue change')
     write(DEST/'catalog.json',catalog)
@@ -121,10 +124,11 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check',action='store_true');parser.add_argument('--ships',nargs='+')
     parser.add_argument('--rollback',type=Path)
+    parser.add_argument('--add',action='store_true',help='Explicitly admit a new native catalogue entry')
     args=parser.parse_args()
     if args.check:
-        require(not args.ships and not args.rollback,'Check mode is read-only');verify()
+        require(not args.ships and not args.rollback and not args.add,'Check mode is read-only');verify()
     else:
-        require(args.ships and args.rollback,'Sync requires --ships and --rollback');sync(args.ships,args.rollback)
+        require(args.ships and args.rollback,'Sync requires --ships and --rollback');sync(args.ships,args.rollback,args.add)
 
 if __name__=='__main__':main()

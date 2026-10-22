@@ -1,22 +1,22 @@
 param(
     [Parameter(Mandatory)][int]$BuildNumber,
-    [string]$ExpectedSha,
+    [Parameter(Mandatory)][string]$ExpectedSha,
+    [ValidateSet('Review','Publish','Install')][string]$Phase = 'Review',
     [string]$JenkinsHome = 'C:\Jenkins\home'
 )
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $repoRoot
-if (!$ExpectedSha) {
-    $ExpectedSha = (git rev-parse HEAD).Trim()
-    if ($LASTEXITCODE -ne 0) { throw 'Cannot identify the release commit.' }
-}
 if ($ExpectedSha -notmatch '^[0-9a-f]{40}$' -or $BuildNumber -lt 1) { throw 'A full pushed source SHA and build number are required.' }
-$version = ([xml](Get-Content SensorPanel/SensorPanel.csproj -Raw)).Project.PropertyGroup.Version
+$projectSource = git show "${ExpectedSha}:SensorPanel/SensorPanel.csproj"
+if ($LASTEXITCODE -ne 0) { throw 'Cannot read the project version from the requested committed source.' }
+$version = ([xml]($projectSource -join "`n")).Project.PropertyGroup.Version
+if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid committed release version.' }
 $releaseRoot = Join-Path $repoRoot "artifacts\release-$version"
 New-Item -ItemType Directory -Path $releaseRoot -Force | Out-Null
 Start-Transcript -LiteralPath (Join-Path $releaseRoot 'release-flow.txt') -Append
 try {
-    Write-Host "Sensor panel release $version, exact SHA $ExpectedSha, Jenkins X890-CI #$BuildNumber."
+    Write-Host "Sensor panel $Phase $version, exact SHA $ExpectedSha, Jenkins X890-CI #$BuildNumber."
     Write-Host 'Waiting for the authorized Jenkins build; its console is mirrored here. Fleet Studio will not be launched, installed or deployed.'
     $buildRoot = Join-Path $JenkinsHome "jobs\X890-CI\builds\$BuildNumber"
     $deadline = [datetime]::UtcNow.AddMinutes(50)
@@ -70,6 +70,14 @@ try {
     }
     $sums | Set-Content -LiteralPath (Join-Path $installerRoot 'SHA256SUMS.txt') -Encoding ascii
     $tag = "v$version"
+    $review = [pscustomobject]@{Phase=$Phase;Version=$version;SourceHead=$ExpectedSha;CiBuild=$BuildNumber;CiResult='SUCCESS';InstallerSHA256=$manifest.InstallerSHA256;Published=$false;MonitorInstalled=$false;FleetStudioInstalled=$false;FleetStudioDeployed=$false;CompletedAt=[datetimeoffset]::Now}
+    if ($Phase -eq 'Review') {
+        $review | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $releaseRoot 'candidate-review.json') -Encoding utf8
+        $review | Format-List | Out-Host
+        Write-Host 'Candidate review complete. Publication and installation require separately authorized explicit phases.'
+        return
+    }
+    if ($Phase -eq 'Publish') {
     $existingTag = git ls-remote --tags origin "refs/tags/$tag"
     if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect the remote release tag.' }
     if ($existingTag) { throw "Remote tag $tag already exists; inspect its source before publication." }
@@ -77,11 +85,13 @@ try {
     if ($LASTEXITCODE -eq 0) { throw "Release $tag already exists; inspect it before retrying publication." }
     $releaseNotes = git show "${ExpectedSha}:Packaging/ReleaseNotes-$version.md"
     if ($LASTEXITCODE -ne 0) { throw 'Cannot read committed release notes.' }
+    if (($releaseNotes -join "`n") -match '(?im)^\*\*DRAFT:') { throw 'Release notes are still draft. Nothing published or installed.' }
     $notesPath = Join-Path $releaseRoot 'published-release-notes.md'
     $releaseNotes | Set-Content -LiteralPath $notesPath -Encoding utf8
     Write-Host "Publishing $tag from successful Jenkins #$BuildNumber / $ExpectedSha."
-    gh release create $tag --target $ExpectedSha --title "AORUS Sensor Panel FAN MADE $tag - Anubis and fleet lighting" --notes-file $notesPath (Join-Path $installerRoot 'AORUS-Sensor-Panel-FAN-MADE-Setup.exe') (Join-Path $installerRoot 'README.txt') (Join-Path $installerRoot 'SHA256SUMS.txt')
+    gh release create $tag --target $ExpectedSha --title "AORUS Sensor Panel FAN MADE $tag" --notes-file $notesPath (Join-Path $installerRoot 'AORUS-Sensor-Panel-FAN-MADE-Setup.exe') (Join-Path $installerRoot 'README.txt') (Join-Path $installerRoot 'SHA256SUMS.txt')
     if ($LASTEXITCODE -ne 0) { throw 'GitHub release publication failed; installation has not started.' }
+    }
     $published = gh release view $tag --json url,assets | ConvertFrom-Json
     if ($LASTEXITCODE -ne 0) { throw 'Cannot verify published release.' }
     $publishedTag = git ls-remote --tags origin "refs/tags/$tag"
@@ -93,6 +103,13 @@ try {
     foreach ($name in @('AORUS-Sensor-Panel-FAN-MADE-Setup.exe','README.txt','SHA256SUMS.txt')) {
         if ((Get-FileHash -LiteralPath (Join-Path $downloadRoot $name)).Hash -ne (Get-FileHash -LiteralPath (Join-Path $installerRoot $name)).Hash) { throw "Public download differs: $name" }
     }
+    if ($Phase -eq 'Publish') {
+        [pscustomobject]@{Version=$version;SourceHead=$ExpectedSha;CiBuild=$BuildNumber;InstallerSHA256=$manifest.InstallerSHA256;PublicUrl=$published.url;PublicDownloadVerified=$true;MonitorInstalled=$false;FleetStudioInstalled=$false;FleetStudioDeployed=$false;CompletedAt=[datetimeoffset]::Now} |
+            ConvertTo-Json | Set-Content -LiteralPath (Join-Path $releaseRoot 'publication.json') -Encoding utf8
+        Write-Host 'Publication verified. Installation has not run; request the separately authorized Install phase.'
+        return
+    }
+    if ($Phase -ne 'Install') { throw 'An explicit Install phase is required before touching the installed product.' }
     $registryPath = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{1B7C308F-694A-4C92-8C95-218009316F78}_is1'
     $installed = Get-ItemProperty -LiteralPath $registryPath
     $panelRoot = [IO.Path]::GetFullPath($installed.InstallLocation).TrimEnd('\')

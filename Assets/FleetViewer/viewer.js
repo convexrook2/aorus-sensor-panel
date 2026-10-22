@@ -8,6 +8,7 @@ import {SSAOPass} from 'three/addons/postprocessing/SSAOPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {makeShipEffects} from './rocinante-effects.js';
 import {EmissiveGlowPass} from './light-glow.js';
+import {makePortal} from './portal.js';
 
 const canvas=document.querySelector('canvas'),status=document.querySelector('#status');
 const post=message=>window.chrome?.webview?.postMessage(message);
@@ -56,9 +57,10 @@ try {
  // Inspection rotates and zooms about the ship, never translates it off-screen.
  controls.enablePan=false;controls.zoomToCursor=false;
  let shipEffects=null;
- let root=null,entry=null,interactive=false,holotable=false,motion=true,active=true,dirty=true,frame=0,last=0,lastRender=0,frames=0,loadToken=0;
+ const motionFrameInterval=1000/30;let efficient=false;
+ let root=null,entry=null,interactive=false,holotable=false,motion=true,active=true,dirty=true,frame=0,last=0,nextMotionFrame=0,frames=0,loadToken=0;
  let radius=1,height=3.2,modelSha='',modelStats={},raf=0,seconds=0,pendingId=null,viewWidth=0,viewHeight=0,viewRatio=0;
- let lastFrameStats={},profile=null;
+ let lastFrameStats={},profile=null,portal=null,aperture=null,gateNormal=null;
  const gl=renderer.getContext(),gpuInfo=gl.getExtension('WEBGL_debug_renderer_info');
  const timerQuery=gl.getExtension('EXT_disjoint_timer_query_webgl2');
  const gpu=gpuInfo?gl.getParameter(gpuInfo.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);
@@ -74,11 +76,11 @@ try {
  }
  function resize(){if(viewWidth===innerWidth&&viewHeight===innerHeight&&viewRatio===devicePixelRatio)return;viewWidth=innerWidth;viewHeight=innerHeight;viewRatio=devicePixelRatio;renderer.setPixelRatio(devicePixelRatio);renderer.setSize(innerWidth,innerHeight,false);composer.setPixelRatio(devicePixelRatio);composer.setSize(innerWidth,innerHeight);fit();invalidate();}
  function reset(){
-   if(root)root.rotation.y=interactive?0:-.62;
+   if(root)root.rotation.y=interactive?0:-.20;
    displayStage.visible=holotable&&!!root;
    displayStage.scale.set(Math.max(.8,radius*1.35),1,Math.max(.8,radius*1.35));
    displayStage.position.y=-height/2-.10;
-   camera.up.set(0,1,0);camera.position.set(...(holotable||interactive?[4,1.7,6]:[0,.05,8]));
+   camera.up.set(0,1,0);camera.position.set(...(holotable||interactive?[4,1.7,6]:[3.8,3.2,6]));
    controls.target.set(0,0,0);camera.zoom=1;controls.update();fit();renderer.shadowMap.needsUpdate=true;invalidate();
  }
  function disposeRoot(obj){
@@ -103,7 +105,7 @@ try {
    try {
    // Release the previous GPU resources before allocating the next full model.
    lightGlow.reset();shipEffects?.dispose();shipEffects=null;
-   if(root){scene.remove(root);disposeRoot(root);root=null;}entry=null;invalidate();
+   if(root){scene.remove(root);disposeRoot(root);root=null;}entry=null;portal=null;aperture=null;gateNormal=null;invalidate();
    const response=await fetch(selected.model,previewFetch);if(!response.ok)throw Error('Missing model: '+id);
    const raw=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
    const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',raw)),b=>b.toString(16).padStart(2,'0')).join('');
@@ -118,12 +120,21 @@ try {
    const max=Math.max(size.x,size.y,size.z);if(!(max>0&&Number.isFinite(max)))throw Error('Invalid ship bounds');
    gltf.scene.position.sub(center);oriented.scale.setScalar(3.2/max);
    const axis=size.x>=size.y&&size.x>=size.z?new THREE.Vector3(1,0,0):size.z>size.y?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
-   oriented.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,entry.flipLongitudinal?-1:1,0));
+   // The gate is already upright in its source XY plane; it has no ship nose.
+   if(entry.orientation!=='gate')oriented.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,entry.flipLongitudinal?-1:1,0));
+   else gateNormal=new THREE.Vector3(0,0,1).applyQuaternion(oriented.quaternion).toArray();
    oriented.traverse(o=>{
      // Updated catalogue entries use the same source-light calibration as Fleet Studio.
      if((o.isPointLight||o.isSpotLight)&&entry.lightUnitScale){o.intensity*=entry.lightUnitScale*(3.2/max)**2;if(o.distance)o.distance*=3.2/max;}
      if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;for(const m of Array.isArray(o.material)?o.material:[o.material])for(const t of Object.values(m))if(t?.isTexture)t.anisotropy=renderer.capabilities.getMaxAnisotropy();
+     if(entry.orientation==='gate'&&/^Active[ _]aperture/.test(o.name)){
+       if(aperture)throw Error('Multiple gate apertures');
+       aperture=o;portal=makePortal();
+       for(const material of Array.isArray(o.material)?o.material:[o.material])material.dispose();
+       o.material=portal;o.castShadow=false;o.receiveShadow=false;
+     }
    });
+   if(entry.orientation==='gate'&&!aperture)throw Error('The separate gate aperture was not found');
    // Reviewed ships opt into their own registered exhaust. Source model
    // statistics are captured above, before separate effect meshes are added.
    if(entry.id==='Rocinante'||entry.id==='Anubis'){
@@ -145,6 +156,7 @@ try {
  }
  function render(){
    shipEffects?.tick(seconds);
+   if(portal)portal.uniforms.time.value=seconds;
    ao.ssaoMaterial.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);
    ao.ssaoMaterial.uniforms.cameraInverseProjectionMatrix.value.copy(camera.projectionMatrixInverse);
    // Diagnostic timer queries exist only during an explicitly requested review.
@@ -166,19 +178,23 @@ try {
    if(sampling)profile.cpu.push(performance.now()-started);
    if(profile?.state==='collecting'&&profile.cpu.length>=profile.requested&&!profile.pending.length)profile.state='complete';
    lastFrameStats={drawCalls:renderer.info.render.calls,submittedTriangles:renderer.info.render.triangles};
-   dirty=false;frames++;lastRender=performance.now();
+   dirty=false;frames++;
  }
  function tick(t){
    raf=0;const dt=last?Math.min((t-last)/1000,.1):0;last=t;
    if(!active||document.hidden)return;
-   if(root&&motion&&!interactive){
+   if(root&&motion){
      root.rotation.y+=dt*Math.PI*2/30;seconds+=dt;
-     if(!holotable||t-lastRender>=1000/30-.5){
+     if(!efficient||t>=nextMotionFrame){
+       // Keep elapsed-time rotation on rAF, but draw motion at 30 Hz. Carry the
+       // remainder so high-refresh displays do not round every interval down.
+       // Explicit control/resize invalidations still draw on the next frame.
+       if(efficient)nextMotionFrame=t+motionFrameInterval-(nextMotionFrame?(t-nextMotionFrame)%motionFrameInterval:0);
        renderer.shadowMap.needsUpdate=true;dirty=true;
      }
    }
    if(dirty)render();frame++;
-   if(motion&&!interactive||dirty)schedule();
+   if(motion||dirty)schedule();
  }
  function diagnose(){
    camera.updateMatrixWorld(true);
@@ -187,23 +203,29 @@ try {
    return {id:entry?.id??null,title:entry?.title??null,sourceSha256:modelSha,expectedSha256:entry?.sha256,
    ...modelStats,expectedTriangles:entry?.triangles,expectedMaps:entry?.renderMaps,gpu,webgl2:gl instanceof WebGL2RenderingContext,
    shadows:renderer.shadowMap.enabled,ambientOcclusion:ao.enabled,interactive,holotable,motion,active,
-   displayStage:displayStage.visible,rotationRadians:root?.rotation.y??0,frameLimit:holotable?30:null,
+   displayStage:displayStage.visible,rotationRadians:root?.rotation.y??0,frameLimit:efficient?30:null,graphicsMode:efficient?'Efficient':'FullFidelity',
+   orientation:entry?.orientation??'ship',gateNormal,
+   aperture:aperture?{visible:aperture.visible,time:portal.uniforms.time.value,doubleSided:portal.side===THREE.DoubleSide,name:aperture.name}:null,
    transparent:true,pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,
    frames,animationSeconds:seconds,modelReady:!!root,renderPipeline:'Fleet Studio / Three.js PBR',
    engineEffects:shipEffects?.stats()??null,toneMapping:'AgX',geometryReduced:false,texturesResampled:false,lastFrameStats,
    renderProfile:profile?{state:profile.state,samples:profile.cpu.length,gpuSamples:profile.gpu.length,gpuTimerSupported:!!timerQuery,
      gpuMilliseconds:profile.gpu.length?profile.gpu.reduce((a,b)=>a+b,0)/profile.gpu.length:null,
      cpuSubmissionMilliseconds:profile.cpu.length?profile.cpu.reduce((a,b)=>a+b,0)/profile.cpu.length:null}:null,
-   framing:{centreNdc:{x:centre.x,y:centre.y},boundsCentreNdc:{x:boundsCentre.x,y:boundsCentre.y},target:controls.target.toArray(),panEnabled:controls.enablePan,zoom:camera.zoom,
+   framing:{centreNdc:{x:centre.x,y:centre.y},boundsCentreNdc:{x:boundsCentre.x,y:boundsCentre.y},cameraPosition:camera.position.toArray(),target:controls.target.toArray(),panEnabled:controls.enablePan,zoom:camera.zoom,
      cssWidth:innerWidth,cssHeight:innerHeight,projectionAspect:(camera.right-camera.left)/(camera.top-camera.bottom)}};}
  function receive(message){
    if(message.type==='scene'){
+     const nextEfficient=message.graphicsMode==='Efficient';if(nextEfficient!==efficient){efficient=nextEfficient;nextMotionFrame=0;invalidate();}
      const changed=interactive!==!!message.interactive||holotable!==!!message.holotable;
-     holotable=!!message.holotable;interactive=!!message.interactive&&!holotable;controls.enabled=interactive;
+     holotable=!!message.holotable;interactive=!!message.interactive;controls.enabled=interactive;
+     // Prepared portraits bake the glow against their dark display background.
+     // This avoids browser premultiplied-alpha artefacts in PNG captures.
+     scene.background=holotable?null:new THREE.Color(0x040c13);
      if(message.stageColour)for(const ring of stageRings)ring.material.color.set(message.stageColour);
      if(changed)reset();load(message.id).catch(failure);
    } else if(message.type==='activity'){
-     motion=!!message.motion;active=!!message.active;last=0;
+     motion=!!message.motion;active=!!message.active;last=0;nextMotionFrame=0;
      if(!active)cancelScheduled();else invalidate();
    } else if(message.type==='resize')resize();
    else if(message.type==='reset')reset();
@@ -218,7 +240,7 @@ try {
    if(profile?.state==='collecting')return;
    profile={state:'collecting',requested:Math.min(120,Math.max(1,requested)),cpu:[],gpu:[],pending:[]};invalidate();
  }};
- addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{last=0;if(document.hidden)cancelScheduled();else invalidate();});
+ addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{last=0;nextMotionFrame=0;if(document.hidden)cancelScheduled();else invalidate();});
  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();failure(Error('Graphics context was lost. Reopen the panel to restore it.'));});
  addEventListener('keydown',event=>{
    if(!interactive)return;

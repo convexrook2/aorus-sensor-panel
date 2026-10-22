@@ -1,0 +1,69 @@
+--- a/SensorPanel/PanelTheme.cs
++++ b/SensorPanel/PanelTheme.cs
+@@ -75,14 +75,6 @@
+     {
+         foreach (var ship in ShipProfile.All.Skip(8))
+         {
+-            if (ship.Id=="Arboghast")
+-            {
+-                // Karl Crosby's Season 2 flight-deck concepts: pale console
+-                // shells, navy inserts, dark screen wells and restrained orange trim.
+-                yield return Create("Arboghast","Expanse · UNS ARBOGHAST","#0B1320","#EEEFE8","#B9C5D0","#E6AC68","#88979E","#142B47","#070F1B","#B8BFBD","#EEEFE8")
+-                    with { ConsoleStyle="Arboghast",ShipId="Arboghast" };
+-                continue;
+-            }
+             if (ship.Id=="Pella")
+             {
+                 yield return Create("Pella","Expanse · Pella","#050F1B","#E2E2CF","#9FB8C2","#DD315E","#503047","#0A1826","#050F1B","#0A1520","#E2E2CF")
+--- a/SensorPanel/ShipPanel.cs
++++ b/SensorPanel/ShipPanel.cs
+@@ -341,22 +341,6 @@
+     {
+         var card = new Canvas { ClipToBounds = true };
+         Put(this, card, bounds);
+-        if(theme.ConsoleStyle=="Arboghast")
+-        {
+-            // Frame the existing readings in the flight-deck material language.
+-            // Instrument bounds, bindings and shared theme layout stay unchanged.
+-            var outline=new StreamGeometry();
+-            using(var path=outline.Open())
+-            {
+-                path.BeginFigure(new Point(9,1),true,true);
+-                path.PolyLineTo(new Point[] {new(bounds.Width-9,1),new(bounds.Width-1,9),new(bounds.Width-1,bounds.Height-9),new(bounds.Width-9,bounds.Height-1),new(9,bounds.Height-1),new(1,bounds.Height-9),new(1,9)},true,false);
+-            }
+-            outline.Freeze();
+-            card.Children.Add(new System.Windows.Shapes.Path {Data=outline,Fill=theme.Surface,Stroke=theme.Chrome,StrokeThickness=3,IsHitTestVisible=false});
+-            Put(card,new Border {Background=theme.Accent},new(11,3,Math.Min(68,bounds.Width/4),1));
+-            Put(card,new Border {Background=theme.Accent,Opacity=.65},new(bounds.Width-4,13,1,Math.Min(36,bounds.Height/3)));
+-            return card;
+-        }
+         if(theme.RociConsole)
+         {
+             RociInstrumentPlane(card,bounds,theme);
+@@ -377,7 +361,7 @@
+         Brush ink = key.Contains("Power", StringComparison.OrdinalIgnoreCase) || key == "voltage" ? Brushes.LightSalmon
+             : key == "fps" || key == "download" ? Brushes.Aquamarine
+             : key is "fpsApplication" or "uptime" ? theme.Foreground : theme.Accent;
+-        if(theme.ConsoleStyle is "Pella" or "Arboghast" || theme.RociConsole)ink=theme.Foreground;
++        if(theme.ConsoleStyle=="Pella" || theme.RociConsole)ink=theme.Foreground;
+         var value = Bind(key, size, ink, suffix);
+         if (key == "fps") value.FontWeight=FontWeights.SemiBold;
+         value.FontFamily = theme.ConsoleStyle is "Mars" or "Belt" or "Patrol" or "Landing" ? new FontFamily("Consolas") : new FontFamily("Segoe UI");
+--- a/SensorPanel/PanelWindow.cs
++++ b/SensorPanel/PanelWindow.cs
+@@ -862,14 +862,7 @@
+     {
+         if(theme.ShipConsole && shipPanel?.HasShipViewport==true)
+         {
+-            try
+-            {
+-                await shipPanel.ShipViewport.WaitForReadyAsync();
+-                // The WebView model-ready message can precede its composition
+-                // image reaching WPF. Explicit captures need that presented frame.
+-                await Task.Delay(180);
+-                await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.Render);
+-            }
++            try{await shipPanel.ShipViewport.WaitForReadyAsync();}
+             catch(Exception ex) when(ex is TimeoutException or InvalidOperationException or TaskCanceledException)
+             {File.WriteAllText(Path.Combine(PanelPaths.Artifacts,"fleet-capture-error.txt"),ex.ToString());}
+         }

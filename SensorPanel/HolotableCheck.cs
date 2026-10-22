@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace SensorPanel;
 
-// Explicit, owner-visible live review flow. No timer or work in normal runs.
+// Explicit, owner-visible LIVE review flow. No timer or work in normal runs.
 internal sealed partial class PanelWindow
 {
     private async Task CheckLiveHolotableAsync(CancellationToken token)
@@ -19,20 +19,22 @@ internal sealed partial class PanelWindow
         {
             if(shipPanel is null || !theme.ShipConsole || !shipPanel.HolotableAvailable)
                 throw new InvalidOperationException("Select a full-model ship for the live holotable check.");
-            string? expectedHash=null;
-            async Task Record(string phase)
+            if(!shipPanel.HasShipViewport)throw new InvalidOperationException("The showcase renderer is missing.");
+            var portrait=JsonSerializer.SerializeToElement(shipPanel.PortraitDiagnostics,JsonOptions);
+            string? expectedHash=portrait.GetProperty("receipt").GetProperty("sourceSha256").GetString();
+            checks.Add(new{Phase="showcase-before-open",FallbackPortrait=portrait,Renderer=await shipPanel.ShipViewport.DiagnoseAsync(),LiveShipRenderer=true});
+            async Task<JsonElement> Record(string phase)
             {
                 UpdateLayout();
-                var deadline=DateTimeOffset.UtcNow.AddSeconds(12);
+                var deadline=DateTimeOffset.UtcNow.AddSeconds(15);
                 JsonElement renderer;
                 do
                 {
                     await Task.Delay(200,token);
                     renderer=await shipPanel.ShipViewport.DiagnoseAsync();
                     double aspect=shipPanel.ShipViewport.ActualWidth/shipPanel.ShipViewport.ActualHeight;
-                    var frame=renderer.GetProperty("framing");
-                    if(renderer.GetProperty("holotable").GetBoolean() && !renderer.GetProperty("interactive").GetBoolean()
-                        && Math.Abs(frame.GetProperty("projectionAspect").GetDouble()-aspect)<.015)break;
+                    if(renderer.GetProperty("holotable").GetBoolean() && renderer.GetProperty("interactive").GetBoolean()
+                        && Math.Abs(renderer.GetProperty("framing").GetProperty("projectionAspect").GetDouble()-aspect)<.015)break;
                     if(DateTimeOffset.UtcNow>deadline)throw new TimeoutException("Holotable layout did not settle: "+phase);
                 }while(true);
                 shipPanel.CheckHolotableFraming();
@@ -42,31 +44,56 @@ internal sealed partial class PanelWindow
                         if(Math.Abs(framing.GetProperty(centre).GetProperty(axis).GetDouble())>(centre=="centreNdc"?.005:.08))
                             throw new InvalidOperationException("Ship moved off-centre: "+phase+" / "+centre+" / "+axis);
                 if(framing.GetProperty("panEnabled").GetBoolean())throw new InvalidOperationException("Panning can move the ship off-centre.");
-                if(!renderer.GetProperty("displayStage").GetBoolean() || renderer.GetProperty("frameLimit").GetInt32()!=30)
-                    throw new InvalidOperationException("The passive stage or its render limit is missing.");
-                string? hash=renderer.GetProperty("sourceSha256").GetString();expectedHash??=hash;
-                if(hash!=expectedHash)throw new InvalidOperationException("The model changed during holotable review.");
-                checks.Add(new{Phase=phase,Renderer=renderer});
+                if(!renderer.GetProperty("displayStage").GetBoolean() || renderer.GetProperty("frameLimit") is var frameLimit
+                    && frameLimit.ValueKind!=JsonValueKind.Null && frameLimit.GetInt32()!=30)
+                    throw new InvalidOperationException("The full-detail stage or its optional animation limit is missing.");
+                if(renderer.GetProperty("sourceSha256").GetString()!=expectedHash)
+                    throw new InvalidOperationException("The holotable differs from the accepted portrait source.");
+                checks.Add(new{Phase=phase,Renderer=renderer});return renderer;
             }
             shipPanel.CheckHolotable();
             await Record("first-open-without-reset");
             await shipPanel.ShipViewport.CaptureAsync(Path.Combine(PanelPaths.Artifacts,"live-holotable-first-open.png"));
-            await shipPanel.ShipViewport.StartRenderProfileAsync();
-            var turningBefore=await shipPanel.ShipViewport.DiagnoseAsync();
-            var rotationWatch=System.Diagnostics.Stopwatch.StartNew();
-            await Task.Delay(3000,token);
-            var turningAfter=await shipPanel.ShipViewport.DiagnoseAsync();
-            if(turningAfter.GetProperty("renderProfile").GetProperty("state").GetString()!="complete")
-                throw new InvalidOperationException("The requested renderer profile did not complete.");
-            double renderedFps=(turningAfter.GetProperty("frames").GetInt64()-turningBefore.GetProperty("frames").GetInt64())/rotationWatch.Elapsed.TotalSeconds;
-            if(turningAfter.GetProperty("animationSeconds").GetDouble()-turningBefore.GetProperty("animationSeconds").GetDouble()<1
-                || Math.Abs(turningAfter.GetProperty("rotationRadians").GetDouble()-turningBefore.GetProperty("rotationRadians").GetDouble())<.1
-                || renderedFps<10 || renderedFps>33)
-                throw new InvalidOperationException("The passive holotable did not rotate within its 30 fps budget.");
-            checks.Add(new{Phase="automatic-rotation",RenderedFps=renderedFps,Before=turningBefore,After=turningAfter});
-            await shipPanel.ShipViewport.CaptureAsync(Path.Combine(PanelPaths.Artifacts,"live-holotable-rotated.png"));
+            await Task.Delay(400,token);
+            var idleBefore=await shipPanel.ShipViewport.DiagnoseAsync();
+            await Task.Delay(900,token);
+            var idleAfter=await shipPanel.ShipViewport.DiagnoseAsync();
+            if(idleAfter.GetProperty("motion").GetBoolean()
+                ||idleAfter.GetProperty("frames").GetInt64()!=idleBefore.GetProperty("frames").GetInt64())
+                throw new InvalidOperationException("The newly opened holotable did not remain idle until interaction.");
+            checks.Add(new{Phase="idle-no-continuous-render",Before=idleBefore,After=idleAfter});
+            shipPanel.ShipViewport.Inspect(.25,.10,1.2);await Task.Delay(250,token);
+            var inspected=await shipPanel.ShipViewport.DiagnoseAsync();
+            if(inspected.GetProperty("framing").GetProperty("cameraPosition").GetRawText()==idleAfter.GetProperty("framing").GetProperty("cameraPosition").GetRawText()
+                ||Math.Abs(inspected.GetProperty("framing").GetProperty("zoom").GetDouble()-1.2)>.01)
+                throw new InvalidOperationException("Holotable orbit or zoom did not change the camera.");
+            checks.Add(new{Phase="programmatic-orbit-and-zoom",Renderer=inspected});
+            shipPanel.ShipViewport.Reset();await Task.Delay(250,token);
+            if(SystemParameters.ClientAreaAnimation)
+            {
+                shipPanel.SetHolotableRotation(true);
+                await shipPanel.ShipViewport.StartRenderProfileAsync();
+                var turningBefore=await shipPanel.ShipViewport.DiagnoseAsync();
+                var watch=System.Diagnostics.Stopwatch.StartNew();
+                await Task.Delay(3000,token);
+                var turningAfter=await shipPanel.ShipViewport.DiagnoseAsync();
+                double fps=(turningAfter.GetProperty("frames").GetInt64()-turningBefore.GetProperty("frames").GetInt64())/watch.Elapsed.TotalSeconds;
+                if(turningAfter.GetProperty("renderProfile").GetProperty("state").GetString()!="complete"
+                    ||turningAfter.GetProperty("animationSeconds").GetDouble()-turningBefore.GetProperty("animationSeconds").GetDouble()<1
+                    ||Math.Abs(turningAfter.GetProperty("rotationRadians").GetDouble()-turningBefore.GetProperty("rotationRadians").GetDouble())<.1
+                    ||fps<10 ||turningAfter.GetProperty("frameLimit").ValueKind!=JsonValueKind.Null&&fps>33)
+                    throw new InvalidOperationException("Optional rotation did not advance within the selected rendering budget.");
+                checks.Add(new{Phase="optional-automatic-rotation",RenderedFps=fps,Before=turningBefore,After=turningAfter});
+                shipPanel.SetHolotableRotation(false);
+            }
+            var oldViewport=shipPanel.ShipViewport;
             shipPanel.CloseHolotable();await Task.Delay(300,token);
-            shipPanel.CheckHolotable();await Record("reopen-without-reset");
+            if(!ReferenceEquals(oldViewport,shipPanel.ShipViewport)||oldViewport.IsDisposed||oldViewport.IsHolotable)
+                throw new InvalidOperationException("Closing the holotable failed to return the shared renderer to the showcase.");
+            checks.Add(new{Phase="close-returns-shared-renderer",OldViewportDisposed=oldViewport.IsDisposed,LiveShipRenderer=shipPanel.HasShipViewport});
+            shipPanel.CheckHolotable();
+            if(!ReferenceEquals(oldViewport,shipPanel.ShipViewport))throw new InvalidOperationException("Opening the holotable allocated another renderer.");
+            await Record("reopen-with-shared-renderer");
             Width=880;Height=620;await Record("landscape-resize");
             Width=680;Height=860;await Record("portrait-resize");
             Width=originalWidth;Height=originalHeight;await Record("restore-original-size");
@@ -75,8 +102,8 @@ internal sealed partial class PanelWindow
             await Task.Delay(900,token);
             var minimizedAfter=await shipPanel.ShipViewport.DiagnoseAsync();
             if(minimizedAfter.GetProperty("active").GetBoolean()
-                || minimizedAfter.GetProperty("frames").GetInt64()!=minimizedBefore.GetProperty("frames").GetInt64())
-                throw new InvalidOperationException("The minimized showcase continued rendering.");
+                ||minimizedAfter.GetProperty("frames").GetInt64()!=minimizedBefore.GetProperty("frames").GetInt64())
+                throw new InvalidOperationException("The minimized holotable continued rendering.");
             checks.Add(new{Phase="minimized-rendering-stopped",Before=minimizedBefore,After=minimizedAfter});
             WindowState=WindowState.Normal;await Task.Delay(800,token);await Record("restored-after-minimize");
             await shipPanel.ShipViewport.CaptureAsync(Path.Combine(PanelPaths.Artifacts,"live-holotable-centred.png"));
@@ -86,7 +113,7 @@ internal sealed partial class PanelWindow
             using(var stream=File.Create(Path.Combine(PanelPaths.Artifacts,"live-holotable-layout.png")))encoder.Save(stream);
             File.WriteAllText(path,JsonSerializer.Serialize(new{Passed=true,StartedAt=started,CompletedAt=DateTimeOffset.UtcNow,
                 Preview=false,ProcessId=Environment.ProcessId,Theme=theme.Id,Checks=checks,
-                Evidence="Visible native live showcase: programmatic open/reopen/resize, automatic rotation, minimize/restore; no manual model interaction"},JsonOptions));
+                Evidence="Visible native LIVE monitor: shared showcase/holotable viewport, programmatic orbit/zoom, optional holotable rotation, resize and minimize/restore; no manual-input or GPU-utilization proof"},JsonOptions));
         }
         catch(Exception ex)
         {

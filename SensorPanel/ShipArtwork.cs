@@ -31,7 +31,8 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
         new("Hammurabi", "MCRN HAMMURABI", "MCRN", "SCIROCCO CLASS", "FLEET ENGINEERING", "Original fan model"),
         new("Guanshiyin", "GUANSHIYIN", "MAO-KWIK", "YACHT", "YACHT ENGINEERING", "Original fan model"),
         new("Arboghast", "UNS ARBOGHAST", "UN", "SCIENCE VESSEL", "SURVEY ENGINEERING", "Original fan model"),
-        new("BashiBazouk", "BASHI BAZOUK", "FREE NAVY", "BELTER SHIP", "CARGO ENGINEERING", "Reference: Lee Fitzgerald / North Front")
+        new("BashiBazouk", "BASHI BAZOUK", "FREE NAVY", "BELTER SHIP", "CARGO ENGINEERING", "Reference: Lee Fitzgerald / North Front"),
+        new("SolRing", "SOL RING", "RING BUILDERS", "GATE", "SYSTEMS MONITORING", "Original v3 fan reconstruction")
     ];
     internal static string CanonicalId(string id) => id == "Truman" ? "AgathaKing" : id;
     public static ShipProfile Resolve(string id) => All.Single(s => s.Id == CanonicalId(id));
@@ -116,6 +117,14 @@ internal sealed class ShipArtwork : Image
             throw new InvalidOperationException("Every ship must have exactly one theme.");
         foreach (var theme in themes)
         {
+              // Sol Ring uses only the full GLB viewport, never a legacy .ship
+              // conversion or a pre-rendered image substitute.
+              if(theme.ShipId=="SolRing")
+              {
+                  if(!Rookline.AssetProtection.AppAssets.Exists("FleetViewer/models/SolRing.glb.gz"))
+                      throw new InvalidOperationException("The full gate model is missing.");
+                  continue;
+              }
             var image = GetImage(theme.ShipId!);
             if (!image.IsFrozen || image.PixelWidth <= 0 || image.PixelHeight <= 0)
                 throw new InvalidOperationException("Ship image failed to load: " + theme.ShipId);

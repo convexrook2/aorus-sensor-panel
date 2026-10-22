@@ -10,7 +10,7 @@ using Microsoft.Web.WebView2.Wpf;
 
 namespace SensorPanel;
 
-// One reusable GPU viewport for the portrait and holotable. It consumes only
+// One shared GPU viewport for the left showcase and open holotable. It consumes only
 // local artwork; telemetry remains bound by ShipPanel and Holotable in WPF.
 internal sealed class FleetViewport : Grid, IDisposable
 {
@@ -28,10 +28,13 @@ internal sealed class FleetViewport : Grid, IDisposable
     private (bool Active,bool Motion)? activity;
     private string ship="Rocinante";
     private string stageColour="#dd315e";
+    private ExpanseGraphicsMode graphicsMode=PanelPreferences.GraphicsMode;
     internal event Action? CloseRequested;
     internal bool Interactive => interactive;
     internal bool IsHolotable => holotableMode;
-    internal bool MotionActive => !interactive && motion && loaded && IsVisible && IsEnabled
+    internal bool IsDisposed => disposed;
+    internal bool MotionActive => motion && loaded && IsVisible && IsEnabled
+        && owner?.WindowState!=WindowState.Minimized && owner?.IsVisible==true
         && SystemParameters.ClientAreaAnimation && !failed && !disposed && modelReady.Task.IsCompletedSuccessfully;
     internal string ShipId => ship;
     private static TaskCompletionSource Completion() => new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -157,7 +160,9 @@ internal sealed class FleetViewport : Grid, IDisposable
         try{core.PostWebMessageAsJson(JsonSerializer.Serialize(message));}
         catch(InvalidOperationException ex){Fail(ex);}
     }
-    private void SendScene()=>Send(new{type="scene",id=ship,interactive,holotable=holotableMode,stageColour});
+    private void SendScene()=>Send(new{type="scene",id=ship,interactive,holotable=holotableMode,stageColour,graphicsMode=graphicsMode.ToString()});
+    internal void SetGraphicsMode(ExpanseGraphicsMode mode)
+    {if(graphicsMode==mode)return;graphicsMode=mode;SendScene();}
     private void RefreshLayout()
     {
         if(layoutPending||disposed)return;
@@ -203,7 +208,7 @@ internal sealed class FleetViewport : Grid, IDisposable
     internal void SetShip(string id)
     {
         id=ShipProfile.CanonicalId(id);
-        if(!ShipPortrait.Supports(id))throw new ArgumentException("Unknown ship artwork.",nameof(id));
+        if(!Supports(id))throw new ArgumentException("Unknown ship artwork.",nameof(id));
         if(ship!=id)
         {
             modelReady.TrySetCanceled();modelReady=Completion();ship=id;
@@ -217,14 +222,17 @@ internal sealed class FleetViewport : Grid, IDisposable
         interactive=enabled;IsHitTestVisible=enabled;Focusable=enabled;
         RefreshLayout();PublishActivity();
     }
+    internal static bool Supports(string? id)=>id=="SolRing" || ShipPortrait.Supports(id);
     internal void SetHolotableMode(bool enabled,Color? accent=null)
     {
         if(accent is {} c)stageColour=$"#{c.R:X2}{c.G:X2}{c.B:X2}";
         resetOnLayout|=holotableMode!=enabled;holotableMode=enabled;
-        SetInteractive(false);
+        SetInteractive(enabled);
     }
     internal void SetMotion(bool enabled){motion=enabled;PublishActivity();}
     internal void Reset()=>Send(new{type="reset"});
+    internal void Inspect(double x,double y,double factor)
+    { Send(new{type="orbit",x,y});Send(new{type="zoom",factor}); }
     internal async Task WaitForReadyAsync()=>await modelReady.Task.WaitAsync(TimeSpan.FromSeconds(60));
     internal async Task<JsonElement> DiagnoseAsync()
     {
@@ -266,6 +274,7 @@ internal sealed class FleetViewport : Grid, IDisposable
     {
         if(disposed)return;
         disposed=true;
+        modelReady.TrySetCanceled();
         if(owner is not null)
         {
             owner.Closed-=OwnerClosed;
@@ -273,6 +282,7 @@ internal sealed class FleetViewport : Grid, IDisposable
             owner.DpiChanged-=OwnerDpiChanged;
         }
         SystemParameters.StaticPropertyChanged-=AnimationPreferenceChanged;
-        browser?.Dispose();browser=null;
+        browser?.Dispose();browser=null;browserSurface=null;
+        Children.Clear();
     }
 }

@@ -22,8 +22,11 @@ internal sealed partial class ShipPanel : Canvas
     private bool readoutPulse = PanelPreferences.ReadoutPulse;
     private bool gaugeTransitions = PanelPreferences.GaugeTransitions;
     private bool presentationActive = true;
-    private readonly FleetViewport shipPortrait = new();
-    internal FleetViewport ShipViewport => shipPortrait;
+    private FleetViewport? shipViewport;
+    internal FleetViewport ShipViewport => shipViewport ?? throw new InvalidOperationException("Select a ship to inspect its renderer.");
+    internal bool HasShipViewport => shipViewport is not null;
+    private ShipPoster? shipPoster;
+    internal object PortraitDiagnostics => shipPoster?.Diagnose() ?? throw new InvalidOperationException("The ship portrait is missing.");
     private Grid? shipMedia;
     private Button? holotableAccess;
     private ExpanseBackdrop? showcaseBackdrop;
@@ -49,6 +52,7 @@ internal sealed partial class ShipPanel : Canvas
     private double configuredAspect;
     private string configuredLayout = "Auto";
     public bool HolotableOpen => holotable is not null;
+    internal bool HolotableMotionActive => holotable?.MotionActive==true;
     public bool HolotableAvailable => Holotable.Supports(FeaturedShipId);
     public string Mode { get; private set; } = "Landscape";
 
@@ -96,27 +100,28 @@ internal sealed partial class ShipPanel : Canvas
         }
         var plan = Calculate(aspect, layout);
         bool pella=theme.ShipId=="Pella";
-        if(pella || theme.RociConsole)plan=PellaPlan(plan);
+        bool gate=theme.ShipId=="SolRing";
+        if(pella || theme.RociConsole || gate)plan=PellaPlan(plan);
         string key = $"{theme.Id}:{theme.Showcase}:{plan.Width}:{plan.Height}:{plan.Mode}";
         if (configuration == key) return;
         string? sceneShip = theme.ShipId;
         configuration = key; Mode = plan.Mode;
         bool reopenHolotable=HolotableOpen;
         CloseHolotable(); activeTheme = theme;
+        shipViewport?.SetMotion(false);
+        if(shipViewport?.Parent is Panel previousHost)previousHost.Children.Remove(shipViewport);
         foreach (var element in new FrameworkElement[] { cpuDial, gpuDial, cpuGraph, gpuGraph })
         {
             if (element.Parent is Panel parent) parent.Children.Remove(element);
             else if (element.Parent is Decorator decorator) decorator.Child = null;
         }
-        shipPortrait.SetMotion(false);
-        shipMedia?.Children.Remove(shipPortrait);
         showcaseBackdrop?.SetMotion(false);
         showcaseBackdrop=null;
         showcaseCrew?.SetMotion(false);
         showcaseCrew=null;
         heading=faction=mediaCredit=null; sidebarBounds=plan.Sidebar;
         Children.Clear(); bound.Clear(); Width = plan.Width; Height = plan.Height; Background = theme.Backdrop;
-        if (theme.Showcase || pella || theme.RociConsole)
+        if (theme.Showcase || pella || theme.RociConsole || gate)
         {
             showcaseBackdrop=new ExpanseBackdrop();
             showcaseBackdrop.SetMotion(motion);
@@ -124,16 +129,18 @@ internal sealed partial class ShipPanel : Canvas
         }
         if(pella)Put(this,new PellaGrid(theme.Accent.Color),new(0,0,plan.Width,plan.Height));
         if(theme.RociConsole)Put(this,new PellaGrid(Color.FromRgb(118,158,154)),new(0,0,plan.Width,plan.Height));
+        if(gate)Put(this,new PellaGrid(theme.Accent.Color),new(0,0,plan.Width,plan.Height));
         bool portrait = Mode == "Portrait";
         double bodyX=plan.Cpu.X;
         bool reuseProjection=projection is not null;
         if (projection is null)
         {
             projection=new SolarSystemView();
+            projection.SetGraphicsMode(graphicsMode);
             projection.BodySelected+=_=>NavigationChanged?.Invoke();
         }
         Put(this, projection, plan.Navigation);
-        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase || pella || theme.RociConsole ? (byte)115 : (byte)232,3,12,21));
+        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase || pella || theme.RociConsole || gate ? (byte)115 : (byte)232,3,12,21));
         selectedShip=sceneShip;
         var navigation=ExpanseNavigation.ForShip(selectedShip);
         projection?.FocusBody(navigation.Body,reuseProjection);
@@ -157,6 +164,7 @@ internal sealed partial class ShipPanel : Canvas
         System.Windows.Automation.AutomationProperties.SetName(holotableAccess,"Open ship holotable");
         holotableAccess.Click+=(_,_)=>OpenHolotable();
         Put(this,holotableAccess,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-64)));
+        AddShowcaseRotationControl(theme,portrait);
         if (theme.Showcase && !theme.RociConsole)
         {
             showcaseCrew=new ExpanseCrew();
@@ -174,9 +182,11 @@ internal sealed partial class ShipPanel : Canvas
         itemStyle.Setters.Add(new Setter(Control.ForegroundProperty,theme.Foreground));
         shipChoices.ItemContainerStyle=itemStyle;
         NavigationControls.Apply(shipChoices);
-        foreach (var ship in ShipProfile.All)
+        // Canonical vessel IDs sort by ship name without faction prefixes.
+        foreach (var ship in ShipProfile.All.OrderBy(ship=>ship.Id,StringComparer.OrdinalIgnoreCase))
             shipChoices.Items.Add(new ComboBoxItem { Content=ship.Name, Tag=ship });
-        shipChoices.SelectedIndex=ShipProfile.All.ToList().FindIndex(ship=>ship.Id==selectedShip);
+        shipChoices.SelectedItem=shipChoices.Items.OfType<ComboBoxItem>()
+            .Single(item=>item.Tag is ShipProfile ship && ship.Id==selectedShip);
         System.Windows.Automation.AutomationProperties.SetName(shipChoices,"Ship navigation selection");
         shipChoices.SelectionChanged += (_,_) =>
         {
@@ -215,13 +225,13 @@ internal sealed partial class ShipPanel : Canvas
         if (mediaCredit is not null)
         {
             var scene=ExpanseMedia.ForShip(selectedShip);
-            mediaCredit.ToolTip=scene.Credit+"\n"+scene.Source+"\n"+(ShipPortrait.Supports(selectedShip)
+            mediaCredit.ToolTip=scene.Credit+"\n"+scene.Source+"\n"+(FleetViewport.Supports(selectedShip)
                 ? Holotable.ModelCredit(selectedShip) : ShipProfile.Resolve(selectedShip).Artist);
         }
     }
 
     // Cycle the actual ship console, retaining the shared readings, histories,
-    // solar view and one full-fidelity model viewport.
+    // solar view and one shared full-quality model viewport.
     public void SetShowcaseScene(string shipId)
     {
         if (activeTheme?.Showcase != true) return;
@@ -234,15 +244,17 @@ internal sealed partial class ShipPanel : Canvas
     private void UpdateSceneMedia(ShipProfile vessel,bool fade)
     {
         if (activeTheme is null || shipMedia is null) return;
-        shipPortrait.SetMotion(false);
         shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1;
         shipMedia.Children.Clear();
-        bool model=ShipPortrait.Supports(vessel.Id);
+        bool model=FleetViewport.Supports(vessel.Id);
         if (holotableAccess is not null) holotableAccess.IsEnabled=model;
         if (model)
         {
-            shipPortrait.SetShip(vessel.Id);shipPortrait.SetInteractive(false);
-            shipPortrait.SetMotion(motion); shipMedia.Children.Add(shipPortrait);
+            shipPoster=new ShipPoster(vessel.Id);shipMedia.Children.Add(shipPoster);
+            shipViewport??=new FleetViewport();
+            shipViewport.SetGraphicsMode(graphicsMode);
+            shipViewport.SetShip(vessel.Id);shipViewport.SetHolotableMode(false);
+            shipMedia.Children.Add(shipViewport);UpdateShowcaseRotation();
         }
         else shipMedia.Children.Add(new ShipArtwork(activeTheme with { ShipId=vessel.Id },true) { Opacity=.7 });
         if (faction is not null) faction.Text=vessel.Faction;
@@ -270,8 +282,9 @@ internal sealed partial class ShipPanel : Canvas
     {
         if (shipMedia is not null)
         {
-            shipMedia.Height=Math.Max(80,sidebarBounds.Height-64-(showcaseCrew?.HasImage == true ? 146 : activeTheme?.RociConsole==true ? 146 : 0));
+            shipMedia.Height=Math.Max(80,sidebarBounds.Height-100-(showcaseCrew?.HasImage == true ? 146 : activeTheme?.RociConsole==true ? 146 : 0));
             if (holotableAccess is not null) holotableAccess.Height=shipMedia.Height;
+            if(rotationControl is not null)SetTop(rotationControl,GetTop(shipMedia)+shipMedia.Height+6);
         }
     }
 
@@ -378,12 +391,13 @@ internal sealed partial class ShipPanel : Canvas
     {
         motion = enabled;
         enabled &= presentationActive;
-        shipPortrait?.SetMotion(enabled); holotable?.SetMotion(enabled);
+        holotable?.SetActive(presentationActive);
         // The holotable covers these views. Restore/minimize must not restart
         // their animation behind the active ship, for any ship theme.
         bool monitorMotion=enabled && holotable is null;
         projection?.SetMotion(monitorMotion);
         showcaseBackdrop?.SetMotion(monitorMotion); showcaseCrew?.SetMotion(monitorMotion);
+        UpdateShowcaseRotation();
         if ((!enabled || !SystemParameters.ClientAreaAnimation) && shipMedia is not null)
         { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
         if (!enabled && shipMedia is not null) { shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1; }
@@ -405,8 +419,10 @@ internal sealed partial class ShipPanel : Canvas
     internal void OpenHolotable()
     {
         if (holotable is not null || activeTheme is null || !HolotableAvailable) return;
-        shipMedia?.Children.Remove(shipPortrait);
-        holotable = new Holotable(activeTheme with { ShipId=FeaturedShipId }, source, motion, readoutPulse, CloseHolotable,shipPortrait);
+        shipViewport??=new FleetViewport();
+        shipViewport.SetGraphicsMode(graphicsMode);
+        shipViewport.SetShip(FeaturedShipId!);shipMedia?.Children.Remove(shipViewport);
+        holotable = new Holotable(activeTheme with { ShipId=FeaturedShipId }, source, readoutPulse, CloseHolotable,shipViewport);
         SetMotion(motion);SetReadoutEffects(readoutPulse,gaugeTransitions);
         Put(this, holotable, new(8, 8, Width - 16, Height - 36));
         SetZIndex(holotable, 10); holotable.Focus();
@@ -415,10 +431,11 @@ internal sealed partial class ShipPanel : Canvas
     {
         if (holotable is null) return;
         holotable.ReleaseViewport(); Children.Remove(holotable); holotable = null;
-        shipPortrait.SetHolotableMode(false);shipPortrait.SetMotion(motion);
-        shipMedia?.Children.Add(shipPortrait);
+        if(shipViewport is not null){shipViewport.SetHolotableMode(false);shipMedia?.Children.Add(shipViewport);}
         SetMotion(motion);SetReadoutEffects(readoutPulse,gaugeTransitions);
     }
+    internal void SetHolotableRotation(bool enabled)=>holotable?.SetMotion(enabled);
+    internal void SetNavigationMotionForReview(bool enabled)=>projection?.SetMotion(enabled&&presentationActive&&holotable is null);
     internal void CheckHolotable()
     {
         if (holotableAccess is not { IsEnabled:true, IsVisible:true })
@@ -430,7 +447,6 @@ internal sealed partial class ShipPanel : Canvas
         holotableAccess.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         if (holotable is null) throw new InvalidOperationException("The ship portrait click did not open its holotable.");
         holotable!.CheckInteraction();
-        holotable.SetMotion(motion);
         CheckBindings();
     }
     internal void CheckHolotableFraming()
@@ -454,14 +470,14 @@ internal sealed partial class ShipPanel : Canvas
     {
         bool savedMotion=motion, savedPulse=readoutPulse, savedGauges=gaugeTransitions;
         SetReadoutEffects(false,true); SetMotion(false);
-        if (shipPortrait?.MotionActive==true || projection?.MotionActive==true)
+        if (projection?.MotionActive==true)
             throw new InvalidOperationException("Holographic display motion did not stop independently.");
         CheckBindings();
         SetReadoutEffects(true,false);
         if (motion) throw new InvalidOperationException("Readout effects enabled holographic motion.");
         SetReadoutEffects(false,savedGauges); SetMotion(savedMotion); CheckBindings();
         SetReadoutEffects(savedPulse,savedGauges);
-        shipPortrait?.Check();
+        shipPoster?.Check();
         projection?.Check();
     }
     internal void SelectShip(string id)

@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "view": "three-quarter",
+  "portraits": [
+    {
+      "id": "Pella",
+      "sourceSha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
+      "sha256": "33d2d2488f74ba23150a9d2571a4fff22110f5bd9a989efb17f046cde36c4a73",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Razorback",
+      "sourceSha256": "e943a21e54606b991ffc76c98444414debc5905b58a5dd61e5019fbf469dbae3",
+      "sha256": "897fe3532a063eae9ac544f47a78a2309aae29df0bdba75760a41c268ec0f852",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "BashiBazouk",
+      "sourceSha256": "a80f49b735903cede82930b16fe31c53cc424b45da357d87d63023b38f899440",
+      "sha256": "f313e9c5b7d94496670f9f8ba908b7d0705f4068379ae54460bbc96d25ed276b",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Tynan",
+      "sourceSha256": "092f61042bf558f20f35ea6abfe6f337a2587ecdc7c2e8361d3cffb19b756a0e",
+      "sha256": "37b5c69e3b7c7518fb1778a6124ad7b7e30c9ad9823d1fd9d699c4ab2296ffec",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Guanshiyin",
+      "sourceSha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
+      "sha256": "0898ead3d9efa6c4b9977b4d88b2c9d93d2e11f712972dac2abcc3366ba45344",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Donnager",
+      "sourceSha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
+      "sha256": "f14131f2c91e72eda67973ea7ad78eb5f6df8811837e65362ccf1b01302f7b93",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Rocinante",
+      "sourceSha256": "d391bc43b0843a328e435f0eefe16a34a0c8724cdaf0fe275f449fcd330e3eb3",
+      "sha256": "74e65f59d7318922cb7a95136830f926f4a98c72e04ab72c45010c2012a3a71b",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Dropship",
+      "sourceSha256": "28bf2b973aca2f04feefd22b63afd0090efb6c0a086410376aca97169520f091",
+      "sha256": "f4a58c0e2bac43faeb2c3d59ec8a00e048344787ce6dc42bc5ed665b59855f61",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Epstein",
+      "sourceSha256": "22b657a6e74ac56870e68edfba6444804051d53441d0c797e7e16e9ab03cb48c",
+      "sha256": "d4a897fc70f7c12f8a4ab2a3a6cb282e8ce0bd53812fd9f87d8c0786a2c02b9d",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "AgathaKing",
+      "sourceSha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
+      "sha256": "ed43e2444fce32776a4ea720e3ceb5eca67efdf7d393155b597970bf874f4051",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Morrigan",
+      "sourceSha256": "5cc655a6c5eff342637bb2f999f7e44446015badef35a856a22932d131b6925f",
+      "sha256": "ad64671acbf18c1b7be797d14b029197489c2865520f697c261fbee2af7c6c64",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Canterbury",
+      "sourceSha256": "77a3cddea457dda48460d78cadd43989173c979720d08a50882837065dee8bf9",
+      "sha256": "9a3466d2107d9a5b7e8c44f8dd3bee480408a7684124a1156d91185c4bfe4e24",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Knight",
+      "sourceSha256": "c7469468de6fdb102161c20d29ee73b271a54f56753ccdf8f49db045fe7c180e",
+      "sha256": "39fcb882c1c30d3145a2290883415c63a6bb30de40d1e921a302877c162a7ccb",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Anubis",
+      "sourceSha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+      "sha256": "f87db9ab96267ad97290b6e5faf534fdd47073073d23c4481e40668f8e58aae9",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Nauvoo",
+      "sourceSha256": "cf40797eb7aa7bc51592edb6bdeafcc6dd0a30b6ce4b8c65cd50e5e389f71f09",
+      "sha256": "2891c984e72d0f633924be966fd5fee98d572ea4b52e8ad5e450ade005b2733e",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Behemoth",
+      "sourceSha256": "c1ddcba52494f4d37ff0245fcf61947b743d55f2454586172b260f963269e447",
+      "sha256": "9e2d196f134b664508600f3d06f4e7a8fc7a748286001817f4422d92e59e292a",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Medina",
+      "sourceSha256": "ad72a33ff8667caf8aec31db26e00bb67a3257217c32607b1163bffbe4365b23",
+      "sha256": "2bde18ecbf613d6427916a2f8d58c017fa7954db2381c129470ed86009d1905a",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Scopuli",
+      "sourceSha256": "49effe9e695075d0cf7f277fe47c5ced502f4cabd59a38ab01a4bed8fb074cf6",
+      "sha256": "c8b5ac85b1a12d165d0df3a9244b7cb6cefc97d67ba1ee05f0d42a9f2a8b7058",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Scirocco",
+      "sourceSha256": "b13bbd793799b15c8828a5ea2dd4a0ad1b95b1b788ea7b455a6ad004f1b75dd0",
+      "sha256": "7e9e29e41b0a1cc2adc8e6f0562649d771428c103d9cd9195a23a698b3ac81a2",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Hammurabi",
+      "sourceSha256": "b52da98ea14fe3f998752ffb429a17943f6b6cb2009d4a13c2ac45d471384930",
+      "sha256": "19d32d66acc42297e49c06de2fb84cbd116c769be021cfbfab4163b079a6b087",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "Arboghast",
+      "sourceSha256": "d537f34c26e9e82c3f8f85e678b04d06ae867d04ea95437e1f7625ab71f4dd84",
+      "sha256": "7d763617f512fb6d4d9ff2649f9c7db99f56480a17852dd324c315f15e440568",
+      "width": 1024,
+      "height": 2048
+    },
+    {
+      "id": "SolRing",
+      "sourceSha256": "c80193dd8327d6bda2a55664f34617b2910130f6e961ef772dc23293599283d1",
+      "sha256": "3862fd457bbc87078334eeff818031bd7d5da78b244ad1465c6771be38138d2d",
+      "width": 1024,
+      "height": 2048
+    }
+  ]
+}

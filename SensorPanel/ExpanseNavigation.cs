@@ -7,6 +7,7 @@ internal static class ExpanseNavigation
 {
     internal static ShipNavigation ForShip(string? ship) => ship switch
     {
+        "SolRing" => new("SolGate", "SOL RING", "FICTIONAL GATE", "https://expanse.fandom.com/wiki/Sol_gate"),
         "Rocinante" => new("Tycho", "TYCHO STATION", "REFIT / SAFE HARBOR", "https://expanse.fandom.com/wiki/Rocinante_%28TV%29"),
         "Donnager" => new("Callisto", "CALLISTO SHIPYARDS", "BUILD SITE / JUPITER FLEET", "https://expanse.fandom.com/wiki/Donnager-class_%28TV%29"),
         "Truman" => new("Earth", "EARTH / UNITED NATIONS", "UNN AFFILIATION", "https://expanse.fandom.com/wiki/Truman-class_dreadnought_%28TV%29"),

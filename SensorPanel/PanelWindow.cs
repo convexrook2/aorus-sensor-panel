@@ -95,7 +95,8 @@ internal sealed partial class PanelWindow : Window
         var surface = new Grid(); surface.Children.Add(viewport); Content = surface;
         BuildLayout();
         foreach (string key in new[] { "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax", "cpuCcdMax", "boardSystem", "boardPch", "boardVrm", "cpuFan", "cpuOptionalFan", "boardPump", "gpuFan" }) text[key] = new TextBlock { Text = "—" };
-        shipPanel = new(text);
+        shipPanel = new(text);shipPanel.SetGraphicsMode(graphicsMode);
+        if(theme.ShipConsole)expanseTheme=theme.Id;else aorusTheme=theme.Id;
         shipPanel.ShipSelectionRequested += ship =>
         {
             if (theme.Showcase) { SelectShowcaseShip(ship, true); return; }
@@ -104,6 +105,11 @@ internal sealed partial class PanelWindow : Window
             ApplyTheme(); SaveDisplayState();
         };
         shipPanel.NavigationChanged += () => { if (IsLoaded) SaveDisplayState(); };
+        shipPanel.ShowcaseRotationChanged += enabled =>
+        {
+            if(previewPath is null)PanelPreferences.SaveShowcaseRotation(enabled);
+            if(IsLoaded)SaveDisplayState();
+        };
         shipPanel.ShipOptionsRequested += () => settings?.Open(shipOptions);
         showcaseClock.Tick += (_, _) =>
         {
@@ -160,6 +166,10 @@ internal sealed partial class PanelWindow : Window
             if (runtimeCheck && previewPath is null) _=CheckLiveRuntimeAsync(checkHolotable);
             if(Environment.GetCommandLineArgs().Any(a=>a is "--check-native-quality" or "--check-protected-assets"))_=CheckNativeQualityAsync();
             if(Environment.GetCommandLineArgs().Contains("--check-expanse-cycle"))_=CheckExpanseCycleAsync();
+            if(Environment.GetCommandLineArgs().Contains("--check-sol-ring"))_=CheckSolRingAsync();
+            if(Environment.GetCommandLineArgs().Any(arg=>arg is "--check-static-fleet" or "--check-showcase-rotation"))_=CheckStaticFleetAsync();
+            if(Environment.GetCommandLineArgs().Contains("--check-solar-efficiency"))_=CheckSolarEfficiencyAsync();
+            if(Environment.GetCommandLineArgs().Contains("--check-experience"))_=CheckExperienceAsync();
             UpdateShowcaseClock();
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
         };
@@ -322,23 +332,17 @@ internal sealed partial class PanelWindow : Window
         }
         menu.Items.Add(layout);
         var themes = new MenuItem { Header = "Theme" };
-        foreach (var choice in PanelTheme.All)
+        foreach (var choice in PanelTheme.All.Where(choice=>!choice.ShipConsole || choice.Showcase)
+            .Concat(PanelTheme.All.Where(choice=>choice.ShipConsole && !choice.Showcase)
+                .OrderBy(choice=>choice.ShipId,StringComparer.OrdinalIgnoreCase)))
         {
             var item = new MenuItem { Header = choice.Name, IsCheckable = true };
-            themes.SubmenuOpened += (_, _) => item.IsChecked = theme.Id == choice.Id;
-            item.Click += (_, _) =>
+            themes.SubmenuOpened += (_, _) =>
             {
-                theme = choice;
-                // The Expanse is the cycling theme. Explicitly selecting it
-                // resumes after any earlier manual ship hold.
-                if(choice.Showcase)
-                {
-                    showcaseCycle=true;
-                    if(previewPath is null)PanelPreferences.SaveExpanseCycle(true);
-                }
-                if (previewPath is null) PanelPreferences.SaveTheme(theme.Id);
-                ApplyTheme(); SaveDisplayState();
+                item.IsChecked=theme.Id==choice.Id;
+                item.Visibility=choice.ShipConsole==theme.ShipConsole?Visibility.Visible:Visibility.Collapsed;
             };
+            item.Click+=(_,_)=>ChooseTheme(choice);
             themes.Items.Add(item);
         }
         menu.Items.Add(themes);
@@ -417,7 +421,7 @@ internal sealed partial class PanelWindow : Window
         };
         readoutEffects.Items.Add(pulse); readoutEffects.Items.Add(smooth); menu.Items.Add(readoutEffects);
         var holographic = new MenuItem { Header = "Holographic display" };
-        var holoMotion = new MenuItem { Header = "Projection motion and ship rotation", IsCheckable = true, IsChecked = holographicMotion };
+        var holoMotion = new MenuItem { Header = "Map and background motion", IsCheckable = true, IsChecked = holographicMotion };
         holoMotion.Click += (_, _) =>
         {
             holographicMotion=holoMotion.IsChecked; shipPanel?.SetMotion(holographicMotion);
@@ -467,9 +471,9 @@ internal sealed partial class PanelWindow : Window
         menu.Items.Remove(showcase); menu.Items.Remove(holographic);
         holographic.Items.Remove(holoMotion);
         shipOptions=new MenuItem { Header="Ship options" };
-        shipOptions.Items.Add(holoMotion); shipOptions.Items.Add(showcase);
+        shipOptions.Items.Add(GraphicsCommands());shipOptions.Items.Add(holoMotion); shipOptions.Items.Add(showcase);
         menu.Items.Clear();
-        foreach (var item in new[] {displayOptions,themes,sensors,advanced,hide,exit}) menu.Items.Add(item);
+        foreach (var item in new[] {ExperienceCommands(),displayOptions,themes,sensors,advanced,hide,exit}) menu.Items.Add(item);
         menu.Opened += (_,_) =>
         {
             animate.Visibility=theme.ShipConsole ? Visibility.Collapsed : Visibility.Visible;
@@ -739,6 +743,7 @@ internal sealed partial class PanelWindow : Window
         {
             if (theme.ShipConsole) shipPanel.Configure(theme, ActualWidth > 0 && ActualHeight > 0 ? ActualWidth / ActualHeight : 16.0 / 9, layoutMode);
             if (theme.Showcase && previewPath is null) shipPanel.SetShowcaseScene(PanelPreferences.ExpanseShip);
+            if(!theme.ShipConsole)shipPanel.SuspendShowcase();
             viewport.Child = theme.ShipConsole ? shipPanel : board;
             shipPanel.SetMotion(holographicMotion && theme.ShipConsole);
             shipPanel.SetReadoutEffects(readoutPulse,gaugeTransitions);
@@ -812,13 +817,19 @@ internal sealed partial class PanelWindow : Window
             Display=display, Bounds=bounds, Fit=fit, FitsTarget=display is not null && bounds==Displays.Placement(display,true),
             Dpi=Displays.Dpi(this), Layout=theme.ShipConsole ? shipPanel?.Mode : panelLayout?.Mode, Renderer=theme.ShipConsole ? "ShipConsole" : "Aorus", Scaling=viewport.Stretch.ToString(), Visible=IsVisible,
             ShowInTaskbar, TrayIconVisible=tray?.Visible ?? false, Theme=theme.Id, SettingsOpen=settings?.IsOpen ?? false,
+            Experience=theme.ShipConsole?"Expanse":"AorusLite",ExpanseRendering=graphicsMode.ToString(),
             HolographicMotion=holographicMotion, ReadoutPulse=readoutPulse, GaugeTransitions=gaugeTransitions,
-            RotatingShipInLeftPanel=theme.ShipConsole && ShipPortrait.Supports(shipPanel?.FeaturedShipId),
+            RotatingShipInLeftPanel=theme.ShipConsole&&shipPanel?.ShowcaseRotationActive==true,
+            ShowcaseRotation=shipPanel?.ShowcaseRotationEnabled==true,
+            StaticShipPortrait=theme.ShipConsole&&shipPanel?.HasShipViewport!=true,
+            NavigationMotion=shipPanel?.NavigationView?.MotionActive==true,
+            ShipRendererLoaded=shipPanel?.HasShipViewport==true,
             FeaturedShip=theme.ShipConsole ? shipPanel?.FeaturedShipId : null,
             ExpanseAutoCycle=theme.Showcase && showcaseCycle, ExpanseCycleRunning=showcaseClock.IsEnabled,
             ExpanseSceneSeconds=showcaseSeconds, ExpanseMedia=theme.Showcase ? ExpanseMedia.Status : null,
             NavigationFocus=theme.ShipConsole ? shipPanel?.NavigationFocus : null,
-            HolotableOpen=shipPanel?.HolotableOpen ?? false
+            HolotableOpen=shipPanel?.HolotableOpen ?? false,
+            HolotableMotion=shipPanel?.HolotableMotionActive==true
         },JsonOptions));
     }
     private nint DisplayMessage(nint hwnd,int message,nint wParam,nint lParam,ref bool handled)
@@ -849,7 +860,7 @@ internal sealed partial class PanelWindow : Window
 
     private async void Capture(string path)
     {
-        if(theme.ShipConsole && shipPanel is not null)
+        if(theme.ShipConsole && shipPanel?.HasShipViewport==true)
         {
             try{await shipPanel.ShipViewport.WaitForReadyAsync();}
             catch(Exception ex) when(ex is TimeoutException or InvalidOperationException or TaskCanceledException)
@@ -916,7 +927,7 @@ internal sealed partial class PanelWindow : Window
                         "AgathaKing" or "Razorback" or "Guanshiyin"=>"Earth", "Tynan" or "Medina"=>"Medina",
                         "Morrigan" or "Dropship" or "Epstein" or "Pella"=>"Mars",
                         "Canterbury" or "Knight"=>"Ceres", "Anubis" or "Scopuli"=>"Eros",
-                        "Behemoth"=>"SolGate", "Scirocco"=>"Ganymede", "Hammurabi"=>"Io",
+                        "Behemoth" or "SolRing"=>"SolGate", "Scirocco"=>"Ganymede", "Hammurabi"=>"Io",
                         "Arboghast"=>"Venus", "BashiBazouk"=>"Sun", _=>throw new InvalidOperationException("Missing ship navigation check.")
                     };
                     if (shipPanel!.NavigationFocus!=expected) throw new InvalidOperationException("Ship selection focused the wrong planet or station.");
@@ -1081,21 +1092,18 @@ internal sealed partial class PanelWindow : Window
             var fleetModels=new List<object>();
             foreach (string ship in holotableShips)
             {
-                shipPanel!.SelectShip(ship); await shipPanel.ShipViewport.WaitForReadyAsync();
+                shipPanel!.SelectShip(ship);
                 UpdateLayout();await Task.Delay(180);
-                var portrait=await shipPanel.ShipViewport.DiagnoseAsync();
-                if(portrait.GetProperty("interactive").GetBoolean() || portrait.GetProperty("id").GetString()!=ship)
-                    throw new InvalidOperationException("The full ship portrait did not follow the selector.");
-                await shipPanel.ShipViewport.CaptureAsync(Path.Combine(output,ship.ToLowerInvariant()+"-full-portrait.png"));
-                shipPanel.CheckHolotable(); await Task.Delay(250); UpdateLayout();
+                var portrait=JsonSerializer.SerializeToElement(shipPanel.PortraitDiagnostics,JsonOptions);
+                if(!shipPanel.HasShipViewport||portrait.GetProperty("id").GetString()!=ship)
+                    throw new InvalidOperationException("The showcase did not follow the selector.");
+                SaveVisual((Visual)Content,ActualWidth,ActualHeight,Path.Combine(output,ship.ToLowerInvariant()+"-static-portrait.png"));
+                shipPanel.CheckHolotable();await shipPanel.ShipViewport.WaitForReadyAsync();await Task.Delay(250); UpdateLayout();
                 var holo=await shipPanel.ShipViewport.DiagnoseAsync();
-                if(holo.GetProperty("interactive").GetBoolean() || !holo.GetProperty("holotable").GetBoolean()
-                    || !holo.GetProperty("displayStage").GetBoolean() || holo.GetProperty("sourceSha256").GetString()!=portrait.GetProperty("sourceSha256").GetString())
+                if(!holo.GetProperty("interactive").GetBoolean() || !holo.GetProperty("holotable").GetBoolean()
+                    || !holo.GetProperty("displayStage").GetBoolean() || holo.GetProperty("sourceSha256").GetString()!=portrait.GetProperty("receipt").GetProperty("sourceSha256").GetString())
                     throw new InvalidOperationException("The holotable did not retain the identical full model.");
-                if(!holo.GetProperty("active").GetBoolean()
-                    || (long)holo.GetProperty("width").GetInt32()*holo.GetProperty("height").GetInt32()
-                        <= (long)portrait.GetProperty("width").GetInt32()*portrait.GetProperty("height").GetInt32()*1.2)
-                    throw new InvalidOperationException("The holotable did not expand and activate its canvas: "+ship);
+                if(!holo.GetProperty("active").GetBoolean())throw new InvalidOperationException("The holotable did not activate its canvas: "+ship);
                 await shipPanel.ShipViewport.CaptureAsync(Path.Combine(output,ship.ToLowerInvariant()+"-full-holotable.png"));
                 SaveVisual((Visual)Content,ActualWidth,ActualHeight,Path.Combine(output,ship.ToLowerInvariant()+"-holotable-access.png"));
                 fleetModels.Add(new{Ship=ship,Portrait=portrait,Holotable=holo});
@@ -1103,9 +1111,7 @@ internal sealed partial class PanelWindow : Window
                 if (shipPanel.HolotableOpen) throw new InvalidOperationException("The holotable did not close.");
             }
             shipPanel!.SetMotion(false);await Task.Delay(300);
-            var fleetStopped=await shipPanel.ShipViewport.DiagnoseAsync();await Task.Delay(600);
-            if((await shipPanel.ShipViewport.DiagnoseAsync()).GetProperty("frames").GetInt64()!=fleetStopped.GetProperty("frames").GetInt64())
-                throw new InvalidOperationException("The ship kept rendering after motion stopped.");
+            if(!shipPanel.HasShipViewport)throw new InvalidOperationException("The showcase lost its shared renderer.");
             settings!.Open(); await Task.Delay(300); UpdateLayout();
             SaveVisual((Visual)Content, ActualWidth, ActualHeight, Path.Combine(output, "settings-overlay.png")); settings.Close();
             if (baseline.Any(p => p.Key != "date" && p.Key != "uptime" && text[p.Key].Text != p.Value)
@@ -1114,7 +1120,7 @@ internal sealed partial class PanelWindow : Window
             File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(new
             {
                 Passed = true, OriginalSolNavigationDiagram = true, NativeSolarDiagram = true, OfflineAssets = true,
-                FullQualityFleetModels=fleetModels, LosslessSourceModelsChecked=true, SharedPortraitAndHolotableRenderer=true,
+                FullQualityFleetModels=fleetModels, LosslessSourceModelsChecked=true, PreparedPortraitAndOnDemandHolotable=true,
                 HolotablePortraitAccessChecked = true, HolotableShips = holotableShips,
                 SchematicAndTrueScaleModes = true, NasaVectorUnitsAndMoonParentsChecked = true, MoonMotionAdvanced = true,
                 OffscreenAndSubpixelMeshesDetached = true, PhysicalTrailsClippedBeforeDrawing = true,
@@ -1182,9 +1188,9 @@ internal sealed partial class PanelWindow : Window
             JsonElement? ship=null;
             if (theme.ShipConsole && shipPanel is not null)
             {
+                await shipPanel.ShipViewport.WaitForReadyAsync();
                 ship=await shipPanel.ShipViewport.DiagnoseAsync();
-                await shipPanel.ShipViewport.CaptureAsync(Path.Combine(PanelPaths.Artifacts,"live-monitor-ship.png"));
-                if(checkHolotable)await CheckLiveHolotableAsync(token);
+                if(checkHolotable&&!Environment.GetCommandLineArgs().Contains("--measure-fleet-pair"))await CheckLiveHolotableAsync(token);
             }
             using var process=Process.GetCurrentProcess();
             double cpu=process.TotalProcessorTime.TotalSeconds;

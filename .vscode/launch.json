@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+    { "name": "X890 · Showcase rotation and holotable", "type": "coreclr", "request": "launch", "preLaunchTask": "Build X890 monitor", "program": "${workspaceFolder}/SensorPanel/bin/Debug/net10.0-windows/SensorPanel.dll", "args": ["--preview", "${workspaceFolder}/tools/preview-empty.json", "--windowed", "--preview-theme", "Rocinante"], "cwd": "${workspaceFolder}", "console": "internalConsole" },
     { "name": "Anubis main fleet", "type": "coreclr", "request": "launch", "preLaunchTask": "Finalize accepted Anubis fleet (no install)", "program": "${workspaceFolder}/FleetStudio.Desktop/bin/Debug/net10.0-windows10.0.17763.0/FleetStudio.Desktop.dll", "cwd": "${workspaceFolder}", "console": "internalConsole" },
     { "name": "Anubis bow review", "type": "coreclr", "request": "launch", "preLaunchTask": "Prepare Anubis Fleet Studio review", "program": "${workspaceFolder}/FleetStudio.Desktop/bin/Debug/net10.0-windows10.0.17763.0/FleetStudio.Desktop.dll", "args": ["--review-root", "${workspaceFolder}/Sources/Anubis/DesktopReview/FleetStudio"], "cwd": "${workspaceFolder}", "console": "internalConsole" },
     { "name": "X890 · LIVE monitor", "type": "coreclr", "request": "launch", "preLaunchTask": "Build X890 monitor", "program": "${workspaceFolder}/SensorPanel/bin/Debug/net10.0-windows/SensorPanel.exe", "args": ["--windowed", "--runtime-check"], "cwd": "${workspaceFolder}", "console": "internalConsole" },

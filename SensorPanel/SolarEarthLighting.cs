@@ -16,6 +16,7 @@ internal sealed class SolarEarthLighting
     private readonly Vector3D[] normals = new Vector3D[Width * Height];
     private readonly byte[] gamma = new byte[4096];
     private long lastUpdate;
+    private Vector3D lastDirection;
     private int updates, litNightPixels;
     internal GeometryModel3D Model { get; }
 
@@ -42,11 +43,12 @@ internal sealed class SolarEarthLighting
         Update(new(1, 0, 0));
     }
 
-    internal void Update(Vector3D sunDirection)
+    internal void Update(Vector3D sunDirection,bool force=false)
     {
+        if(updates>0&&sunDirection==lastDirection)return;
         long now = Stopwatch.GetTimestamp();
-        if (updates > 0 && now - lastUpdate < Stopwatch.Frequency / 2) return;
-        lastUpdate = now; updates++; litNightPixels = 0;
+        if (!force&&updates > 0 && now - lastUpdate < Stopwatch.Frequency / 2) return;
+        lastUpdate = now;lastDirection=sunDirection;updates++; litNightPixels = 0;
         for (int i = 0; i < normals.Length; i++)
         {
             double sunLit = Vector3D.DotProduct(normals[i], sunDirection);

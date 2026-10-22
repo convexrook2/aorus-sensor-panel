@@ -1,0 +1,460 @@
+{
+  "schema": "x890.release-preparation.v1",
+  "date": "2026-10-21",
+  "proposedVersion": "1.8.11",
+  "state": "LOCAL_CHECKS_PASS_NOT_EXACT_COMMIT_CI",
+  "repository": ".",
+  "branch": "main",
+  "baselineHead": "d7724d70bf94dbd6bbedc1ecc296557e8d8c5abb",
+  "currentAppVersion": "1.8.11",
+  "candidateCommit": null,
+  "installerBuilt": false,
+  "published": false,
+  "installed": false,
+  "packagingProposal": "One sensor-panel installer with both runtime experiences; split packages deferred",
+  "currentFileCandidates": [
+    {
+      "path": "SensorPanel/App.cs",
+      "sha256": "b65b2a9357f35bc141e6b96c348031cab7eb2a86a24d87d6d1c4188a54d9f625",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/ExpanseCycleCheck.cs",
+      "sha256": "bc2c611ef476d41c8cff0488b3b2e71ec3780f50c6c73dc328213e26fff14a86",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/ExpanseNavigation.cs",
+      "sha256": "4bbbbbb38861347572a3bd22c4b3d7d2c9a1056e9f83a38de74e3e2db7c7abf4",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/FleetPairCheck.cs",
+      "sha256": "8f9fc9a4bc3b341d1eae9e7d191d3ab6ebf4f66d0d108cc144f2033e9d92f1e9",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/FleetViewport.cs",
+      "sha256": "5da933620fba6a91feed1c7d2b29ec72b025ccd20baa730537f6763d88a9922e",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/Holotable.cs",
+      "sha256": "7226616dbd06c5474bc7b0262a97ea920e98832183ae90f63821ecd6bbcf14e7",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/HolotableCheck.cs",
+      "sha256": "7e0157dc9ee33d3d8e3d3dfa3f6d2f8f909901c9839e4a82c2ba7a2fc7b8c5fb",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/NativeQualityCheck.cs",
+      "sha256": "919618880fbfc2ed619c842d69e816c56555e5eb999bf4095846b1e092041d61",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/PanelPreferences.cs",
+      "sha256": "b26bff1d4306865db9b53b6dd891a7bf49627f7ed0a0651b8290fbab5ce4d219",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/PanelSettings.cs",
+      "sha256": "94904fb07dc8b3bf951b46b44cbbd64d483f9e38f87dbda5d1ba6a059358968e",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/PanelWindow.cs",
+      "sha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/PellaConsole.cs",
+      "sha256": "adb674811d004b3d60e57682f7ad995687af87e18b5b45cd3b6871038bc5a6b5",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/ShipArtwork.cs",
+      "sha256": "72cf6988ac2cb419c2fed4e6d404be592f120dd8e11d65f8b522db6249d6173d",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/ShipPanel.cs",
+      "sha256": "4673bcd8424e1bc83f647bd94c9b1ce4917eedcde13b1add1773ee86183a7bf3",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/SolarEarthLighting.cs",
+      "sha256": "1485c7af0226da3e57102eb1a77fff4f011580f70837a593eadc8888cf57e39d",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/SolarSystem.md",
+      "sha256": "dda8268539ee550582e8bfeb6153c140cec34647fb38ab6655a3170ff72b0fdf",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/SolarSystemView.cs",
+      "sha256": "55db5b588f0b5afa386ece6df84d58b583a5c4dc1feb250fb69b1d88fcb5810d",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/ExperienceCheck.cs",
+      "sha256": "98651cc2624b9fb6331a09c8d31f24a2987558d6cd1c7a66603dcf45ed4d6c53",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/FleetPortraitExport.cs",
+      "sha256": "26782aa6bcbdf38e1cfd7dddfb06ac223634a5406e9c76928f5bfd72d2c3e8e3",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/NativeRasterCache.cs",
+      "sha256": "f29760c3714f87278fb56b7bfe2a0d298a94177ad0f84a302a8c69726dabd812",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/PanelExperience.cs",
+      "sha256": "99fd0b7d3d3f79cfbde98155a4d66b5394509379162af8fb62c95f86bc25cfae",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/ShipPoster.cs",
+      "sha256": "bf639fc8b1ab7134814971cb06df2b0169380b56bf0c4e3f5dc970f3ea970df9",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/ShowcaseRotation.cs",
+      "sha256": "9135ea1375890eabbe90f2321f1a43dc14a2fdac564bfa7bab1743709f20dcd5",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/SolRingCheck.cs",
+      "sha256": "8abef39b3f494dfc39d42f99785bb8659b29d77486b4b2ad83e6f1b8e2ac491b",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/SolarEfficiencyCheck.cs",
+      "sha256": "6474c88862b5be9824f3a79c7a91e7eba5226fff4a4ef88364539b3386f5ffec",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/StaticFleetCheck.cs",
+      "sha256": "e35fbabd5168f77580494a2db8063ec8678b5bc818e9fe39450c8b61a7efa380",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/ATTRIBUTION.txt",
+      "sha256": "0715f65949762627d10f5647e791069788b807587465b6629cf7b412e89425c9",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/catalog.json",
+      "sha256": "51c90f6ec7fa147a9ef20e2de7248832096d67f2da17e6d99bc9531f53a4e8ec",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/manifest.json",
+      "sha256": "ceeefc68891d5cc7a2aad68b4efb35e9105551c59075502da8f014e763214654",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/viewer.js",
+      "sha256": "eb14365c40ac5b97da58f544f359b9171477474f39629935d117da3de708f53b",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portal.js",
+      "sha256": "867bdd60d7008f9cca469c5ce743f111a3e912fc44423c739e6f4a65d3f244fb",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/models/SolRing.glb.gz",
+      "sha256": "7152881b089c5ceecede9d6adf5d1605d9048378f73b1a4f6d08d997c94db505",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/index.json",
+      "sha256": "ea8825f036afdc06a1cd6af90a7c891069f048cbc7088fb270891d4c13ad8278",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Check-FleetPortraits.py",
+      "sha256": "5f6f1211c4752215efaa2c346b1007e7849aa2bb41089d5330f3281a540f38cf",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Prepare-StaticFleet.ps1",
+      "sha256": "7397bcbe39ed8d2ea21ffee74a6a0303671be631505f2cfb4e2e5d1e81f00656",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Measure-FleetPair.ps1",
+      "sha256": "ea674e45308b2ee53ebc15decb4f32d5e7936c27b7b6a054df0a1b9bcec13a43",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Measure-MonitorResources.ps1",
+      "sha256": "42e8e1ff9286c23c5614b9061eadbf371e67ee89e44b97de932b8d1d7879d9de",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Read-MonitorWindowState.ps1",
+      "sha256": "aba35d7906e4de67566cb535b0ce4f530b49ace7c988497e0abde60b54919cb8",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Run-CI.ps1",
+      "sha256": "875e6586c7d38df87af95fc162b7e25c2acfc18f867fdc345391bd75d72a1abd",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Sync-FleetViewer.py",
+      "sha256": "63c2321cb99dfab3232fbef3616476bf0f6d3d48504331ba0c0abce7885c292a",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Pella.png",
+      "sha256": "33d2d2488f74ba23150a9d2571a4fff22110f5bd9a989efb17f046cde36c4a73",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Razorback.png",
+      "sha256": "897fe3532a063eae9ac544f47a78a2309aae29df0bdba75760a41c268ec0f852",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/BashiBazouk.png",
+      "sha256": "f313e9c5b7d94496670f9f8ba908b7d0705f4068379ae54460bbc96d25ed276b",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Tynan.png",
+      "sha256": "37b5c69e3b7c7518fb1778a6124ad7b7e30c9ad9823d1fd9d699c4ab2296ffec",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Guanshiyin.png",
+      "sha256": "0898ead3d9efa6c4b9977b4d88b2c9d93d2e11f712972dac2abcc3366ba45344",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Donnager.png",
+      "sha256": "f14131f2c91e72eda67973ea7ad78eb5f6df8811837e65362ccf1b01302f7b93",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Rocinante.png",
+      "sha256": "74e65f59d7318922cb7a95136830f926f4a98c72e04ab72c45010c2012a3a71b",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Dropship.png",
+      "sha256": "f4a58c0e2bac43faeb2c3d59ec8a00e048344787ce6dc42bc5ed665b59855f61",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Epstein.png",
+      "sha256": "d4a897fc70f7c12f8a4ab2a3a6cb282e8ce0bd53812fd9f87d8c0786a2c02b9d",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/AgathaKing.png",
+      "sha256": "ed43e2444fce32776a4ea720e3ceb5eca67efdf7d393155b597970bf874f4051",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Morrigan.png",
+      "sha256": "ad64671acbf18c1b7be797d14b029197489c2865520f697c261fbee2af7c6c64",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Canterbury.png",
+      "sha256": "9a3466d2107d9a5b7e8c44f8dd3bee480408a7684124a1156d91185c4bfe4e24",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Knight.png",
+      "sha256": "39fcb882c1c30d3145a2290883415c63a6bb30de40d1e921a302877c162a7ccb",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Anubis.png",
+      "sha256": "f87db9ab96267ad97290b6e5faf534fdd47073073d23c4481e40668f8e58aae9",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Nauvoo.png",
+      "sha256": "2891c984e72d0f633924be966fd5fee98d572ea4b52e8ad5e450ade005b2733e",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Behemoth.png",
+      "sha256": "9e2d196f134b664508600f3d06f4e7a8fc7a748286001817f4422d92e59e292a",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Medina.png",
+      "sha256": "2bde18ecbf613d6427916a2f8d58c017fa7954db2381c129470ed86009d1905a",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Scopuli.png",
+      "sha256": "c8b5ac85b1a12d165d0df3a9244b7cb6cefc97d67ba1ee05f0d42a9f2a8b7058",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Scirocco.png",
+      "sha256": "7e9e29e41b0a1cc2adc8e6f0562649d771428c103d9cd9195a23a698b3ac81a2",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Hammurabi.png",
+      "sha256": "19d32d66acc42297e49c06de2fb84cbd116c769be021cfbfab4163b079a6b087",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Arboghast.png",
+      "sha256": "7d763617f512fb6d4d9ff2649f9c7db99f56480a17852dd324c315f15e440568",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/SolRing.png",
+      "sha256": "3862fd457bbc87078334eeff818031bd7d5da78b244ad1465c6771be38138d2d",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/SensorPanel.csproj",
+      "sha256": "7bf844698205458e9a2ac139def8b27c270a44a13bebe0997e53c2fdf621ee9f",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "FleetStudio.Desktop/FleetStudio.Desktop.csproj",
+      "sha256": "902bd0467b41911984f53709c69fe750e09f4d44e0b811018b5d3ece3c62835b",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Packaging/SensorPanel.iss",
+      "sha256": "06e9a4258eee13806270a385891f08cee9039319dbed319293cb1ab4d1f8c60b",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Packaging/README.txt",
+      "sha256": "5482d952db52d190b39cdddc97c49b15f68701d07ea2e7dfc7ff87e24526581d",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "Packaging/ReleaseNotes-1.8.11.md",
+      "sha256": "f90897e801b633162b5a0c452e96e8c7db3700f6180e4ae7a062ceeb3db9f7bf",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": ".vscode/tasks.json",
+      "sha256": "554c6bad5e9737875872abebee09c610ef21368b984330291f7ca7cff6744768",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Complete-SensorRelease.ps1",
+      "sha256": "98657cc959e8db84e27f057d84e54bbd9c3f69c6abddc0be79103c3985c6b0ed",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Check-SensorReleaseFlow.ps1",
+      "sha256": "9fb8707171bb21b7d7f872c531945fbb7c33ce20c9d609f678c82220521e209d",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "SensorPanel/PanelTheme.cs",
+      "sha256": "13bc1b6414a64fd31456c02bbe567264864ce6ec329b936f2637dcac563dd8de",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "NavigationWeb/package-lock.json",
+      "sha256": "344f6c3988f42fe39df1a77a0e09ebeaa4f6cadf8d844c0c527c7f4f7ff0e47f",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Run-JenkinsChecks.ps1",
+      "sha256": "608c831da32a2a565f60e496e00b297e059d54b61b3a92c64431fb601fa5decb",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/FleetAssetSnapshot.ps1",
+      "sha256": "8040dbff94bf6ff70546ce57ee9cfcea2aa158a2a47d70dcd1d5d3009af5991f",
+      "requiresHeldExclusion": false
+    },
+    {
+      "path": "tools/Check-FleetAssetSnapshot.ps1",
+      "sha256": "c297fb97c0e5c98e473ab2acf2cda692a705874e95579368291133e3c7e1f2f0",
+      "requiresHeldExclusion": false
+    }
+  ],
+  "sourceOnlyDevSupport": [
+    ".vscode/launch.json (showcase review profile)",
+    ".vscode/tasks.json (checks only plus explicit exact-CI review task)"
+  ],
+  "heldSourceExclusions": [
+    {
+      "path": "SensorPanel/PanelTheme.cs",
+      "currentSha256": "13bc1b6414a64fd31456c02bbe567264864ce6ec329b936f2637dcac563dd8de",
+      "proposedExcludedResultSha256": "ca8b4cea5fc7fc79b53e3a4cfc897bb8da203eff1037ffb84e2befd3dbb8b015",
+      "baselineSnapshot": "Sources/Arboghast/before/PanelTheme.cs",
+      "sourceEdited": true,
+      "beforeExclusionSha256": "fdee131a9114d1babb8c9bf9bd7e815b8d7d601354f5c290ad7927a58a77bdc2",
+      "preStudyTextMatched": true
+    },
+    {
+      "path": "SensorPanel/ShipPanel.cs",
+      "currentSha256": "4673bcd8424e1bc83f647bd94c9b1ce4917eedcde13b1add1773ee86183a7bf3",
+      "proposedExcludedResultSha256": "6b08983e8bc6e23332ef12b8d71a2c0cdd1f602a01347bee445b48cb65f36141",
+      "baselineSnapshot": "Sources/Arboghast/before/ShipPanel.cs",
+      "sourceEdited": true,
+      "beforeExclusionSha256": "f1186e88a40d828b39ea50cf9c70ccebf9b69635d691aff6132cc459fd928ff5",
+      "preStudyTextMatched": true
+    },
+    {
+      "path": "SensorPanel/PanelWindow.cs",
+      "currentSha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+      "proposedExcludedResultSha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+      "baselineSnapshot": "Sources/Arboghast/before/PanelWindow.cs",
+      "sourceEdited": true,
+      "beforeExclusionSha256": "57426504d488a2695e439baffcf0ee33586669352f91bf3423d454bb0723f1f0",
+      "preStudyTextMatched": true
+    }
+  ],
+  "heldExclusionPatch": "docs/release-preparation-1.8.11/exclude-held-arboghast.patch",
+  "patchApplied": true,
+  "explicitExcludedSlices": [
+    "Sources/Arboghast/** and output/arboghast-research-20261021/**",
+    "rejected Arboghast PanelTheme/ShipPanel styling and explicit PanelWindow capture delay",
+    "Sources/Knight/**; new Knight geometry",
+    "rejected Roci/Charon/Canterbury studies and production-reference archives",
+    "FleetStudio/manifest.json dirty additions and FleetStudio/models/Anubis-41fedbe295b8.glb.gz / Anubis-a633ff3e4743.glb.gz",
+    "Fleet Studio install/deploy/service changes",
+    "separate Lite/Expanse installer packaging",
+    "unrelated dirty work, generated receipts/logs, local keys and machine-specific state"
+  ],
+  "pendingVersionFiles": [],
+  "draftNotes": "Packaging/ReleaseNotes-1.8.11.md",
+  "executionToolingUnresolved": [],
+  "gates": [
+    "review/freeze mixed candidate source and supporting tooling",
+    "separate final native/LIVE/resource acceptance",
+    "applicable scoped commit/push authority and exact-SHA Jenkins installer CI",
+    "actual package review and separate publication/upgrade authority"
+  ],
+  "releaseTooling": {
+    "defaultPhase": "Review",
+    "explicitPhases": [
+      "Review",
+      "Publish",
+      "Install"
+    ],
+    "draftNotesBlockPublication": true,
+    "defaultTask": "Check sensor panel 1.8.11 (no publish or install)",
+    "reviewTask": "Review sensor panel CI candidate (no publish or install)",
+    "fixedBuildNumberRemoved": true,
+    "exactCommittedVersion": true
+  },
+  "newExecutionResult": "docs/release-preparation-1.8.11/blocker-resolution-result.json"
+}

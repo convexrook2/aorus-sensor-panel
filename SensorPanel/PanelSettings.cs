@@ -73,7 +73,7 @@ internal sealed class PanelSettings
         pane.Width=Math.Min(580,Math.Max(180,Overlay.ActualWidth-24));
         pane.MaxHeight=Math.Max(80,Math.Min(520,Overlay.ActualHeight-72));
         double width=Math.Max(140,pane.Width-40); sections.Width=width;
-        foreach(var card in sections.Children.OfType<Border>()) card.Width=width>=480 ? (width-16)/2 : width-8;
+        foreach(var card in sections.Children.OfType<Border>()) card.Width=card.Tag is true||width<480?width-8:(width-16)/2;
     }
     private static IEnumerable<MenuItem> Items(ItemCollection items)
     {
@@ -112,6 +112,10 @@ internal sealed class PanelSettings
     }
     private void BuildSettings()
     {
+        var experience=Section("Experience",true);
+        Choice(experience,"Experience",Find("Experience"));
+        if(currentTheme().ShipConsole)BuildGraphicsChoice(experience);
+        else experience.Children.Add(Label("Original AORUS monitoring and colour themes. Ship and solar graphics are inactive.",11));
         var display=Section("Display");
         Choice(display,"Screen",Find("Move to display"));
         Actions(display,("Fullscreen",Find("Fit to display")),("Windowed",Find("Restore window size")));
@@ -139,8 +143,9 @@ internal sealed class PanelSettings
     }
     private void BuildShipOptions()
     {
-        var motion=Section("Scene");
-        Toggle(motion,"Animate map and ship",Find("Projection motion and ship rotation"));
+        var motion=Section("Scene",true);
+        BuildGraphicsChoice(motion);
+        Toggle(motion,"Animate map and background",Find("Map and background motion"));
         var showcase=Find("Expanse showcase");
         var cycle=Section("Ship cycling"); cycle.IsEnabled=showcase.IsEnabled;
         if(!showcase.IsEnabled)cycle.Children.Add(Label("Choose The Expanse theme to cycle ships.",12));
@@ -156,13 +161,18 @@ internal sealed class PanelSettings
         Toggle(parent,"Cycle ship themes",Find("Auto-cycle ships and personnel"));
         Choice(parent,"Change ship every",Find("Scene duration"));
     }
-    private StackPanel Section(string title)
+    private void BuildGraphicsChoice(StackPanel parent)
+    {
+        Choice(parent,"Rendering",Find("Rendering mode"));
+        parent.Children.Add(Label("Full Fidelity: unrestricted motion. Efficient: lower GPU use with the same ship detail.",11));
+    }
+    private StackPanel Section(string title,bool fullWidth=false)
     {
         var body=new StackPanel();
         var caption=Label(title,13); caption.FontWeight=FontWeights.SemiBold; caption.Margin=new(0,0,0,8);
         body.Children.Add(caption);
         sections.Children.Add(new Border { Child=body, Padding=new(10), Margin=new(4,0,4,8), CornerRadius=new(6),
-            Background=currentTheme().Surface });
+            Background=currentTheme().Surface,Tag=fullWidth });
         return body;
     }
     private TextBlock Label(string text,double size=12) => new() { Text=text,FontSize=size,Foreground=currentTheme().Foreground,
@@ -271,6 +281,19 @@ internal sealed class PanelSettings
     {
         var selector=selectors[control];
         selector.SelectedItem=selector.Items.OfType<ComboBoxItem>().Single(item=>item.Tag is MenuItem command && command.Header?.ToString()==option);
+    }
+    internal void CheckExperienceControls(bool expanse)
+    {
+        if(!IsOpen||!selectors.ContainsKey("Experience")||selectors.ContainsKey("Rendering")!=expanse)
+            throw new InvalidOperationException("Experience/rendering controls differ from the current experience.");
+        foreach(string name in expanse?new[]{"Experience","Rendering"}:new[]{"Experience"})
+        {
+            var control=selectors[name];var rectangle=control.TransformToAncestor(Overlay).TransformBounds(new Rect(0,0,control.ActualWidth,control.ActualHeight));
+            var centre=new Point(rectangle.X+rectangle.Width/2,rectangle.Y+rectangle.Height/2);
+            var hit=Overlay.InputHitTest(centre) as DependencyObject;
+            if(!control.IsVisible||rectangle.Height<25||!Bounds.Contains(rectangle)||hit is null||(hit!=control&&!control.IsAncestorOf(hit)))
+                throw new InvalidOperationException("Experience control is clipped or covered: "+name);
+        }
     }
     private Button Button(object content,Action action,string name)
     {

@@ -31,8 +31,16 @@ try {
     if ((Get-Content .\Packaging\SensorPanel.iss -Raw) -notmatch ('#define AppVersion "'+[regex]::Escape($version)+'"') -or
         (Get-Content .\Packaging\README.txt -Raw) -notmatch ('Version '+[regex]::Escape($version)+' \|') -or
         !(Test-Path -LiteralPath ".\Packaging\ReleaseNotes-$version.md")) { throw 'Release version/notes disagree.' }
+    & pwsh -NoLogo -NoProfile -File .\tools\Check-SensorReleaseFlow.ps1
+    if ($LASTEXITCODE -ne 0) { throw 'Isolated release-phase safety checks failed.' }
+    & pwsh -NoLogo -NoProfile -File .\tools\Check-FleetAssetSnapshot.ps1
+    if ($LASTEXITCODE -ne 0) { throw 'Asset immutability/Jenkins cleanliness checks failed.' }
     & $PythonExecutable .\tools\Sync-FleetViewer.py --check
     if ($LASTEXITCODE -ne 0) { throw 'Monitor fleet integrity failed.' }
+    & $PythonExecutable .\tools\Check-FleetPortraits.py --self-test
+    if ($LASTEXITCODE -ne 0) { throw 'Portrait validator regression checks failed.' }
+    & $PythonExecutable .\tools\Check-FleetPortraits.py
+    if ($LASTEXITCODE -ne 0) { throw 'Prepared ship portraits failed provenance/resolution checks.' }
     & $PythonExecutable .\FleetStudio\tools\verify_assets.py
     if ($LASTEXITCODE -ne 0) { throw 'Fleet Studio asset integrity failed.' }
     node .\tools\Check-RocinanteRelease.mjs

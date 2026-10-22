@@ -1,5 +1,8 @@
 # X890 Jenkins
 
+For the complete source-to-installed sequence and current holds, see
+[release flow](RELEASE-FLOW.md). A green Jenkins run is one gate in that flow.
+
 `X890-CI` uses the existing local Jenkins controller and its Windows agent in a
 dedicated workspace. It never builds in the owner's interactive checkout. The
 pipeline definition is `Jenkinsfile` from this repository's `main` branch.
@@ -20,7 +23,8 @@ and verifies decrypted asset bytes against source, with no loose protected asset
 roots or build keys/source/debug files in either publish output.
 
 The outer runner additionally restores the retained navigation engineering
-project with `npm ci`, checks high/critical npm advisories, runs all discovered
+project with `npm ci --ignore-scripts --no-audit`, then separately requires the
+high/critical npm advisory check, runs all discovered
 Vitest cases and builds TypeScript/Vite into `artifacts/ci/navigation-build`.
 It never uses that project's default build output, which would overwrite
 accepted runtime assets. NuGet freshness and npm updates within the declared
@@ -31,6 +35,21 @@ review. This X890 policy preserves the admitted Three.js/compiler compatibility
 ranges; it differs from Rookline's strict latest-version policy. High/critical
 security advisories still fail independently of those ranges. Dependency
 updates remain reviewed source changes.
+
+Local checks freeze SHA-256, size and path-set snapshots of `Assets` and
+`FleetStudio/models` before running, then reject changed, added or removed
+asset inputs. This permits validation of an explicitly prepared dirty local
+candidate while proving that the checks did not alter its assets. Jenkins
+additionally requires clean tracked and untracked source at both entry and
+exit; local success is not exact-commit Jenkins evidence. Eight isolated cases
+cover asset mutation and clean-source enforcement. Asset preservation is also
+accounted for if an earlier gate fails.
+
+The explicit npm audit has bounded network retries/timeouts and remains
+mandatory. Disabling npm ci's duplicate automatic audit does not bypass the
+separate gate. Network failure fails the run. Vite is now locked to 8.3.5
+within its existing declared compatibility range; other range migrations
+remain separate scope.
 
 Jenkins publishes actual navigation test cases plus clearly named aggregate
 contract-gate results. Console self-tests are not presented as invented

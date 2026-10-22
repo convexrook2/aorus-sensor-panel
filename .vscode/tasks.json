@@ -2,16 +2,23 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Release sensor panel 1.8.10 (CI, publish, install)",
+      "label": "Prepare ship portraits and review rotation controls",
+      "type": "process",
+      "command": "pwsh",
+      "args": ["-NoLogo", "-NoProfile", "-File", "${workspaceFolder}/tools/Prepare-StaticFleet.ps1", "-Review"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Check sensor panel 1.8.11 (no publish or install)",
       "type": "process",
       "command": "pwsh",
       "args": [
         "-NoLogo",
         "-NoProfile",
         "-File",
-        "${workspaceFolder}/tools/Complete-SensorRelease.ps1",
-        "-BuildNumber",
-        "9"
+        "${workspaceFolder}/tools/Run-JenkinsChecks.ps1"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -22,6 +29,15 @@
         "clear": false,
         "close": false
       },
+      "problemMatcher": []
+    },
+    {
+      "label": "Review sensor panel CI candidate (no publish or install)",
+      "type": "process",
+      "command": "pwsh",
+      "args": ["-NoLogo", "-NoProfile", "-File", "${workspaceFolder}/tools/Complete-SensorRelease.ps1", "-Phase", "Review", "-BuildNumber", "${input:sensorReleaseBuild}", "-ExpectedSha", "${input:sensorReleaseSha}"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": false, "close": false },
       "problemMatcher": []
     },
     {
@@ -358,5 +374,9 @@
         "panel": "dedicated"
       }
     }
+  ],
+  "inputs": [
+    { "id": "sensorReleaseBuild", "type": "promptString", "description": "Successful X890-CI installer build number for the approved candidate" },
+    { "id": "sensorReleaseSha", "type": "promptString", "description": "Full 40-character pushed source SHA for that exact CI build" }
   ]
 }

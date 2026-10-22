@@ -34,7 +34,10 @@ internal sealed class PellaGrid : FrameworkElement
     private DrawingGroup? drawing;
     private Size cachedSize;
     internal PellaGrid(Color ink)
-    {this.ink=ink;IsHitTestVisible=false;SizeChanged+=(_,_)=>InvalidateVisual();}
+    {
+        this.ink=ink;IsHitTestVisible=false;SizeChanged+=(_,_)=>InvalidateVisual();
+        LayoutUpdated+=(_,_)=>NativeRasterCache.Apply(this,IsVisible);
+    }
     protected override void OnRender(DrawingContext dc)
     {
         if(ActualWidth<=0||ActualHeight<=0)return;

@@ -43,7 +43,8 @@ internal sealed partial class PanelWindow
                     throw new InvalidOperationException("Ship changed without its theme: "+ship);
                 if(ship is "Pella" or "Rocinante")
                 {
-                    await shipPanel.ShipViewport.WaitForReadyAsync(); await Task.Delay(400);
+                    if(!shipPanel.HasShipViewport)throw new InvalidOperationException("Cycling lost the showcase renderer.");
+                    await Task.Delay(400);
                     CaptureStudy(ship.ToLowerInvariant());
                 }
             }

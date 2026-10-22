@@ -87,11 +87,31 @@ Checks cover all destination focus states, actual asset loading and render
 budgets, labels, schematic/geographic boundaries, paused/hidden animation and
 unchanged sensor readings/maxima. Screenshots and results are saved in
 `artifacts/solar-navigation-validation`. These previews are separate from
-installed-build or live-hardware proof. Idle orbital animation is capped at
-20 updates/second; camera transitions use up to 60 and return to the idle rate.
-The render callback is attached only during a camera transition and detached
-when it settles, hides, unloads or motion is disabled.
+installed-build or live-hardware proof. Efficient idle orbital animation requests one
+update every 100 ms (10 per second); dispatcher load can reduce the achieved
+update rate. Camera transitions use up to 60 updates per second and return to
+the idle rate. Direct dragging refreshes on pointer movement, independently of
+that idle timer. These scene update rates are not measurements of physically
+presented display frames.
+Full Fidelity follows native composition frames for both orbital animation and
+camera motion, without the Efficient mode's application frame caps. Its callback
+detaches when paused and settled, hidden, unloaded or disabled. Efficient attaches
+that callback only during a camera transition and detaches when it settles.
 True-scale zoom interpolates the scale ratio instead of taking huge linear steps.
+
+PAUSED stops the settled scene's timer and refreshes. Focus transitions, dragging
+and zooming remain available while paused. Stars and stable schematic planet
+orbits use separate retained drawing layers; their bitmap caches account for
+ancestor Viewbox scaling and display DPI. Camera, size, selection and scale-mode
+changes invalidate the appropriate layer. Dynamic belts, moon orbits, models and
+lighting retain their original rendering. Earth lighting skips identical sun
+directions and settles to the final direction after a paused camera change.
+
+The explicit `--check-solar-efficiency` windowed saved-data review records scene
+update counters, checks paused/focus behaviour, and captures seven deterministic
+map views under `artifacts/solar-efficiency/after`. The `--solar-baseline` option
+labels a baseline receipt; it does not disable optimizations. This diagnostic
+does not measure physical display FPS, live sensors or GPU utilization.
 
 Models outside the projected view are detached from the 3D scene, retaining
 their cached assets for re-entry. Sub-pixel true-scale bodies use the existing

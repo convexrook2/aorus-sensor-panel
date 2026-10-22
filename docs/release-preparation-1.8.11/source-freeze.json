@@ -1,0 +1,474 @@
+{
+  "schema": "x890.release-source-freeze.v1",
+  "version": "1.8.11",
+  "frozenAt": "2026-10-21T23:22:13.7988337-04:00",
+  "repository": ".",
+  "branch": "main",
+  "parentHead": "d7724d70bf94dbd6bbedc1ecc296557e8d8c5abb",
+  "authority": "Owner authorized source freeze, release-slice commit/push, exact-SHA Jenkins and installer build; show results before publishing/installing",
+  "state": "FROZEN_FOR_EXACT_COMMIT_CI",
+  "files": [
+    {
+      "path": ".vscode/launch.json",
+      "workingBytesSha256": "0b88360d74048c973733785a92e5c9b64e1f64a02cb6e9ad9670fb3f7d8a551e",
+      "gitBlob": "d761a00235991ec34bc9d8a4614fb3c79b365357"
+    },
+    {
+      "path": ".vscode/tasks.json",
+      "workingBytesSha256": "554c6bad5e9737875872abebee09c610ef21368b984330291f7ca7cff6744768",
+      "gitBlob": "7ce84f12daf279e5b0669365c468ae23b2c18352"
+    },
+    {
+      "path": "Assets/FleetViewer/ATTRIBUTION.txt",
+      "workingBytesSha256": "0715f65949762627d10f5647e791069788b807587465b6629cf7b412e89425c9",
+      "gitBlob": "945de60b78b753786f8599b1f9c2ddd30dc0f51f"
+    },
+    {
+      "path": "Assets/FleetViewer/catalog.json",
+      "workingBytesSha256": "51c90f6ec7fa147a9ef20e2de7248832096d67f2da17e6d99bc9531f53a4e8ec",
+      "gitBlob": "361724a436d986604e6bcc98556e3cab36324583"
+    },
+    {
+      "path": "Assets/FleetViewer/manifest.json",
+      "workingBytesSha256": "ceeefc68891d5cc7a2aad68b4efb35e9105551c59075502da8f014e763214654",
+      "gitBlob": "ea61bc82142369c2c7e5d2011e9374b872f8edfc"
+    },
+    {
+      "path": "Assets/FleetViewer/models/SolRing.glb.gz",
+      "workingBytesSha256": "7152881b089c5ceecede9d6adf5d1605d9048378f73b1a4f6d08d997c94db505",
+      "gitBlob": "a05061caef400127da2ffe7457f4efa7ddf45555"
+    },
+    {
+      "path": "Assets/FleetViewer/portal.js",
+      "workingBytesSha256": "867bdd60d7008f9cca469c5ce743f111a3e912fc44423c739e6f4a65d3f244fb",
+      "gitBlob": "2a233428cd32075a615cb5dbac22311698175654"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/AgathaKing.png",
+      "workingBytesSha256": "ed43e2444fce32776a4ea720e3ceb5eca67efdf7d393155b597970bf874f4051",
+      "gitBlob": "fde195d90303aff5dde5eea56e95276b3828c4d7"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Anubis.png",
+      "workingBytesSha256": "f87db9ab96267ad97290b6e5faf534fdd47073073d23c4481e40668f8e58aae9",
+      "gitBlob": "34c2f04b138e84269bcf2dfc66aea182d716e5ff"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Arboghast.png",
+      "workingBytesSha256": "7d763617f512fb6d4d9ff2649f9c7db99f56480a17852dd324c315f15e440568",
+      "gitBlob": "b38708a883eb656684b63e75147f2433b1cdf590"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/BashiBazouk.png",
+      "workingBytesSha256": "f313e9c5b7d94496670f9f8ba908b7d0705f4068379ae54460bbc96d25ed276b",
+      "gitBlob": "0659311e4c8af5a6931955ded4e655bdcdc715c8"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Behemoth.png",
+      "workingBytesSha256": "9e2d196f134b664508600f3d06f4e7a8fc7a748286001817f4422d92e59e292a",
+      "gitBlob": "afff8a7767a274fc2a5071cd45c8a6091f89e9de"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Canterbury.png",
+      "workingBytesSha256": "9a3466d2107d9a5b7e8c44f8dd3bee480408a7684124a1156d91185c4bfe4e24",
+      "gitBlob": "bfa1cb90b02c9b9c7eaa05332b57ede8b3f35031"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Donnager.png",
+      "workingBytesSha256": "f14131f2c91e72eda67973ea7ad78eb5f6df8811837e65362ccf1b01302f7b93",
+      "gitBlob": "002e9300e15432c6a5a13ac61b4e6717585c81f0"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Dropship.png",
+      "workingBytesSha256": "f4a58c0e2bac43faeb2c3d59ec8a00e048344787ce6dc42bc5ed665b59855f61",
+      "gitBlob": "d6487c2225845aa7adff60392448d223e00326dd"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Epstein.png",
+      "workingBytesSha256": "d4a897fc70f7c12f8a4ab2a3a6cb282e8ce0bd53812fd9f87d8c0786a2c02b9d",
+      "gitBlob": "7b670b257bc8031fc7a2fcac5c1b01d49cfc3687"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Guanshiyin.png",
+      "workingBytesSha256": "0898ead3d9efa6c4b9977b4d88b2c9d93d2e11f712972dac2abcc3366ba45344",
+      "gitBlob": "6c685502eced01f339d8d8b0fa7d9b2c45e2b13e"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Hammurabi.png",
+      "workingBytesSha256": "19d32d66acc42297e49c06de2fb84cbd116c769be021cfbfab4163b079a6b087",
+      "gitBlob": "3f02de464737d7f580097b6b30fbc2b58c9c15f5"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/index.json",
+      "workingBytesSha256": "ea8825f036afdc06a1cd6af90a7c891069f048cbc7088fb270891d4c13ad8278",
+      "gitBlob": "b8493aaad9c072bca72ac7237849754035a9c190"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Knight.png",
+      "workingBytesSha256": "39fcb882c1c30d3145a2290883415c63a6bb30de40d1e921a302877c162a7ccb",
+      "gitBlob": "bea13ecf045d64d433f5c50487932128af495e9b"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Medina.png",
+      "workingBytesSha256": "2bde18ecbf613d6427916a2f8d58c017fa7954db2381c129470ed86009d1905a",
+      "gitBlob": "1679d172115ffe5e2fcd0349d89de43bc540f3b0"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Morrigan.png",
+      "workingBytesSha256": "ad64671acbf18c1b7be797d14b029197489c2865520f697c261fbee2af7c6c64",
+      "gitBlob": "9784595c148006257bf7b97cf9c3315d69fbff26"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Nauvoo.png",
+      "workingBytesSha256": "2891c984e72d0f633924be966fd5fee98d572ea4b52e8ad5e450ade005b2733e",
+      "gitBlob": "3f3cca85beaaede530e0fada4843b4b7ea01bb4f"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Pella.png",
+      "workingBytesSha256": "33d2d2488f74ba23150a9d2571a4fff22110f5bd9a989efb17f046cde36c4a73",
+      "gitBlob": "89a670a62e4710c18c7bb0f0d2f087ed298c271b"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Razorback.png",
+      "workingBytesSha256": "897fe3532a063eae9ac544f47a78a2309aae29df0bdba75760a41c268ec0f852",
+      "gitBlob": "c4b0309d0fa11089bcb55afdc4200ddeed3432dc"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Rocinante.png",
+      "workingBytesSha256": "74e65f59d7318922cb7a95136830f926f4a98c72e04ab72c45010c2012a3a71b",
+      "gitBlob": "829abd82dccc48c67715c0da0fb8aec7620bc5d1"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Scirocco.png",
+      "workingBytesSha256": "7e9e29e41b0a1cc2adc8e6f0562649d771428c103d9cd9195a23a698b3ac81a2",
+      "gitBlob": "801707776f8d6de2b96613f023ad5dc13811269d"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Scopuli.png",
+      "workingBytesSha256": "c8b5ac85b1a12d165d0df3a9244b7cb6cefc97d67ba1ee05f0d42a9f2a8b7058",
+      "gitBlob": "92f78bc945715ec6dbdb7278f51f03a162228b36"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/SolRing.png",
+      "workingBytesSha256": "3862fd457bbc87078334eeff818031bd7d5da78b244ad1465c6771be38138d2d",
+      "gitBlob": "ced4b40f0596e1a389a12ea85d31541888de534a"
+    },
+    {
+      "path": "Assets/FleetViewer/portraits/Tynan.png",
+      "workingBytesSha256": "37b5c69e3b7c7518fb1778a6124ad7b7e30c9ad9823d1fd9d699c4ab2296ffec",
+      "gitBlob": "78312c8a354b2ead2b7dac529da5f0fc837f2205"
+    },
+    {
+      "path": "Assets/FleetViewer/viewer.js",
+      "workingBytesSha256": "eb14365c40ac5b97da58f544f359b9171477474f39629935d117da3de708f53b",
+      "gitBlob": "fb7833cc12d1f7ce313c5e6fd30019e7bcf7c436"
+    },
+    {
+      "path": "docs/CI.md",
+      "workingBytesSha256": "30c7a46050c6098e604e86dbcd92691735c7cee5dfcb3b8e639e774a6b93e4f2",
+      "gitBlob": "9b2a922e74a0852a55d409f6b26bbda2985a777a"
+    },
+    {
+      "path": "docs/PERFORMANCE-2026-10-21.md",
+      "workingBytesSha256": "4d9ec1c6b3679f0e3556294f84712b09988fc2eca4466c9a54526b14d78cd6c9",
+      "gitBlob": "447d08bcaef672560e5cd641d5bd3f66000dc584"
+    },
+    {
+      "path": "docs/RELEASE-1.8.11-CHECKS.md",
+      "workingBytesSha256": "576a9658022aa5e5b01833ef6e72b29d37dccc53937f43dad5df7f7171e10443",
+      "gitBlob": "55ac322772579180cad290f93962cf25f4e9aa27"
+    },
+    {
+      "path": "docs/RELEASE-CANDIDATE-1.8.11.md",
+      "workingBytesSha256": "ad04d55b001d4efec86c5275997a6d97c5221756a07fd501abb8d6d5f4c7be9f",
+      "gitBlob": "0cec5bca8d39adc219867a762d587b0b8cca5ad0"
+    },
+    {
+      "path": "docs/RELEASE-FLOW.md",
+      "workingBytesSha256": "6d4333f718dd7615e79b6eea448c99e1bb537ea17d87f6155b50c85b95d80226",
+      "gitBlob": "702b5871686705d0e6c1e1947f699569454999da"
+    },
+    {
+      "path": "docs/release-preparation-1.8.11/blocker-resolution-result.json",
+      "workingBytesSha256": "7a086eca9b001072654e4fddd30f4215d0c9f19c27be459f59d015276510a357",
+      "gitBlob": "d8e65f4b6be7e98429822b0a91be010093734bfe"
+    },
+    {
+      "path": "docs/release-preparation-1.8.11/exclude-held-arboghast.patch",
+      "workingBytesSha256": "f31f02084249af365650d684e0e2809176afccf9380b7f38bbf8295ad3a8274b",
+      "gitBlob": "b3b4b2d031cc8a52b1ee1188a5f4bc5b55cfb9d0"
+    },
+    {
+      "path": "docs/release-preparation-1.8.11/execution-result.json",
+      "workingBytesSha256": "ccf4c2dd81b6c378aaae20a568603073ec1b05c498cc2f84837bd635513a4621",
+      "gitBlob": "ba3fbd412908d6bc8486da952054188f28e5db92"
+    },
+    {
+      "path": "docs/release-preparation-1.8.11/research-path-preservation.json",
+      "workingBytesSha256": "59a910a6b723e24ed1f6c0576e05b3dabc3ff891c691a63c145f9c00016b1e64",
+      "gitBlob": "06aebda630906a1ae4b27a425d44f765b6e777bb"
+    },
+    {
+      "path": "docs/release-preparation-1.8.11/scope.json",
+      "workingBytesSha256": "e6cdca666659215c609271543c90e85ef91b7607fb0816cef9261cfd65da9088",
+      "gitBlob": "aeed8cb3b087387d295dbab6b5bbbacfd1d30168"
+    },
+    {
+      "path": "docs/release-preparation-1.8.11/source-audit.json",
+      "workingBytesSha256": "eb8249846277469fa76fd01584304e5ab17f54c01b408c8d2f2ac39907292488",
+      "gitBlob": "f41b5a06b290e2842dd5bab4b47c703e83040aae"
+    },
+    {
+      "path": "docs/RL-ASSET-STANDARD.md",
+      "workingBytesSha256": "da39b88d96291edf2138c4c015adbe7bd3b5b4c9a2bd8115f5b339597b244134",
+      "gitBlob": "0d7dd0e492aaf41b6b5b48768e20f62191055416"
+    },
+    {
+      "path": "docs/SOL-RING.md",
+      "workingBytesSha256": "9dd87685714cd21daa07ff0776f6b111c6e6e8f15fd8a72929e8f7633e26c188",
+      "gitBlob": "02a3e447b6fbc3badb24bc3e538d88fd700da0af"
+    },
+    {
+      "path": "FleetStudio.Desktop/FleetStudio.Desktop.csproj",
+      "workingBytesSha256": "902bd0467b41911984f53709c69fe750e09f4d44e0b811018b5d3ece3c62835b",
+      "gitBlob": "ec9a68cad69a8db3740780b12b12addcbfe1292e"
+    },
+    {
+      "path": "NavigationWeb/package-lock.json",
+      "workingBytesSha256": "344f6c3988f42fe39df1a77a0e09ebeaa4f6cadf8d844c0c527c7f4f7ff0e47f",
+      "gitBlob": "56f002953694e62fdbd5fbe489f80a5d1107b76e"
+    },
+    {
+      "path": "Packaging/README.txt",
+      "workingBytesSha256": "5482d952db52d190b39cdddc97c49b15f68701d07ea2e7dfc7ff87e24526581d",
+      "gitBlob": "50f3b764681e87f6d16385706ae8c9313eb70602"
+    },
+    {
+      "path": "Packaging/ReleaseNotes-1.8.11.md",
+      "workingBytesSha256": "f90897e801b633162b5a0c452e96e8c7db3700f6180e4ae7a062ceeb3db9f7bf",
+      "gitBlob": "c1921e1f3e7b1d326374538288810ac49f1f477b"
+    },
+    {
+      "path": "Packaging/SensorPanel.iss",
+      "workingBytesSha256": "06e9a4258eee13806270a385891f08cee9039319dbed319293cb1ab4d1f8c60b",
+      "gitBlob": "fc6335f40da4a3db011f4535e7120c0eb9be48f5"
+    },
+    {
+      "path": "SensorPanel/App.cs",
+      "workingBytesSha256": "b65b2a9357f35bc141e6b96c348031cab7eb2a86a24d87d6d1c4188a54d9f625",
+      "gitBlob": "3f4e3b03d15e503cd149446d2816fe28ded5f0db"
+    },
+    {
+      "path": "SensorPanel/ExpanseCycleCheck.cs",
+      "workingBytesSha256": "bc2c611ef476d41c8cff0488b3b2e71ec3780f50c6c73dc328213e26fff14a86",
+      "gitBlob": "2b804e7a53648dc5b40189ab2dd956f47fefd87f"
+    },
+    {
+      "path": "SensorPanel/ExpanseNavigation.cs",
+      "workingBytesSha256": "4bbbbbb38861347572a3bd22c4b3d7d2c9a1056e9f83a38de74e3e2db7c7abf4",
+      "gitBlob": "694d72303d08ab141154ee9d91c35341c7813a49"
+    },
+    {
+      "path": "SensorPanel/ExperienceCheck.cs",
+      "workingBytesSha256": "98651cc2624b9fb6331a09c8d31f24a2987558d6cd1c7a66603dcf45ed4d6c53",
+      "gitBlob": "2bdef9d3954de1a07af57508960d86a4b83c98ba"
+    },
+    {
+      "path": "SensorPanel/FleetPairCheck.cs",
+      "workingBytesSha256": "8f9fc9a4bc3b341d1eae9e7d191d3ab6ebf4f66d0d108cc144f2033e9d92f1e9",
+      "gitBlob": "e1521f54ba17983f76e33d5dbe96530e5c70f615"
+    },
+    {
+      "path": "SensorPanel/FleetPortraitExport.cs",
+      "workingBytesSha256": "26782aa6bcbdf38e1cfd7dddfb06ac223634a5406e9c76928f5bfd72d2c3e8e3",
+      "gitBlob": "2356a9ed2b6ed792217ce5c6d6b68e3ecb250c8c"
+    },
+    {
+      "path": "SensorPanel/FleetViewport.cs",
+      "workingBytesSha256": "5da933620fba6a91feed1c7d2b29ec72b025ccd20baa730537f6763d88a9922e",
+      "gitBlob": "e02b1d89083f52daef7d5f703b4001e3faf370c3"
+    },
+    {
+      "path": "SensorPanel/Holotable.cs",
+      "workingBytesSha256": "7226616dbd06c5474bc7b0262a97ea920e98832183ae90f63821ecd6bbcf14e7",
+      "gitBlob": "8f7df79f5a14b2e0088b3eec62c0077e6554a8c5"
+    },
+    {
+      "path": "SensorPanel/HolotableCheck.cs",
+      "workingBytesSha256": "7e0157dc9ee33d3d8e3d3dfa3f6d2f8f909901c9839e4a82c2ba7a2fc7b8c5fb",
+      "gitBlob": "6080e29614dda18bfb57f4613949c784b401802e"
+    },
+    {
+      "path": "SensorPanel/NativeQualityCheck.cs",
+      "workingBytesSha256": "919618880fbfc2ed619c842d69e816c56555e5eb999bf4095846b1e092041d61",
+      "gitBlob": "5c13359f858c33a182c1a5a233ad83da5512e7b4"
+    },
+    {
+      "path": "SensorPanel/NativeRasterCache.cs",
+      "workingBytesSha256": "f29760c3714f87278fb56b7bfe2a0d298a94177ad0f84a302a8c69726dabd812",
+      "gitBlob": "543c4b8142d57c26ce78128db47eebf7047ff63f"
+    },
+    {
+      "path": "SensorPanel/PanelExperience.cs",
+      "workingBytesSha256": "99fd0b7d3d3f79cfbde98155a4d66b5394509379162af8fb62c95f86bc25cfae",
+      "gitBlob": "73861930785bd52144211a53bd637f33ff52a0db"
+    },
+    {
+      "path": "SensorPanel/PanelPreferences.cs",
+      "workingBytesSha256": "b26bff1d4306865db9b53b6dd891a7bf49627f7ed0a0651b8290fbab5ce4d219",
+      "gitBlob": "e42c115c393691624efccabe82c0e830ba0f3cef"
+    },
+    {
+      "path": "SensorPanel/PanelSettings.cs",
+      "workingBytesSha256": "94904fb07dc8b3bf951b46b44cbbd64d483f9e38f87dbda5d1ba6a059358968e",
+      "gitBlob": "8465c9afeaaeaa0931bf4130fd4a4fa5892630e1"
+    },
+    {
+      "path": "SensorPanel/PanelTheme.cs",
+      "workingBytesSha256": "13bc1b6414a64fd31456c02bbe567264864ce6ec329b936f2637dcac563dd8de",
+      "gitBlob": "11b664fb6b5981f00db85a45f3ae6cff4c89579f"
+    },
+    {
+      "path": "SensorPanel/PanelWindow.cs",
+      "workingBytesSha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+      "gitBlob": "5f49772e8e1af434530821a9b10a93a3845791a5"
+    },
+    {
+      "path": "SensorPanel/PellaConsole.cs",
+      "workingBytesSha256": "adb674811d004b3d60e57682f7ad995687af87e18b5b45cd3b6871038bc5a6b5",
+      "gitBlob": "670e410905514a5d12003a90019356fe95b214d1"
+    },
+    {
+      "path": "SensorPanel/SensorPanel.csproj",
+      "workingBytesSha256": "7bf844698205458e9a2ac139def8b27c270a44a13bebe0997e53c2fdf621ee9f",
+      "gitBlob": "3f11c3c17aa74df236996d874a75f20312002464"
+    },
+    {
+      "path": "SensorPanel/ShipArtwork.cs",
+      "workingBytesSha256": "72cf6988ac2cb419c2fed4e6d404be592f120dd8e11d65f8b522db6249d6173d",
+      "gitBlob": "e4e90f7b8082485e7361a135db1f6414b64c9787"
+    },
+    {
+      "path": "SensorPanel/ShipPanel.cs",
+      "workingBytesSha256": "4673bcd8424e1bc83f647bd94c9b1ce4917eedcde13b1add1773ee86183a7bf3",
+      "gitBlob": "0914908d0a9624fb16b53ea68cdf5c14560306b6"
+    },
+    {
+      "path": "SensorPanel/ShipPoster.cs",
+      "workingBytesSha256": "bf639fc8b1ab7134814971cb06df2b0169380b56bf0c4e3f5dc970f3ea970df9",
+      "gitBlob": "78938c7486a04dce933f172fc167e9b75cd853fc"
+    },
+    {
+      "path": "SensorPanel/ShowcaseRotation.cs",
+      "workingBytesSha256": "9135ea1375890eabbe90f2321f1a43dc14a2fdac564bfa7bab1743709f20dcd5",
+      "gitBlob": "37cfe01c21b4f99f63d5942ec2fd7ba4aa0b7671"
+    },
+    {
+      "path": "SensorPanel/SolarEarthLighting.cs",
+      "workingBytesSha256": "1485c7af0226da3e57102eb1a77fff4f011580f70837a593eadc8888cf57e39d",
+      "gitBlob": "33cbc111deff10d5858dc19ec5601c4ae41f0de3"
+    },
+    {
+      "path": "SensorPanel/SolarEfficiencyCheck.cs",
+      "workingBytesSha256": "6474c88862b5be9824f3a79c7a91e7eba5226fff4a4ef88364539b3386f5ffec",
+      "gitBlob": "fea588c5bb5527f7f97b05da7c81a756e9e5a7e6"
+    },
+    {
+      "path": "SensorPanel/SolarSystem.md",
+      "workingBytesSha256": "dda8268539ee550582e8bfeb6153c140cec34647fb38ab6655a3170ff72b0fdf",
+      "gitBlob": "89ce78136844b4889e55c8195b093bbd610ba226"
+    },
+    {
+      "path": "SensorPanel/SolarSystemView.cs",
+      "workingBytesSha256": "55db5b588f0b5afa386ece6df84d58b583a5c4dc1feb250fb69b1d88fcb5810d",
+      "gitBlob": "fa884689c0003d571820e8b21d0731480ace2343"
+    },
+    {
+      "path": "SensorPanel/SolRingCheck.cs",
+      "workingBytesSha256": "8abef39b3f494dfc39d42f99785bb8659b29d77486b4b2ad83e6f1b8e2ac491b",
+      "gitBlob": "4997b5d10a8195d9b8e1afddb30f8c22b2a7453f"
+    },
+    {
+      "path": "SensorPanel/StaticFleetCheck.cs",
+      "workingBytesSha256": "e35fbabd5168f77580494a2db8063ec8678b5bc818e9fe39450c8b61a7efa380",
+      "gitBlob": "e3f0630d5e77486578c3861f96daa952a330ab1a"
+    },
+    {
+      "path": "tools/Check-FleetAssetSnapshot.ps1",
+      "workingBytesSha256": "c297fb97c0e5c98e473ab2acf2cda692a705874e95579368291133e3c7e1f2f0",
+      "gitBlob": "ac986fe4eceea0bb0ddbc85528c19723a7e42c16"
+    },
+    {
+      "path": "tools/Check-FleetPortraits.py",
+      "workingBytesSha256": "5f6f1211c4752215efaa2c346b1007e7849aa2bb41089d5330f3281a540f38cf",
+      "gitBlob": "9c177db20d1c9089ca17332bdd3159c649de1a9f"
+    },
+    {
+      "path": "tools/Check-SensorReleaseFlow.ps1",
+      "workingBytesSha256": "9fb8707171bb21b7d7f872c531945fbb7c33ce20c9d609f678c82220521e209d",
+      "gitBlob": "8e4ab2f75b472fb2563779c81c4544b132cd19c9"
+    },
+    {
+      "path": "tools/Complete-SensorRelease.ps1",
+      "workingBytesSha256": "98657cc959e8db84e27f057d84e54bbd9c3f69c6abddc0be79103c3985c6b0ed",
+      "gitBlob": "2bfa2ee42279aa96709a143035bc38dfb7126fb9"
+    },
+    {
+      "path": "tools/FleetAssetSnapshot.ps1",
+      "workingBytesSha256": "8040dbff94bf6ff70546ce57ee9cfcea2aa158a2a47d70dcd1d5d3009af5991f",
+      "gitBlob": "ff8263c12fb8149b77a230ecdb611b163151e41d"
+    },
+    {
+      "path": "tools/Measure-FleetPair.ps1",
+      "workingBytesSha256": "ea674e45308b2ee53ebc15decb4f32d5e7936c27b7b6a054df0a1b9bcec13a43",
+      "gitBlob": "5d003db8a50d455f1df7ad4144977ac4c5a7c6a9"
+    },
+    {
+      "path": "tools/Measure-MonitorResources.ps1",
+      "workingBytesSha256": "42e8e1ff9286c23c5614b9061eadbf371e67ee89e44b97de932b8d1d7879d9de",
+      "gitBlob": "b6b8a3407791224fff0fe7da997c8f9345b9af3f"
+    },
+    {
+      "path": "tools/Prepare-StaticFleet.ps1",
+      "workingBytesSha256": "7397bcbe39ed8d2ea21ffee74a6a0303671be631505f2cfb4e2e5d1e81f00656",
+      "gitBlob": "0c4c4dff999a2da0dfa2e65b9dce0c2d04849270"
+    },
+    {
+      "path": "tools/Read-MonitorWindowState.ps1",
+      "workingBytesSha256": "aba35d7906e4de67566cb535b0ce4f530b49ace7c988497e0abde60b54919cb8",
+      "gitBlob": "9b7057bd451acad63c3c3d11012b995e2f054772"
+    },
+    {
+      "path": "tools/Run-CI.ps1",
+      "workingBytesSha256": "875e6586c7d38df87af95fc162b7e25c2acfc18f867fdc345391bd75d72a1abd",
+      "gitBlob": "4d21fb4863b2ae2b6c9eaf84d37789047d54eb6c"
+    },
+    {
+      "path": "tools/Run-JenkinsChecks.ps1",
+      "workingBytesSha256": "608c831da32a2a565f60e496e00b297e059d54b61b3a92c64431fb601fa5decb",
+      "gitBlob": "593bf3029cf99ea0240cb2f589e638659f3a94e8"
+    },
+    {
+      "path": "tools/Sync-FleetViewer.py",
+      "workingBytesSha256": "63c2321cb99dfab3232fbef3616476bf0f6d3d48504331ba0c0abce7885c292a",
+      "gitBlob": "4dbe5a60f9474ecf0cf256f7de347e54feed3142"
+    }
+  ],
+  "self": "docs/release-preparation-1.8.11/source-freeze.json",
+  "hashSemantics": "Working bytes reflect this existing checkout; gitBlob identifies normalized committed content. This manifest does not include its own hash.",
+  "arboghast": "REJECTED_STOPPED_NOT_ADOPTED; pre-study source restored; released legacy model retained",
+  "research": "Original research/model/reference files remain local and unmodified; exact original path-bearing records preserved privately with the research-path-preservation ledger",
+  "excluded": "All retained non-allowlisted paths, including Sources/Arboghast, Sources/Knight, output research, dirty Studio historical additions, reference studies, AGENTS and README continuity changes",
+  "incidentalAppCancellation": "Retain reviewed Win32 1223 cancellation handling in App.cs; no new collector/FPS behavior claim",
+  "draftNotesBlockPublication": true,
+  "sourceCheckReport": "docs/RELEASE-1.8.11-CHECKS.md",
+  "localChecks": "Five groups PASS, audit zero, 50 navigation cases; not exact-commit CI or native acceptance",
+  "pending": [
+    "exact pushed-SHA Jenkins and installer build",
+    "actual candidate/hash/package review",
+    "final native/LIVE/resource acceptance",
+    "separate publication and installation approval"
+  ],
+  "published": false,
+  "installed": false
+}

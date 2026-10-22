@@ -1,0 +1,163 @@
+{
+  "date": "2026-10-21",
+  "class": "LOCAL_SOURCE_BUILD_CONTRACTS_NOT_RELEASE_ACCEPTANCE",
+  "version": "1.8.11",
+  "repository": ".",
+  "head": "d7724d70bf94dbd6bbedc1ecc296557e8d8c5abb",
+  "stagedPaths": [],
+  "arboghast": {
+    "state": "REJECTED_STOPPED_NOT_ADOPTED",
+    "exclusionPatchApplied": true,
+    "sourceRows": [
+      {
+        "path": "SensorPanel/PanelTheme.cs",
+        "beforeExclusionSha256": "fdee131a9114d1babb8c9bf9bd7e815b8d7d601354f5c290ad7927a58a77bdc2",
+        "afterExclusionSha256": "13bc1b6414a64fd31456c02bbe567264864ce6ec329b936f2637dcac563dd8de",
+        "protectedSnapshotSha256": "ca8b4cea5fc7fc79b53e3a4cfc897bb8da203eff1037ffb84e2befd3dbb8b015",
+        "preStudyTextMatched": true,
+        "preStudyBytesMatched": false
+      },
+      {
+        "path": "SensorPanel/ShipPanel.cs",
+        "beforeExclusionSha256": "f1186e88a40d828b39ea50cf9c70ccebf9b69635d691aff6132cc459fd928ff5",
+        "afterExclusionSha256": "4673bcd8424e1bc83f647bd94c9b1ce4917eedcde13b1add1773ee86183a7bf3",
+        "protectedSnapshotSha256": "6b08983e8bc6e23332ef12b8d71a2c0cdd1f602a01347bee445b48cb65f36141",
+        "preStudyTextMatched": true,
+        "preStudyBytesMatched": false
+      },
+      {
+        "path": "SensorPanel/PanelWindow.cs",
+        "beforeExclusionSha256": "57426504d488a2695e439baffcf0ee33586669352f91bf3423d454bb0723f1f0",
+        "afterExclusionSha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+        "protectedSnapshotSha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+        "preStudyTextMatched": true,
+        "preStudyBytesMatched": true
+      }
+    ],
+    "rejectedCandidateUnchanged": true,
+    "candidateSha256": "0e0fff4db49a3e1a1bbc791b6650b277464c1784d59c1c2ba56e53f28aa9faf6",
+    "releasedModelUnchanged": "d537f34c26e9e82c3f8f85e678b04d06ae867d04ea95437e1f7625ab71f4dd84"
+  },
+  "sourceVersionAndTaskChecks": "PASS",
+  "releaseSolutionBuild": {
+    "passed": true,
+    "warnings": 0,
+    "errors": 0
+  },
+  "nugetAllDependencyAuditRestore": "PASS",
+  "releaseFlow": {
+    "passed": true,
+    "cases": 6,
+    "mockedOnly": true,
+    "receipt": "artifacts/release-flow-check-29cbaf4c4a2a4da79967468037aec7fd/result.json",
+    "receiptSha256": "46846a67700d8f336990ff8b4d257c7c10d519f77e3a37fef61e2db53896b935"
+  },
+  "portraitRegressions": 12,
+  "portraitCount": 22,
+  "nativeFleetEntries": 22,
+  "nativeFleetBundleFiles": 74,
+  "releasedModelIdentitiesUnchanged": 21,
+  "managedCollectorContracts": "PASS; optional native FrameView ABI skipped",
+  "mappingResources": "PASS",
+  "rlarContracts": 11,
+  "javascriptSyntaxFiles": 8,
+  "protectedLocalOutputs": [
+    {
+      "project": "SensorPanel",
+      "assetCount": 507,
+      "archiveSha256": "e150c4f2d6bf142ae345acd0b12876a463994126cd6d53c25620c2e5b61d8715",
+      "exactSourceParity": true,
+      "looseProtectedKeysSourceDebugAbsent": true
+    },
+    {
+      "project": "FleetStudio.Desktop",
+      "assetCount": 62,
+      "archiveSha256": "eca1bdd700e8286899f7dd799311eab13dbe394b50fbcfa9439ac28e34a08d36",
+      "exactSourceParity": true,
+      "looseProtectedKeysSourceDebugAbsent": true
+    }
+  ],
+  "navigation": {
+    "passed": 50,
+    "failed": 0,
+    "buildPassed": true,
+    "acceptedRuntimeAssetOutputUsed": false,
+    "junit": "artifacts/release-1.8.11-checks/navigation-tests.xml",
+    "junitSha256": "25cff363c756e07a44d98179a950b895adae9aca88d0a68f41179976c1a7fcf8"
+  },
+  "wrapper": {
+    "passed": false,
+    "stoppedAt": "Public-content policy",
+    "remainingAccountPathFiles": 15,
+    "guardChanged": false,
+    "laterUnchangedAssetsGate": "not reached; shared checkout still dirty"
+  },
+  "npmAudit": {
+    "passed": false,
+    "state": "UNRESOLVED_NETWORK_TIMEOUT",
+    "endpoint": "https://registry.npmjs.org/-/npm/v1/security/advisories/bulk",
+    "fetchRetries": 0,
+    "fetchTimeoutMs": 20000
+  },
+  "npmFreshness": {
+    "passed": false,
+    "compatiblePending": [
+      {
+        "package": "vite",
+        "current": "8.3.4",
+        "wanted": "8.3.5"
+      }
+    ],
+    "majorRangeMigrations": "held; no updates performed"
+  },
+  "sourceFiles": [
+    {
+      "path": "tools/Complete-SensorRelease.ps1",
+      "sha256": "98657cc959e8db84e27f057d84e54bbd9c3f69c6abddc0be79103c3985c6b0ed"
+    },
+    {
+      "path": "tools/Check-SensorReleaseFlow.ps1",
+      "sha256": "9fb8707171bb21b7d7f872c531945fbb7c33ce20c9d609f678c82220521e209d"
+    },
+    {
+      "path": "tools/Run-CI.ps1",
+      "sha256": "9ab7c3e80a0762714f209ccc8fdfcd49d85c9f580911adcad4c616512e9ead5c"
+    },
+    {
+      "path": ".vscode/tasks.json",
+      "sha256": "554c6bad5e9737875872abebee09c610ef21368b984330291f7ca7cff6744768"
+    },
+    {
+      "path": "SensorPanel/SensorPanel.csproj",
+      "sha256": "7bf844698205458e9a2ac139def8b27c270a44a13bebe0997e53c2fdf621ee9f"
+    },
+    {
+      "path": "FleetStudio.Desktop/FleetStudio.Desktop.csproj",
+      "sha256": "902bd0467b41911984f53709c69fe750e09f4d44e0b811018b5d3ece3c62835b"
+    },
+    {
+      "path": "Packaging/SensorPanel.iss",
+      "sha256": "06e9a4258eee13806270a385891f08cee9039319dbed319293cb1ab4d1f8c60b"
+    },
+    {
+      "path": "Packaging/README.txt",
+      "sha256": "5482d952db52d190b39cdddc97c49b15f68701d07ea2e7dfc7ff87e24526581d"
+    }
+  ],
+  "actions": {
+    "gitCommitPush": false,
+    "ciDispatch": false,
+    "installerCompiled": false,
+    "publicUploadOrTag": false,
+    "installed": false,
+    "liveHardware": false,
+    "nativeRenderedAcceptance": false,
+    "windowInput": false
+  },
+  "remaining": [
+    "public-safe source slice and continuity documentation",
+    "review compatible Vite update and obtain npm audit",
+    "exact pushed-SHA CI installer validation",
+    "final native/LIVE/resource and installed acceptance"
+  ]
+}

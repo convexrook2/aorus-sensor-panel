@@ -88,10 +88,19 @@ For a published build's LIVE process-tree resource check, run
 `& .\tools\Measure-FleetPair.ps1 -ExecutablePath '<exact SensorPanel.exe path>'`
 in VS Code after closing other monitor instances. This explicit diagnostic opens
 one monitor, requests normal Windows sensor elevation, measures both ships in
-monitor/holotable/minimized states, restores rendering, then exits. It neither
+rotating showcase/idle holotable/optional holotable rotation/minimized states, restores rendering, then exits. It neither
 rebuilds nor installs anything. Raw receipts identify the binary and archive
 hash, the whole descendant tree, hardware and actual elapsed time. Do not
 attribute shared GPU memory counters or unrelated applications to this app.
+`-IsolateMap` instead compares the rotating showcase with solar animation running
+and paused, retaining the visible map and live readings. It does not save the
+temporary motion change. Prepared ship portraits live under
+`FleetViewer/portraits`, inside the existing monitor archive root.
+Adding `-CompareRotation` runs all four combinations of ship rotation and solar
+motion for each ship. Each visible sample requires the review to pass a 45-point
+interior screen-coverage check. The diagnostic activates only its own review
+window at phase changes and stops if the owner closes its holotable or selects
+another ship. No VS Code input, installation or saved animation change is needed.
 
 Reference API contracts: [AES-GCM encryption](https://learn.microsoft.com/dotnet/api/system.security.cryptography.aesgcm.encrypt?view=net-10.0)
 and [WebView2 local content responses](https://learn.microsoft.com/microsoft-edge/webview2/concepts/working-with-local-content#loading-local-content-by-handling-the-%60webresourcerequested%60-event).

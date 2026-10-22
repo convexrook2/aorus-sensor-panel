@@ -12,11 +12,13 @@ internal sealed class Holotable : Grid
     private readonly FleetViewport viewport;
     private readonly Grid stage;
     private readonly Action close;
+    private readonly System.Windows.Controls.Primitives.ToggleButton rotation;
+    private bool active=true;
     private readonly List<HoloReadout> readouts = new();
     private readonly List<(HoloReadout Reading, TextBlock Source)> bindings = new();
     internal bool MotionActive => viewport.MotionActive;
 
-    public Holotable(PanelTheme theme, Dictionary<string, TextBlock> source, bool motion,
+    public Holotable(PanelTheme theme, Dictionary<string, TextBlock> source,
         bool readoutPulse, Action close, FleetViewport viewport)
     {
         this.viewport=viewport;this.close=close;
@@ -46,9 +48,16 @@ internal sealed class Holotable : Grid
         // Give the ship the full central stage. A one-sided instrument rail
         // displaced the viewport's centre to the left of the holotable.
         stage=new Grid();
-        viewport.SetHolotableMode(true,theme.Accent.Color);viewport.SetMotion(motion);viewport.CloseRequested+=close;
+        viewport.SetHolotableMode(true,theme.Accent.Color);viewport.SetMotion(false);viewport.CloseRequested+=close;
         stage.Children.Add(viewport);SetRow(stage,1);Children.Add(stage);
         var footer=new StackPanel { Margin=new Thickness(30,0,30,20),Background=new SolidColorBrush(Color.FromArgb(170,4,12,19)) };
+        var controls=new StackPanel { Orientation=Orientation.Horizontal,Margin=new Thickness(0,0,0,8) };
+        rotation=new System.Windows.Controls.Primitives.ToggleButton { Content="AUTO ROTATE",IsChecked=false,
+            Foreground=theme.Accent,Background=theme.Surface,BorderBrush=theme.Accent,Padding=new Thickness(12,6,12,6),FontSize=11 };
+        rotation.Checked+=(_,_)=>viewport.SetMotion(active);
+        rotation.Unchecked+=(_,_)=>viewport.SetMotion(false);
+        controls.Children.Add(rotation);controls.Children.Add(Command("RESET VIEW",theme,viewport.Reset));
+        footer.Children.Add(controls);
         var readings=new System.Windows.Controls.Primitives.UniformGrid { Columns=3 };
         foreach(var item in new[]{("CPU","cpuTemperature"),("GPU","gpuTemperature"),("FPS","fps"),("CPU POWER","cpuPower"),("GPU POWER","gpuPower"),("MEMORY","memory")})
         {
@@ -60,7 +69,7 @@ internal sealed class Holotable : Grid
             readouts.Add(reading);bindings.Add((reading,source[item.Item2]));cell.Children.Add(reading);readings.Children.Add(cell);
         }
         footer.Children.Add(readings);
-        footer.Children.Add(new TextBlock { Text="MODEL / "+ModelCredit(theme.ShipId!)+"     ·     ESC TO RETURN",
+        footer.Children.Add(new TextBlock { Text="DRAG TO ORBIT · WHEEL TO ZOOM · HOME TO RESET · ESC TO RETURN\nMODEL / "+ModelCredit(theme.ShipId!),
             FontSize=9,Foreground=theme.Muted,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(6,9,0,0) });
         SetRow(footer,2);Children.Add(footer);
         bool? previousPortrait=null;
@@ -79,12 +88,13 @@ internal sealed class Holotable : Grid
         button.Click+=(_,e)=>{e.Handled=true;action();};return button;
     }
     internal void ReleaseViewport(){viewport.CloseRequested-=close;stage.Children.Remove(viewport);}
-    public void SetMotion(bool enabled)=>viewport.SetMotion(enabled);
+    public void SetMotion(bool enabled){rotation.IsChecked=enabled;viewport.SetMotion(active&&enabled);}
+    public void SetActive(bool enabled){active=enabled;viewport.SetMotion(active&&rotation.IsChecked==true);}
     public void SetReadoutPulse(bool enabled){foreach(var reading in readouts)reading.SetPulse(enabled);}
     internal void CheckInteraction()
     {
-        if(viewport.Interactive||!viewport.IsHolotable||viewport.IsHitTestVisible||!ReferenceEquals(viewport.Parent,stage))
-            throw new InvalidOperationException("The passive holotable did not reuse the full model viewport without navigation controls.");
+        if(!viewport.Interactive||!viewport.IsHolotable||!viewport.IsHitTestVisible||!ReferenceEquals(viewport.Parent,stage))
+            throw new InvalidOperationException("The holotable did not expose its full model for orbit and zoom.");
         viewport.Check();CheckBindings();
     }
     internal void CheckBindings()
@@ -98,9 +108,10 @@ internal sealed class Holotable : Grid
         if(viewport.ActualWidth<=0 || viewport.ActualHeight<=0 || Math.Abs(centre.X-ActualWidth/2)>.5)
             throw new InvalidOperationException("The holotable viewport is not centred in the full display.");
     }
-    internal static bool Supports(string? ship)=>ShipPortrait.Supports(ship);
+    internal static bool Supports(string? ship)=>FleetViewport.Supports(ship);
     internal static string ModelCredit(string ship)=>ship switch
     {
+        "SolRing"=>"ORIGINAL V3 FAN RECONSTRUCTION",
         "Razorback"=>"OWNER-SUPPLIED V2","Rocinante"=>"MARTIN TAICHL / CC BY 4.0",
         "Truman" or "AgathaKing"=>"MOHAMEDHUSSIEN",
         "Pella"=>"MARTIN TAICHL / CC BY 4.0 · ADAPTED",

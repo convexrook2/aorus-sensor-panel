@@ -1,0 +1,201 @@
+{
+  "date": "2026-10-21",
+  "class": "LOCAL_SOURCE_BUILD_CONTRACTS_NOT_RELEASE_OR_NATIVE_ACCEPTANCE",
+  "version": "1.8.11",
+  "repository": ".",
+  "branch": "main",
+  "head": "d7724d70bf94dbd6bbedc1ecc296557e8d8c5abb",
+  "stagedPaths": [],
+  "state": "LOCAL_CHECKS_PASS_NOT_EXACT_COMMIT_CI",
+  "command": "pwsh -NoLogo -NoProfile -File tools/Run-JenkinsChecks.ps1",
+  "wrapper": {
+    "Passed": true,
+    "CompletedAt": "2026-10-21T23:07:24.8795095-04:00",
+    "PreflightOnly": false,
+    "Groups": [
+      {
+        "Name": "Windows toolchain preflight",
+        "Seconds": 0.4365899,
+        "Failure": null
+      },
+      {
+        "Name": "Release build, sensor/resource contracts, authenticated assets and protected publish",
+        "Seconds": 29.7126064,
+        "Failure": null
+      },
+      {
+        "Name": "Navigation tests, dependency audit and isolated engineering build",
+        "Seconds": 7.5551709,
+        "Failure": null
+      },
+      {
+        "Name": "NuGet and npm dependency freshness",
+        "Seconds": 2.0015703,
+        "Failure": null
+      },
+      {
+        "Name": "Accepted asset inputs remain unchanged during checks",
+        "Seconds": 0.8003608,
+        "Failure": null
+      }
+    ],
+    "AssetInputs": 783,
+    "AssetInputsUnchanged": true,
+    "ExactCommitCI": false,
+    "Installed": false,
+    "LiveSensorsTested": false
+  },
+  "navigation": {
+    "tests": 50,
+    "failures": 0,
+    "errors": 0,
+    "build": "PASS"
+  },
+  "npmAudit": {
+    "passed": true,
+    "vulnerabilities": 0,
+    "earlierTimeoutsPreserved": true
+  },
+  "dependencies": {
+    "changedLockedVersions": [
+      {
+        "path": "node_modules/vite",
+        "before": "8.3.4",
+        "after": "8.3.5"
+      }
+    ],
+    "declaredRangesUnchanged": true,
+    "compatibleFreshness": "PASS",
+    "separateRangeMigrations": 4
+  },
+  "build": {
+    "passed": true,
+    "warnings": 0,
+    "errors": 0
+  },
+  "contracts": {
+    "releaseFlowMockCases": 6,
+    "assetSnapshotAndCleanCiCases": 8,
+    "portraitRegressions": 12,
+    "portraits": 22,
+    "rlarCases": 11,
+    "managedCollector": "PASS; optional FrameView native ABI skipped"
+  },
+  "research": {
+    "preservationLedger": "docs/release-preparation-1.8.11/research-path-preservation.json",
+    "ledgerSha256": "59a910a6b723e24ed1f6c0576e05b3dabc3ff891c691a63c145f9c00016b1e64",
+    "privateOriginalsVerified": 15,
+    "portableCopiesVerified": 15,
+    "publicContentGuardUnchanged": true
+  },
+  "arboghast": {
+    "state": "REJECTED_STOPPED_NOT_ADOPTED",
+    "candidatePath": "Sources/Arboghast/candidate/Arboghast-production-study.glb",
+    "candidateSha256": "0e0fff4db49a3e1a1bbc791b6650b277464c1784d59c1c2ba56e53f28aa9faf6",
+    "rejectedCandidateUnchanged": true,
+    "releasedDecodedSha256": "d537f34c26e9e82c3f8f85e678b04d06ae867d04ea95437e1f7625ab71f4dd84",
+    "preStudySource": [
+      {
+        "path": "SensorPanel/PanelTheme.cs",
+        "sha256": "13bc1b6414a64fd31456c02bbe567264864ce6ec329b936f2637dcac563dd8de",
+        "protectedSnapshot": "Sources/Arboghast/before/PanelTheme.cs",
+        "preStudyTextMatched": true
+      },
+      {
+        "path": "SensorPanel/ShipPanel.cs",
+        "sha256": "4673bcd8424e1bc83f647bd94c9b1ce4917eedcde13b1add1773ee86183a7bf3",
+        "protectedSnapshot": "Sources/Arboghast/before/ShipPanel.cs",
+        "preStudyTextMatched": true
+      },
+      {
+        "path": "SensorPanel/PanelWindow.cs",
+        "sha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+        "protectedSnapshot": "Sources/Arboghast/before/PanelWindow.cs",
+        "preStudyTextMatched": true
+      }
+    ]
+  },
+  "assets": {
+    "releasedIdentitiesUnchanged": 21,
+    "models": 22,
+    "onlyAddedModel": "SolRing",
+    "bundleFiles": 74,
+    "frozenInputs": 783,
+    "unchangedDuringChecks": true
+  },
+  "scope": {
+    "path": "docs/release-preparation-1.8.11/scope.json",
+    "sha256": "e6cdca666659215c609271543c90e85ef91b7607fb0816cef9261cfd65da9088"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/commands.txt",
+      "sha256": "0301c90f4329127450f951ce18bbaef694afd7b27925e13991637583a3ab8b00"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/dependency-migrations.json",
+      "sha256": "f98080c630f5cc78db1b6dfe900be387529657452dd2b98cbe10722f3ed012d5"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/FleetStudio.Desktop-assets.json",
+      "sha256": "a7eb8178048c61487c3fff53b43238185f954528017cafe702fc665f634a767a"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/gate-tests.xml",
+      "sha256": "1ec3a41561ddf685ec646540a52a6ec7526e5d7d0b03a9da384a9e4ec6f2b462"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/jenkins-checks.json",
+      "sha256": "cbb9b56abc72d2234995893bdb56fe065af2dfd9d4375083c1707cd172a852c0"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/navigation-tests.xml",
+      "sha256": "9c647351aa26e1f96f1313494f15bd2dd44859299084b47d92c58818f6aca1ba"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/npm-outdated.json",
+      "sha256": "e3b8a459dd879808e8b2c9b38240ca01473235dd16fce1d00fc026c01e020e0b"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/nuget-outdated.json",
+      "sha256": "abcc08f93e23a3307a4e7274c95764ebd1debb61ac577b89fcea396131d0e0f0"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/pushed-source.json",
+      "sha256": "d63258b0e785273495434a761fa9d90bca4d5d0fa3a0f92b887d8f1593c10987"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/result.json",
+      "sha256": "32bcbde15a5bce9a0f26ecf1c58a2ddacbb69d853657b0429bc57693a88163ed"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/SensorPanel-assets.json",
+      "sha256": "6e68b7458544a9bcf7b6e791c57a127f8f24fb61c831f051e1761b0293d823ae"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/source.json",
+      "sha256": "79eed27925c59798b15ef27b25d77bc662ad547a6b23d920f71cb04272e99eee"
+    },
+    {
+      "path": "artifacts/release-1.8.11-checks/blockers-resolved-20261021-230724/ci/validation.txt",
+      "sha256": "dab910c28d377fb5c112a54484bd4375a3951982bd4a3fca177fd21fa5424219"
+    }
+  ],
+  "performed": {
+    "commit": false,
+    "push": false,
+    "ciDispatch": false,
+    "installerCompiled": false,
+    "publicTagOrUpload": false,
+    "installation": false,
+    "liveHardware": false,
+    "nativeWindowInput": false
+  },
+  "remainingGates": [
+    "review/freeze mixed candidate source and supporting tooling",
+    "separate final native/LIVE/resource acceptance",
+    "applicable scoped commit/push authority and exact-SHA Jenkins installer CI",
+    "actual package review and separate publication/upgrade authority"
+  ],
+  "draftNotesRemainBlocked": true
+}

@@ -27,7 +27,7 @@
         "url": "https://kelvintam.artstation.com/projects/v2358E"
       },
       {
-        "label": "Generation Films / exterior pass at 0:54–1:04, docking at 1:51–1:54",
+        "label": "Generation Films / exterior pass at 0:54\u20131:04, docking at 1:51\u20131:54",
         "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE&t=54s"
       },
       {
@@ -718,5 +718,37 @@
       "metalRough": 0,
       "emissive": 0
     }
+  },
+  {
+    "id": "SolRing",
+    "title": "Sol Ring / v3 rim study",
+    "model": "models/SolRing.glb.gz",
+    "orientation": "gate",
+    "note": "Closed, layered rim with an animated browser transit field. First screen-reference reconstruction; the browser field is a separate shader from Blender's.",
+    "credit": "Authored reconstruction using TV S03E07, S03E08 and S04 exterior references. Not an official production mesh.",
+    "referenceUrl": "https://expanse.fandom.com/wiki/Sol_gate",
+    "triangles": 282272,
+    "materials": 7,
+    "sha256": "c80193dd8327d6bda2a55664f34617b2910130f6e961ef772dc23293599283d1",
+    "relatedSources": [
+      {
+        "label": "Artist / exterior reference",
+        "url": "https://expanse.fandom.com/wiki/Sol_gate"
+      }
+    ],
+    "images": 0,
+    "sourceId": "SolRing",
+    "sourceBytes": 12233476,
+    "compressedBytes": 4228604,
+    "compression": "gzip-lossless",
+    "compressedSha256": "7152881b089c5ceecede9d6adf5d1605d9048378f73b1a4f6d08d997c94db505",
+    "renderMaps": {
+      "colour": 0,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 0,
+      "emissive": 0
+    },
+    "lightUnitScale": 0.0014641288433382138
   }
 ]

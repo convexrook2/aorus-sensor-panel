@@ -1,0 +1,236 @@
+{
+  "date": "2026-10-21",
+  "class": "READ_ONLY_SOURCE_AND_ASSET_INTEGRITY_NOT_NATIVE_ACCEPTANCE",
+  "baselineHead": "d7724d70bf94dbd6bbedc1ecc296557e8d8c5abb",
+  "releasedModels": 21,
+  "currentModels": 22,
+  "addedModels": [
+    "SolRing"
+  ],
+  "releasedModelIdentitiesUnchanged": true,
+  "modelRows": [
+    {
+      "id": "Pella",
+      "decodedSha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
+      "compressedSha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Pella.glb.gz"
+    },
+    {
+      "id": "Razorback",
+      "decodedSha256": "e943a21e54606b991ffc76c98444414debc5905b58a5dd61e5019fbf469dbae3",
+      "compressedSha256": "e7e92b3c0e8648c6ef69f654c87b6d75a2d7478975f2bec6f821f9ea304abeaf",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Razorback.glb.gz"
+    },
+    {
+      "id": "BashiBazouk",
+      "decodedSha256": "a80f49b735903cede82930b16fe31c53cc424b45da357d87d63023b38f899440",
+      "compressedSha256": "2260165936b60062bee086aeedc40f71faca35d433184cb5d470c25712353826",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/BashiBazouk.glb.gz"
+    },
+    {
+      "id": "Tynan",
+      "decodedSha256": "092f61042bf558f20f35ea6abfe6f337a2587ecdc7c2e8361d3cffb19b756a0e",
+      "compressedSha256": "1c5ae2705ae229f0afc10ced9d8764e68ce5607ebe29e026b89d81491cd7c17b",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Tynan.glb.gz"
+    },
+    {
+      "id": "Guanshiyin",
+      "decodedSha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
+      "compressedSha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Guanshiyin.glb.gz"
+    },
+    {
+      "id": "Donnager",
+      "decodedSha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
+      "compressedSha256": "10807a4529dc595e153bc20eafdf02e3fd88d8c26be6adc7a59341afaac77944",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Donnager.glb.gz"
+    },
+    {
+      "id": "Rocinante",
+      "decodedSha256": "d391bc43b0843a328e435f0eefe16a34a0c8724cdaf0fe275f449fcd330e3eb3",
+      "compressedSha256": "c87d9f612c8e47e61536d11998e2d0c6669a046ade29301a48bad07fb5e172d9",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Rocinante.glb.gz"
+    },
+    {
+      "id": "Dropship",
+      "decodedSha256": "28bf2b973aca2f04feefd22b63afd0090efb6c0a086410376aca97169520f091",
+      "compressedSha256": "74153e8cdd1619348baf1dcdae8e18060a00da08f195e5daba3b6977dd62b8ad",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Dropship.glb.gz"
+    },
+    {
+      "id": "Epstein",
+      "decodedSha256": "22b657a6e74ac56870e68edfba6444804051d53441d0c797e7e16e9ab03cb48c",
+      "compressedSha256": "2f8d41e53cc92f295e9525ea43d4e478f64239755446eddf6893b006768ed5f1",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Epstein.glb.gz"
+    },
+    {
+      "id": "AgathaKing",
+      "decodedSha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
+      "compressedSha256": "6503f7822cef0b57d478f81af895b2f441614b588488124d85e0bc5b16137541",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/AgathaKing.glb.gz"
+    },
+    {
+      "id": "Morrigan",
+      "decodedSha256": "5cc655a6c5eff342637bb2f999f7e44446015badef35a856a22932d131b6925f",
+      "compressedSha256": "251b760884aa4410f3818ac7f49c931288994c26467a2d197ce215bc82f68ad0",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Morrigan.glb.gz"
+    },
+    {
+      "id": "Canterbury",
+      "decodedSha256": "77a3cddea457dda48460d78cadd43989173c979720d08a50882837065dee8bf9",
+      "compressedSha256": "8b79b7eb833e9c7590960e16e06503f5c09a6e86a3b0e2749561aacd35358048",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Canterbury.glb.gz"
+    },
+    {
+      "id": "Knight",
+      "decodedSha256": "c7469468de6fdb102161c20d29ee73b271a54f56753ccdf8f49db045fe7c180e",
+      "compressedSha256": "a6fde7aa786841e46ea04af8ed179df1f1764b4b03037d20c55a6e90f393dcf9",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Knight.glb.gz"
+    },
+    {
+      "id": "Anubis",
+      "decodedSha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+      "compressedSha256": "8ac24693b2aedde4e788aab431195427ccc23aa9698c613de9610c27a9e56e58",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Anubis.glb.gz"
+    },
+    {
+      "id": "Nauvoo",
+      "decodedSha256": "cf40797eb7aa7bc51592edb6bdeafcc6dd0a30b6ce4b8c65cd50e5e389f71f09",
+      "compressedSha256": "9de2f7120f29684ec4a677106b066102407c5f0601ddc32aef17a3478a62e36a",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Nauvoo.glb.gz"
+    },
+    {
+      "id": "Behemoth",
+      "decodedSha256": "c1ddcba52494f4d37ff0245fcf61947b743d55f2454586172b260f963269e447",
+      "compressedSha256": "1c802282b5941e5e782f2dcf88870e018239ffa95688166b824ecc1518b02c28",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Behemoth.glb.gz"
+    },
+    {
+      "id": "Medina",
+      "decodedSha256": "ad72a33ff8667caf8aec31db26e00bb67a3257217c32607b1163bffbe4365b23",
+      "compressedSha256": "430cc1391a63ff635f24af2625bf9ce0af2bf605e85bde2321d4e22c1ab780f4",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Medina.glb.gz"
+    },
+    {
+      "id": "Scopuli",
+      "decodedSha256": "49effe9e695075d0cf7f277fe47c5ced502f4cabd59a38ab01a4bed8fb074cf6",
+      "compressedSha256": "f0f8aa2d443ffb6db5c15ecc1f069f5a0bfd6c7431585f2a0c90d3d6c17dcb07",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Scopuli.glb.gz"
+    },
+    {
+      "id": "Scirocco",
+      "decodedSha256": "b13bbd793799b15c8828a5ea2dd4a0ad1b95b1b788ea7b455a6ad004f1b75dd0",
+      "compressedSha256": "938c9a58ca7afe6dfaa433a0c073f86fa0ee239318bd17df1d8f3aaedce6bbff",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Scirocco.glb.gz"
+    },
+    {
+      "id": "Hammurabi",
+      "decodedSha256": "b52da98ea14fe3f998752ffb429a17943f6b6cb2009d4a13c2ac45d471384930",
+      "compressedSha256": "02d4ee36f9e3d97e54570d62d82434c196273edb8d14d67dcb2b04179864dd37",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Hammurabi.glb.gz"
+    },
+    {
+      "id": "Arboghast",
+      "decodedSha256": "d537f34c26e9e82c3f8f85e678b04d06ae867d04ea95437e1f7625ab71f4dd84",
+      "compressedSha256": "58090c012e65391e51f69f845ea492fc213882d0b83a5d1047ba36de626736ff",
+      "inReleasedBaseline": true,
+      "modelPath": "Assets/FleetViewer/models/Arboghast.glb.gz"
+    },
+    {
+      "id": "SolRing",
+      "decodedSha256": "c80193dd8327d6bda2a55664f34617b2910130f6e961ef772dc23293599283d1",
+      "compressedSha256": "7152881b089c5ceecede9d6adf5d1605d9048378f73b1a4f6d08d997c94db505",
+      "inReleasedBaseline": false,
+      "modelPath": "Assets/FleetViewer/models/SolRing.glb.gz"
+    }
+  ],
+  "fallbackPortraits": 22,
+  "portraitIdentityAndImageHashesMatched": true,
+  "solRingExactStudioBytes": true,
+  "portalExactStudioBytes": true,
+  "rejectedCandidateSha256": "0e0fff4db49a3e1a1bbc791b6650b277464c1784d59c1c2ba56e53f28aa9faf6",
+  "heldSourceRows": [
+    {
+      "path": "SensorPanel/PanelTheme.cs",
+      "currentSha256": "fdee131a9114d1babb8c9bf9bd7e815b8d7d601354f5c290ad7927a58a77bdc2",
+      "proposedExcludedResultSha256": "ca8b4cea5fc7fc79b53e3a4cfc897bb8da203eff1037ffb84e2befd3dbb8b015",
+      "baselineSnapshot": "Sources/Arboghast/before/PanelTheme.cs",
+      "sourceEdited": false
+    },
+    {
+      "path": "SensorPanel/ShipPanel.cs",
+      "currentSha256": "f1186e88a40d828b39ea50cf9c70ccebf9b69635d691aff6132cc459fd928ff5",
+      "proposedExcludedResultSha256": "6b08983e8bc6e23332ef12b8d71a2c0cdd1f602a01347bee445b48cb65f36141",
+      "baselineSnapshot": "Sources/Arboghast/before/ShipPanel.cs",
+      "sourceEdited": false
+    },
+    {
+      "path": "SensorPanel/PanelWindow.cs",
+      "currentSha256": "57426504d488a2695e439baffcf0ee33586669352f91bf3423d454bb0723f1f0",
+      "proposedExcludedResultSha256": "c7eae50054ff22a49087714bdc7b68ae0b2c3a1409fbecce06c24d08b8402a05",
+      "baselineSnapshot": "Sources/Arboghast/before/PanelWindow.cs",
+      "sourceEdited": false
+    }
+  ],
+  "excludedPatchSha256": "f31f02084249af365650d684e0e2809176afccf9380b7f38bbf8295ad3a8274b",
+  "newProductBuildTestNativeOrHardwareEvidence": false,
+  "remoteReadOnlyResult": "Latest listed public release v1.8.10; no v1.8.11 tag observed; authenticated gh release list and git ls-remote performed",
+  "priorEvidenceFiles": [
+    {
+      "path": "artifacts/release-1.8.10/result.json",
+      "sha256": "6d1908b8599b95cd50f2c590ba32b6bde88ed030ed1f3a1cab41c925fefcf678"
+    },
+    {
+      "path": "artifacts/experience-check/result.json",
+      "sha256": "8b7f5a4277c5fcc593307a3db9791ed735d831543eb00bda9cf34040930b050c"
+    },
+    {
+      "path": "artifacts/experience-check/evidence-index.json",
+      "sha256": "610db0506ee6d9322ecc3138fefd39aef6b1233ffd065f5b053b74ae4470ee51"
+    },
+    {
+      "path": "artifacts/sol-ring-review-20261020/live/live-runtime-check.json",
+      "sha256": "e68373ede5d75b7d59f23242f0cd7c824657d8dbab64547c695c3bf883d8c9bc"
+    },
+    {
+      "path": "artifacts/sol-ring-review-20261020/live/live-holotable-check.json",
+      "sha256": "d9daf2b93962994391a4513d356163b1ed5e7650e98b936037d13e3916f81481"
+    },
+    {
+      "path": "artifacts/performance/cadence-trial-20261021-120854/visual-summary.json",
+      "sha256": "64c00f452184cb4e136bb68eda77a39223b32f54ed94e9ce28468f0ef5f11e98"
+    },
+    {
+      "path": "artifacts/performance/cadence-trial-20261021-120854/lifecycle-summary.json",
+      "sha256": "d66bf4704db4c3f721809017bcb53ee8d2aadaf76ab4680b2549a27ae5e16eaf"
+    }
+  ],
+  "exclusionPatchDryRun": {
+    "command": "git apply --check docs/release-preparation-1.8.11/exclude-held-arboghast.patch",
+    "exitCode": 0,
+    "applied": false
+  },
+  "heldSourceFilesUnchangedDuringPreparation": true,
+  "rejectedCandidateUnchangedDuringPreparation": true,
+  "rejectedCandidateInNativeCatalogue": false
+}

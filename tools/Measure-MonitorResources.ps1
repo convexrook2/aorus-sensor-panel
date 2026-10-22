@@ -1,11 +1,13 @@
 param(
     [ValidateSet('Pella','Rocinante')][string]$Ship = 'Pella',
-    [ValidateSet('Monitor','Holotable')][string]$View = 'Monitor',
+    [ValidateSet('Monitor','MonitorMapPaused','MonitorRotationPaused','MonitorAllPaused','Holotable','HolotableIdle','HolotableRotating')][string]$View = 'Monitor',
     [ValidateSet('Visible','Minimized','Restored','ReleaseFullscreen','ReleaseMinimized')][string]$State = 'Visible',
     [ValidateRange(10,45)][int]$Seconds = 30,
     [ValidateRange(0,30)][int]$SettleSeconds = 8,
     [string]$ExpectedExecutable,
-    [switch]$RequireHolotable
+    [switch]$RequireHolotable,
+    [switch]$RequireForeground,
+    [switch]$RequireUncovered
 )
 $ErrorActionPreference='Stop'
 if($RequireHolotable -and !$PSBoundParameters.ContainsKey('View')){$View='Holotable'}
@@ -42,7 +44,7 @@ do {
 } while($added)
 $tree=@($all | Where-Object { $ids.Contains([int]$_.ProcessId) })
 $tree | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath | Format-Table -AutoSize
-if(@($tree | Where-Object Name -eq 'msedgewebview2.exe').Count -eq 0){throw 'The full model WebView2 process tree is missing.'}
+if($View -notlike 'Monitor*' -and @($tree | Where-Object Name -eq 'msedgewebview2.exe').Count -eq 0){throw 'The full model WebView2 process tree is missing.'}
 Write-Host "State: $State; root $($root[0].ProcessId); $($tree.Count) processes; $Seconds samples, at least one second apart, after $SettleSeconds seconds settling."
 Write-Host 'CPU is percent of the whole machine. GPU is the busiest hardware engine across this process tree.'
 Write-Host 'RAM/graphics memory sums can include shared allocations more than once. No app setting or model is changed.'
@@ -63,8 +65,20 @@ function Check-SelectedShip {
     $expectActive=$State -notin @('Minimized','ReleaseMinimized')
     $nativeWindow=Read-MonitorWindowState -MonitorProcessId $receipt.processId
     if([bool]$nativeWindow.PresentationActive -ne $expectActive){throw 'The native window does not match the requested visible/minimized state.'}
-    if($RequireHolotable -and (!$displayState.holotableOpen -or !$displayState.holographicMotion)){throw 'The rotating holotable is not selected.'}
-    if($View -eq 'Monitor' -and $displayState.holotableOpen){throw 'The normal monitoring view is covered by the holotable.'}
+    if($RequireForeground -and $expectActive -and !$nativeWindow.Foreground){throw 'The measurement panel lost foreground; a covered window is not accepted as a visible sample.'}
+    if($RequireUncovered -and $expectActive -and ($nativeWindow.CoveragePoints -ne 45 -or $nativeWindow.CoveredPoints -ne 0)){
+        $covering=@($nativeWindow.CoveringProcessIds | ForEach-Object {Get-Process -Id $_ -ErrorAction SilentlyContinue} | Select-Object Id,ProcessName,MainWindowTitle)
+        throw ('The measurement panel is covered at one or more screen-sample points: '+($covering | ConvertTo-Json -Compress))
+    }
+    if($RequireHolotable -and !$displayState.holotableOpen){throw 'The holotable is not selected.'}
+    if($View -eq 'HolotableIdle' -and $displayState.holotableMotion){throw 'The idle holotable is rotating.'}
+    if($View -eq 'HolotableRotating' -and $expectActive -and !$displayState.holotableMotion){throw 'The rotating holotable is stopped.'}
+    if($View -like 'Monitor*' -and $displayState.holotableOpen){throw 'The normal monitoring view is covered by the holotable.'}
+    if($View -like 'Monitor*' -and !$displayState.shipRendererLoaded){throw 'The showcase renderer is missing.'}
+    if($View -in @('MonitorMapPaused','MonitorAllPaused') -and $displayState.navigationMotion){throw 'The isolated solar map is still animating.'}
+    if($View -in @('Monitor','MonitorRotationPaused') -and !$displayState.navigationMotion){throw 'The solar map should be animating for this sample.'}
+    if($View -in @('MonitorAllPaused','MonitorRotationPaused') -and ($displayState.showcaseRotation -or $displayState.rotatingShipInLeftPanel)){throw 'The isolated ship rotation is still enabled.'}
+    if($View -in @('Monitor','MonitorMapPaused') -and !$displayState.rotatingShipInLeftPanel){throw 'The showcase should be rotating for this sample.'}
     return $displayState
 }
 $displayBefore=Check-SelectedShip
@@ -177,7 +191,8 @@ $result=[pscustomobject]@{
     Hardware=[pscustomobject]@{LogicalProcessors=[Environment]::ProcessorCount;Cpu=@(Get-CimInstance Win32_Processor | Select-Object -ExpandProperty Name);Gpu=@(Get-CimInstance Win32_VideoController | Select-Object Name,DriverVersion)}
     DisplayStateBefore=$displayBefore; DisplayStateAfter=(Check-SelectedShip)
     NativeWindowBefore=$nativeBefore; NativeWindowAfter=(Read-MonitorWindowState -MonitorProcessId $receipt.processId)
-    WindowStateBasis='Read-only IsIconic/IsWindowVisible with HWND-to-PID verification; cached presentationActive is not a live minimize indicator'
+    WindowStateBasis='Read-only IsIconic/IsWindowVisible with HWND-to-PID verification; optional 45-point interior WindowFromPoint coverage check on every sample; no window input or movement'
+    RequireForeground=[bool]$RequireForeground; RequireUncovered=[bool]$RequireUncovered
     StartedAt=$rows[0].Time; CompletedAt=$rows[-1].Time; Samples=$rows.Count
     ElapsedSeconds=($rows | Measure-Object IntervalSeconds -Sum).Sum
     CpuPercentOfMachine=(Summary 'CpuPercent'); WorkingSetMiB=(Summary 'WorkingMiB'); PrivateMiB=(Summary 'PrivateMiB')
