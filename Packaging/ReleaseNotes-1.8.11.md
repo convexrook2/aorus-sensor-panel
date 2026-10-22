@@ -1,7 +1,5 @@
 # v1.8.11 — Experiences, rotating showcase and Sol Ring
 
-**DRAFT: proposed contents only. Not a published or validated release candidate.**
-
 Choose AORUS Lite for the original monitoring themes or The Expanse Experience
 for ship consoles. Each experience remembers its theme. Expanse defaults to
 Full Fidelity; optional Efficient rendering limits automatic ship drawing to
@@ -19,7 +17,7 @@ upright rim model, separate animated aperture and existing SolGate navigation
 association. The established monitoring layout and previously released models
 are retained. Prepared, model-bound portraits serve as loading fallbacks.
 
-This proposed release excludes the rejected Arboghast study and its related
+This release excludes the rejected Arboghast study and its related
 styling/capture changes. Knight and other new ship studies are not included.
 The previously released Arboghast remains unchanged.
 
@@ -27,7 +25,13 @@ Both experiences remain in one sensor-panel installer. Separate Lite packaging
 is deferred. Fleet Studio remains a development tool and is not installed or
 deployed by this release.
 
-Efficient mode does not guarantee <=2% GPU use: the earlier rotating trial was
-above that target. The final candidate's Full Fidelity GPU use is not yet
-measured. Final source/CI/package, native/LIVE and installed acceptance must be
-recorded before these draft notes are promoted for publication.
+Full Fidelity prioritizes unrestricted animation and can use substantially
+more GPU than Efficient. Efficient reduces animation rates without reducing
+model quality; it does not guarantee <=2% GPU use. Resource use varies with
+ship, display and system. Representative whole-app measurements and validation
+boundaries are recorded in the [release validation report](https://github.com/convexrook2/aorus-sensor-panel/blob/main/docs/RELEASE-1.8.11-NATIVE-LIVE.md).
+
+This update preserves the existing monitoring layout, polling preferences and
+previously released ship models. It introduces no new collector, game-FPS or
+hardware-compatibility claim. Native candidate checks and live sensor checks
+are separate from installation and in-place upgrade acceptance.
