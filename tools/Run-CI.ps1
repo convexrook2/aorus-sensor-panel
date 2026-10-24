@@ -53,6 +53,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Arboghast adoption check failed.' }
     & $PythonExecutable .\tools\Check-CanterburyAdoption.py
     if ($LASTEXITCODE -ne 0) { throw 'Adopted Canterbury source/model/portrait identity failed.' }
+    & $PythonExecutable .\tools\Check-KnightAdoption.py
+    if ($LASTEXITCODE -ne 0) { throw 'Accepted Knight source/model/portrait identity failed.' }
+    node .\tools\Check-KnightPlumes.mjs
+    if ($LASTEXITCODE -ne 0) { throw 'Knight fitted plume registration/lighting checks failed.' }
     node .\tools\Check-FleetPlumes.mjs
     if ($LASTEXITCODE -ne 0) { throw 'Fleet exhaust emission/lighting/scale/lifecycle contracts failed.' }
     node .\tools\Check-ShowcaseMotion.mjs

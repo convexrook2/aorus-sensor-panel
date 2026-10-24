@@ -1,0 +1,35 @@
+{
+  "version": "1.8.13",
+  "ownerInstruction": "Put the accepted Knight into the app with its portrait, lights and plumes, and release the correction. Leave the accepted model unchanged.",
+  "scope": "Knight-only profile and viewer routing added to shared runtime. Existing Anubis geometry, material recipe, lighting, anchors and effect settings remain unchanged.",
+  "candidate_sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+  "original_receipt_sha256": "356e38ef373f2489ba5be71d648cf793654a0708afb9ef22dd6d46d1b2455582",
+  "runtime_files": [
+    {
+      "path": "FleetStudio/ship-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "7ca716d60998304148ebb72725dee0ebe4a1e71fccc75e8d0353279712006552"
+    },
+    {
+      "path": "FleetStudio/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    },
+    {
+      "path": "FleetStudio/review.js",
+      "previous_sha256": "9d634a65c3d47098a54382734c90f9afdd3b043b0988b48f66cc2a5f82e46458",
+      "sha256": "669264fc1de9ac9bc56db7b4adfb0c3a229862e4c496392e32f70b481e4dea41"
+    },
+    {
+      "path": "Assets/FleetViewer/rocinante-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "7ca716d60998304148ebb72725dee0ebe4a1e71fccc75e8d0353279712006552"
+    },
+    {
+      "path": "Assets/FleetViewer/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    }
+  ],
+  "previousRuntimeReceiptSha256": "dcf4293c0ca95803fb22961f83da3b886a298b4a0b8fe938713bee19ab8e2c71"
+}

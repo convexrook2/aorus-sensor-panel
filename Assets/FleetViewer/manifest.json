@@ -5,18 +5,18 @@
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 4243,
-      "sha256": "e95b0f8396e1433f4dc1e51c0b1630a3f496b64c045aec8f61e0ee9bf8ea283d"
+      "bytes": 4701,
+      "sha256": "c4ffd4a77311bed23e12f71ccd79398651bcfd86a92280e360992adace73225e"
     },
     {
       "path": "catalog.json",
-      "bytes": 30495,
-      "sha256": "f467abf20c6691ba52ad714262132068c8e2b0bb842ad1dceb3208fbf8861298"
+      "bytes": 31198,
+      "sha256": "9713e0c9a94a78b5bf2d41269d13312e920f399267ccb47f98e7cbcd3d13b043"
     },
     {
       "path": "engines.json",
-      "bytes": 8694,
-      "sha256": "ccaacb63861a1a6ec9fad4096aa2b539ee7dab8e510f003d2da3863b0b97d514"
+      "bytes": 10919,
+      "sha256": "a884251f7c257a50c0067e63e5e2cedb91f1c2d14e90ee4081fa5091a1bec06b"
     },
     {
       "path": "holographic-stage.js",
@@ -90,8 +90,8 @@
     },
     {
       "path": "models/Knight.glb.gz",
-      "bytes": 566992,
-      "sha256": "a6fde7aa786841e46ea04af8ed179df1f1764b4b03037d20c55a6e90f393dcf9"
+      "bytes": 27743400,
+      "sha256": "bfb6b1d037db4a7f1e7ded27111d4c32fa95d541055db37d6f24dfab12bf89eb"
     },
     {
       "path": "models/Medina.glb.gz",
@@ -206,12 +206,12 @@
     {
       "path": "portraits/index.json",
       "bytes": 5795,
-      "sha256": "3da7f4b45e8ab241a231e1f11b617eb2841cfccddbd710f651fc817f49556d8f"
+      "sha256": "6622971bb6afc34f6e90023123d1e484dc16b7c0ee60a77c8d91049aeaca0e40"
     },
     {
       "path": "portraits/Knight.png",
-      "bytes": 463149,
-      "sha256": "39fcb882c1c30d3145a2290883415c63a6bb30de40d1e921a302877c162a7ccb"
+      "bytes": 530880,
+      "sha256": "d4cd85bca9aff150429759b4c4c3991b63da2feb24b6255b56d879325b59c217"
     },
     {
       "path": "portraits/Medina.png",
@@ -265,8 +265,8 @@
     },
     {
       "path": "rocinante-effects.js",
-      "bytes": 17501,
-      "sha256": "6f0549d876154d2aab3e6daf618a82b48c4ee3e151c9bffa45f00e5d56e486f3"
+      "bytes": 17629,
+      "sha256": "7ca716d60998304148ebb72725dee0ebe4a1e71fccc75e8d0353279712006552"
     },
     {
       "path": "ship-inspection.js",
@@ -385,8 +385,8 @@
     },
     {
       "path": "viewer.js",
-      "bytes": 21190,
-      "sha256": "06faab6d420d02f985dc8def13da0810c278e3eed3c6cdd0daf4389da216b892"
+      "bytes": 21208,
+      "sha256": "c08a7d60ae9ae9c9db5267990621c0141b757d23636cc8090488e4ea54dc1fec"
     }
   ]
 }

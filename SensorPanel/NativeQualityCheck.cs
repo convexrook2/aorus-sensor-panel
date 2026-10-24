@@ -144,12 +144,14 @@ internal sealed partial class PanelWindow
 
         static void CheckExhaust(JsonElement renderer)
         {
-            if(renderer.GetProperty("id").GetString()!="Arboghast")return;
+            string? id=renderer.GetProperty("id").GetString();
+            if(id is not ("Arboghast" or "Knight"))return;
+            int drives=id=="Knight"?3:4,lamps=id=="Knight"?17:8;
             var effect=renderer.GetProperty("engineEffects");
-            if(effect.ValueKind!=JsonValueKind.Object||effect.GetProperty("engineCount").GetInt32()!=4
-                ||effect.GetProperty("visiblePlumes").GetInt32()!=4||!effect.GetProperty("burning").GetBoolean()
-                ||effect.GetProperty("activeSourceLights").GetInt32()!=8)
-                throw new InvalidOperationException("Arboghast must retain four drive plumes and eight source work lights.");
+            if(effect.ValueKind!=JsonValueKind.Object||effect.GetProperty("engineCount").GetInt32()!=drives
+                ||effect.GetProperty("visiblePlumes").GetInt32()!=drives||!effect.GetProperty("burning").GetBoolean()
+                ||effect.GetProperty("activeSourceLights").GetInt32()!=lamps)
+                throw new InvalidOperationException($"{id} must retain {drives} drive plumes and {lamps} source work lights.");
         }
 
         void SaveNative(string name)

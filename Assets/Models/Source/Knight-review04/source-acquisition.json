@@ -1,0 +1,66 @@
+{
+  "page": "https://www.thingiverse.com/thing:2060044",
+  "publisherAnnouncement": "https://www.syfy.com/blogs/new-3d-models-of-the-magicians-and-the-expanse",
+  "author": "SYFY / Voodoo Manufacturing",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "primaryLicenseObserved": true,
+  "acquisitionMethod": "Normal original Thingiverse browser Files buttons; browser-managed download files copied without modification. No authentication bypass or alternate endpoint.",
+  "files": [
+    {
+      "name": "Knight_PartA.stl",
+      "bytes": 8677184,
+      "sha256": "08c61f4a7f6ef12ff9f724acbd4bf8a1fd97067e1d37939f5fcae280ba83e1e3",
+      "triangles": 173542,
+      "downloadTemporaryFile": "<USERPROFILE>\\Downloads\\c2ca03fa-b793-4c5a-9901-9fc9369c9240.tmp"
+    },
+    {
+      "name": "Knight_PartB_9.6in_01.stl",
+      "bytes": 12620384,
+      "sha256": "e130fc14bc456f2ede528c2b96023592ae9d4412e38f9e8a2c48fdc31e9c8b92",
+      "triangles": 252406,
+      "downloadTemporaryFile": "<USERPROFILE>\\Downloads\\4bdf481d-e344-4b40-b149-b646c17ae2dd.tmp",
+      "role": "source ship part"
+    },
+    {
+      "name": "Knight_MidA_9.6in_01.stl",
+      "bytes": 11704684,
+      "sha256": "0d5e9e285c9bbe0e01749a5720478f44791e92f03fd0bd9935ee84ad54394df2",
+      "triangles": 234092,
+      "downloadTemporaryFile": "<USERPROFILE>\\Downloads\\355bc597-4be9-45a7-af5e-81e4fe195dc2.tmp",
+      "role": "source ship part"
+    },
+    {
+      "name": "Knight_MidB_9.6in_01.stl",
+      "bytes": 11401684,
+      "sha256": "f6b3ca86f366f4f98d8e3a5a9a66f1871be678f76f910ca99adff9639bdd7b55",
+      "triangles": 228032,
+      "downloadTemporaryFile": "<USERPROFILE>\\Downloads\\bfdec65d-2955-4347-b22d-10e8e6d460a6.tmp",
+      "role": "source ship part"
+    },
+    {
+      "name": "Knight_Top_9.6in_01.stl",
+      "bytes": 12247084,
+      "sha256": "86868e24abb342772054c2a6017dc3661fce1ceded55dc155e535d931fabe120",
+      "triangles": 244940,
+      "downloadTemporaryFile": "<USERPROFILE>\\Downloads\\f86c22ef-88ac-46b3-978c-073abc573577.tmp",
+      "role": "source ship part"
+    },
+    {
+      "name": "Knight_Bottom_9.6in_01.stl",
+      "bytes": 11685484,
+      "sha256": "59ae95d9aa5de461fbd55badf068092d6308a65349649a481fb1f575e4b3629f",
+      "triangles": 233708,
+      "downloadTemporaryFile": "<USERPROFILE>\\Downloads\\5f804ac6-a18c-4144-a815-70c3405da3d0.tmp",
+      "role": "source ship part"
+    }
+  ],
+  "assemblyArchive": {
+    "name": "source-syfy-1235700/Knight.thing",
+    "page": "https://www.thingiverse.com/thing:1235700",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "primaryLicenseObserved": true,
+    "bytes": 45575377,
+    "sha256": "04ed32a92ae10a937ef78f382858cf5af5925ae7e89cba189dab10adb091cc99",
+    "method": "Original public Files Download Knight.thing button; browser download receipt"
+  }
+}

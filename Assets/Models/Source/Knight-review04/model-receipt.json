@@ -1,0 +1,969 @@
+{
+  "source": "SYFY / Voodoo Manufacturing",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "registration": [
+    {
+      "source": "Knight_PartA.stl",
+      "sourceSha256": "08c61f4a7f6ef12ff9f724acbd4bf8a1fd97067e1d37939f5fcae280ba83e1e3",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "sourceTriangles": 173542,
+      "candidatePolygons": 161221
+    },
+    {
+      "source": "Knight_PartB_9.6in_01.stl",
+      "sourceSha256": "e130fc14bc456f2ede528c2b96023592ae9d4412e38f9e8a2c48fdc31e9c8b92",
+      "matrix": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          26.405000686645508
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          17.68600082397461
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "sourceTriangles": 252406,
+      "candidatePolygons": 187918
+    },
+    {
+      "source": "Knight_Top_9.6in_01.stl",
+      "sourceSha256": "86868e24abb342772054c2a6017dc3661fce1ceded55dc155e535d931fabe120",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.14589999616146088
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          19.247900009155273
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          108.4800033569336
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "sourceTriangles": 244940,
+      "candidatePolygons": 219826
+    },
+    {
+      "source": "Knight_Bottom_9.6in_01.stl",
+      "sourceSha256": "59ae95d9aa5de461fbd55badf068092d6308a65349649a481fb1f575e4b3629f",
+      "matrix": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          19.247900009155273
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "sourceTriangles": 233708,
+      "candidatePolygons": 135522
+    },
+    {
+      "source": "Knight_MidA_9.6in_01.stl",
+      "sourceSha256": "0d5e9e285c9bbe0e01749a5720478f44791e92f03fd0bd9935ee84ad54394df2",
+      "matrix": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          22.5
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          19.247900009155273
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          55.71500015258789
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "sourceTriangles": 234092,
+      "candidatePolygons": 77731
+    },
+    {
+      "source": "Knight_MidB_9.6in_01.stl",
+      "sourceSha256": "f6b3ca86f366f4f98d8e3a5a9a66f1871be678f76f910ca99adff9639bdd7b55",
+      "matrix": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -22.5
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          19.247900009155273
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          55.71500015258789
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "sourceTriangles": 228032,
+      "candidatePolygons": 76052
+    }
+  ],
+  "engines": [
+    {
+      "center": [
+        -0.017554093152284622,
+        22.995532989501953,
+        -31.97595977783203
+      ],
+      "direction": [
+        0.0,
+        0.21301086246967316,
+        -0.9770498275756836
+      ],
+      "radius": 13.497510493399698,
+      "rawCenter": [
+        -3.747631915727016,
+        0.01755409393486218,
+        31.975960411365858
+      ],
+      "rawDirection": [
+        -0.21301086383109014,
+        0.0,
+        0.9770498308120895
+      ]
+    },
+    {
+      "center": [
+        -29.547517776489258,
+        -25.952016830444336,
+        -30.40077018737793
+      ],
+      "direction": [
+        -0.22396449744701385,
+        -0.23496276140213013,
+        -0.9458500742912292
+      ],
+      "radius": 13.575116531864841,
+      "rawCenter": [
+        45.19991809838868,
+        29.547518376666172,
+        30.40077113182284
+      ],
+      "rawDirection": [
+        0.23496276135325442,
+        0.22396450443884677,
+        0.9458500946390581
+      ]
+    },
+    {
+      "center": [
+        29.569765090942383,
+        -25.933252334594727,
+        -30.400419235229492
+      ],
+      "direction": [
+        0.22396449744701385,
+        -0.23496276140213013,
+        -0.9458500742912292
+      ],
+      "radius": 13.58781830919843,
+      "rawCenter": [
+        45.18115189479499,
+        -29.56976573554568,
+        30.400419133636277
+      ],
+      "rawDirection": [
+        0.23496276135325442,
+        -0.22396450443884677,
+        0.9458500946390581
+      ]
+    }
+  ],
+  "triangles": 968540,
+  "objects": 299,
+  "lamps": 17,
+  "lampMounts": [
+    {
+      "mount": [
+        -62.45000457763672,
+        34.70000076293945,
+        29.0
+      ],
+      "normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "surface": "Service bay | longitudinal frame.001"
+    },
+    {
+      "mount": [
+        -62.45000457763672,
+        34.70000076293945,
+        59.0
+      ],
+      "normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "surface": "Service bay | longitudinal frame.001"
+    },
+    {
+      "mount": [
+        -62.45000457763672,
+        34.70000076293945,
+        88.0
+      ],
+      "normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "surface": "Service bay | longitudinal frame.001"
+    },
+    {
+      "mount": [
+        -8.0,
+        70.23944091796875,
+        39.0
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "surface": "SYFY | Knight_PartB_9.6in_01.stl"
+    },
+    {
+      "mount": [
+        -8.0,
+        72.48979187011719,
+        83.0
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "surface": "SYFY | Knight_PartB_9.6in_01.stl"
+    },
+    {
+      "mount": [
+        62.45000457763672,
+        34.70000076293945,
+        29.0
+      ],
+      "normal": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "surface": "Service bay | longitudinal frame.003"
+    },
+    {
+      "mount": [
+        62.45000457763672,
+        34.70000076293945,
+        59.0
+      ],
+      "normal": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "surface": "Service bay | longitudinal frame.003"
+    },
+    {
+      "mount": [
+        62.45000457763672,
+        34.70000076293945,
+        88.0
+      ],
+      "normal": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "surface": "Service bay | longitudinal frame.003"
+    },
+    {
+      "mount": [
+        8.0,
+        71.96981048583984,
+        39.0
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "surface": "Relief | Curved machinery bank backing.001"
+    },
+    {
+      "mount": [
+        8.0,
+        71.96980285644531,
+        83.0
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "surface": "Relief | Curved machinery bank backing.001"
+    },
+    {
+      "mount": [
+        -13.0,
+        -14.474540710449219,
+        49.0
+      ],
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "surface": "Relief | Curved airlock bank backing"
+    },
+    {
+      "mount": [
+        13.0,
+        -14.47454833984375,
+        49.0
+      ],
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "surface": "Relief | Curved airlock bank backing.001"
+    },
+    {
+      "mount": [
+        0.0,
+        12.199994087219238,
+        150.0
+      ],
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "surface": "Bow channel | recessed equipment spine"
+    },
+    {
+      "mount": [
+        -23.0,
+        -9.394615173339844,
+        114.0
+      ],
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "surface": "SYFY | Knight_Top_9.6in_01.stl"
+    },
+    {
+      "mount": [
+        23.0,
+        -9.060348510742188,
+        114.0
+      ],
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "surface": "SYFY | Knight_Top_9.6in_01.stl"
+    },
+    {
+      "mount": [
+        -15.0,
+        -11.152992248535156,
+        125.0
+      ],
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "surface": "SYFY | Knight_Top_9.6in_01.stl"
+    },
+    {
+      "mount": [
+        15.0,
+        -11.167961120605469,
+        125.0
+      ],
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "surface": "SYFY | Knight_Top_9.6in_01.stl"
+    }
+  ],
+  "surfaceFinishes": [
+    {
+      "object": "SYFY | Knight_PartA.stl",
+      "creaseDegrees": 20,
+      "verticesUnchanged": true,
+      "hardEdges": 36559,
+      "customNormals": true
+    },
+    {
+      "object": "SYFY | Knight_PartB_9.6in_01.stl",
+      "creaseDegrees": 20,
+      "verticesUnchanged": true,
+      "hardEdges": 32186,
+      "customNormals": true
+    },
+    {
+      "object": "SYFY | Knight_Top_9.6in_01.stl",
+      "creaseDegrees": 20,
+      "verticesUnchanged": true,
+      "hardEdges": 27369,
+      "customNormals": true
+    },
+    {
+      "object": "SYFY | Knight_Bottom_9.6in_01.stl",
+      "creaseDegrees": 20,
+      "verticesUnchanged": true,
+      "hardEdges": 34682,
+      "customNormals": true
+    },
+    {
+      "object": "SYFY | Knight_MidA_9.6in_01.stl",
+      "creaseDegrees": 20,
+      "verticesUnchanged": true,
+      "hardEdges": 10381,
+      "customNormals": true
+    },
+    {
+      "object": "SYFY | Knight_MidB_9.6in_01.stl",
+      "creaseDegrees": 20,
+      "verticesUnchanged": true,
+      "hardEdges": 10167,
+      "customNormals": true
+    }
+  ],
+  "relief": {
+    "basis": "Selected intact final sheet; Danelon 2:35 / 2:55 / 3:10; owner October 23 relief correction",
+    "features": [
+      {
+        "feature": "Open forebody machinery channel",
+        "reference": "Danelon 2:35 oblique and 2:55 corresponding views",
+        "cutBounds": [
+          [
+            -11,
+            12,
+            109.5
+          ],
+          [
+            11,
+            64,
+            172.5
+          ]
+        ],
+        "polygonsBefore": 219826,
+        "polygonsAfter": 163461
+      },
+      {
+        "feature": "Logo bank plate stack",
+        "face": "machinery",
+        "zDivisions": [
+          26,
+          62,
+          83,
+          104
+        ],
+        "lift": 2.1,
+        "thickness": 3,
+        "openSeams": 0.9
+      },
+      {
+        "feature": "Narrow bank plate stack",
+        "face": "machinery",
+        "zDivisions": [
+          26,
+          68,
+          88,
+          104
+        ],
+        "lift": 2.1,
+        "thickness": 3,
+        "openSeams": 0.9
+      },
+      {
+        "feature": "Logo bank upper service cover",
+        "face": "machinery",
+        "outline": [
+          [
+            -31,
+            82
+          ],
+          [
+            -14,
+            82
+          ],
+          [
+            -13,
+            83
+          ],
+          [
+            -13,
+            97
+          ],
+          [
+            -14,
+            98
+          ],
+          [
+            -31,
+            98
+          ],
+          [
+            -32,
+            97
+          ],
+          [
+            -32,
+            83
+          ]
+        ],
+        "rimLift": 4.7,
+        "floorLift": 2.6,
+        "recessDepth": 2.1
+      },
+      {
+        "feature": "Narrow bank upper access well",
+        "face": "machinery",
+        "outline": [
+          [
+            15,
+            76
+          ],
+          [
+            28,
+            76
+          ],
+          [
+            29,
+            77
+          ],
+          [
+            29,
+            93
+          ],
+          [
+            28,
+            94
+          ],
+          [
+            15,
+            94
+          ],
+          [
+            14,
+            93
+          ],
+          [
+            14,
+            77
+          ]
+        ],
+        "rimLift": 3.9,
+        "floorLift": 2.4,
+        "recessDepth": 1.5
+      },
+      {
+        "feature": "Logo bank lower dark socket",
+        "face": "machinery",
+        "outline": [
+          [
+            -29.2,
+            12
+          ],
+          [
+            -16.8,
+            12
+          ],
+          [
+            -16,
+            12.8
+          ],
+          [
+            -16,
+            19.2
+          ],
+          [
+            -16.8,
+            20
+          ],
+          [
+            -29.2,
+            20
+          ],
+          [
+            -30,
+            19.2
+          ],
+          [
+            -30,
+            12.8
+          ]
+        ],
+        "rimLift": 1.8,
+        "floorLift": 0.35,
+        "recessDepth": 1.4500000000000002
+      },
+      {
+        "feature": "Airlock upper service recess",
+        "face": "airlock",
+        "outline": [
+          [
+            -29,
+            82
+          ],
+          [
+            -18,
+            82
+          ],
+          [
+            -17,
+            83
+          ],
+          [
+            -17,
+            96
+          ],
+          [
+            -18,
+            97
+          ],
+          [
+            -29,
+            97
+          ],
+          [
+            -30,
+            96
+          ],
+          [
+            -30,
+            83
+          ]
+        ],
+        "rimLift": 3.5,
+        "floorLift": 1.8,
+        "recessDepth": 1.7
+      },
+      {
+        "feature": "Airlock upper service recess",
+        "face": "airlock",
+        "outline": [
+          [
+            17,
+            82
+          ],
+          [
+            30,
+            82
+          ],
+          [
+            31,
+            83
+          ],
+          [
+            31,
+            96
+          ],
+          [
+            30,
+            97
+          ],
+          [
+            17,
+            97
+          ],
+          [
+            16,
+            96
+          ],
+          [
+            16,
+            83
+          ]
+        ],
+        "rimLift": 3.5,
+        "floorLift": 1.8,
+        "recessDepth": 1.7
+      },
+      {
+        "feature": "Clipped pressure-door surround",
+        "face": "airlock",
+        "outline": [
+          [
+            -10,
+            6
+          ],
+          [
+            10,
+            6
+          ],
+          [
+            13,
+            9
+          ],
+          [
+            13,
+            36
+          ],
+          [
+            10,
+            39
+          ],
+          [
+            -10,
+            39
+          ],
+          [
+            -13,
+            36
+          ],
+          [
+            -13,
+            9
+          ]
+        ],
+        "rimLift": 3.4,
+        "floorLift": 1.9,
+        "recessDepth": 1.5
+      },
+      {
+        "feature": "Bow fin pressed panel -1",
+        "face": "machinery",
+        "outline": [
+          [
+            -15,
+            155
+          ],
+          [
+            -18.5,
+            151
+          ],
+          [
+            -31.5,
+            116
+          ],
+          [
+            -12.3,
+            116
+          ]
+        ],
+        "rimLift": 1.4,
+        "floorLift": 0.25,
+        "recessDepth": 1.15
+      },
+      {
+        "feature": "Bow fin pressed panel 1",
+        "face": "machinery",
+        "outline": [
+          [
+            12.3,
+            116
+          ],
+          [
+            31.5,
+            116
+          ],
+          [
+            18.5,
+            151
+          ],
+          [
+            12.3,
+            157
+          ]
+        ],
+        "rimLift": 1.4,
+        "floorLift": 0.25,
+        "recessDepth": 1.15
+      },
+      {
+        "feature": "Bow machinery and pressure core",
+        "reference": "Danelon 2:35, 2:55 and 3:10",
+        "channelRemainsOpen": true,
+        "separateFins": true
+      }
+    ],
+    "pressedSheetObjects": 98,
+    "depthUnits": "Registered source millimetres; relative depth is an authored reference fit",
+    "sourceGeometryChanged": "Forebody machinery channel and replacement of simplified fused bank bosses with separate curved casing and pressed fields",
+    "sourcePixelsUsed": false
+  },
+  "sha256": "d6b519e0767e770dc896e8c139892ed2ef5a52e4e0a16bb1e2b9a4bab5cd8e74",
+  "bytes": 40209572,
+  "notChanged": [
+    "FleetStudio main catalogue and models",
+    "Assets/FleetViewer",
+    "SensorPanel",
+    "installed application"
+  ],
+  "interpretations": [
+    "Authored reliefs, bowed plate fields and layered door refine printable simplifications using selected final hero and corresponding orthographic views.",
+    "Plume placement uses fitted source outlet planes; violet body/white core follow retained TV frames. Exact effect length and energy remain review interpretations.",
+    "P\u016aR / & / KLEEN / WATER COMPANY reconstructed from the final hero and owner markup, including lowered U, overbar and offset shadow. Exterior service wear is recreated; exact font, small print and original wear are unavailable. Placement limits are explicit in textures/map-notes.json."
+  ],
+  "markings": {
+    "size": [
+      3072,
+      2048
+    ],
+    "sourcePixelsUsed": false,
+    "palette": "weathered silver aluminium shell; gold PUR on charcoal crest; green KLEEN on gold oval; charcoal WATER COMPANY",
+    "placement": "One company badge on the machinery bank; no duplicate on the airlock face. KNIGHT belongs to the sloped bow hood. Physical X/Z bounds are explicit. Artwork is an editable type reconstruction, not extracted production pixels.",
+    "markings": [
+      {
+        "kind": "ship name",
+        "face": 0,
+        "sourceBoundsXZ": [
+          -9,
+          142,
+          9,
+          146
+        ],
+        "text": "KNIGHT",
+        "reference": "Danelon final oblique bow views",
+        "basis": "Existing sloped pressure hood; continuous source surface checked by ray probes."
+      },
+      {
+        "kind": "company wordmark",
+        "face": 1,
+        "bank": "machinery / negative X",
+        "sourceBoundsXZ": [
+          -33.4,
+          35.4,
+          -10.4,
+          56.5
+        ],
+        "lines": [
+          "P\u016aR",
+          "&",
+          "KLEEN",
+          "WATER COMPANY"
+        ],
+        "letterDetails": "Lowered U with separate overbar; dark KLEEN shadow offsets down and right.",
+        "reference": "Danelon 3:10 final hero; SYFY final sheet hero",
+        "basis": "Fitted to the logo-bearing curved plate; the simplified print mesh limits exact registration."
+      }
+    ],
+    "materialLayers": {
+      "substrate": "Silver aluminium; typical metalness .76, roughness .44; subtle brushed variation.",
+      "retainedCoating": "Selected physical service covers; metalness .30, roughness .56.",
+      "ink": "Branding, safety print, ochre band and black fields are dielectric ink; metalness .03, roughness .62.",
+      "packedMap": "Knight-roughness.png: R unused 255; G linear roughness; B linear metalness."
+    },
+    "wear": "Seeded recreation of panel-edge paint chips, clustered handling scuffs, trapped seam grime, aft-apron soot and worn badge ink across all six exterior projections; matching roughness and exposed-metal variation. Geometry remains unchanged.",
+    "pending": [
+      "Exact original logo font is unavailable; typography is reconstructed.",
+      "Small print and exact paint wear cannot be recovered from the retained reference resolution."
+    ],
+    "referenceRevision": "Selected final paint at Danelon 3:10; earlier plain yellow registration discs excluded. Owner corrections: lowered U with overbar, offset KLEEN shadow, used-worker wear and silver rather than white hull."
+  },
+  "materialLayers": {
+    "substrate": "Silver aluminium; typical metalness .76, roughness .44; subtle brushed variation.",
+    "retainedCoating": "Selected physical service covers; metalness .30, roughness .56.",
+    "ink": "Branding, safety print, ochre band and black fields are dielectric ink; metalness .03, roughness .62.",
+    "packedMap": "Knight-roughness.png: R unused 255; G linear roughness; B linear metalness."
+  }
+}

@@ -31,7 +31,7 @@ base=(ROOT/'Sources/Anubis/Anubis-accepted-before-red.glb').read_bytes()
 adopt.require(adopt.sha(base)==adopt.BASE_HASH,'Accepted base identity')
 adopt.require(adopt.sha(source)==identity['sha256' if candidate else 'glb_sha256'],'Anubis source identity disagrees')
 if not candidate:
-    adopt.accepted_review(source, ROOT/'Sources/Anubis/runtime-adoption-1.8.12.json')
+    adopt.accepted_review(source, ROOT/'Sources/Anubis/runtime-adoption-1.8.13.json')
     adopt.require(adopt.sha(source)==studio['sha256']==native['sha256'],'Anubis fleet identities disagree')
     adopt.require(gzip.decompress((ROOT/'FleetStudio'/studio['model']).read_bytes())==source,'Studio source parity')
     adopt.require(gzip.decompress((ROOT/'Assets/FleetViewer'/native['model']).read_bytes())==source,'Native source parity')

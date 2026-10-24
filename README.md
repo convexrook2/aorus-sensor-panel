@@ -8,19 +8,15 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
-The **1.8.12 release candidate** combines the accepted Canterbury finish14 and
-Arboghast pass08 reconstructions with the prepared exhaust, holotable, showcase
-motion and Sol-navigation changes. See the [release record](docs/RELEASE-1.8.12-CANDIDATE.md).
-Canterbury's exact editable model, export and acceptance receipt are retained
-under `Assets/Models/Source/Canterbury-finish14`. Knight is frozen, further
-Arboghast modeling is stopped and ice is deferred.
+The **1.8.13 correction** adds the accepted Knight review 04 that was omitted
+from 1.8.12: the exact silver-hull model, matching portrait, seventeen work
+lights and three fitted white/violet plumes. See the
+[Knight release record](docs/RELEASE-1.8.13-KNIGHT.md). Its accepted Blender/GLB
+files are preserved unchanged in `Assets/Models/Source/Knight-review04`.
 
-The rejected October 21 Arboghast study remains preserved locally. Lennon reopened
-the reconstruction on October 22, confirmed pass08 in Fleet Studio and requested
-its inclusion in the Sensor. The **1.8.12 candidate** integrates that exact
-model while keeping the established monitoring layout. See the
-[Sensor adoption record](docs/ARBOGHAST-PASS08-SENSOR-20261022.md) for source,
-native, package and installation evidence; the installed 1.8.11 remains separate.
+The released 1.8.12 Canterbury finish14, Arboghast pass08, exhaust, holotable
+and Sol-navigation changes remain intact. Further geometry work on these
+accepted ships is stopped and ice is deferred.
 
 ## Open Fleet Studio
 

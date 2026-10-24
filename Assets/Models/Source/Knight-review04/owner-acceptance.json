@@ -1,0 +1,18 @@
+{
+  "owner": "Lennon Bromfield",
+  "acceptedDate": "2026-10-23",
+  "timezone": "America/Toronto",
+  "ownerMessage": "knight accepted backto \" remembering the cant",
+  "revision": "Knight / silver hull and service wear / review 04",
+  "modelSha256": "d6b519e0767e770dc896e8c139892ed2ef5a52e4e0a16bb1e2b9a4bab5cd8e74",
+  "editableBlendSha256": "de753d8528a51d547564cb67d8f5f3c30c7fff3fc8b968c303007756965504f3",
+  "acceptedScope": "Visual/source review of the exact isolated Knight model, its silver finish, physical relief, markings, work lights and fitted shared 3D plumes. Preserve this revision.",
+  "mainFleetAdoption": false,
+  "nativeSensorValidation": "not run for this accepted revision",
+  "installedOrPublished": false,
+  "sourceLimitations": [
+    "Logo typography and unresolved tiny print are reconstructed.",
+    "Exterior wear is recreated where original damage is unresolved."
+  ],
+  "next": "Canterbury reference and lighting audit before model changes."
+}

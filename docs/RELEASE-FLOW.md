@@ -1,5 +1,12 @@
 # X890 sensor-panel release flow
 
+October 23 corrective release authority: Lennon requested the accepted Knight
+with its portrait, lights and plumes in the app, with the accepted model unchanged,
+and requested release. This authorizes the scoped 1.8.13 commit/push, exact-source
+CI installer build and publication after validation. See
+[the Knight correction](RELEASE-1.8.13-KNIGHT.md). Installation is separate.
+The earlier 1.8.12 release is published and the owner installed it.
+
 October 23 release authority: Lennon accepted Canterbury finish14 as sufficient
 and requested release. He explicitly selected the prepared 1.8.12 changes plus
 Canterbury: accepted Arboghast pass08, shared exhaust, holotable, showcase motion
@@ -127,8 +134,7 @@ the owner's installed product.
 
 ## Next safe action
 
-Complete the authorized 1.8.12 candidate gates, commit the reviewed release
+Complete the authorized 1.8.13 Knight-only adoption gates, commit the reviewed
 slice, push and run exact-SHA Jenkins with installer compilation. Review and
-publish those verified bytes under the October 23 release instruction.
-Installation and new LIVE/hardware validation remain separate. Further
-Arboghast modeling is stopped; the accepted pass08 inclusion is authorized.
+publish those verified bytes. Preserve the accepted model and unrelated work.
+Installation and new LIVE/hardware validation remain separate.

@@ -133,7 +133,7 @@ try{
    // Blender keeps spaces in node names in some exporter revisions.
    if(entry.id==='SolRing'&&!field){root.traverse(o=>{if(o.isMesh&&o.name.includes('Active aperture')){field=o;portal=makePortal();specialMaterials.add(portal);o.material.dispose();o.material=portal;originals.set(o,portal);o.castShadow=false;o.receiveShadow=false;}});if(!field)throw Error('The separate gate aperture was not found');}
    const anchorEntry=requestedPrevious&&entry.beforeEngineId?entry.beforeEngineId:entry.id;
-   if(['Arboghast','Canterbury'].includes(entry.id)&&engines[anchorEntry]?.modelSha256!==hash)throw Error(entry.id+' drive registration differs from the loaded model');
+   if(['Arboghast','Canterbury','Knight'].includes(entry.id)&&engines[anchorEntry]?.modelSha256!==hash)throw Error(entry.id+' drive registration differs from the loaded model');
    shipShadows=ownShipShadows(gltf.scene);shipEffects=makeShipEffects(root,gltf.scene,engines[anchorEntry]?.engines||[],center,scale);
    scene.add(root);root.updateMatrixWorld(true);renderer.shadowMap.needsUpdate=true;
    const displayTitle=requestedPrevious&&entry.beforeTitle?entry.beforeTitle:entry.title+(requestedPrevious?' / previous':'');
@@ -143,7 +143,7 @@ try{
    $('#technical').textContent=info.triangles.toLocaleString()+' triangles · '+info.materials+' materials · '+lights+' local lights · '+shipEffects.emitterMaterials+' emissive materials · full geometry';
    $('#before').hidden=!entry.beforeModel;$('#before').textContent=entry.beforeLabel||'Previous version';$('#portal').hidden=$('#effect').hidden=$('#rim-view').hidden=entry.id!=='SolRing';
    if(field)field.visible=$('#portal').getAttribute('aria-pressed')==='true';
-   lightButton.hidden=!['RocinanteS6','Anubis'].includes(entry.id);references();surface();lighting();shipState();if(reset)view();$('#status').hidden=true;
+   lightButton.hidden=!['RocinanteS6','Anubis','Knight'].includes(entry.id);references();surface();lighting();shipState();if(reset)view();$('#status').hidden=true;
    document.body.dataset.loaded=entry.id;document.body.dataset.modelSha256=hash;document.body.dataset.orientation=entry.orientation||'ship';document.body.dataset.shipLights=lights;document.body.dataset.portalAnimated=Boolean(portal);
    const url=new URL(location.href);url.searchParams.set('ship',entry.id);history.replaceState(null,'',url);invalidate();
    }catch(error){if(token===loadId)throw error;}

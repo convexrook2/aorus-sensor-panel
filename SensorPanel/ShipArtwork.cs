@@ -20,7 +20,7 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
         new("Dropship", "MCRN DROPSHIP", "MCRN", "DROPSHIP", "LANDING ENGINEERING", "Ryan Begemann"),
         new("Epstein", "EPSTEIN'S YACHT", "MARS", "YACHT", "DRIVE ENGINEERING", "Chris Kuhn / owlstraw"),
         new("Canterbury", "CANTERBURY", "PUR'N'KLEEN", "ICE HAULER", "HAULAGE ENGINEERING", "X890 reconstruction / Dening and Danelon references"),
-        new("Knight", "KNIGHT", "PUR'N'KLEEN", "SHUTTLE", "SHUTTLE ENGINEERING", "Original fan model"),
+        new("Knight", "KNIGHT", "PUR'N'KLEEN", "SHUTTLE", "SHUTTLE ENGINEERING", "SYFY / Voodoo, CC BY 4.0 / X890 adaptation"),
         new("Anubis", "ANUBIS", "PROTOGEN", "STEALTH FRIGATE", "SYSTEMS ENGINEERING", "Original fan model"),
         new("Pella", "PELLA", "FREE NAVY", "LIGHT CRUISER", "FLEET ENGINEERING", "Martin Taichl / CC BY 4.0 · adapted"),
         new("Nauvoo", "LDSS NAUVOO", "LDSS", "GENERATION SHIP", "DRUM ENGINEERING", "Original fan model"),
@@ -77,7 +77,7 @@ internal sealed class ShipArtwork : Image
         ship=ShipProfile.CanonicalId(ship);
         if (images.TryGetValue(ship, out var existing)) return existing;
         images.Clear();
-        if(ship is "Arboghast" or "Canterbury")
+        if(ship is "Arboghast" or "Canterbury" or "Knight")
         {
             var preparedPortrait=ShipPoster.GetImage(ship);
             images.Add(ship,preparedPortrait);return preparedPortrait;

@@ -183,6 +183,7 @@ internal sealed class Holotable : Grid
     {
         "SolRing"=>"ORIGINAL V3 FAN RECONSTRUCTION",
         "Arboghast"=>"X890 RECONSTRUCTION / CHRIS DANELON REFERENCES",
+        "Knight"=>"SYFY / VOODOO · CC BY 4.0 · X890 ADAPTATION",
         "Razorback"=>"OWNER-SUPPLIED V2","Rocinante"=>"MARTIN TAICHL / CC BY 4.0",
         "Truman" or "AgathaKing"=>"MOHAMEDHUSSIEN",
         "Pella"=>"MARTIN TAICHL / CC BY 4.0 · ADAPTED",

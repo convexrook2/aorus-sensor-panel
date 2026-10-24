@@ -480,6 +480,19 @@
       "images": 3,
       "lights": 6,
       "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Knight-d6b519e0767e.glb.gz",
+      "sha256": "d6b519e0767e770dc896e8c139892ed2ef5a52e4e0a16bb1e2b9a4bab5cd8e74",
+      "source_sha256": "d6b519e0767e770dc896e8c139892ed2ef5a52e4e0a16bb1e2b9a4bab5cd8e74",
+      "gzip_sha256": "bfb6b1d037db4a7f1e7ded27111d4c32fa95d541055db37d6f24dfab12bf89eb",
+      "compressed_bytes": 27743400,
+      "uncompressed_bytes": 40209572,
+      "triangles": 968540,
+      "materials": 9,
+      "images": 2,
+      "lights": 17,
+      "geometry_and_image_bytes_exact": true
     }
   ],
   "current": {

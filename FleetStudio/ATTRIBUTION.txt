@@ -24,3 +24,8 @@ Owner-confirmed reconstruction with separate registered engine plume effects. No
 
 Canterbury: Original X890 fan reconstruction after Ryan Dening concepts and Chris Danelon production views; owner-accepted finish14. No production mesh acquired.
 https://www.youtube.com/watch?v=a3lL1bhpl9c&t=11s
+
+Knight: Original geometry: SYFY / Voodoo Manufacturing, Thingiverse 2060044 and 1235700, CC BY 4.0. Production design: Ryan Dening / North Front; development commentary by Chris Danelon. X890: recorded assembly registration, separate mechanical refinements, authored paint/wear and lighting. Reference images are review evidence, not texture maps.
+https://www.youtube.com/watch?v=YXtIQub_YtI&t=188s
+Original licensed sources: https://www.thingiverse.com/thing:2060044 and https://www.thingiverse.com/thing:1235700
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/

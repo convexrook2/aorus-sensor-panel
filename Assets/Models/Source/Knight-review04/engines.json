@@ -1,0 +1,71 @@
+{
+  "modelSha256": "d6b519e0767e770dc896e8c139892ed2ef5a52e4e0a16bb1e2b9a4bab5cd8e74",
+  "engines": [
+    {
+      "position": [
+        -0.017554093152284622,
+        -32.26907472610473,
+        -23.059436248242854
+      ],
+      "direction": [
+        0.0,
+        -0.9770498275756836,
+        -0.21301086246967316
+      ],
+      "radius": 12.417709653927723,
+      "length": 38,
+      "color": [
+        0.38,
+        0.27,
+        0.95
+      ],
+      "plumeProfile": "knight",
+      "addCore": false,
+      "basis": "Least-squares circle fitted to official source annular outlet faces; canted normals retained. White hot core and violet flowing body follow TV references. Exact energy/length are an interpretation."
+    },
+    {
+      "position": [
+        -29.614707125723363,
+        -30.6845252096653,
+        26.022505658864976
+      ],
+      "direction": [
+        -0.22396449744701385,
+        -0.9458500742912292,
+        0.23496276140213013
+      ],
+      "radius": 12.489107209315655,
+      "length": 38,
+      "color": [
+        0.38,
+        0.27,
+        0.95
+      ],
+      "plumeProfile": "knight",
+      "addCore": false,
+      "basis": "Least-squares circle fitted to official source annular outlet faces; canted normals retained. White hot core and violet flowing body follow TV references. Exact energy/length are an interpretation."
+    },
+    {
+      "position": [
+        29.63695444017649,
+        -30.68417425751686,
+        26.003741163015366
+      ],
+      "direction": [
+        0.22396449744701385,
+        -0.9458500742912292,
+        0.23496276140213013
+      ],
+      "radius": 12.500792844462557,
+      "length": 38,
+      "color": [
+        0.38,
+        0.27,
+        0.95
+      ],
+      "plumeProfile": "knight",
+      "addCore": false,
+      "basis": "Least-squares circle fitted to official source annular outlet faces; canted normals retained. White hot core and violet flowing body follow TV references. Exact energy/length are an interpretation."
+    }
+  ]
+}

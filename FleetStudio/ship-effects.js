@@ -3,6 +3,7 @@ import * as THREE from 'three';
 // Profiles share one gas animation. Size is bounded by the actual hull; stealth
 // exhaust has a short, subdued signature, separate from accepted source lights.
 const plumePalettes={
+ knight:{near:[1,.97,1],far:[.46,.37,1],spill:[.70,.65,1],lengthRatio:.26,radiance:.65,density:.80,illumination:.65,reach:5.5},
  standard:{near:[1,.97,.91],far:[.48,.78,1],spill:[.78,.9,1],lengthRatio:.6,radiance:1,density:1,illumination:1,reach:7},
  stealth:{near:[.72,1,.8],far:[.22,.72,.4],spill:[.65,.9,.72],lengthRatio:.18,radiance:.12,density:.4,illumination:.035,reach:2},
  canterbury:{near:[1,.98,1],far:[.25,.5,1],spill:[.58,.75,1],lengthRatio:.23,radiance:.72,density:.80,illumination:.65,reach:5.5}
