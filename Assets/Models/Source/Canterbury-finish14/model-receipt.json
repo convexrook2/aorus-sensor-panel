@@ -1,0 +1,453 @@
+{
+  "revision": "finish14",
+  "status": "Owner accepted finish14 on 2026-10-23; authorized for Sensor 1.8.12 release",
+  "modelSha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
+  "blendSha256": "7d7d42777e8c3b62d49b0eb74915cba1106918a177b1b74adb18b0cfff4a1a7a",
+  "baseline": "a62bd537222cea47247f7dfd5052e1fc1678276cd5e5f588d590cdc5cef25899",
+  "meshObjects": 212,
+  "shipLights": 6,
+  "physicalOutlets": 9,
+  "engines": [
+    {
+      "name": "Physical outlet 01",
+      "position": [
+        1.3600000143051147,
+        -0.23499999940395355,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875202000141144,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 02",
+      "position": [
+        1.3600000143051147,
+        0.23499999940395355,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875202000141144,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 03",
+      "position": [
+        -0.23499999940395355,
+        -1.3600000143051147,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875200510025024,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 04",
+      "position": [
+        0.23499999940395355,
+        -1.3600000143051147,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875200510025024,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 05",
+      "position": [
+        -1.3600000143051147,
+        0.23499999940395355,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875202000141144,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 06",
+      "position": [
+        -1.3600000143051147,
+        -0.23499999940395355,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875202000141144,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 07",
+      "position": [
+        0.23499999940395355,
+        1.3600000143051147,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875200510025024,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 08",
+      "position": [
+        -0.23499999940395355,
+        1.3600000143051147,
+        0.1779999964237213
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.17875200510025024,
+      "length": 2.25,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    },
+    {
+      "name": "Physical outlet 09 | retained TV centre",
+      "position": [
+        0.0,
+        0.0,
+        1.702999942779541
+      ],
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "radius": 0.15993599593639374,
+      "length": 1.2,
+      "color": [
+        0.2,
+        0.43,
+        1
+      ],
+      "plumeProfile": "canterbury",
+      "addCore": false
+    }
+  ],
+  "removedBridgeMeshes": [
+    "Bridge cabin | sloped outward face and continuous lower return",
+    "Bridge root | connected neck"
+  ],
+  "newMeshes": [
+    "Bridge cabin | complete faceted near body and outward return",
+    "Bridge root | full connected service neck",
+    "Pur and Kleen company badge -1",
+    "CANTERBURY",
+    "ICE COLLECTION",
+    "Pur and Kleen company badge 1",
+    "CANTERBURY.001",
+    "ICE COLLECTION.001",
+    "Bridge glazing",
+    "Bridge bands",
+    "Docking fittings",
+    "Docking fittings.001",
+    "Hull panel joints",
+    "Hull fasteners",
+    "Hull inset panels",
+    "Equipment surface detail",
+    "Hull fasteners.001",
+    "Equipment surface detail.001",
+    "Service pipework",
+    "Service pipework.001",
+    "Service racks",
+    "Service racks.001",
+    "Hold service fittings",
+    "Hold inner panels",
+    "Hold service fittings.001",
+    "Vessel collars",
+    "Drive surface joints",
+    "Drive thermal collars",
+    "Work-light fixtures",
+    "White work lights",
+    "Amber work lights",
+    "Nameplate backing",
+    "Drive ignition throat",
+    "Drive ignition throat.001",
+    "Drive ignition throat.002",
+    "Drive ignition throat.003",
+    "Drive ignition throat.004",
+    "Drive ignition throat.005",
+    "Drive ignition throat.006",
+    "Drive ignition throat.007",
+    "Drive ignition throat.008"
+  ],
+  "retainedGeometryNames": [
+    "Physical outlet 01",
+    "Physical outlet 02",
+    "Physical outlet 03",
+    "Physical outlet 04",
+    "Physical outlet 05",
+    "Physical outlet 06",
+    "Physical outlet 07",
+    "Physical outlet 08",
+    "Physical outlet 09 | retained TV centre",
+    "Drive support web 1 | continuous neck to saddle",
+    "Drive support flange 1/-1",
+    "Drive support flange 1/+1",
+    "Drive shield 1 | swept outboard surface and returns",
+    "Engine body 01 | shoulder to bell stem",
+    "Engine body 02 | shoulder to bell stem",
+    "Drive support web 2 | continuous neck to saddle",
+    "Drive support flange 2/-1",
+    "Drive support flange 2/+1",
+    "Drive shield 2 | swept outboard surface and returns",
+    "Engine body 03 | shoulder to bell stem",
+    "Engine body 04 | shoulder to bell stem",
+    "Drive support web 3 | continuous neck to saddle",
+    "Drive support flange 3/-1",
+    "Drive support flange 3/+1",
+    "Drive shield 3 | swept outboard surface and returns",
+    "Engine body 05 | shoulder to bell stem",
+    "Engine body 06 | shoulder to bell stem",
+    "Drive support web 4 | continuous neck to saddle",
+    "Drive support flange 4/-1",
+    "Drive support flange 4/+1",
+    "Drive shield 4 | swept outboard surface and returns",
+    "Engine body 07 | shoulder to bell stem",
+    "Engine body 08 | shoulder to bell stem",
+    "Equipment spine | shallow continuous connecting land",
+    "Forward equipment | rising cap and return",
+    "Forward equipment | narrow recessed interval",
+    "Forward raised support | B05",
+    "Forward raised support | B07",
+    "Equipment shared shroud | two roof bays and open cylinder returns",
+    "Equipment pressure body 1",
+    "Equipment pressure body 2",
+    "Equipment pressure body 3",
+    "Following shoulder | raised third bay with separate depth",
+    "Cross housing | central inset deck",
+    "Cross housing | projecting left box and bevel",
+    "Cross housing | unequal opposite projection",
+    "Aft stack | upper stepped face and side returns",
+    "Aft stack | lower stepped face and terminal bevel",
+    "Aft wing housing | B21",
+    "Aft wing housing | B22",
+    "Outward raised face feature | Blid1",
+    "Outward raised face feature | Blid2",
+    "Outward raised face feature | Blid3",
+    "Outward raised face feature | Baftlid1",
+    "Outward raised face feature | Baftlid2",
+    "Small forward raised fitting | Bfit1",
+    "Small forward raised fitting | Bfit2",
+    "Small forward raised fitting | Bfit3",
+    "Small forward raised fitting | Bfit4",
+    "Small forward raised fitting | Bfit5",
+    "Cross housing tool pedestal",
+    "Cross housing projecting tool arm",
+    "Service forward housing | measured face and deep return",
+    "Service upper ledge | separate shallow outboard return",
+    "Service forward housing | far stepped continuation",
+    "Service upper step | distinct outward mass",
+    "Service middle carrier | short outward tab",
+    "Service aft housing | measured broad face and return",
+    "Aft corner housing | occluding lower return",
+    "Service intermediate projecting box",
+    "Service channel longitudinal flange",
+    "Service channel longitudinal flange.001",
+    "Service channel cross brace 01",
+    "Service channel cross brace 02",
+    "Service channel cross brace 03",
+    "Service channel cross brace 04",
+    "Service channel cross brace 05",
+    "Service channel cross brace 06",
+    "Service channel cross brace 07",
+    "Aft pressure vessel 01",
+    "Aft pressure vessel 01 | end hub -1",
+    "Aft pressure vessel 01 | end hub +1",
+    "Aft pressure vessel 02",
+    "Aft pressure vessel 02 | end hub -1",
+    "Aft pressure vessel 02 | end hub +1",
+    "Aft pressure vessel 03",
+    "Aft pressure vessel 03 | end hub -1",
+    "Aft pressure vessel 03 | end hub +1",
+    "Aft pressure vessel 04",
+    "Aft pressure vessel 04 | end hub -1",
+    "Aft pressure vessel 04 | end hub +1",
+    "Aft pressure vessel 05",
+    "Aft pressure vessel 05 | end hub -1",
+    "Aft pressure vessel 05 | end hub +1",
+    "Aft pressure vessel 06",
+    "Aft pressure vessel 06 | end hub -1",
+    "Aft pressure vessel 06 | end hub +1",
+    "Bay housing | sloping narrow return",
+    "Bay housing | upright leg",
+    "Vessel saddle 1/-1.20",
+    "Vessel saddle 1/+1.20",
+    "Vessel saddle 2/-1.20",
+    "Vessel saddle 2/+1.20",
+    "Vessel saddle 3/-1.20",
+    "Vessel saddle 3/+1.20",
+    "Vessel saddle 4/-1.20",
+    "Vessel saddle 4/+1.20",
+    "Vessel saddle 5/-1.20",
+    "Vessel saddle 5/+1.20",
+    "Vessel saddle 6/-1.20",
+    "Vessel saddle 6/+1.20",
+    "Aft bay longitudinal load chord",
+    "Aft bay longitudinal load chord.001",
+    "Aft bay longitudinal load chord.002",
+    "Aft bay longitudinal load chord.003",
+    "Open service face | plate 5",
+    "Mouth transverse gantry.002",
+    "Mouth transverse gantry.001",
+    "Mouth transverse gantry",
+    "Hold return | plate 6",
+    "Hold return | plate 4",
+    "Hold return | plate 3",
+    "Hold return | plate 2",
+    "Hold return | plate 0",
+    "Hold inner longitudinal flange.003",
+    "Hold inner longitudinal flange.002",
+    "Hold inner longitudinal flange.001",
+    "Hold inner longitudinal flange",
+    "Hold aft bulkhead",
+    "Equipment side | plate 1",
+    "Company side | plate 7",
+    "Reactor central drive spine | hollow engine collar",
+    "Reactor core | internal centerline sphere",
+    "Reactor shell band 01",
+    "Reactor shell band 02",
+    "Reactor shell band 03",
+    "Reactor shell band 04",
+    "Reactor shell band 05",
+    "Reactor shell band 06",
+    "Reactor shell band 07",
+    "Reactor radial tower 01",
+    "Reactor tower root collar 01",
+    "Reactor tower blunt end 01",
+    "Reactor radial tower 02",
+    "Reactor tower root collar 02",
+    "Reactor tower blunt end 02",
+    "Reactor radial tower 03",
+    "Reactor tower root collar 03",
+    "Reactor tower blunt end 03",
+    "Reactor radial tower 04",
+    "Reactor tower root collar 04",
+    "Reactor tower blunt end 04",
+    "Reactor radial tower 05",
+    "Reactor tower root collar 05",
+    "Reactor tower blunt end 05",
+    "Reactor radial tower 06",
+    "Reactor tower root collar 06",
+    "Reactor tower blunt end 06",
+    "Reactor radial tower 07",
+    "Reactor tower root collar 07",
+    "Reactor tower blunt end 07",
+    "Reactor radial tower 08",
+    "Reactor tower root collar 08",
+    "Reactor tower blunt end 08",
+    "Reactor internal mount 02",
+    "Reactor internal mount 04",
+    "Reactor internal mount 06",
+    "Reactor internal mount 08",
+    "Aft service aperture | company-side return",
+    "Aft service aperture | opposite return",
+    "Aft service aperture | forward header"
+  ],
+  "retainedGeometryCount": 171,
+  "entrance": "Original finish13 mouth, hull skins and forward structure retained exactly; additions stop behind the entrance.",
+  "geometryChanges": "Bridge completed from S17/S18 side profiles with near body, glazing and connected neck. Adjacent docking face and source-supported surface hardware added.",
+  "bridgeUncertainty": "The side and quarter concept drawings disagree. Side profile and TV structure determine this cabin; the quarter remains a comparison, not an exact fit.",
+  "textures": {
+    "Hull-paint.png": {
+      "source": "Sources\\Canterbury\\pass03\\textures\\Canterbury-silver.png",
+      "sha256": "333a22e8b6857a0a774171bee472407239969e043a9b3d2c241958c6aaf9502c"
+    },
+    "Hull-rough-metal.png": {
+      "source": "Sources\\Canterbury\\pass03\\textures\\Canterbury-orm.png",
+      "sha256": "f68f404f8df4d719b62468b110925cbdfa1d4bfba3932b4ec83456fa5e8b504d"
+    },
+    "Company-wordmark.png": {
+      "source": "Sources\\Canterbury\\textures\\Canterbury-company-wordmark.png",
+      "sha256": "77831bc157e9d18da75dfbba7f605db35e18bde28b9754cf5f867fd819434fa3"
+    }
+  },
+  "finishBasis": "TV05/07/10, 11-frame source set, relief-survey Sband/Bseam and equipment surfaces; authored wear only.",
+  "plumeDelivery": "Nine editable Blender volumes; nine matching outlet anchors use the existing shared 3D gas renderer in the browser. GLB carries anchors, not volume shaders.",
+  "nativeInstalledRelease": "Not run",
+  "nativeVolumePlumes": 9,
+  "lightUnits": "Relative model units. Blender COMPAT light export retains radiometric-scale intensities for the Three.js review; physical-metre photometry is not claimed."
+}

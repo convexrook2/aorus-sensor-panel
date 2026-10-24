@@ -42,15 +42,309 @@
         "radius": 26,
         "length": 190,
         "color": [
-          0.09,
-          0.42,
-          1
+          0.16,
+          0.72,
+          0.36
         ],
         "style": "anubis-production",
         "addCore": false,
-        "evidence": "Existing outlet X173.5, axis +X through Y=-30/Z=0. Length is display tuning, not a production measurement."
+        "evidence": "Existing outlet X173.5, axis +X through Y=-30/Z=0. Length is display tuning, not a production measurement.",
+        "plumeProfile": "stealth"
       }
     ],
-    "finish": "Source-unit outlet and reviewed blue-white exhaust; existing cap emission only"
+    "finish": "Existing source outlet; owner-directed green-tinged stealth exhaust palette, shared 3D flow; accepted source fixture colours preserved"
+  },
+  "Arboghast": {
+    "modelSha256": "10744079e7ee154daac7345bac020ca6f0bf6c256032c9636244baa461333778",
+    "engines": [
+      {
+        "position": [
+          16.58333855,
+          -44.64079826,
+          -16.58333964
+        ],
+        "direction": [
+          0.1584962919,
+          -0.9745551944,
+          -0.1584963673
+        ],
+        "radius": 12.0,
+        "length": 44.0,
+        "color": [
+          0.07,
+          0.32,
+          1.0
+        ],
+        "addCore": false,
+        "basis": "Drive0 existing rolled mouth lip: centre/axis measured from pass08 GLB; start 0.06 source units beyond its outlet plane. Radius and compact blue-white plume length are display tuning, not a production measurement."
+      },
+      {
+        "position": [
+          -16.58333855,
+          -44.64079827,
+          -16.58333963
+        ],
+        "direction": [
+          -0.1584962921,
+          -0.9745551945,
+          -0.1584963668
+        ],
+        "radius": 12.0,
+        "length": 44.0,
+        "color": [
+          0.07,
+          0.32,
+          1.0
+        ],
+        "addCore": false,
+        "basis": "Drive1 existing rolled mouth lip: centre/axis measured from pass08 GLB; start 0.06 source units beyond its outlet plane. Radius and compact blue-white plume length are display tuning, not a production measurement."
+      },
+      {
+        "position": [
+          -16.58334017,
+          -44.64079874,
+          16.58333943
+        ],
+        "direction": [
+          -0.1584963967,
+          -0.9745551806,
+          0.1584963474
+        ],
+        "radius": 12.0,
+        "length": 44.0,
+        "color": [
+          0.07,
+          0.32,
+          1.0
+        ],
+        "addCore": false,
+        "basis": "Drive2 existing rolled mouth lip: centre/axis measured from pass08 GLB; start 0.06 source units beyond its outlet plane. Radius and compact blue-white plume length are display tuning, not a production measurement."
+      },
+      {
+        "position": [
+          16.58334017,
+          -44.64079874,
+          16.58333943
+        ],
+        "direction": [
+          0.1584963968,
+          -0.9745551807,
+          0.1584963472
+        ],
+        "radius": 12.0,
+        "length": 44.0,
+        "color": [
+          0.07,
+          0.32,
+          1.0
+        ],
+        "addCore": false,
+        "basis": "Drive3 existing rolled mouth lip: centre/axis measured from pass08 GLB; start 0.06 source units beyond its outlet plane. Radius and compact blue-white plume length are display tuning, not a production measurement."
+      }
+    ],
+    "finish": "Owner requested exhaust on the four existing canted bells; source geometry and eight work lights retained"
+  },
+  "Canterbury": {
+    "modelSha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
+    "engines": [
+      {
+        "name": "Physical outlet 01",
+        "position": [
+          1.3600000143051147,
+          -0.23499999940395355,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875202000141144,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 02",
+        "position": [
+          1.3600000143051147,
+          0.23499999940395355,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875202000141144,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 03",
+        "position": [
+          -0.23499999940395355,
+          -1.3600000143051147,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875200510025024,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 04",
+        "position": [
+          0.23499999940395355,
+          -1.3600000143051147,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875200510025024,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 05",
+        "position": [
+          -1.3600000143051147,
+          0.23499999940395355,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875202000141144,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 06",
+        "position": [
+          -1.3600000143051147,
+          -0.23499999940395355,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875202000141144,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 07",
+        "position": [
+          0.23499999940395355,
+          1.3600000143051147,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875200510025024,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 08",
+        "position": [
+          -0.23499999940395355,
+          1.3600000143051147,
+          0.1779999964237213
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.17875200510025024,
+        "length": 2.25,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      },
+      {
+        "name": "Physical outlet 09 | retained TV centre",
+        "position": [
+          0.0,
+          0.0,
+          1.702999942779541
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 0.15993599593639374,
+        "length": 1.2,
+        "color": [
+          0.2,
+          0.43,
+          1
+        ],
+        "plumeProfile": "canterbury",
+        "addCore": false
+      }
+    ]
   }
 }

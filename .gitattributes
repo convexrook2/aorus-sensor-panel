@@ -17,3 +17,5 @@ FleetStudio/review.js -text whitespace=cr-at-eol
 FleetStudio/vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js -text whitespace=cr-at-eol
 FleetStudio/vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js -text whitespace=cr-at-eol
 Sources/Anubis/*.py text eol=lf
+# Preserve the historical acceptance receipt used by later runtime adoptions.
+Sources/Anubis/owner-acceptance.json -text

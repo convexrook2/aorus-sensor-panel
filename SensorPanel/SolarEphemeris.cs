@@ -13,6 +13,8 @@ internal sealed class SolarEphemeris
         double AuKm, double SunRadiusKm, Series[] Bodies);
     internal sealed record Series(string Id, string Parent, double RadiusKm, double[][] Samples);
     private readonly Dictionary<string, Series> bodies;
+    private readonly Dictionary<string,Series> pathBodies;
+    private readonly Dictionary<string,double> guideDays=new();
     internal double StartJd { get; }
     internal double StopJd { get; }
     internal double SunRadiusKm { get; }
@@ -41,6 +43,16 @@ internal sealed class SolarEphemeris
                     throw new InvalidDataException("Invalid NASA vector: " + b.Id);
                 previous = sample[0];
             }
+        }
+        pathBodies=new(bodies,StringComparer.Ordinal);
+        foreach(var guide in SolarOrbitGuide.Load())
+        {
+            var runtime=bodies[guide.Id];
+            if(guide.Samples[0][0]>StartJd||guide.Samples[^1][0]<StopJd)throw new InvalidDataException("Orbit guide misses the runtime epoch range.");
+            // Keep every runtime sample inside its original range, so paths and
+            // bodies use precisely the same cubic there. Add guide epochs outside.
+            var samples=guide.Samples.Where(s=>s[0]<runtime.Samples[0][0]||s[0]>runtime.Samples[^1][0]).Concat(runtime.Samples).OrderBy(s=>s[0]).ToArray();
+            pathBodies[guide.Id]=runtime with{Samples=samples};guideDays.Add(guide.Id,guide.WindowDays);
         }
     }
 
@@ -85,20 +97,33 @@ internal sealed class SolarEphemeris
             + (-2 * t3 + 3 * t2) * b[axis] + (t3 - t2) * dt * b[axis + 3];
         return new(Coordinate(1), Coordinate(2), Coordinate(3));
     }
-    internal Point3D[] Trail(string id, double jd, int count = 160)
+    internal IEnumerable<SolarOrbitPath.Cubic> OrbitSpans(string id,double jd)
     {
-        // Actual sampled trajectory; outer planets show a one-year arc, not an invented closed orbit.
-        var b = bodies[id];
-        double days = b.Parent == "Sun" ? 365 : id switch { "Luna" => 28, "Io" => 1.77, "Europa" => 3.56,
-            "Ganymede" => 7.16, "Callisto" => 16.7, _ => 365 };
-        double start = Math.Clamp(jd - days / 2, StartJd, StopJd - Math.Min(days, StopJd - StartJd));
-        return Enumerable.Range(0, count).Select(i => Relative(id, start + days * i / (count - 1))).ToArray();
+        var data=pathBodies[id];var samples=data.Samples;
+        double days=guideDays.TryGetValue(id,out double guided)?guided:id switch
+        {"Mercury"=>87.969,"Venus"=>224.701,"Earth"=>365.256,"Luna"=>27.322,"Io"=>1.769,"Europa"=>3.551,"Ganymede"=>7.155,"Callisto"=>16.689,_=>365};
+        double length=Math.Min(days,samples[^1][0]-samples[0][0]);
+        double start=Math.Clamp(jd-length/2,samples[0][0],samples[^1][0]-length),stop=start+length;
+        int lo=0,hi=samples.Length-1;
+        while(hi-lo>1){int mid=(lo+hi)/2;if(samples[mid][0]<=start)lo=mid;else hi=mid;}
+        for(int i=lo+1;i<samples.Length;i++)
+        {
+            var a=samples[i-1];var b=samples[i];if(b[0]<start)continue;if(a[0]>stop)break;
+            double dt=b[0]-a[0],left=Math.Max(start,a[0]),right=Math.Min(stop,b[0]);if(right<=left)continue;
+            var pa=new Point3D(a[1],a[2],a[3]);var pb=new Point3D(b[1],b[2],b[3]);
+            var span=new SolarOrbitPath.Cubic(pa,pa+new Vector3D(a[4],a[5],a[6])*(dt/3),pb-new Vector3D(b[4],b[5],b[6])*(dt/3),pb);
+            span=span.Range((left-a[0])/dt,(right-a[0])/dt);
+            // Explicitly retain the current epoch as a vertex, including moons.
+            if(jd>left&&jd<right){var split=span.Split((jd-left)/(right-left));yield return split.Left;yield return split.Right;}
+            else yield return span;
+        }
     }
     internal static double JulianDate(DateTimeOffset utc) => utc.ToUnixTimeMilliseconds() / 86400000d + 2440587.5 + 69.184 / 86400;
     internal static DateTimeOffset Utc(double jd) => DateTimeOffset.FromUnixTimeMilliseconds((long)((jd - 2440587.5 - 69.184 / 86400) * 86400000));
 
     internal object Check()
     {
+        SolarOrbitPath.Check();
         using var checkpoints = JsonDocument.Parse(Rookline.AssetProtection.AppAssets.Read("SolarNavigation/nasa-checkpoints.json"));
         double maximumErrorKm = 0;
         foreach (var checkpoint in checkpoints.RootElement.EnumerateArray())

@@ -16,3 +16,11 @@ Martin Taichl / Martin / taichl; CC BY 4.0.
 https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse
 https://creativecommons.org/licenses/by/4.0/
 X890 changes: source-part assembly, registered fittings, procedural PBR finish, existing cap emission and separate drive effect. Source hull geometry retained. Unofficial fan model, not official production geometry. Production and paid-model references were inspected only; their images and assets are not redistributed.
+
+Arboghast / 011 reconstruction pass08
+Original X890 reconstruction after Chris Danelon production turntable references.
+https://www.youtube.com/watch?v=vefkFrWLuNI&t=131s
+Owner-confirmed reconstruction with separate registered engine plume effects. No production mesh acquired. Dimensions, hidden fittings, lamp photometry and plume tuning remain authored fits. Reference images/video are not redistributed.
+
+Canterbury: Original X890 fan reconstruction after Ryan Dening concepts and Chris Danelon production views; owner-accepted finish14. No production mesh acquired.
+https://www.youtube.com/watch?v=a3lL1bhpl9c&t=11s

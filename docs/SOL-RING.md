@@ -1,7 +1,7 @@
 # Sol Ring native showcase
 
 The monitoring selector, theme and Expanse cycle include `SolRing`. It focuses
-the existing `SolGate` navigation marker without replacing the solar scene.
+the `SolGate` navigation landmark without replacing the solar scene.
 Its monitor uses the accepted Pella/Rocinante section positions and left
 showcase, with the existing grid/space backdrop and instruments. The passive
 holotable reuses the same `FleetViewport`, normal capture cadence and rotation
@@ -32,6 +32,22 @@ two-sided aperture, animation, motion-off, minimize/restore and switching back
 through Pella/Rocinante. It writes `artifacts/sol-ring-native-check` and closes.
 Saved-data, protected publish, live hardware, installed copy and release evidence
 remain separate. No installer is requested for this integration.
+
+## October 23 map candidate
+
+The native solar map now has its own adaptation of the same hash-pinned v3
+geometry. A distant gate uses one small glyph; focus loads all 282,272 original
+triangles and reveals the layered rim and two-sided animated aperture. The map
+uses native WPF materials/lighting and a CPU texture approximation of `portal.js`,
+separate from the showcase's full PBR shader and sixteen source spill lights.
+Its upright plane follows map yaw/tilt instead of decorative station wobble.
+The illustrative 1,000 km diameter uses the map's uniform true-scale conversion.
+The original GLB, full showcase and earlier exported marker mesh are unchanged.
+
+The explicit `--check-true-scale` saved-data review records both gate faces,
+compact views, source identity, animation and stopped paused/hidden states.
+Candidate evidence is under `artifacts/solar-true-scale-20261023`; it does not
+update the installed 1.8.11 Sensor or establish LIVE/resource acceptance.
 
 ## Validation on 2026-10-20
 

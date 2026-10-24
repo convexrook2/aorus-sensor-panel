@@ -19,7 +19,7 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
         new("Morrigan", "MCRN MORRIGAN", "MCRN", "PATROL DESTROYER", "PATROL ENGINEERING", "Ryan Begemann"),
         new("Dropship", "MCRN DROPSHIP", "MCRN", "DROPSHIP", "LANDING ENGINEERING", "Ryan Begemann"),
         new("Epstein", "EPSTEIN'S YACHT", "MARS", "YACHT", "DRIVE ENGINEERING", "Chris Kuhn / owlstraw"),
-        new("Canterbury", "CANTERBURY", "PUR'N'KLEEN", "ICE HAULER", "HAULAGE ENGINEERING", "Original fan model"),
+        new("Canterbury", "CANTERBURY", "PUR'N'KLEEN", "ICE HAULER", "HAULAGE ENGINEERING", "X890 reconstruction / Dening and Danelon references"),
         new("Knight", "KNIGHT", "PUR'N'KLEEN", "SHUTTLE", "SHUTTLE ENGINEERING", "Original fan model"),
         new("Anubis", "ANUBIS", "PROTOGEN", "STEALTH FRIGATE", "SYSTEMS ENGINEERING", "Original fan model"),
         new("Pella", "PELLA", "FREE NAVY", "LIGHT CRUISER", "FLEET ENGINEERING", "Martin Taichl / CC BY 4.0 · adapted"),
@@ -30,7 +30,7 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
         new("Scirocco", "MCRN SCIROCCO", "MCRN", "ASSAULT CRUISER", "MARINE ENGINEERING", "Original fan model"),
         new("Hammurabi", "MCRN HAMMURABI", "MCRN", "SCIROCCO CLASS", "FLEET ENGINEERING", "Original fan model"),
         new("Guanshiyin", "GUANSHIYIN", "MAO-KWIK", "YACHT", "YACHT ENGINEERING", "Original fan model"),
-        new("Arboghast", "UNS ARBOGHAST", "UN", "SCIENCE VESSEL", "SURVEY ENGINEERING", "Original fan model"),
+        new("Arboghast", "UNS ARBOGHAST", "UN", "SCIENCE VESSEL", "SURVEY ENGINEERING", "X890 reconstruction / Chris Danelon references"),
         new("BashiBazouk", "BASHI BAZOUK", "FREE NAVY", "BELTER SHIP", "CARGO ENGINEERING", "Reference: Lee Fitzgerald / North Front"),
         new("SolRing", "SOL RING", "RING BUILDERS", "GATE", "SYSTEMS MONITORING", "Original v3 fan reconstruction")
     ];
@@ -77,6 +77,11 @@ internal sealed class ShipArtwork : Image
         ship=ShipProfile.CanonicalId(ship);
         if (images.TryGetValue(ship, out var existing)) return existing;
         images.Clear();
+        if(ship is "Arboghast" or "Canterbury")
+        {
+            var preparedPortrait=ShipPoster.GetImage(ship);
+            images.Add(ship,preparedPortrait);return preparedPortrait;
+        }
         if (ship == "Epstein" || ship is not ("Rocinante" or "Donnager" or "Truman" or "Tynan" or "Razorback" or "Morrigan" or "Dropship"))
         {
             // Render the actual downloaded hull once for its faded backdrop.

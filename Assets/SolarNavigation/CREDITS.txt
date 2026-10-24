@@ -10,7 +10,7 @@ commit ba86075477fc529294a5e51cb4e1b0d183ff893a.
 https://github.com/skylercole/belter-charts/tree/ba86075477fc529294a5e51cb4e1b0d183ff893a
 See Belter-Charts-LICENSE.txt and Belter-Charts-Upstream-Credits.md.
 
-Sun/planet maps, Earth cloud/night-light masks and Saturn ring strip: Solar System Scope,
+Sun/planet maps, Earth cloud/night-light masks, Milky Way panorama and Saturn ring strip: Solar System Scope,
 CC BY 4.0. https://www.solarsystemscope.com/textures/
 https://creativecommons.org/licenses/by/4.0/
 Galilean moon mosaics: NASA/JPL/USGS. Ceres: NASA/JPL-Caltech/UCLA/MPS/DLR/IDA.
@@ -22,8 +22,11 @@ Phoebe: Belter Charts' original procedural packed mesh and vertex colours.
 Native adaptation: original image maps on UV-mapped spheres; the cloud mask
 becomes alpha; the ring strip is mapped radially. Eros faces are retained;
 source meshes are split into native render batches without simplification.
-The Earth day/night equation and two Sun corona layers adapt bodies3d.ts from
-the credited Apache-2.0 source; the native surface texture updates at most 2 Hz.
+The Earth day/night equation adapts bodies3d.ts from the credited Apache-2.0
+source; the native Earth texture updates at most 2 Hz. The Sun's native display
+adds white-gold emission and bloom with stronger point lighting. The Milky Way
+uses the unchanged Solar System Scope panorama with a cached exposure adjustment
+and zoom-dependent opacity. These display adaptations do not alter source maps.
 Terrestrial atmosphere colours follow Belter; native rims retain readability.
 Packed vertex colours use face averages
 in a native palette; the procedural web regolith shader is not reproduced.

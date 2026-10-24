@@ -169,6 +169,8 @@ internal sealed partial class PanelWindow : Window
             if(Environment.GetCommandLineArgs().Contains("--check-sol-ring"))_=CheckSolRingAsync();
             if(Environment.GetCommandLineArgs().Any(arg=>arg is "--check-static-fleet" or "--check-showcase-rotation"))_=CheckStaticFleetAsync();
             if(Environment.GetCommandLineArgs().Contains("--check-solar-efficiency"))_=CheckSolarEfficiencyAsync();
+            if(Environment.GetCommandLineArgs().Contains("--check-true-scale"))_=CheckTrueScaleAsync();
+            if(Environment.GetCommandLineArgs().Contains("--check-solar-radiance"))_=CheckSolarRadianceAsync();
             if(Environment.GetCommandLineArgs().Contains("--check-experience"))_=CheckExperienceAsync();
             UpdateShowcaseClock();
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));

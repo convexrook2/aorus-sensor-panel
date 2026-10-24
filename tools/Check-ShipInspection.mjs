@@ -1,0 +1,28 @@
+// Exercise the actual inspection message path with real Three transforms.
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import * as THREE from '../Assets/FleetViewer/vendor/three/build/three.module.js';
+const base=new URL('../',import.meta.url),threeURL=new URL('Assets/FleetViewer/vendor/three/build/three.module.js',base).href;
+const source=fs.readFileSync(new URL('Assets/FleetViewer/viewer.js',base),'utf8');
+const path=new URL('Assets/FleetViewer/ship-inspection.js',base);
+const make=fs.existsSync(path)?(await import('data:text/javascript;base64,'+Buffer.from(fs.readFileSync(path,'utf8').replace("from 'three'",'from '+JSON.stringify(threeURL))).toString('base64'))).makeShipInspection:null;
+const camera=new THREE.OrthographicCamera(-3,3,2,-2,.01,40);camera.position.set(4,1.7,6);camera.lookAt(0,0,0);camera.updateMatrixWorld(true);
+const root=new THREE.Group(),platform=new THREE.Group();platform.position.y=-1.8;platform.scale.set(1.6,1,1.6);platform.updateMatrixWorld(true);
+const inspection=make?.(camera),controls={target:new THREE.Vector3(),update(){if(inspection){inspection.camera.lookAt(0,0,0);inspection.apply(root);}else camera.lookAt(0,0,0);}};
+inspection?.sync();
+const state={THREE,camera,root,inspection,controls,interactive:true,invalidate(){}};
+vm.createContext(state);vm.runInContext(source.slice(source.indexOf(' function receive(message){'),source.indexOf(' window.chrome?.webview?.addEventListener'))+'\nthis.receive=receive;',state);
+const cameraBefore={position:camera.position.toArray(),quaternion:camera.quaternion.toArray(),zoom:camera.zoom};
+const stageBefore=platform.matrixWorld.toArray();
+state.receive({type:'orbit',x:.4,y:.2});
+assert.deepEqual({position:camera.position.toArray(),quaternion:camera.quaternion.toArray(),zoom:camera.zoom},cameraBefore,'Dragging must keep the render camera and projected platform fixed');
+assert.ok(root.quaternion.angleTo(new THREE.Quaternion())>.1,'Dragging must rotate the ship instead');
+const rotated=root.quaternion.clone();root.rotation.y+=.3;const autoRotated=root.quaternion.clone();
+state.receive({type:'zoom',factor:1.2});
+assert.ok(root.quaternion.angleTo(autoRotated)<1e-7,'Zoom must retain both the manual pose and subsequent automatic turn');
+assert.equal(root.scale.x,1.2);assert.equal(camera.zoom,1,'Zoom must change only the ship scale');
+platform.updateMatrixWorld(true);assert.deepEqual(platform.matrixWorld.toArray(),stageBefore);
+assert.deepEqual(camera.position.toArray(),cameraBefore.position);assert.deepEqual(camera.quaternion.toArray(),cameraBefore.quaternion);
+assert.ok(rotated.angleTo(new THREE.Quaternion())>.1);
+console.log('PASS: actual orbit/zoom route moves only the ship; render camera/platform stay fixed and a later automatic turn survives zoom. Source evidence only.');

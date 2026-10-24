@@ -23,6 +23,7 @@ internal sealed class ShipPoster : Image
         RenderOptions.SetBitmapScalingMode(this,BitmapScalingMode.HighQuality);
         ToolTip=ShipProfile.Resolve(ship).Name+" · Open holotable to inspect in 3D";
     }
+    internal static BitmapSource GetImage(string ship)=>Load(ShipProfile.CanonicalId(ship)).Image;
     private static (BitmapSource Image,JsonElement Receipt) Load(string ship)
     {
         if(cached is {} previous && previous.Id==ship)return(previous.Image,previous.Receipt);

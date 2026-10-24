@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import {Pass,FullScreenQuad} from './vendor/three/examples/jsm/postprocessing/Pass.js';
 import {UnrealBloomPass} from './vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-// Blur only the model's existing physical-material emission. Ordinary white
-// paint, reflections, light objects and unknown effect shaders cannot seed it.
+// Blur physical-material emission and explicitly registered pure-emission gas.
+// Ordinary paint, reflections and unknown shaders cannot seed it.
 // This pass precedes OutputPass, so both extraction and composition stay HDR.
 export class EmissiveGlowPass extends Pass{
  constructor(scene,camera){
@@ -32,6 +32,9 @@ export class EmissiveGlowPass extends Pass{
 
  _maskMaterial(source,used){
   used.add(source);
+  // The volume is already emission-only, with shared animated uniforms and
+  // source depth testing. Its owner, rather than this pass, disposes it.
+  if(source.isShaderMaterial&&source.userData.fleetPlumeEmission===true)return source;
   let record=this._materials.get(source);
   if(record&&(record.version!==source.version||record.hook!==source.onBeforeCompile||record.map!==source.emissiveMap)){
    record.material.dispose();this._materials.delete(source);record=null;

@@ -59,14 +59,17 @@ internal sealed partial class PanelWindow
             await Task.Delay(900,token);
             var idleAfter=await shipPanel.ShipViewport.DiagnoseAsync();
             if(idleAfter.GetProperty("motion").GetBoolean()
-                ||idleAfter.GetProperty("frames").GetInt64()!=idleBefore.GetProperty("frames").GetInt64())
-                throw new InvalidOperationException("The newly opened holotable did not remain idle until interaction.");
-            checks.Add(new{Phase="idle-no-continuous-render",Before=idleBefore,After=idleAfter});
+                ||idleAfter.GetProperty("rotationRadians").GetDouble()!=idleBefore.GetProperty("rotationRadians").GetDouble()
+                ||SystemParameters.ClientAreaAnimation&&idleAfter.GetProperty("hologram").GetProperty("elapsed").GetDouble()<=idleBefore.GetProperty("hologram").GetProperty("elapsed").GetDouble())
+                throw new InvalidOperationException("The holographic platform did not animate independently of the stationary ship.");
+            checks.Add(new{Phase="hologram-with-stationary-ship",Before=idleBefore,After=idleAfter});
             shipPanel.ShipViewport.Inspect(.25,.10,1.2);await Task.Delay(250,token);
             var inspected=await shipPanel.ShipViewport.DiagnoseAsync();
-            if(inspected.GetProperty("framing").GetProperty("cameraPosition").GetRawText()==idleAfter.GetProperty("framing").GetProperty("cameraPosition").GetRawText()
-                ||Math.Abs(inspected.GetProperty("framing").GetProperty("zoom").GetDouble()-1.2)>.01)
-                throw new InvalidOperationException("Holotable orbit or zoom did not change the camera.");
+            if(inspected.GetProperty("framing").GetProperty("cameraPosition").GetRawText()!=idleAfter.GetProperty("framing").GetProperty("cameraPosition").GetRawText()
+                ||inspected.GetProperty("framing").GetProperty("cameraQuaternion").GetRawText()!=idleAfter.GetProperty("framing").GetProperty("cameraQuaternion").GetRawText()
+                ||inspected.GetProperty("inspection").GetProperty("quaternion").GetRawText()==idleAfter.GetProperty("inspection").GetProperty("quaternion").GetRawText()
+                ||Math.Abs(inspected.GetProperty("inspection").GetProperty("zoom").GetDouble()-1.2)>.01)
+                throw new InvalidOperationException("Inspection must rotate and zoom only the ship, keeping the projected platform's camera fixed.");
             checks.Add(new{Phase="programmatic-orbit-and-zoom",Renderer=inspected});
             shipPanel.ShipViewport.Reset();await Task.Delay(250,token);
             if(SystemParameters.ClientAreaAnimation)

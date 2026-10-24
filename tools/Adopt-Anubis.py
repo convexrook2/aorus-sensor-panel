@@ -51,15 +51,29 @@ def retain(path, data):
     path.write_bytes(data)
 
 
-def accepted_review(raw):
+def accepted_review(raw, runtime_revision=None):
     """Refuse to replace the fleet with anything except the owner's exact review."""
     receipt = read(SOURCE / 'owner-acceptance.json')
     require(receipt['accepted'] is True, 'Owner acceptance is absent')
     require(sha(raw) == receipt['candidate_sha256'], 'Candidate changed after owner acceptance')
+    revisions = {}
+    if runtime_revision is not None:
+        amendment = read(runtime_revision)
+        require(amendment['candidate_sha256'] == receipt['candidate_sha256'], 'Runtime adoption changed Anubis identity')
+        require(amendment['original_receipt_sha256'] == sha((SOURCE/'owner-acceptance.json').read_bytes()), 'Historical acceptance receipt changed')
+        allowed = {'FleetStudio/ship-effects.js','FleetStudio/light-glow.js','FleetStudio/review.js',
+                   'Assets/FleetViewer/rocinante-effects.js','Assets/FleetViewer/light-glow.js'}
+        revisions = {row['path']:row for row in amendment['runtime_files']}
+        require(len(revisions) == len(amendment['runtime_files']) and set(revisions) == allowed, 'Unexpected runtime adoption boundary')
     for item in receipt['accepted_source_files']:
         path = (ROOT / item['path']).resolve()
         require(path.is_relative_to(ROOT.resolve()), 'Accepted source path is outside the checkout')
-        require(sha(path.read_bytes()) == item['sha256'], 'Accepted lighting/source changed: ' + item['path'])
+        expected = item['sha256']
+        if item['path'] in revisions:
+            revision = revisions[item['path']]
+            require(revision['previous_sha256'] == expected, 'Runtime adoption lost its historical identity')
+            expected = revision['sha256']
+        require(sha(path.read_bytes()) == expected, 'Accepted lighting/source changed: ' + item['path'])
     return receipt
 
 

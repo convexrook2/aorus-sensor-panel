@@ -13,12 +13,15 @@ namespace SensorPanel;
 // The normal monitor never starts a renderer to create a missing portrait.
 internal static class FleetPortraitExport
 {
-    internal static int Run(string destination)
+    internal static int Run(string destination,string? onlyShip=null)
     {
         if(AppAssets.Protected)throw new InvalidOperationException("Export editable source portraits from a development build, not an installed archive.");
         Directory.CreateDirectory(destination);
         using var catalog=JsonDocument.Parse(AppAssets.Read("FleetViewer/catalog.json"));
-        var entries=catalog.RootElement.EnumerateArray().Select(row=>row.Clone()).ToArray();
+        var entries=catalog.RootElement.EnumerateArray()
+            .Where(row=>onlyShip is null || row.GetProperty("id").GetString()==ShipProfile.CanonicalId(onlyShip))
+            .Select(row=>row.Clone()).ToArray();
+        if(onlyShip is not null && entries.Length!=1)throw new ArgumentException("Unknown portrait ship: "+onlyShip);
         var application=new Application { ShutdownMode=ShutdownMode.OnMainWindowClose };
         var label=new TextBlock { Text="Preparing full-quality ship portraits…",Foreground=Brushes.LightBlue,Margin=new Thickness(12) };
         var viewport=new FleetViewport { Width=1024,Height=2048 };
@@ -51,7 +54,8 @@ internal static class FleetPortraitExport
                     if(bitmap.PixelWidth<1024||bitmap.PixelHeight<2048)throw new InvalidOperationException("Portrait capture resolution is too low: "+id);
                     File.Move(temporary,file,true);
                     receipts.Add(new { id,sourceSha256=diagnostic.GetProperty("sourceSha256").GetString(),
-                        sha256=Convert.ToHexStringLower(SHA256.HashData(bytes)),width=bitmap.PixelWidth,height=bitmap.PixelHeight });
+                        sha256=Convert.ToHexStringLower(SHA256.HashData(bytes)),width=bitmap.PixelWidth,height=bitmap.PixelHeight,
+                        nativeRender=diagnostic });
                     Console.WriteLine($"PORTRAIT: {id} · {bitmap.PixelWidth}x{bitmap.PixelHeight} · {diagnostic.GetProperty("sourceSha256").GetString()}");
                 }
                 string index=Path.Combine(destination,"index.json");

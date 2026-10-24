@@ -1,0 +1,200 @@
+[
+  {
+    "name": "Physical outlet 01",
+    "position": [
+      1.3600000143051147,
+      -0.23499999940395355,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875202000141144,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 02",
+    "position": [
+      1.3600000143051147,
+      0.23499999940395355,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875202000141144,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 03",
+    "position": [
+      -0.23499999940395355,
+      -1.3600000143051147,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875200510025024,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 04",
+    "position": [
+      0.23499999940395355,
+      -1.3600000143051147,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875200510025024,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 05",
+    "position": [
+      -1.3600000143051147,
+      0.23499999940395355,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875202000141144,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 06",
+    "position": [
+      -1.3600000143051147,
+      -0.23499999940395355,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875202000141144,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 07",
+    "position": [
+      0.23499999940395355,
+      1.3600000143051147,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875200510025024,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 08",
+    "position": [
+      -0.23499999940395355,
+      1.3600000143051147,
+      0.1779999964237213
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.17875200510025024,
+    "length": 2.25,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  },
+  {
+    "name": "Physical outlet 09 | retained TV centre",
+    "position": [
+      0.0,
+      0.0,
+      1.702999942779541
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "radius": 0.15993599593639374,
+    "length": 1.2,
+    "color": [
+      0.2,
+      0.43,
+      1
+    ],
+    "plumeProfile": "canterbury",
+    "addCore": false
+  }
+]

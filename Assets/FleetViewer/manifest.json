@@ -4,374 +4,389 @@
   "source": "Reviewed Fleet Studio catalogue; scoped model updates",
   "files": [
     {
-      "bytes": 4067,
       "path": "ATTRIBUTION.txt",
-      "sha256": "0715f65949762627d10f5647e791069788b807587465b6629cf7b412e89425c9"
+      "bytes": 4243,
+      "sha256": "e95b0f8396e1433f4dc1e51c0b1630a3f496b64c045aec8f61e0ee9bf8ea283d"
     },
     {
-      "bytes": 29574,
       "path": "catalog.json",
-      "sha256": "51c90f6ec7fa147a9ef20e2de7248832096d67f2da17e6d99bc9531f53a4e8ec"
+      "bytes": 30495,
+      "sha256": "f467abf20c6691ba52ad714262132068c8e2b0bb842ad1dceb3208fbf8861298"
     },
     {
-      "bytes": 1434,
       "path": "engines.json",
-      "sha256": "c362ee8df65a6b8386502586caa914ef55b224fde9e21a930ae753fd9aac45a8"
+      "bytes": 8694,
+      "sha256": "ccaacb63861a1a6ec9fad4096aa2b539ee7dab8e510f003d2da3863b0b97d514"
     },
     {
-      "bytes": 1247,
+      "path": "holographic-stage.js",
+      "bytes": 4898,
+      "sha256": "1ed96bd164be055d5c3500fa4ef101df1c6d122a6e53e5cd7d8dc472f9b749c5"
+    },
+    {
       "path": "index.html",
+      "bytes": 1247,
       "sha256": "75ac81d3d564223d03be7916f27447a92b471fdd25725aa5fad216e0ff35f226"
     },
     {
-      "bytes": 7655,
       "path": "light-glow.js",
-      "sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045"
+      "bytes": 7882,
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
     },
     {
-      "bytes": 47329112,
       "path": "models/AgathaKing.glb.gz",
+      "bytes": 47329112,
       "sha256": "6503f7822cef0b57d478f81af895b2f441614b588488124d85e0bc5b16137541"
     },
     {
-      "bytes": 5549740,
       "path": "models/Anubis.glb.gz",
+      "bytes": 5549740,
       "sha256": "8ac24693b2aedde4e788aab431195427ccc23aa9698c613de9610c27a9e56e58"
     },
     {
-      "bytes": 650454,
       "path": "models/Arboghast.glb.gz",
-      "sha256": "58090c012e65391e51f69f845ea492fc213882d0b83a5d1047ba36de626736ff"
+      "bytes": 4134409,
+      "sha256": "a656b1202db51e863251c20698bdaf537bc7e4a9df65f87f89f58c82b222fcc1"
     },
     {
-      "bytes": 3594133,
       "path": "models/BashiBazouk.glb.gz",
+      "bytes": 3594133,
       "sha256": "2260165936b60062bee086aeedc40f71faca35d433184cb5d470c25712353826"
     },
     {
-      "bytes": 1027882,
       "path": "models/Behemoth.glb.gz",
+      "bytes": 1027882,
       "sha256": "1c802282b5941e5e782f2dcf88870e018239ffa95688166b824ecc1518b02c28"
     },
     {
-      "bytes": 690616,
       "path": "models/Canterbury.glb.gz",
-      "sha256": "8b79b7eb833e9c7590960e16e06503f5c09a6e86a3b0e2749561aacd35358048"
+      "bytes": 17378885,
+      "sha256": "f60a9df399dc1ece5c28394bb2568cdcf1a08bfa56ff5c0d64116ab45392f0ea"
     },
     {
-      "bytes": 49175887,
       "path": "models/Donnager.glb.gz",
+      "bytes": 49175887,
       "sha256": "10807a4529dc595e153bc20eafdf02e3fd88d8c26be6adc7a59341afaac77944"
     },
     {
-      "bytes": 3603402,
       "path": "models/Dropship.glb.gz",
+      "bytes": 3603402,
       "sha256": "74153e8cdd1619348baf1dcdae8e18060a00da08f195e5daba3b6977dd62b8ad"
     },
     {
-      "bytes": 8326493,
       "path": "models/Epstein.glb.gz",
+      "bytes": 8326493,
       "sha256": "2f8d41e53cc92f295e9525ea43d4e478f64239755446eddf6893b006768ed5f1"
     },
     {
-      "bytes": 5620908,
       "path": "models/Guanshiyin.glb.gz",
+      "bytes": 5620908,
       "sha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb"
     },
     {
-      "bytes": 656928,
       "path": "models/Hammurabi.glb.gz",
+      "bytes": 656928,
       "sha256": "02d4ee36f9e3d97e54570d62d82434c196273edb8d14d67dcb2b04179864dd37"
     },
     {
-      "bytes": 566992,
       "path": "models/Knight.glb.gz",
+      "bytes": 566992,
       "sha256": "a6fde7aa786841e46ea04af8ed179df1f1764b4b03037d20c55a6e90f393dcf9"
     },
     {
-      "bytes": 1037274,
       "path": "models/Medina.glb.gz",
+      "bytes": 1037274,
       "sha256": "430cc1391a63ff635f24af2625bf9ce0af2bf605e85bde2321d4e22c1ab780f4"
     },
     {
-      "bytes": 2102363,
       "path": "models/Morrigan.glb.gz",
+      "bytes": 2102363,
       "sha256": "251b760884aa4410f3818ac7f49c931288994c26467a2d197ce215bc82f68ad0"
     },
     {
-      "bytes": 1007130,
       "path": "models/Nauvoo.glb.gz",
+      "bytes": 1007130,
       "sha256": "9de2f7120f29684ec4a677106b066102407c5f0601ddc32aef17a3478a62e36a"
     },
     {
-      "bytes": 36936450,
       "path": "models/Pella.glb.gz",
+      "bytes": 36936450,
       "sha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f"
     },
     {
-      "bytes": 2769209,
       "path": "models/Razorback.glb.gz",
+      "bytes": 2769209,
       "sha256": "e7e92b3c0e8648c6ef69f654c87b6d75a2d7478975f2bec6f821f9ea304abeaf"
     },
     {
-      "bytes": 37799454,
       "path": "models/Rocinante.glb.gz",
+      "bytes": 37799454,
       "sha256": "c87d9f612c8e47e61536d11998e2d0c6669a046ade29301a48bad07fb5e172d9"
     },
     {
-      "bytes": 657572,
       "path": "models/Scirocco.glb.gz",
+      "bytes": 657572,
       "sha256": "938c9a58ca7afe6dfaa433a0c073f86fa0ee239318bd17df1d8f3aaedce6bbff"
     },
     {
-      "bytes": 569457,
       "path": "models/Scopuli.glb.gz",
+      "bytes": 569457,
       "sha256": "f0f8aa2d443ffb6db5c15ecc1f069f5a0bfd6c7431585f2a0c90d3d6c17dcb07"
     },
     {
-      "bytes": 4228604,
       "path": "models/SolRing.glb.gz",
+      "bytes": 4228604,
       "sha256": "7152881b089c5ceecede9d6adf5d1605d9048378f73b1a4f6d08d997c94db505"
     },
     {
-      "bytes": 4670499,
       "path": "models/Tynan.glb.gz",
+      "bytes": 4670499,
       "sha256": "1c5ae2705ae229f0afc10ced9d8764e68ce5607ebe29e026b89d81491cd7c17b"
     },
     {
-      "bytes": 1822,
       "path": "portal.js",
+      "bytes": 1822,
       "sha256": "867bdd60d7008f9cca469c5ce743f111a3e912fc44423c739e6f4a65d3f244fb"
     },
     {
-      "bytes": 1119635,
       "path": "portraits/AgathaKing.png",
+      "bytes": 1119635,
       "sha256": "ed43e2444fce32776a4ea720e3ceb5eca67efdf7d393155b597970bf874f4051"
     },
     {
-      "bytes": 384908,
       "path": "portraits/Anubis.png",
+      "bytes": 384908,
       "sha256": "f87db9ab96267ad97290b6e5faf534fdd47073073d23c4481e40668f8e58aae9"
     },
     {
-      "bytes": 200663,
       "path": "portraits/Arboghast.png",
-      "sha256": "7d763617f512fb6d4d9ff2649f9c7db99f56480a17852dd324c315f15e440568"
+      "bytes": 296708,
+      "sha256": "cbf2b29279d7316c015bf3ce221ada7f0afb99b38c33e1e0e5052f16f1cfb3cb"
     },
     {
-      "bytes": 721377,
       "path": "portraits/BashiBazouk.png",
+      "bytes": 721377,
       "sha256": "f313e9c5b7d94496670f9f8ba908b7d0705f4068379ae54460bbc96d25ed276b"
     },
     {
-      "bytes": 772414,
       "path": "portraits/Behemoth.png",
+      "bytes": 772414,
       "sha256": "9e2d196f134b664508600f3d06f4e7a8fc7a748286001817f4422d92e59e292a"
     },
     {
-      "bytes": 702312,
       "path": "portraits/Canterbury.png",
-      "sha256": "9a3466d2107d9a5b7e8c44f8dd3bee480408a7684124a1156d91185c4bfe4e24"
+      "bytes": 887081,
+      "sha256": "c464ffa21b990e6abbb45ab065e3290a3e20f76acb751525e7246691e8c78d47"
     },
     {
-      "bytes": 951009,
       "path": "portraits/Donnager.png",
+      "bytes": 951009,
       "sha256": "f14131f2c91e72eda67973ea7ad78eb5f6df8811837e65362ccf1b01302f7b93"
     },
     {
-      "bytes": 545593,
       "path": "portraits/Dropship.png",
+      "bytes": 545593,
       "sha256": "f4a58c0e2bac43faeb2c3d59ec8a00e048344787ce6dc42bc5ed665b59855f61"
     },
     {
-      "bytes": 445112,
       "path": "portraits/Epstein.png",
+      "bytes": 445112,
       "sha256": "d4a897fc70f7c12f8a4ab2a3a6cb282e8ce0bd53812fd9f87d8c0786a2c02b9d"
     },
     {
-      "bytes": 609105,
       "path": "portraits/Guanshiyin.png",
+      "bytes": 609105,
       "sha256": "0898ead3d9efa6c4b9977b4d88b2c9d93d2e11f712972dac2abcc3366ba45344"
     },
     {
-      "bytes": 782870,
       "path": "portraits/Hammurabi.png",
+      "bytes": 782870,
       "sha256": "19d32d66acc42297e49c06de2fb84cbd116c769be021cfbfab4163b079a6b087"
     },
     {
-      "bytes": 5794,
       "path": "portraits/index.json",
-      "sha256": "ea8825f036afdc06a1cd6af90a7c891069f048cbc7088fb270891d4c13ad8278"
+      "bytes": 5795,
+      "sha256": "3da7f4b45e8ab241a231e1f11b617eb2841cfccddbd710f651fc817f49556d8f"
     },
     {
-      "bytes": 463149,
       "path": "portraits/Knight.png",
+      "bytes": 463149,
       "sha256": "39fcb882c1c30d3145a2290883415c63a6bb30de40d1e921a302877c162a7ccb"
     },
     {
-      "bytes": 564416,
       "path": "portraits/Medina.png",
+      "bytes": 564416,
       "sha256": "2bde18ecbf613d6427916a2f8d58c017fa7954db2381c129470ed86009d1905a"
     },
     {
-      "bytes": 652618,
       "path": "portraits/Morrigan.png",
+      "bytes": 652618,
       "sha256": "ad64671acbf18c1b7be797d14b029197489c2865520f697c261fbee2af7c6c64"
     },
     {
-      "bytes": 771711,
       "path": "portraits/Nauvoo.png",
+      "bytes": 771711,
       "sha256": "2891c984e72d0f633924be966fd5fee98d572ea4b52e8ad5e450ade005b2733e"
     },
     {
-      "bytes": 531193,
       "path": "portraits/Pella.png",
+      "bytes": 531193,
       "sha256": "33d2d2488f74ba23150a9d2571a4fff22110f5bd9a989efb17f046cde36c4a73"
     },
     {
-      "bytes": 479498,
       "path": "portraits/Razorback.png",
+      "bytes": 479498,
       "sha256": "897fe3532a063eae9ac544f47a78a2309aae29df0bdba75760a41c268ec0f852"
     },
     {
-      "bytes": 442644,
       "path": "portraits/Rocinante.png",
+      "bytes": 442644,
       "sha256": "74e65f59d7318922cb7a95136830f926f4a98c72e04ab72c45010c2012a3a71b"
     },
     {
-      "bytes": 783375,
       "path": "portraits/Scirocco.png",
+      "bytes": 783375,
       "sha256": "7e9e29e41b0a1cc2adc8e6f0562649d771428c103d9cd9195a23a698b3ac81a2"
     },
     {
-      "bytes": 649833,
       "path": "portraits/Scopuli.png",
+      "bytes": 649833,
       "sha256": "c8b5ac85b1a12d165d0df3a9244b7cb6cefc97d67ba1ee05f0d42a9f2a8b7058"
     },
     {
-      "bytes": 305691,
       "path": "portraits/SolRing.png",
+      "bytes": 305691,
       "sha256": "3862fd457bbc87078334eeff818031bd7d5da78b244ad1465c6771be38138d2d"
     },
     {
-      "bytes": 573419,
       "path": "portraits/Tynan.png",
+      "bytes": 573419,
       "sha256": "37b5c69e3b7c7518fb1778a6124ad7b7e30c9ad9823d1fd9d699c4ab2296ffec"
     },
     {
-      "bytes": 8831,
       "path": "rocinante-effects.js",
-      "sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853"
+      "bytes": 17501,
+      "sha256": "6f0549d876154d2aab3e6daf618a82b48c4ee3e151c9bffa45f00e5d56e486f3"
     },
     {
-      "bytes": 1443056,
+      "path": "ship-inspection.js",
+      "bytes": 792,
+      "sha256": "8d1edf5f9f32e876d053f3f6e37e6ad8feda3bc1cf271232adbbd1573df67ce1"
+    },
+    {
+      "path": "showcase-motion.js",
+      "bytes": 553,
+      "sha256": "56498dd02f735604c463d16183d5ec4015807679f677cc5f03a834b36e5b3894"
+    },
+    {
       "path": "vendor/three/build/three.core.js",
+      "bytes": 1443056,
       "sha256": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759"
     },
     {
-      "bytes": 650153,
       "path": "vendor/three/build/three.module.js",
+      "bytes": 650153,
       "sha256": "bbf5ed13fe4373f5bd38b14ea8e62e9f157327da5638edc6d3863e08b167c9c7"
     },
     {
-      "bytes": 40504,
       "path": "vendor/three/examples/jsm/controls/OrbitControls.js",
+      "bytes": 40504,
       "sha256": "faabb4e8dfd9235ee4a9fd7c9a3d75f90f1689dbd4944bd6fd32117dacec5f93"
     },
     {
-      "bytes": 4960,
       "path": "vendor/three/examples/jsm/environments/RoomEnvironment.js",
+      "bytes": 4960,
       "sha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4"
     },
     {
-      "bytes": 114959,
       "path": "vendor/three/examples/jsm/loaders/GLTFLoader.js",
+      "bytes": 114959,
       "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2"
     },
     {
-      "bytes": 15148,
       "path": "vendor/three/examples/jsm/math/SimplexNoise.js",
+      "bytes": 15148,
       "sha256": "4b1455617135e6b477de76244de07547d95570643379b72f4758e50161b06072"
     },
     {
-      "bytes": 8501,
       "path": "vendor/three/examples/jsm/postprocessing/EffectComposer.js",
+      "bytes": 8501,
       "sha256": "4e079a5886152d7e529a59aef644e968ab4d32c6a33ce016b36bf29b2eac26f7"
     },
     {
-      "bytes": 4694,
       "path": "vendor/three/examples/jsm/postprocessing/MaskPass.js",
+      "bytes": 4694,
       "sha256": "7cd08eee9d5d6f5578beaddbdcbe9c384f6873810af27f22ab7db3ceeb127aa3"
     },
     {
-      "bytes": 4184,
       "path": "vendor/three/examples/jsm/postprocessing/OutputPass.js",
+      "bytes": 4184,
       "sha256": "02e4a261af34de71338185e9e87f0cbe5cba9115608d984363e1269dec1d2272"
     },
     {
-      "bytes": 4218,
       "path": "vendor/three/examples/jsm/postprocessing/Pass.js",
+      "bytes": 4218,
       "sha256": "444b409c235ead986893c472e720da1b779a56985c7d10b279c7944b52bd61c5"
     },
     {
-      "bytes": 4280,
       "path": "vendor/three/examples/jsm/postprocessing/RenderPass.js",
+      "bytes": 4280,
       "sha256": "817f6c3cdcd0fd41515d112359ea0532568eefb5aabd3b33903957ebca1b8a6a"
     },
     {
-      "bytes": 3228,
       "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+      "bytes": 3228,
       "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
     },
     {
-      "bytes": 13443,
       "path": "vendor/three/examples/jsm/postprocessing/SSAOPass.js",
+      "bytes": 13443,
       "sha256": "59944f833d10330f6bdd205260ad06a8ef2bd12a115e4101d81578b249627e3f"
     },
     {
-      "bytes": 15445,
       "path": "vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "bytes": 15445,
       "sha256": "8718ac279d97af5460327e1483fc21e44aa6611601d45c835bda0ae36bcb3b06"
     },
     {
-      "bytes": 729,
       "path": "vendor/three/examples/jsm/shaders/CopyShader.js",
+      "bytes": 729,
       "sha256": "a33057d5ac91c43304c186ac0e8816e62bb2ed471d3a00ff3018dfd5c0389718"
     },
     {
-      "bytes": 1359,
       "path": "vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
+      "bytes": 1359,
       "sha256": "defd5558ebf217de21275573c7e4365cbe62da34e46bd7f86ca2517a909536b6"
     },
     {
-      "bytes": 1876,
       "path": "vendor/three/examples/jsm/shaders/OutputShader.js",
+      "bytes": 1876,
       "sha256": "353479f77a8d7e2629d49ccac9fc2f5dbfdda5442e0adf867b00377a2fcb0cb2"
     },
     {
-      "bytes": 6968,
       "path": "vendor/three/examples/jsm/shaders/SSAOShader.js",
+      "bytes": 6968,
       "sha256": "034dad98927ed8f2677a19ce56d4da1212ce5070ed2666157106025dc260bb55"
     },
     {
-      "bytes": 37621,
       "path": "vendor/three/examples/jsm/utils/BufferGeometryUtils.js",
+      "bytes": 37621,
       "sha256": "5c552223a9309883743b80538d6e9cdb45e3227f30d3ec56fb2c39b46e78d595"
     },
     {
-      "bytes": 11535,
       "path": "vendor/three/examples/jsm/utils/SkeletonUtils.js",
+      "bytes": 11535,
       "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
     },
     {
-      "bytes": 1081,
       "path": "vendor/three/LICENSE",
+      "bytes": 1081,
       "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
     },
     {
-      "bytes": 19410,
       "path": "viewer.js",
-      "sha256": "eb14365c40ac5b97da58f544f359b9171477474f39629935d117da3de708f53b"
+      "bytes": 21190,
+      "sha256": "06faab6d420d02f985dc8def13da0810c278e3eed3c6cdd0daf4389da216b892"
     }
   ]
 }

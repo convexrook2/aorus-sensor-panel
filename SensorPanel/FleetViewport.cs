@@ -25,7 +25,8 @@ internal sealed class FleetViewport : Grid, IDisposable
     private Task? initialization;
     private TaskCompletionSource modelReady = Completion();
     private bool engineReady, disposed, failed, loaded, motion=true, interactive, holotableMode, layoutPending, resetOnLayout;
-    private (bool Active,bool Motion)? activity;
+    private (bool Active,bool Motion,bool Hologram)? activity;
+    private bool hologramMotion=true;
     private string ship="Rocinante";
     private string stageColour="#dd315e";
     private ExpanseGraphicsMode graphicsMode=PanelPreferences.GraphicsMode;
@@ -198,12 +199,12 @@ internal sealed class FleetViewport : Grid, IDisposable
     {
         if (!engineReady || disposed || failed) return;
         bool active=loaded&&IsVisible&&IsEnabled&&owner?.WindowState!=WindowState.Minimized&&owner?.IsVisible==true;
-        var current=(Active:active,Motion:motion&&SystemParameters.ClientAreaAnimation);
+        var current=(Active:active,Motion:motion&&SystemParameters.ClientAreaAnimation,Hologram:hologramMotion&&SystemParameters.ClientAreaAnimation);
         if (activity==current) return;
         activity=current;
         if(browser?.CoreWebView2 is {} core)
             core.MemoryUsageTargetLevel=active ? CoreWebView2MemoryUsageTargetLevel.Normal : CoreWebView2MemoryUsageTargetLevel.Low;
-        Send(new{type="activity",motion=current.Motion,active});
+        Send(new{type="activity",motion=current.Motion,hologram=current.Hologram,active});
     }
     internal void SetShip(string id)
     {
@@ -230,7 +231,9 @@ internal sealed class FleetViewport : Grid, IDisposable
         SetInteractive(enabled);
     }
     internal void SetMotion(bool enabled){motion=enabled;PublishActivity();}
+    internal void SetHologramMotion(bool enabled){hologramMotion=enabled;PublishActivity();}
     internal void Reset()=>Send(new{type="reset"});
+    internal void SetInspectionStage(bool visible)=>Send(new{type="inspection-stage",visible});
     internal void Inspect(double x,double y,double factor)
     { Send(new{type="orbit",x,y});Send(new{type="zoom",factor}); }
     internal async Task WaitForReadyAsync()=>await modelReady.Task.WaitAsync(TimeSpan.FromSeconds(60));
@@ -258,6 +261,41 @@ internal sealed class FleetViewport : Grid, IDisposable
     }
     internal async Task StartRenderProfileAsync()
     { await WaitForReadyAsync();await browser!.CoreWebView2.ExecuteScriptAsync("window.x890Fleet.profile(30)"); }
+    // Explicit native preview diagnostic; records the real canvas without
+    // replacing its camera, animation clock, presentation or saved settings.
+    internal async Task StartMotionRecordingAsync()
+    {
+        await WaitForReadyAsync();
+        await browser!.CoreWebView2.ExecuteScriptAsync("""
+            (()=>{
+             const clip=window.x890MotionClip={status:'recording'},chunks=[];
+             const stream=document.querySelector('canvas').captureStream(30);
+             const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8'].find(value=>MediaRecorder.isTypeSupported(value));
+             const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6000000});clip.recorder=recorder;
+             recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+             recorder.onerror=e=>{clip.status='error';clip.error=e.error?.message;stream.getTracks().forEach(track=>track.stop());};
+             recorder.onstop=async()=>{
+              stream.getTracks().forEach(track=>track.stop());const bytes=new Uint8Array(await new Blob(chunks,{type:recorder.mimeType}).arrayBuffer());let binary='';
+              for(let i=0;i<bytes.length;i+=32768)binary+=String.fromCharCode(...bytes.subarray(i,i+32768));
+              clip.data=btoa(binary);clip.status='complete';
+             };
+             recorder.start(250);
+            })()
+            """);
+    }
+    internal async Task SaveMotionRecordingAsync(string path)
+    {
+        await browser!.CoreWebView2.ExecuteScriptAsync("window.x890MotionClip.recorder.stop()");
+        for(int attempt=0;attempt<100;attempt++)
+        {
+            await Task.Delay(100);
+            if(await browser.CoreWebView2.ExecuteScriptAsync("window.x890MotionClip.status==='complete'")!="true")continue;
+            string data=JsonSerializer.Deserialize<string>(await browser.CoreWebView2.ExecuteScriptAsync("window.x890MotionClip.data"))!;
+            File.WriteAllBytes(path,Convert.FromBase64String(data));
+            await browser.CoreWebView2.ExecuteScriptAsync("delete window.x890MotionClip");return;
+        }
+        throw new InvalidOperationException("Native showcase recording did not complete.");
+    }
     internal async Task CaptureAsync(string path)
     {
         await WaitForReadyAsync();

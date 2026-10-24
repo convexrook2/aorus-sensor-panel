@@ -81,8 +81,8 @@
     },
     {
       "id": "Canterbury",
-      "sourceSha256": "77a3cddea457dda48460d78cadd43989173c979720d08a50882837065dee8bf9",
-      "sha256": "9a3466d2107d9a5b7e8c44f8dd3bee480408a7684124a1156d91185c4bfe4e24",
+      "sourceSha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
+      "sha256": "c464ffa21b990e6abbb45ab065e3290a3e20f76acb751525e7246691e8c78d47",
       "width": 1024,
       "height": 2048
     },
@@ -144,8 +144,8 @@
     },
     {
       "id": "Arboghast",
-      "sourceSha256": "d537f34c26e9e82c3f8f85e678b04d06ae867d04ea95437e1f7625ab71f4dd84",
-      "sha256": "7d763617f512fb6d4d9ff2649f9c7db99f56480a17852dd324c315f15e440568",
+      "sourceSha256": "10744079e7ee154daac7345bac020ca6f0bf6c256032c9636244baa461333778",
+      "sha256": "cbf2b29279d7316c015bf3ce221ada7f0afb99b38c33e1e0e5052f16f1cfb3cb",
       "width": 1024,
       "height": 2048
     },

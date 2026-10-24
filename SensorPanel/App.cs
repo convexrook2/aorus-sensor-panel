@@ -16,7 +16,11 @@ internal static class App
             // process DPI before either framework creates an HWND.
             System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.PerMonitorV2);
             string? portraitOutput=Argument(args,"--export-fleet-portraits");
-            if(portraitOutput is not null)return FleetPortraitExport.Run(portraitOutput);
+            int portraitShipIndex=Array.IndexOf(args,"--portrait-ship");
+            if(portraitShipIndex>=0 && portraitShipIndex+1>=args.Length)throw new ArgumentException("--portrait-ship requires a ship ID.");
+            string? portraitShip=portraitShipIndex<0?null:args[portraitShipIndex+1];
+            if(portraitShip is not null && portraitOutput is null)throw new ArgumentException("--portrait-ship requires --export-fleet-portraits.");
+            if(portraitOutput is not null)return FleetPortraitExport.Run(portraitOutput,portraitShip);
             if (args.Contains("--check-mapping")) { CheckArtworkPackage(); return PanelMetrics.Check(); }
             if (args.Contains("--check-displays"))
             {

@@ -87,12 +87,12 @@
   },
   {
     "id": "Arboghast",
-    "title": "UNS Arboghast / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier rough study. Cruise and deployed Venus-descent references are in the drawer. The descent ballutes are not modelled yet.",
-    "referenceUrl": "https://karlcrosby.artstation.com/projects/1ndxoZ",
-    "triangles": 9882,
-    "materials": 8,
+    "title": "UNS Arboghast /011 reconstruction pass08",
+    "credit": "Original X890 fan reconstruction after Chris Danelon production turntable references; owner-confirmed pass08. No production mesh acquired.",
+    "note": "Owner-confirmed pass08: bowed roof, recessed instrument well with low return, separate equipment and eight warm work lights. Exact dimensions, hidden fittings and photometry remain authored fits. Four separate blue-white exhaust plumes follow the existing canted drive mouths; plume colour and length are display tuning.",
+    "referenceUrl": "https://www.youtube.com/watch?v=vefkFrWLuNI&t=131s",
+    "triangles": 1165180,
+    "materials": 21,
     "images": 1,
     "maps": {
       "colour": 1,
@@ -101,23 +101,17 @@
       "metalRough": 0,
       "emissive": 0
     },
-    "model": "models/Arboghast-d537f34c26e9.glb.gz",
-    "sha256": "b5fc902d4609d6c8c027ea1e2ec44bdc3fcf4c09a40cf4c9532acbb0d4b4a9a8",
+    "model": "models/Arboghast-10744079e7ee.glb.gz",
+    "sha256": "10744079e7ee154daac7345bac020ca6f0bf6c256032c9636244baa461333778",
     "relatedSources": [
       {
-        "label": "Artist / exterior reference",
-        "url": "https://expanse.fandom.com/wiki/Arboghast"
-      },
-      {
-        "label": "Artist / exterior reference",
-        "url": "https://karlcrosby.artstation.com/projects/1ndxoZ"
-      },
-      {
-        "label": "Artist / exterior reference",
-        "url": "https://fantastic-plastic.com/arboghast.html"
+        "label": "Chris Danelon / original production turntable references",
+        "url": "https://www.youtube.com/watch?v=vefkFrWLuNI&t=131s"
       }
     ],
-    "references": []
+    "references": [],
+    "orientation": "survey-disc",
+    "localLightShadows": true
   },
   {
     "id": "Pella",
@@ -414,24 +408,40 @@
   },
   {
     "id": "Canterbury",
-    "title": "Canterbury / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier simplified project-authored fan study. The official SYFY mesh download was unavailable and is not represented by this geometry.",
-    "referenceUrl": "https://deningart.artstation.com/projects/XP8Vl",
-    "triangles": 24034,
-    "materials": 10,
-    "images": 1,
+    "title": "Canterbury / accepted reconstruction",
+    "credit": "Original X890 fan reconstruction after Ryan Dening concepts and Chris Danelon production views; owner-accepted finish14. No production mesh acquired.",
+    "note": "Owner accepted finish14 on 2026-10-23. Raised shroud, stepped housings, six aft vessels and exposed centerline core; entrance retained. Hidden dimensions, fine fittings and bridge-reference disagreement remain estimates.",
+    "referenceUrl": "https://www.youtube.com/watch?v=a3lL1bhpl9c&t=11s",
+    "triangles": 112232,
+    "materials": 12,
+    "images": 3,
     "maps": {
-      "colour": 1,
+      "colour": 2,
       "normal": 0,
       "occlusion": 0,
-      "metalRough": 0,
+      "metalRough": 1,
       "emissive": 0
     },
-    "model": "models/Canterbury-77a3cddea457.glb.gz",
-    "sha256": "bcbec41dc67c8d9bbad4806b628125b2107aa4770276a57e403d05a5f47afcaf",
+    "model": "models/Canterbury-290778c8f5e7.glb.gz",
+    "sha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
     "relatedSources": [],
-    "references": []
+    "references": [],
+    "renderMaps": {
+      "colour": 2,
+      "normal": 0,
+      "occlusion": 0,
+      "metalRough": 1,
+      "emissive": 0
+    },
+    "sourceBytes": 19309512,
+    "compressedBytes": 17378885,
+    "compressedSha256": "f60a9df399dc1ece5c28394bb2568cdcf1a08bfa56ff5c0d64116ab45392f0ea",
+    "compression": "gzip-lossless",
+    "lightUnitScale": 1,
+    "localLightShadows": true,
+    "sourceLights": 6,
+    "editableSource": "Assets/Models/Source/Canterbury-finish14/Canterbury.blend",
+    "adoption": "Owner accepted current model and requested release on 2026-10-23"
   },
   {
     "id": "Knight",

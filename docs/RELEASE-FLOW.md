@@ -1,11 +1,29 @@
 # X890 sensor-panel release flow
 
+October 23 release authority: Lennon accepted Canterbury finish14 as sufficient
+and requested release. He explicitly selected the prepared 1.8.12 changes plus
+Canterbury: accepted Arboghast pass08, shared exhaust, holotable, showcase motion
+and Sol navigation. This authorizes the scoped commit/push, exact-source CI,
+installer build and publication after validation. Installation is separate.
+Canterbury's immutable Blender/export identities and owner receipt are in
+`Assets/Models/Source/Canterbury-finish14`. No further geometry changes are part
+of this release. Research and rejected studies stay outside the release slice.
+
+October 22 update: 1.8.11 was released with the legacy Arboghast retained. The
+owner subsequently confirmed the separate 011 pass08 reconstruction and
+requested Sensor inclusion. The current **1.8.12 source candidate** adopts
+pass08; see [its integration record](ARBOGHAST-PASS08-SENSOR-20261022.md).
+The older rejected study and styling remain excluded. The October 21 readiness
+states below are historical; publication/install authority for 1.8.11 does not
+automatically apply to this candidate. Codex is the owner-authorized validation
+terminal for this continuation, preserving the existing window layout.
+
 Prepared October 21, 2026. Current continuity owner:
 [🚀 X890 — Successor — 2026-10-21](codex://threads/01a160a3-a390-7c02-99ce-4234fd53712d).
 This is a release procedure and readiness record. No release execution follows
 from preparing it.
 
-## Current state and scope
+## Historical October 21 state and scope
 
 The saved `artifacts/release-1.8.10/result.json` records Jenkins #9 SUCCESS for
 `d7724d70bf94dbd6bbedc1ecc296557e8d8c5abb`, public download hash verification,
@@ -38,8 +56,8 @@ Pella and Guanshiyin v11 and all unrelated work.
 1. **Agree the candidate.** Select the sensor-panel changes and next version;
    keep source models, native showcase, standalone Fleet Studio and installed
    product identities separate. Record included paths/model hashes, exclusions,
-   owner acceptance, held changes and known limits. The published 1.8.10 version
-   must not be reused for a changed package. Reconcile version fields, installer
+   owner acceptance, held changes and known limits. A published version must
+   not be reused for a changed package. Reconcile version fields, installer
    metadata and `Packaging/ReleaseNotes-<version>.md`. No new branch/worktree.
 2. **Resolve the source boundary.** Review each dirty path before staging only
    the approved release slice. A candidate needs a reproducible committed file
@@ -109,9 +127,8 @@ the owner's installed product.
 
 ## Next safe action
 
-Review the now-green 1.8.11 local check report and freeze the exact source slice.
-The exclusion patch, portable public records with private originals, Vite
-8.3.5, audit, source metadata and release-task correction are complete.
-Scoped commit/push, CI dispatch, installer build,
-publication, installation and live/hardware actions remain pending their
-applicable owner authorization. Arboghast implementation remains stopped.
+Complete the authorized 1.8.12 candidate gates, commit the reviewed release
+slice, push and run exact-SHA Jenkins with installer compilation. Review and
+publish those verified bytes under the October 23 release instruction.
+Installation and new LIVE/hardware validation remain separate. Further
+Arboghast modeling is stopped; the accepted pass08 inclusion is authorized.

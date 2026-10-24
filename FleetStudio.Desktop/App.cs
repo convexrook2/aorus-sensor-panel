@@ -16,7 +16,9 @@ internal static class App
         {
             string? reviewRoot = null;
             int reviewIndex = Array.IndexOf(args, "--review-root");
-            bool protectedCheck = args.Contains("--check-protected-assets");
+            bool plumeCheck=args.Contains("--check-plume-lighting");
+            bool motionCheck=args.Contains("--check-plume-motion");
+            bool protectedCheck = args.Contains("--check-protected-assets")||plumeCheck||motionCheck;
             if (reviewIndex >= 0)
             {
                 if (protectedCheck || reviewIndex + 1 >= args.Length ||
@@ -29,7 +31,7 @@ internal static class App
                         throw new FileNotFoundException("Local review file is missing: " + file);
             }
             return new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }
-                .Run(new StudioWindow(protectedCheck, reviewRoot));
+                .Run(new StudioWindow(protectedCheck, reviewRoot,plumeCheck,motionCheck));
         }
         catch (Exception ex)
         {
@@ -54,12 +56,16 @@ internal sealed partial class StudioWindow : Window
     private int generation;
     private bool closed;
     private readonly bool protectedCheck;
+    private readonly bool plumeCheck;
+    private readonly bool motionCheck;
     private readonly string? reviewRoot;
     private bool checkStarted;
 
-    internal StudioWindow(bool protectedCheck=false, string? reviewRoot=null)
+    internal StudioWindow(bool protectedCheck=false, string? reviewRoot=null,bool plumeCheck=false,bool motionCheck=false)
     {
         this.protectedCheck=protectedCheck;
+        this.plumeCheck=plumeCheck;
+        this.motionCheck=motionCheck;
         this.reviewRoot=reviewRoot;
         Title = reviewRoot is null ? "X890 Fleet Studio · on demand" : "X890 Fleet Studio · local model review";
         Width = 1200; Height = 800; MinWidth = 800; MinHeight = 600;

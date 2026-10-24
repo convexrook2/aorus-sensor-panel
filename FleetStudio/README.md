@@ -15,6 +15,15 @@ For initial setup or to refresh that copy from current source, run
 to test the Desktop shortcut. Setup publishes Release files, checks the current
 model bundle hashes and creates the Desktop and Start-menu shortcuts. It does
 not add Windows startup entries. The desktop copy updates when setup is rerun.
+
+The October 22 catalogue includes the owner-confirmed Arboghast 011 pass08,
+with its bowed roof, low island return, eight work lights and four registered
+drive plumes. Select **UNS Arboghast / 011 reconstruction pass08** and turn
+**Engine plumes on** to inspect the exhaust. The full source model and its
+upright disc orientation match the Sensor candidate; other ship entries and
+earlier research are retained. The per-user Fleet Studio refresh is separate
+from installing or releasing the monitoring app.
+
 Published assets are authenticated/encrypted in `assets.rl`, loaded in memory;
 source files remain editable. See [the shared .rl standard](../docs/RL-ASSET-STANDARD.md).
 
@@ -33,6 +42,40 @@ the WebView2/model; restoring reloads the selected ship and quality but resets
 camera/effects. Closing exits the app. The monitor does not launch it. Geometry
 and source assets are shared on disk, not loaded by an idle Fleet Studio service.
 The browser-preview instructions below remain available for web QA only.
+
+### Exhaust emission and illumination
+
+All registered drives instantiate one shared 3D plume animation. A single
+spatial density texture, geometry and clock serve every outlet on the loaded
+ship. Gas structure travels outward in nozzle coordinates around a bright core
+and fading tail; it retains depth during orbit and end-on inspection. Rays stop
+at the actual solid hull depth, so a proxy face cannot cut off gas in front of
+the ship. Linear HDR emission enters selective glow before colour output; gas
+does not act as a solid surface in ambient occlusion. Hulls, fittings, source
+materials and outlet anchors remain unchanged.
+
+Each outlet has a shadowed light aimed back toward its nozzle and nearby
+hardware, with inverse-square falloff. Range is expressed in world units and
+intensity scales with outlet area, preserving appearance across model authoring
+units. Fixed engine shadows reuse their depth maps while their projection
+follows rigid ship rotation; changing inspection materials invalidates them.
+Ship-lamp and plume controls remain independent. Plume shape, colour and light
+power are display values rather than recovered propulsion measurements.
+Enabling plumes invalidates the renderer's cached shadows before the first
+illuminated frame. Model-owned shadow materials release their uniforms with the
+model, avoiding stale image references when switching ships.
+
+`--check-plume-lighting` is an explicit visible protected-app diagnostic. It
+checks every catalogue entry using isolated HDR emission and a real rendered
+hull-light on/off comparison, plus normal studio and drive-end captures. It
+does not read sensors or establish a whole-app GPU budget.
+
+`--check-plume-motion` records normal rendered canvas video of a full orbit and
+a separate fixed-camera flow clip for Arboghast, Rocinante S6, Pella and Nauvoo,
+with side, opposite, drive-end and bow captures. It checks the first plume toggle
+and GL errors. Videos still require visual review; recording completion alone
+is not visual acceptance. Both diagnostics open their own visible window and
+close it when complete; neither runs in normal use.
 
 ### Isolated local model review
 
@@ -68,6 +111,21 @@ The pass retains dark hull occlusion and native transparency. It does not add
 generic point lights to other ships. Their existing source lights remain intact.
 Owner visual acceptance applies to the source review; installed sensor, CI and
 release evidence remain separate.
+
+Engine plumes share one animated 3D gas field across each ship's outlets.
+Anubis and its retained comparison use the owner's October 22 green-tinged
+stealth exhaust palette for the gas, hot core and reflected drive light.
+Registered lengths are honoured without a nozzle-radius minimum and capped
+at 60% of the hull extent along each engine's axis. Stealth exhaust is capped
+at 18%, with 12% gas radiance, lower density and 3.5% of ordinary spill-light
+intensity over a shorter range. These are review settings following the owner's
+scale/signature correction, not measured production burn dimensions.
+This changes the separate display effect, preserving the accepted model,
+cyan bow lighting, source drive fixtures and the ordinary ships' palettes.
+It is an authored visual profile; the colour values are not a calibrated
+measurement of a production burn. `--check-plume-motion` includes Anubis
+alongside the regular fleet orbit checks and measures its isolated RGB radiance,
+subdued brightness and hull-relative size.
 
 Hosting target: **https://convexrook2.github.io/aorus-sensor-panel/**.
 GitHub Pages was not enabled at the 2026-10-17 checkpoint; this address is not

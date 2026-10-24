@@ -8,6 +8,20 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+The **1.8.12 release candidate** combines the accepted Canterbury finish14 and
+Arboghast pass08 reconstructions with the prepared exhaust, holotable, showcase
+motion and Sol-navigation changes. See the [release record](docs/RELEASE-1.8.12-CANDIDATE.md).
+Canterbury's exact editable model, export and acceptance receipt are retained
+under `Assets/Models/Source/Canterbury-finish14`. Knight is frozen, further
+Arboghast modeling is stopped and ice is deferred.
+
+The rejected October 21 Arboghast study remains preserved locally. Lennon reopened
+the reconstruction on October 22, confirmed pass08 in Fleet Studio and requested
+its inclusion in the Sensor. The **1.8.12 candidate** integrates that exact
+model while keeping the established monitoring layout. See the
+[Sensor adoption record](docs/ARBOGHAST-PASS08-SENSOR-20261022.md) for source,
+native, package and installation evidence; the installed 1.8.11 remains separate.
+
 ## Open Fleet Studio
 
 Fleet Studio is a development and reference-review tool. Sensor-panel releases
@@ -51,15 +65,30 @@ the SDK and do not install or register anything.
 The normal monitor uses WPF and the existing SensorCollector backend
 (LibreHardwareMonitor/PawnIO, NVIDIA NVML and optional game FPS via PresentMon).
 It collects serially at the saved polling interval, default 1000 ms. The current
-ship viewport, solar navigation, holotable, full geometry/PBR maps, native pixel
-ratio, shadows and ambient occlusion remain the normal design. Saved motion,
-showcase and readout choices remain available; no still-art or graph substitute
-is used to save resources. The old `--full-graphics` argument is unnecessary.
+sensor panel automatically rotates the full ship in its left showcase. Use
+**PAUSE ROTATION** directly beneath the ship to hold its current angle, and
+**RESUME ROTATION** to restart; this preference is saved separately from map
+and background motion. During each 30-second turn, the showcase briefly tilts
+through a lower viewing angle and smoothly returns to its normal view. Pausing
+holds both the turn and tilt. Click the ship or press **H** for the full-detail holotable: drag
+to turn the ship, wheel to zoom the ship, **RESET VIEW** to reset, and **Esc** to return. The
+holographic platform retains its position, size and viewing angle during inspection. Rotation
+in the holotable starts off and can be enabled with **AUTO ROTATE**. The
+holotable has a projected 3D light platform with floating rings, rotating arcs
+and a rising scan. It animates independently of the ship; **HOLOGRAM MOTION**
+holds or resumes the light pattern. Hidden or inactive views stop animating. The same
+viewport moves between the showcase and holotable; closing returns it to the
+showcase and restores its pause preference. Leaving ship themes releases the
+browser/model. Full geometry/PBR maps, native
+pixel ratio, shadows, ambient occlusion and accepted lights remain intact in 3D.
+Solar navigation, theme cycling and readout choices retain their existing layout.
+The old `--full-graphics` argument is unnecessary.
 
 Efficiency comes from avoiding duplicate model requests, redrawing only when a
-scene changes, reusing shadow maps when the hull/light is unchanged, and pausing
-visual activity when minimized or hidden. Inactive WebViews request lower memory
-usage without changing their geometry or shading. AORUS animation frames are
+scene changes, reusing one ship viewport, and pausing visual activity when
+minimized or hidden. The visible holographic platform uses the selected
+Full Fidelity or Efficient cadence. Pausing **HOLOGRAM MOTION** with ship
+rotation off restores drawing only on interaction or a scene change. AORUS animation frames are
 decoded only when that theme is visible and animated; ship themes release them.
 Live collection continues independently of visual activity.
 
@@ -129,6 +158,26 @@ are preserved.
 
 ## Controls and appearance
 
+Settings opens with an **Experience** selector:
+
+- **AORUS · Lite Mode** uses the original monitoring panel and colour themes.
+  Expanse ship graphics are released and solar/background animation is stopped.
+- **The Expanse Experience** exposes ship themes and **Rendering** directly in
+  the same card. **Full Fidelity** is the default for a new rendering preference:
+  ship drawing follows browser animation frames and solar animation follows
+  native composition frames without artificial application frame caps.
+  **Efficient** keeps the same models, textures, lights, shadows, AO and native
+  capture resolution, limiting automatic ship drawing to 30 fps and idle solar
+  updates to 10 per second. Direct interaction remains responsive.
+
+The rendering choice is also in **⋯ Ship options**. Switching applies immediately
+without reloading or reducing the current model, and is saved independently of
+pause/motion choices. Each experience remembers its theme; sensor values,
+peaks, polling interval and display selection are retained. Hidden, minimized
+and covered visual work still stops in either mode. The current installer
+still contains both experiences' assets; choosing Lite is a runtime selection,
+not a separate content-free installation. Separate installers are release work.
+
 Pella retains the release monitoring instruments: CPU/GPU temperature dials,
 clock rates, power, peaks, memory, network and cooling. The full model fills the
 left showcase, and the existing solar system remains visible in the centre.
@@ -162,12 +211,12 @@ The tray menu remains available while the panel is hidden.
   serial and never overlaps.
 - **Sensor readouts:** optional number pulses, off by default, and independent
   smooth temperature rings.
-- **Ship options → Animate map and ship:** automatic map motion and ship rotation, separate
+- **Ship options → Map and background motion:** automatic solar-map motion and scene fades, separate
   from sensor polling. Motion pauses when hidden or disabled and respects
   Windows animation preferences.
 
 The collection includes Classic, Dark, ICE and additional colour palettes,
-plus **The Expanse** main theme and 21 individual ship themes. Theme changes retain readings,
+plus **The Expanse** main theme and 22 individual ship/gate themes. Theme changes retain readings,
 maxima, display selection and polling settings. Session maxima reset when
 the app restarts.
 
@@ -179,7 +228,7 @@ The CPU card shows measured CCD hotspot temperature where supported. The
 RPM and NVIDIA fan duty. Fan duty is a percentage, not RPM. Actor captions,
 unidentified-crew placeholders and the inactive "ORIGINAL COLOURS" label are removed.
 
-Choose **Settings → Theme → The Expanse** to cycle through all 21 ship themes,
+Choose **Settings → Theme → The Expanse** to cycle through all 22 ship/gate themes,
 including each ship's console colours and graphics. Selecting The Expanse
 explicitly resumes cycling after an earlier manual hold. **Cycle ship themes**
 and **Change ship every** appear directly below the theme selector, and also in
@@ -187,8 +236,8 @@ and **Change ship every** appear directly below the theme selector, and also in
 seconds; changing themes preserves the selected interval. Selecting a ship
 manually pauses cycling until **Cycle ship themes** is enabled again. Readings,
 session maxima, histories and the shared solar view are retained. These controls
-are separate from **Animate map and ship**, which controls map motion and ship
-rotation. Cycling pauses while minimized, in settings or in the holotable.
+are separate from map motion and the holotable's **AUTO ROTATE** control.
+Cycling pauses while minimized, in settings or in the holotable.
 
 Personnel cards identify a verified character and their relationship to the
 selected ship. Generic types without identified crews show no portrait. Optional local
@@ -208,32 +257,63 @@ the detailed Sun/planet texture maps, Earth clouds/night lights, Saturn ring str
 and irregular Eros/Phoebe meshes. Native WPF renders these assets locally.
 **SCHEMATIC** retains enlarged bodies and readable orbit spacing. **TRUE SCALE**
 uses physical radii and NASA/JPL Horizons vectors, an AU/km bar and small
-selection markers. Parent-relative moon trajectories are sampled hourly;
+selection markers. Body positions and orbit curves share the same interpolation;
+curves refine with zoom so the selected body stays on its path. Focus keeps a
+selected planet readable; wheel out to inspect its wider moon system.
+Parent-relative moon trajectories are sampled hourly;
 planet/small-body trajectories are sampled daily. Data is bundled for
 2026-10-01 to 2027-10-01, with a visible simulated UTC clock and selectable
 speed (default: six hours per second). The clock loops within that range;
-the panel makes no NASA network requests. Earth night lights, atmosphere rims
-and two soft Sun corona layers restore Belter's lighting detail locally.
+the panel makes no NASA network requests. Earth night lights and atmosphere rims
+retain Belter's lighting detail. The Sun has a brighter white-gold emitting
+surface, stronger point lighting and a soft three-layer corona. A credited
+Milky Way panorama fades into the background as you zoom out, then fades away
+for close inspection. It is a cached sky image with no extra animation loop.
 Body names appear only on hover; the destination list keeps the selected name.
 True-scale zoom skips off-screen and sub-pixel meshes and clips orbit trails
-before drawing. Camera movement follows rendering at up to 60 updates/second;
-idle orbital animation remains capped at 20 and pauses when hidden or disabled.
+before drawing. Efficient camera movement follows rendering at up to 60 updates/second;
+Efficient idle orbital animation requests 10 updates/second; Full Fidelity follows
+native composition frames. Both pause when hidden or disabled.
 Tycho's mobile Belt position is approximate; the fixed Sol gate is shown
 outside Uranus. Medina retains its separate Ring Space inset, distinct from
 the alien central station. See [navigation scope and credits](SensorPanel/SolarSystem.md).
 
-All 21 ships have local 3D portraits and holotables using one reusable WebView2
-GPU viewport. Its captured image follows the native display scale, so enlarging
-the panel renders more pixels instead of stretching a small ship bitmap. Resizing
-does not change model detail, shading or rotation timing.
-Click the portrait or press **H** to open the holotable: a centred,
-passive rotating showcase above a small display plinth, with the existing space
-or local media backdrop. Rotation follows **Animate map and ship** and Windows
-animation preferences, drawing at most 30 fps and stopping when minimized.
-There are no model navigation controls. **BACK TO MONITOR** or **Escape** returns
-to monitoring. Both views retain the identical full
-model and embedded PBR maps, checked against its SHA-256 value. No additional
-mesh reduction or texture resampling occurs in the full viewport.
+All 22 ship/gate themes use one full-quality shared ship viewport. Automatic
+rotation retains elapsed-time speed and normal native capture cadence, with a
+30 fps drawing limit only in Efficient mode. **PAUSE ROTATION / RESUME ROTATION** sits
+directly beneath the ship and preserves its exact angle and saved preference.
+Prepared 1024×2048 three-quarter portraits remain loading fallbacks; their
+receipts bind each PNG to the full model's SHA-256 value.
+Click the ship or press **H** for an interactive holotable above its display
+plinth, with the existing space or local media backdrop. Drag to orbit, wheel
+to zoom, or use **RESET VIEW**. **AUTO ROTATE** is optional, starts off, and
+respects Windows animation preferences. Idle views redraw on demand; deliberate
+rotation shares the selected rendering mode. **BACK TO MONITOR** or **Escape**
+returns the same viewport to the showcase with its rotation preference retained.
+Leaving ship themes releases the browser/model. No additional mesh reduction
+or texture resampling occurs. Efficient retains the accepted trial policy;
+its measurements do not establish the <=2% target or a GPU budget for Full Fidelity.
+
+Developer task **Prepare ship portraits and review rotation controls** rebuilds, visibly
+exports the images through the full renderer, checks all image/model hashes,
+refreshes the bundle manifest and runs the saved-data native lifecycle review.
+Use `pwsh -File tools/Prepare-StaticFleet.ps1 -Review`; `-SkipExport` reuses
+already prepared images. It neither installs nor opens Fleet Studio. Portraits
+remain inside `FleetViewer` and are protected by the existing RLAR archive in
+published builds. [Current performance evidence](docs/PERFORMANCE-2026-10-21.md)
+keeps the <=2% normal-monitor target separate from measured results.
+
+**Sol Ring** is also available in the same selector and Expanse cycle. Its
+existing Fleet Studio v3 rim model is copied losslessly into the monitor's own
+bundle, with its upright gate orientation and the same separate animated
+aperture shader. The left showcase, instruments, solar navigation and backgrounds
+retain their established positions; its map association is the existing Sol gate
+landmark. The map uses a small marker at system scale and the accepted v3 rim
+geometry with native lighting and an animated aperture when focused. Its
+1,000 km diameter and fixed direction are illustrative. Motion-off and minimize
+stop both rotation and the aperture. The full
+model and shader are included in the protected published asset archive. This
+source addition does not update an installed copy; see [Sol Ring integration](docs/SOL-RING.md).
 
 The owner-finished **Rocinante Season 6** includes smooth armour, paired relief
 markings, red lettering, a bluish-grey optical finish and the corrected blue-white
@@ -280,6 +360,14 @@ Resource use varies with hardware, display size, theme and workload; there
 is no universal performance or game-FPS guarantee.
 
 ## Build and validation
+
+Use the [release flow](docs/RELEASE-FLOW.md) to scope the next sensor-panel
+release, reconcile held changes, validate an exact revision and separately
+authorize publication and installation. Arboghast remains rejected/stopped;
+the newer local experience changes are not covered by the saved 1.8.10 release.
+The [proposed 1.8.11 candidate](docs/RELEASE-CANDIDATE-1.8.11.md) lists included
+changes, explicit exclusions and unresolved release gates. It is preparation,
+not an approved or built package.
 
 [Jenkins CI](docs/CI.md) defines repeatable source/build/asset checks for the
 Windows agent. Run `& .\tools\Run-JenkinsChecks.ps1` visibly in VS Code for the same local

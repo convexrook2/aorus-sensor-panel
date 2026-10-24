@@ -19,13 +19,18 @@ internal static class SolarBodyAssets
     internal static Model3DGroup Load(string id)
     {
         if (cache.TryGetValue(id, out var existing)) return existing;
+        if(id=="SolGate")
+        {
+            var gate=SolarGateModel.FrozenModel;cache.Add(id,gate);
+            sources.TryAdd(SolarGateModel.AssetPath,SolarGateModel.PackedHash);return gate;
+        }
         var model = new Model3DGroup();
-        if (id is "Eros" or "Phoebe" or "Tycho" or "Medina" or "SolGate")
-            Packed(model, id == "SolGate" ? "solgate" : id.ToLowerInvariant(), id == "Eros" ? 8.4 : 1);
+        if (id is "Eros" or "Phoebe" or "Tycho" or "Medina")
+            Packed(model, id.ToLowerInvariant(), id == "Eros" ? 8.4 : 1);
         else
         {
             string file = id == "Luna" ? "moon" : id.ToLowerInvariant();
-            Material material = id == "Sun" ? new EmissiveMaterial(Texture(file + ".jpg")) : new DiffuseMaterial(Texture(file + ".jpg"));
+            Material material = id == "Sun" ? SunMaterial() : new DiffuseMaterial(Texture(file + ".jpg"));
             material.Freeze();
             model.Children.Add(new GeometryModel3D(sphere, material));
             if (id == "Saturn")
@@ -40,6 +45,25 @@ internal static class SolarBodyAssets
             }
         }
         model.Freeze(); cache.Add(id, model); return model;
+    }
+
+    private static Material SunMaterial()
+    {
+        // Raise photospheric exposure without clipping its original sunspots
+        // and granulation to a flat white disk. The source map stays untouched.
+        var source=new FormatConvertedBitmap(Bitmap("sun.jpg"),PixelFormats.Bgra32,null,0);
+        int stride=source.PixelWidth*4;var pixels=new byte[stride*source.PixelHeight];source.CopyPixels(pixels,stride,0);
+        for(int i=0;i<pixels.Length;i+=4)
+        {
+            double original=(pixels[i+2]*.2126+pixels[i+1]*.7152+pixels[i]*.0722)/255;
+            double hot=255*(.58+.42*Math.Pow(original,.48));
+            pixels[i+2]=(byte)Math.Round(hot);pixels[i+1]=(byte)Math.Round(hot*.965);pixels[i]=(byte)Math.Round(hot*.89);pixels[i+3]=255;
+        }
+        var bitmap=BitmapSource.Create(source.PixelWidth,source.PixelHeight,96,96,PixelFormats.Bgra32,null,pixels,stride);bitmap.Freeze();
+        // Emission alone adds onto the background corona. Occlude that behind
+        // the photosphere first, then emit the textured surface over black.
+        var material=new MaterialGroup();material.Children.Add(new DiffuseMaterial(Brushes.Black));
+        material.Children.Add(new EmissiveMaterial(new ImageBrush(bitmap){Stretch=Stretch.Fill}));return material;
     }
 
     private static byte[] Asset(string relative)
@@ -110,11 +134,6 @@ internal static class SolarBodyAssets
         { atlas[i * 4] = (byte)((i & 15) * 17); atlas[i * 4 + 1] = (byte)(((i >> 4) & 15) * 17); atlas[i * 4 + 2] = (byte)((i >> 8) * 17); atlas[i * 4 + 3] = 255; }
         var palette = BitmapSource.Create(64, 64, 96, 96, PixelFormats.Bgra32, null, atlas, 256); palette.Freeze();
         Material material = new DiffuseMaterial(colours is null ? new SolidColorBrush(Color.FromRgb(169, 151, 128)) : Image(palette)); material.Freeze();
-        if (name == "solgate")
-        {
-            var glow = Image(palette).Clone(); glow.Opacity = .45; glow.Freeze();
-            var lit = new MaterialGroup(); lit.Children.Add(material); lit.Children.Add(new EmissiveMaterial(glow)); lit.Freeze(); material = lit;
-        }
         // Retain the source faces; split only to stay inside WPF's per-mesh limits.
         for (int start = 0; start < indices.Length; start += 18000)
         {
@@ -162,11 +181,12 @@ internal static class SolarBodyAssets
     }
     internal static object Check()
     {
+        Load("SolGate");
         foreach (var model in cache.Values)
             if (!model.IsFrozen || model.Children.OfType<GeometryModel3D>().Any(p => p.Geometry is not MeshGeometry3D m || !m.IsFrozen || m.Positions.Count > 20000 || m.TriangleIndices.Count > 60000))
                 throw new InvalidOperationException("A solar asset exceeds the native render budget.");
         if (!sources.ContainsKey("textures/earth_night.jpg") || !sources.ContainsKey("textures/earth.jpg") || !sources.ContainsKey("textures/saturn_ring.png") || !sources.ContainsKey("models/eros.fnm") || cache.Count != 20)
             throw new InvalidOperationException("The schematic is missing its detailed assets.");
-        return new { NativeModels = cache.Count, SourceFiles = sources, OriginalErosTriangles = cache["Eros"].Children.OfType<GeometryModel3D>().Sum(m => ((MeshGeometry3D)m.Geometry).TriangleIndices.Count / 3), Source = "Belter Charts ba86075477fc529294a5e51cb4e1b0d183ff893a", StationGeometry = "Retained original panel models" };
+        return new { NativeModels = cache.Count, SourceFiles = sources, OriginalErosTriangles = cache["Eros"].Children.OfType<GeometryModel3D>().Sum(m => ((MeshGeometry3D)m.Geometry).TriangleIndices.Count / 3), Source = "Belter Charts ba86075477fc529294a5e51cb4e1b0d183ff893a", StationGeometry = "Original Tycho/Medina; accepted Sol Ring v3 native material adaptation", SolRingTriangles=cache["SolGate"].Children.OfType<GeometryModel3D>().Sum(m=>((MeshGeometry3D)m.Geometry).TriangleIndices.Count/3) };
     }
 }

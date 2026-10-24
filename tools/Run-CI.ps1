@@ -49,6 +49,18 @@ try {
     # emission-glow contracts without depending on a generated review bundle.
     & $PythonExecutable .\tools\Check-AnubisAdoption.py
     if ($LASTEXITCODE -ne 0) { throw 'Adopted Anubis identity/bow and shared fleet-glow contracts failed.' }
+    & $PythonExecutable .\tools\Check-ArboghastAdoption.py
+    if ($LASTEXITCODE -ne 0) { throw 'Arboghast adoption check failed.' }
+    & $PythonExecutable .\tools\Check-CanterburyAdoption.py
+    if ($LASTEXITCODE -ne 0) { throw 'Adopted Canterbury source/model/portrait identity failed.' }
+    node .\tools\Check-FleetPlumes.mjs
+    if ($LASTEXITCODE -ne 0) { throw 'Fleet exhaust emission/lighting/scale/lifecycle contracts failed.' }
+    node .\tools\Check-ShowcaseMotion.mjs
+    if ($LASTEXITCODE -ne 0) { throw 'Showcase tilt/return, pause and rendering cadence contracts failed.' }
+    node .\tools\Check-HolographicStage.mjs
+    if ($LASTEXITCODE -ne 0) { throw 'Holographic platform motion, visibility, cadence and disposal contracts failed.' }
+    node .\tools\Check-ShipInspection.mjs
+    if ($LASTEXITCODE -ne 0) { throw 'Ship-only inspection and fixed hologram/camera contracts failed.' }
     foreach ($script in @('Assets/FleetViewer/viewer.js','Assets/FleetViewer/rocinante-effects.js','Assets/FleetViewer/light-glow.js','FleetStudio/review.js','FleetStudio/portal.js','FleetStudio/ship-effects.js','FleetStudio/light-glow.js')) {
         node --check $script
         if ($LASTEXITCODE -ne 0) { throw "JavaScript syntax failed: $script" }

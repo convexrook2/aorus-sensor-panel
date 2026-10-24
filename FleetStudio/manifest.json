@@ -1,5 +1,5 @@
 {
-  "revision": "Fleet Studio / accepted Anubis source assembly and production-reference finish / 2026-10-20",
+  "revision": "Fleet Studio / accepted Arboghast pass08 and registered plumes / 2026-10-22",
   "catalogue_entries": 23,
   "assets": [
     {
@@ -409,6 +409,36 @@
       "geometry_and_image_bytes_exact": true
     },
     {
+      "file": "models/Anubis-41fedbe295b8.glb.gz",
+      "sha256": "41fedbe295b89b482b527fb9d6b7e8d851faa729a6da415c6d32fb3154968d5d",
+      "gzip_sha256": "51e9d9ae0d4406352298afc84ea2fe41cf005fe1bd21607a63028f1d97d6f79f",
+      "source_sha256": "41fedbe295b89b482b527fb9d6b7e8d851faa729a6da415c6d32fb3154968d5d",
+      "binary_sha256": "a3ad1b8d008845ef2f692d66ad55bddea768d24cf653fa4127b80081b85759dc",
+      "triangles": 180410,
+      "rendered_triangles": 198192,
+      "materials": 6,
+      "images": 1,
+      "lights": 0,
+      "compressed_bytes": 5549411,
+      "uncompressed_bytes": 18153704,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Anubis-a633ff3e4743.glb.gz",
+      "sha256": "a633ff3e4743580fdf241dba251146b0be44d8dc387209242839ec3e23a0b128",
+      "gzip_sha256": "15e3cceba8039eb3ceb4e98076596fc6744067d11c326c0781f214959ececda5",
+      "source_sha256": "a633ff3e4743580fdf241dba251146b0be44d8dc387209242839ec3e23a0b128",
+      "binary_sha256": "c9a9ba273d700a99460453ca70eef0098b7f7b652d5f473261c31cd3fa3d6a5a",
+      "triangles": 180410,
+      "rendered_triangles": 198192,
+      "materials": 7,
+      "images": 1,
+      "lights": 0,
+      "compressed_bytes": 5549562,
+      "uncompressed_bytes": 18154556,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
       "file": "models/Anubis-067fc6b196b6.glb.gz",
       "sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
       "gzip_sha256": "8ac24693b2aedde4e788aab431195427ccc23aa9698c613de9610c27a9e56e58",
@@ -421,6 +451,34 @@
       "lights": 0,
       "compressed_bytes": 5549740,
       "uncompressed_bytes": 18154612,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Arboghast-10744079e7ee.glb.gz",
+      "sha256": "10744079e7ee154daac7345bac020ca6f0bf6c256032c9636244baa461333778",
+      "gzip_sha256": "a656b1202db51e863251c20698bdaf537bc7e4a9df65f87f89f58c82b222fcc1",
+      "source_sha256": "10744079e7ee154daac7345bac020ca6f0bf6c256032c9636244baa461333778",
+      "binary_sha256": "16f12e2187d2fb6d87b8c05476d4f8d7aeaf52958665277a2a1be50ab2e6f047",
+      "triangles": 487978,
+      "rendered_triangles": 1165180,
+      "materials": 21,
+      "images": 1,
+      "lights": 8,
+      "compressed_bytes": 4134409,
+      "uncompressed_bytes": 16781360,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Canterbury-290778c8f5e7.glb.gz",
+      "sha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
+      "source_sha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
+      "gzip_sha256": "f60a9df399dc1ece5c28394bb2568cdcf1a08bfa56ff5c0d64116ab45392f0ea",
+      "compressed_bytes": 17378885,
+      "uncompressed_bytes": 19309512,
+      "triangles": 112232,
+      "materials": 12,
+      "images": 3,
+      "lights": 6,
       "geometry_and_image_bytes_exact": true
     }
   ],

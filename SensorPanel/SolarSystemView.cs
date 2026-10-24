@@ -20,6 +20,7 @@ internal sealed class SolarSystemView : Grid
     private readonly ComboBox selector;
     private readonly TextBlock status;
     private readonly Button scaleMode;
+    private readonly ComboBox rate;
     private bool selecting;
 
     public event Action<string>? BodySelected;
@@ -65,7 +66,7 @@ internal sealed class SolarSystemView : Grid
         AutomationProperties.SetName(scaleMode, "Navigation scale mode");
         scaleMode.Click += (_, _) => SetTrueScale(!map.TrueScale);
         Grid.SetColumn(scaleMode, 1); footer.Children.Add(scaleMode);
-        var rate = new ComboBox { Width = 67, FontSize = 9, Margin = new Thickness(0, 0, 3, 0),
+        rate = new ComboBox { Width = 67, FontSize = 9, Margin = new Thickness(0, 0, 3, 0),
             Foreground = Brushes.White, Background = new SolidColorBrush(Color.FromRgb(12, 36, 49)),
             ToolTip = "Simulation speed. 6 H/S = six simulated hours each second. Does not affect monitoring." };
         NavigationControls.Apply(rate); AutomationProperties.SetName(rate, "Orbital time speed");
@@ -116,8 +117,15 @@ internal sealed class SolarSystemView : Grid
     internal void Check() => map.Check();
     internal object ShowJupiterPass(bool nearSide) => map.ShowJupiterPass(nearSide);
     internal JsonElement Diagnose() => JsonSerializer.SerializeToElement(map.Diagnose());
-    internal void SetTimeRateForReview(double seconds)=>map.SetTimeRate(seconds);
-    internal void PrepareEfficiencyFrame(string body,bool trueScale)=>map.PrepareEfficiencyFrame(body,trueScale);
+    internal void SetTimeRateForReview(double seconds){rate.SelectedItem=rate.Items.OfType<ComboBoxItem>().First(item=>item.Tag is double value&&value==seconds);map.SetTimeRate(seconds);}
+    internal void PrepareEfficiencyFrame(string body,bool trueScale){SetTimeRateForReview(0);map.PrepareEfficiencyFrame(body,trueScale);}
+    internal void PrepareTrueScaleReview(string body,double magnification=1){SetTimeRateForReview(0);map.PrepareTrueScaleReview(body,magnification);}
+    internal object PathAlignmentForReview()=>map.PathAlignmentForReview();
+    internal void SetEpochForReview(double fraction)=>map.SetEpochForReview(fraction);
+    internal void RotateForReview(double azimuth,double elevation)=>map.RotateForReview(azimuth,elevation);
+    internal void ZoomForReview(double factor)=>map.ZoomForReview(factor);
+    internal void SetSolarLightForReview(bool enabled)=>map.SetSolarLightForReview(enabled);
+    internal Point SunCenterForReview=>map.TranslatePoint(map.SunCenterForReview,this);
     internal event Action? ReviewDragCompleted { add=>map.ReviewDragCompleted+=value;remove=>map.ReviewDragCompleted-=value; }
     internal object CheckAssets() => new { Visuals = SolarBodyAssets.Check(), Ephemeris = map.CheckEphemeris() };
 
@@ -154,6 +162,8 @@ internal sealed class SolarSystemView : Grid
         internal static readonly SolidColorBrush Ink = Frozen(Color.FromRgb(132, 233, 251));
         internal static readonly SolidColorBrush FaintInk = Frozen(Color.FromRgb(92, 141, 160));
         private static readonly SolidColorBrush Amber = Frozen(Color.FromRgb(255, 199, 110));
+        private static readonly SolidColorBrush SunWhite=Frozen(Color.FromRgb(255,249,231));
+        private static readonly Color SolarLight=Color.FromRgb(255,247,233);
         private static readonly SolidColorBrush LabelBackground = Frozen(Color.FromArgb(205, 3, 14, 23));
         private static readonly SolidColorBrush RingSpaceBackground = Frozen(Color.FromArgb(220, 6, 20, 30));
         private static readonly Pen Orbit = Pen(Color.FromArgb(72, 74, 182, 225), .75);
@@ -167,6 +177,7 @@ internal sealed class SolarSystemView : Grid
         private readonly Stopwatch clock = new();
         // The containing map already clips its children; avoid a second expensive 3D clip.
         private readonly Viewport3D viewport = new() { IsHitTestVisible = false, ClipToBounds = false };
+        private readonly Image galaxy=new(){Stretch=Stretch.UniformToFill,IsHitTestVisible=false,Opacity=0};
         private readonly OrthographicCamera camera = new() { Position = new(0, 0, 2000), LookDirection = new(0, 0, -1), UpDirection = new(0, 1, 0), NearPlaneDistance = 1, FarPlaneDistance = 4000 };
         private readonly Model3DGroup scene = new();
         private readonly Dictionary<string, Model3DGroup> models = new();
@@ -176,9 +187,9 @@ internal sealed class SolarSystemView : Grid
         private readonly SolarEphemeris? ephemeris;
         private readonly string? ephemerisError;
         private readonly Dictionary<string, Point3D> nasaPositions = new();
-        private readonly Dictionary<string, Point3D[]> trails = new();
-        private readonly PointLight sunlight = new(Colors.White, new()) { ConstantAttenuation = .65 };
+        private readonly PointLight sunlight = new(SolarLight, new()) { ConstantAttenuation = .38 };
         private readonly SolarEarthLighting earthLighting = new();
+        private SolarGateModel? gateModel;
         private readonly Overlay backdrop, overlay;
         private readonly BeltLayer beltLayer;
         private readonly StaticMapLayer starLayer,orbitLayer;
@@ -186,6 +197,7 @@ internal sealed class SolarSystemView : Grid
         private OrbitView? lastOrbitView;
         private long starPaints,orbitPaints;
         private readonly Dictionary<string, FormattedText> text = new();
+        private readonly Dictionary<string,SolidColorBrush> markerInk=Bodies.ToDictionary(b=>b.Id,b=>Frozen(b.Colour));
         private readonly List<(Body Body, Point Point, double Radius)> hitTargets = new();
         private readonly List<(Body Body, Rect Bounds)> labelTargets = new();
         private readonly List<Rect> labelBounds = new();
@@ -197,7 +209,7 @@ internal sealed class SolarSystemView : Grid
         private long dragStarted,dragSceneStart,dragPaintStart,dragPointerStart;
         private object? lastDrag;
         internal event Action? ReviewDragCompleted;
-        private int pathSegments, rejectedPathSegments;
+        private int pathSegments;
         private double maximumPathCoordinate;
         private Vector3D pan, targetPan;
         private Point? drag;
@@ -233,6 +245,8 @@ internal sealed class SolarSystemView : Grid
             {
                 var transform = new MatrixTransform3D(); transforms.Add(body.Id, transform);
                 var instance = new Model3DGroup { Transform = transform };
+                // Do not decode or attach the detailed ring for a distant map marker.
+                if(body.Id=="SolGate"){models.Add(body.Id,instance);modelExtents.Add(body.Id,1.01);continue;}
                 var detail = SolarBodyAssets.Load(body.Id);
                 if (body.Id == "Earth")
                 {
@@ -251,7 +265,7 @@ internal sealed class SolarSystemView : Grid
             backdrop = new Overlay(this, false); overlay = new Overlay(this, true);
             starLayer=new StaticMapLayer(this,true);orbitLayer=new StaticMapLayer(this,false);
             beltLayer=new BeltLayer(this);
-            Children.Add(starLayer);Children.Add(beltLayer);Children.Add(orbitLayer);Children.Add(backdrop);Children.Add(viewport);Children.Add(overlay);
+            Children.Add(galaxy);Children.Add(starLayer);Children.Add(beltLayer);Children.Add(orbitLayer);Children.Add(backdrop);Children.Add(viewport);Children.Add(overlay);
             timer.Tick += Tick;
             Loaded += (_, _) => { loaded = true; SystemParameters.StaticPropertyChanged += ParametersChanged; UpdateTimer(); Refresh(); };
             Unloaded += (_, _) =>
@@ -293,7 +307,7 @@ internal sealed class SolarSystemView : Grid
         internal void SetTrueScale(bool enabled)
         {
             if (enabled && ephemeris is null) return;
-            TrueScale = enabled; trails.Clear(); FocusBody(selected, false);
+            TrueScale = enabled; FocusBody(selected, false);
         }
         private void UpdateEphemeris()
         {
@@ -360,7 +374,7 @@ internal sealed class SolarSystemView : Grid
             if (ephemeris is not null && timeRate > 0)
             {
                 jd += delta * timeRate / 86400;
-                if (jd > ephemeris.StopJd) { jd = ephemeris.StartJd + (jd - ephemeris.StopJd); trails.Clear(); }
+                if (jd > ephemeris.StopJd) jd = ephemeris.StartJd + (jd - ephemeris.StopJd);
                 UpdateEphemeris();
             }
             frames++;
@@ -389,14 +403,19 @@ internal sealed class SolarSystemView : Grid
             if (body is null) throw new ArgumentException("Unknown solar-system body.", nameof(id));
             selected = body.Id;
             if (body.Id == "Sun") { yaw = -.24; tilt = .35; }
+            if(body.Id=="SolGate"){yaw=Math.PI/2-body.Angle;tilt=.35;}
             targetZoom = body.Id == "Sun" ? 1 : body.Id == "Medina" ? 2.2 : body.Parent is not null ? 4.8 : body.Planet ? 3.3 : 3.8;
             if (TrueScale && !body.Station && body.Id != "Sun")
             {
                 double extent = ephemeris!.RadiusKm(body.Id) / SolarEphemeris.AuKm * 8;
                 var moons = Bodies.Where(b => b.Parent == body.Id).ToArray();
-                if (moons.Length > 0) extent = moons.Max(b => ((Vector3D)ephemeris.Relative(b.Id, jd)).Length) * 1.3;
+                // A distant satellite (especially Phoebe) must not reduce its
+                // selected planet to a sub-pixel dot. Wheel out for the whole system.
+                if (moons.Length > 0) extent = Math.Clamp(moons.Max(b => ((Vector3D)ephemeris.Relative(b.Id, jd)).Length) * 1.3,extent,extent*1.5);
                 targetZoom = Math.Clamp(Math.Min(ActualWidth, ActualHeight) * .32 / (Math.Max(1e-8, extent) / 32 * Scale), .65, 1e8);
             }
+            if(TrueScale&&body.Id=="SolGate")
+                targetZoom=Math.Clamp(Math.Min(ActualWidth,ActualHeight)*.32/(500/SolarEphemeris.AuKm*1.15/32*Scale),.65,1e8);
             var p = Position(body); targetPan = -(Vector3D)p;
             moving = animate && motion && SystemParameters.ClientAreaAnimation;
             if (!moving) SnapCamera();
@@ -454,6 +473,9 @@ internal sealed class SolarSystemView : Grid
         private double BodyRadius(Body body)
         {
             if (TrueScale && !body.Station) return ephemeris!.RadiusKm(body.Id) / SolarEphemeris.AuKm / 32 * Scale * zoom;
+            // Fictional 1,000 km diameter is illustrative, but uses the same conversion.
+            if(TrueScale&&body.Id=="SolGate")return 500/SolarEphemeris.AuKm/32*Scale*zoom;
+            if(body.Id=="SolGate"&&body.Id==selected)return Math.Clamp(Math.Min(ActualWidth,ActualHeight)*.20,28,130);
             double radius = Math.Clamp(body.Size * Math.Pow(zoom, .55), 2, 29);
             if (body.Id == selected && body.Id != "Sun") radius = Math.Max(radius, Math.Min(32, Math.Min(ActualWidth, ActualHeight) * .16));
             if (body.Parent is not null && body.Id != selected && body.Parent != selected && zoom < 1.8) radius = Math.Min(radius, 2.5);
@@ -468,7 +490,15 @@ internal sealed class SolarSystemView : Grid
             // along the foreshortened minor axis. Depth(), not artificial spacing, resolves overlap.
             return Math.Max(body.Radius, (parentExtent + BodyRadius(body) + 12) / (Scale * zoom));
         }
-        private static Rect MedinaArea(Point p) => new(p.X - 98, p.Y - 28, 196, 56);
+        private Rect MedinaArea(Point p)
+        {
+            double left=p.X-98,top=p.Y-28;
+            // Ring Space is a separate inset, not a heliocentric coordinate.
+            // Keep the entire inset visible in the compact whole-system view.
+            if(selected=="Sun"&&zoom<=1.1)
+            {left=Math.Clamp(left,6,Math.Max(6,ActualWidth-202));top=Math.Clamp(top,6,Math.Max(6,ActualHeight-62));}
+            return new(left,top,196,56);
+        }
         private bool IntersectsView(Point p, double radius) => p.X + radius >= 0 && p.Y + radius >= 0
             && p.X - radius <= ActualWidth && p.Y - radius <= ActualHeight;
         private void Refresh()
@@ -476,6 +506,9 @@ internal sealed class SolarSystemView : Grid
             if (ActualWidth < 2 || ActualHeight < 2 || overlay is null) return;
             sceneUpdates++;
             camera.Width = ActualWidth;
+            double skyOpacity=SolarSky.Opacity(zoom);
+            if(skyOpacity>0&&galaxy.Source is null)galaxy.Source=SolarSky.Panorama;
+            if(galaxy.Opacity!=skyOpacity)galaxy.Opacity=skyOpacity;
             var sun = Project(new()); sunlight.Position = new(sun.X - ActualWidth / 2, ActualHeight / 2 - sun.Y, Depth(new()));
             double front = 0, back = 0;
             foreach (var body in Bodies)
@@ -484,19 +517,37 @@ internal sealed class SolarSystemView : Grid
                 if (body.Id == "Medina") { var area = MedinaArea(p); p = new(area.Left + 28, area.Top + 28); radius = 20; }
                 var matrix = Matrix3D.Identity;
                 double extent = radius * modelExtents[body.Id];
-                bool visible = IntersectsView(p, extent) && (!TrueScale || body.Station || radius >= 1);
+                bool visible = IntersectsView(p, extent) && (body.Id=="SolGate"?radius>=8:!TrueScale || body.Station || radius >= 1);
                 if (!visible)
                 {
                     // A zero-scale model still costs scene traversal. Detach it until its mesh is visible again.
                     if (visibleModels.Remove(body.Id)) scene.Children.Remove(models[body.Id]);
                     continue;
                 }
+                if(body.Id=="SolGate"&&gateModel is null)
+                {
+                    SolarBodyAssets.Load("SolGate");gateModel=new();models[body.Id].Children.Add(gateModel.Model);
+                }
                 if (visibleModels.Add(body.Id)) scene.Children.Add(models[body.Id]);
-                double depth = body.Station ? 0 : Depth(Position(body));
+                double depth = body.Station&&body.Id!="SolGate" ? 0 : Depth(Position(body));
                 front = Math.Max(front, depth + extent); back = Math.Min(back, depth - extent);
-                double pitch = body.Id == "SolGate" ? 65 : body.Id == "Tycho" ? 40 : body.Id == "Medina" ? -18 : 0;
-                matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), pitch));
-                matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0), body.Station ? -25 + Math.Sin(time * .08) * 8 : 35 + time * 2));
+                if(body.Id=="SolGate")
+                {
+                    // Upright aperture, normal directed radially away from the Sun.
+                    // Apply the map's actual tilt/yaw to all three local axes.
+                    Vector3D View(Vector3D v)=>new(v.X*Math.Cos(yaw)-v.Y*Math.Sin(yaw),
+                        -(v.X*Math.Sin(yaw)+v.Y*Math.Cos(yaw))*ProjectionTilt+v.Z*Math.Sqrt(1-ProjectionTilt*ProjectionTilt),
+                        (v.X*Math.Sin(yaw)+v.Y*Math.Cos(yaw))*Math.Sqrt(1-ProjectionTilt*ProjectionTilt)+v.Z*ProjectionTilt);
+                    var x=View(new(-Math.Sin(body.Angle),Math.Cos(body.Angle),0));var y=View(new(0,0,1));var z=View(new(Math.Cos(body.Angle),Math.Sin(body.Angle),0));
+                    matrix=new(x.X,x.Y,x.Z,0,y.X,y.Y,y.Z,0,z.X,z.Y,z.Z,0,0,0,0,1);
+                    gateModel!.Update(time,(!CanAnimate||timeRate<=0)&&!moving&&drag is null);
+                }
+                else
+                {
+                    double pitch=body.Id=="Tycho"?40:body.Id=="Medina"?-18:0;
+                    matrix.Rotate(new Quaternion(new Vector3D(1,0,0),pitch));
+                    matrix.Rotate(new Quaternion(new Vector3D(0,1,0),body.Station?-25+Math.Sin(time*.08)*8:35+time*2));
+                }
                 if (body.Id == "Earth")
                 {
                     var direction = new Vector3D(sun.X - p.X, p.Y - sun.Y, Depth(new()) - Depth(Position(body)));
@@ -532,7 +583,7 @@ internal sealed class SolarSystemView : Grid
             foreach (var body in Bodies.OrderBy(b => Project(Position(b)).Y))
             {
                 var p = Project(Position(body)); var radius = BodyRadius(body);
-                hitTargets.Add((body, p, Math.Max(2, body.Id == "Saturn" ? radius * 2.41 : radius)));
+                hitTargets.Add((body, p, Math.Max(body.Id=="SolGate"?5:2, body.Id == "Saturn" ? radius * 2.41 : radius)));
                 if (p.X < -100 || p.Y < -70 || p.X > ActualWidth + 100 || p.Y > ActualHeight + 70) continue;
                 DrawBody(dc, body, p, radius);
             }
@@ -552,8 +603,10 @@ internal sealed class SolarSystemView : Grid
             DrawLighting(dc);
             var ring = Project(Position(Bodies.First(b => b.Id == "SolGate")));
             var medina = Project(Position(Bodies.First(b => b.Id == "Medina")));
-            if (ClipLine(ring, medina, new Rect(RenderSize), out var linkStart, out var linkEnd)) dc.DrawLine(Link, linkStart, linkEnd);
             var inset = MedinaArea(medina);
+            if ((!TrueScale||selected=="Sun")&&new Rect(RenderSize).Contains(ring)
+                &&inset.IntersectsWith(new Rect(RenderSize))
+                &&ClipLine(ring, new(inset.Left+28,inset.Top+28), new Rect(RenderSize), out var linkStart, out var linkEnd)) dc.DrawLine(Link, linkStart, linkEnd);
             if (inset.IntersectsWith(new Rect(RenderSize))) dc.DrawRoundedRectangle(RingSpaceBackground, RingSpaceBorder, inset, 4, 4);
         }
 
@@ -589,26 +642,19 @@ internal sealed class SolarSystemView : Grid
 
         private void DrawPhysicalPaths(DrawingContext dc)
         {
-            pathSegments = rejectedPathSegments = 0; maximumPathCoordinate = 0;
-            var clip = new Rect(RenderSize);
-            foreach (var body in Bodies.Where(b => b.Planet || b.Parent is not null && (b.Id == selected || b.Parent == selected)))
+            pathSegments = 0; maximumPathCoordinate = 0;
+            foreach (var body in PathBodies())
             {
-                if (!trails.TryGetValue(body.Id, out var path)) trails.Add(body.Id, path = ephemeris!.Trail(body.Id, jd));
-                var parent = body.Parent is null ? new Vector3D() : (Vector3D)ephemeris!.Position(body.Parent, jd);
+                var path=ProjectedPath(body);
                 var geometry = new StreamGeometry();
                 using (var context = geometry.Open())
                 {
-                    var previous = Project((Point3D)(((Vector3D)path[0] + parent) / 32));
-                    for (int i = 1; i < path.Length; i++)
+                    Point? previous=null;
+                    foreach(var segment in path)
                     {
-                        var projected = Project((Point3D)(((Vector3D)path[i] + parent) / 32));
-                        if (ClipLine(previous, projected, clip, out var a, out var b))
-                        {
-                            context.BeginFigure(a, false, false); context.LineTo(b, true, false); pathSegments++;
-                            maximumPathCoordinate = Math.Max(maximumPathCoordinate, Math.Max(Math.Max(a.X, a.Y), Math.Max(b.X, b.Y)));
-                        }
-                        else rejectedPathSegments++;
-                        previous = projected;
+                        if(previous is null||(previous.Value-segment.A).Length>.001)context.BeginFigure(segment.A,false,false);
+                        context.LineTo(segment.B,true,false);pathSegments++;previous=segment.B;
+                        maximumPathCoordinate=Math.Max(maximumPathCoordinate,Math.Max(Math.Max(segment.A.X,segment.A.Y),Math.Max(segment.B.X,segment.B.Y)));
                     }
                 }
                 if (!geometry.IsEmpty()) { geometry.Freeze(); dc.DrawGeometry(null, body.Id == selected ? OrbitBright : Orbit, geometry); }
@@ -622,6 +668,12 @@ internal sealed class SolarSystemView : Grid
             string label = au < .01 ? (au * SolarEphemeris.AuKm).ToString("N0", CultureInfo.InvariantCulture) + " KM"
                 : au.ToString("0.###", CultureInfo.InvariantCulture) + " AU";
             DrawText(dc, label, new(start.X, start.Y - 14), 8, FaintInk);
+        }
+        private IEnumerable<Body> PathBodies()=>Bodies.Where(b=>b.Planet||b.Parent is not null&&(b.Id==selected||b.Parent==selected)||b.Id==selected&&!b.Station&&b.Id!="Sun");
+        private SolarOrbitPath.Segment[] ProjectedPath(Body body)
+        {
+            var parent=body.Parent is null?new Vector3D():(Vector3D)ephemeris!.Position(body.Parent,jd);
+            return SolarOrbitPath.Project(ephemeris!.OrbitSpans(body.Id,jd),p=>Project((Point3D)(((Vector3D)p+parent)/32)),new Rect(RenderSize));
         }
 
         private static bool ClipLine(Point a, Point b, Rect view, out Point start, out Point end)
@@ -643,9 +695,10 @@ internal sealed class SolarSystemView : Grid
             return true;
         }
 
-        // Belter's corona sizes/strengths and terrestrial atmosphere colours; native gas-giant rims.
-        private static readonly RadialGradientBrush SunCorona = Halo(Color.FromRgb(255, 217, 160), .55);
-        private static readonly RadialGradientBrush SunOuter = Halo(Color.FromRgb(255, 217, 160), .22);
+        // Bright white-gold solar bloom; preserve the existing atmosphere colours.
+        private static readonly RadialGradientBrush SunCorona = Halo(Color.FromRgb(255, 242, 207), .92);
+        private static readonly RadialGradientBrush SunOuter = Halo(Color.FromRgb(255, 205, 124), .36);
+        private static readonly RadialGradientBrush SunBloom = Halo(Color.FromRgb(255, 251, 235), .95);
         private static readonly Dictionary<string, RadialGradientBrush> Atmospheres = new()
         {
             ["Earth"] = Rim(Color.FromRgb(106, 184, 255), .7), ["Venus"] = Rim(Color.FromRgb(232, 200, 138), .55),
@@ -672,11 +725,13 @@ internal sealed class SolarSystemView : Grid
             foreach (var body in Bodies.Where(b => b.Id == "Sun" || Atmospheres.ContainsKey(b.Id)))
             {
                 var point = Project(Position(body)); double r = BodyRadius(body);
+                if(body.Id=="Sun")r=Math.Max(r,1.8); // Sub-pixel star bloom is a display marker, never a physical radius.
                 if (point.X + r * 8 < 0 || point.Y + r * 8 < 0 || point.X - r * 8 > ActualWidth || point.Y - r * 8 > ActualHeight) continue;
                 if (body.Id == "Sun")
                 {
                     DrawGlow(dc, SunOuter, point, r * 7.5);
                     DrawGlow(dc, SunCorona, point, r * 3.2);
+                    DrawGlow(dc, SunBloom, point, r*1.45);
                 }
                 else if (r > 1.5) DrawGlow(dc, Atmospheres[body.Id], point, r * 1.12);
             }
@@ -701,17 +756,22 @@ internal sealed class SolarSystemView : Grid
                 DrawText(dc, "NAUVOO / BEHEMOTH", new Point(area.Left + 55, area.Top + 36), 7, FaintInk);
                 labelBounds.Add(area); labelTargets.Add((body, area)); return;
             }
-            if (active && r < Math.Max(ActualWidth, ActualHeight) * 2)
+            if (active && body.Id!="SolGate" && r < Math.Max(ActualWidth, ActualHeight) * 2)
             {
                 dc.DrawEllipse(null, Highlight, p, r + 6, r + 6);
                 dc.DrawLine(Highlight, new Point(p.X - r - 12, p.Y), new Point(p.X - r - 4, p.Y));
                 dc.DrawLine(Highlight, new Point(p.X + r + 4, p.Y), new Point(p.X + r + 12, p.Y));
             }
-            if (TrueScale && !body.Station && r < 1.5) dc.DrawEllipse(body.Id == "Sun" ? Amber : FaintInk, null, p, 1.5, 1.5);
+            if (TrueScale && !body.Station && r < 1.5) dc.DrawEllipse(body.Id=="Sun"?SunWhite:markerInk[body.Id], null, p,body.Id=="Sun"?2.5:1.8,body.Id=="Sun"?2.5:1.8);
             if (body.Id == "SolGate")
             {
-                // Preserve the original diagram's legible portal marker at small sizes.
-                dc.DrawEllipse(null, OrbitBright, p, r * .96, r * .96);
+                if(r<8)dc.DrawEllipse(null,active?Highlight:OrbitBright,p,4,4);
+                if(active)
+                {
+                    double edge=Math.Max(r,4)+6;
+                    dc.DrawLine(Highlight,new(p.X-edge-7,p.Y),new(p.X-edge,p.Y));
+                    dc.DrawLine(Highlight,new(p.X+edge,p.Y),new(p.X+edge+7,p.Y));
+                }
             }
         }
 
@@ -898,6 +958,9 @@ internal sealed class SolarSystemView : Grid
                         || ((Vector3D)Position(body) * 32 - (Vector3D)ephemeris.Position(body.Id, jd)).Length > 1e-10)
                         throw new InvalidOperationException("True-scale geometry diverged from NASA data: " + body.Id);
                 }
+                // Motion needs an interior epoch even when this diagnostic was
+                // entered while displaying the last bundled day.
+                jd=(ephemeris.StartJd+ephemeris.StopJd)/2;UpdateEphemeris();
                 var gateBefore = Position(Bodies.First(b => b.Id == "SolGate"));
                 foreach (var moon in Bodies.Where(b => b.Parent is not null))
                 {
@@ -914,7 +977,7 @@ internal sealed class SolarSystemView : Grid
                 selected = previous.Selected; motion = previous.Motion; moving = previous.Moving;
                 zoom = previous.Zoom; targetZoom = previous.TargetZoom; pan = previous.Pan; targetPan = previous.TargetPan;
                 yaw = previous.Yaw; tilt = previous.Tilt; checking = false;
-                TrueScale = previous.TrueScale; jd = previous.Jd; UpdateEphemeris(); trails.Clear();
+                TrueScale = previous.TrueScale; jd = previous.Jd; UpdateEphemeris();
                 UpdateTimer(); Refresh();
             }
         }
@@ -954,7 +1017,33 @@ internal sealed class SolarSystemView : Grid
         {
             SetMotion(false);SetTimeRate(0);time=0;
             jd=Math.Clamp(SolarEphemeris.JulianDate(new DateTimeOffset(2026,10,20,12,0,0,TimeSpan.Zero)),ephemeris!.StartJd,ephemeris.StopJd);
-            UpdateEphemeris();trails.Clear();SetTrueScale(trueScale);FocusBody(body,false);Refresh();
+            UpdateEphemeris();SetTrueScale(trueScale);FocusBody(body,false);Refresh();
+        }
+        internal void PrepareTrueScaleReview(string body,double magnification)
+        {PrepareEfficiencyFrame(body,true);ChangeZoom(magnification,false);}
+        internal void SetEpochForReview(double fraction)
+        {
+            if(!double.IsFinite(fraction)||fraction<0||fraction>1)throw new ArgumentOutOfRangeException(nameof(fraction));
+            jd=ephemeris!.StartJd+(ephemeris.StopJd-ephemeris.StartJd)*fraction;time=fraction*100;
+            UpdateEphemeris();FocusBody(selected,false);Refresh();
+        }
+        internal void RotateForReview(double azimuth,double elevation)
+        {yaw+=azimuth;tilt=Math.Clamp(tilt+elevation,.03,.95);Refresh();}
+        internal void ZoomForReview(double factor)=>ChangeZoom(factor,false);
+        internal void SetSolarLightForReview(bool enabled){sunlight.Color=enabled?SolarLight:Colors.Black;Refresh();}
+        internal Point SunCenterForReview=>Project(new());
+        internal object PathAlignmentForReview()
+        {
+            var result=new List<object>();
+            foreach(var body in PathBodies())
+            {
+                var path=ProjectedPath(body);
+                var point=Project(Position(body));double distance=double.PositiveInfinity;
+                foreach(var segment in path)distance=Math.Min(distance,SolarOrbitPath.Distance(point,segment.A,segment.B));
+                // Off-screen curves may be omitted entirely; selected bodies are centred.
+                result.Add(new{body.Id,Selected=body.Id==selected,DistancePixels=double.IsFinite(distance)?(double?)distance:null,Segments=path.Length});
+            }
+            return result;
         }
         internal object Diagnose() => new
         {
@@ -964,18 +1053,22 @@ internal sealed class SolarSystemView : Grid
             starPaints,orbitPaints,staticCacheScale=(starLayer.CacheMode as BitmapCache)?.RenderAtScale,
             cadence=moving?"camera-transition":drag is not null?"direct-pointer":timeRate>0?"orbital-animation":"paused",
             nasaDataAvailable = HasEphemeris, simulationUtc = UtcLabel, timeRate, julianDateTdb = jd,
-            earthNightLights = earthLighting.Diagnose(), sunCoronaLayers = 2, solarPointLight = true,
+            earthNightLights = earthLighting.Diagnose(), sunCoronaLayers = 3, solarPointLight = true,
+            solarConstantAttenuation=sunlight.ConstantAttenuation,solarPointColour=sunlight.Color.ToString(),sunPhysicalRadiusPixels=BodyRadius(Bodies.First(b=>b.Id=="Sun")),
+            milkyWayOpacity=galaxy.Opacity,milkyWayDecodedWidth=(galaxy.Source as System.Windows.Media.Imaging.BitmapSource)?.PixelWidth,
             moonPositions = Bodies.Where(b => b.Parent is not null).Select(b => new { b.Id, b.Parent, Position = Position(b) }),
             labelOverlaps = labelBounds.SelectMany((a, i) => labelBounds.Skip(i + 1).Select(b => a.IntersectsWith(b))).Count(overlap => overlap),
             bodyLabelCount = labelTargets.Count(h => h.Body.Id != "Medina"),
             attachedModels = visibleModels.Count, attachedBodyIds = visibleModels.OrderBy(id => id).ToArray(),
-            skippedModels = Bodies.Length - visibleModels.Count, pathSegments, rejectedPathSegments, maximumPathCoordinate,
+            skippedModels = Bodies.Length - visibleModels.Count, pathSegments, maximumPathCoordinate,
             cameraIntervalMs = efficient?(double?)timer.Interval.TotalMilliseconds:null,
             frameLimit=efficient?(int?)(moving?60:10):null,graphicsMode=efficient?"Efficient":"FullFidelity",
             selectedRadiusPixels = BodyRadius(Bodies.First(b => b.Id == selected)),
             gateOutsideUranusInsideNeptune = Bodies.First(b => b.Id == "SolGate").Radius > Bodies.First(b => b.Id == "Uranus").Radius
                 && Bodies.First(b => b.Id == "SolGate").Radius < Bodies.First(b => b.Id == "Neptune").Radius,
-            assets = SolarBodyAssets.Sources
+            assets = SolarBodyAssets.Sources,
+            solRing=gateModel?.Diagnose(),solRingDetailedModelAttached=visibleModels.Contains("SolGate"),solRingIllustrativeDiameterKm=1000,
+            medinaInsetFullyVisible=new Rect(RenderSize).Contains(MedinaArea(Project(Position(Bodies.First(b=>b.Id=="Medina")))))
         };
         private sealed class Overlay(MapSurface owner, bool foreground) : FrameworkElement
         {

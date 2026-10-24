@@ -1,0 +1,34 @@
+{
+  "version": "1.8.12",
+  "ownerInstruction": "Prepared 1.8.12 changes + Canterbury",
+  "scope": "Owner-authorized shared 3D exhaust, plume-only HDR bloom and shadow handling; accepted Anubis geometry, material recipe, emissive brightness and source anchors retained.",
+  "candidate_sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+  "original_receipt_sha256": "356e38ef373f2489ba5be71d648cf793654a0708afb9ef22dd6d46d1b2455582",
+  "runtime_files": [
+    {
+      "path": "FleetStudio/ship-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "6f0549d876154d2aab3e6daf618a82b48c4ee3e151c9bffa45f00e5d56e486f3"
+    },
+    {
+      "path": "FleetStudio/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    },
+    {
+      "path": "FleetStudio/review.js",
+      "previous_sha256": "9d634a65c3d47098a54382734c90f9afdd3b043b0988b48f66cc2a5f82e46458",
+      "sha256": "3704788d2047a620403ec2cf66beeebe3911f62288bba42e5f69c0ca43a1a1c1"
+    },
+    {
+      "path": "Assets/FleetViewer/rocinante-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "6f0549d876154d2aab3e6daf618a82b48c4ee3e151c9bffa45f00e5d56e486f3"
+    },
+    {
+      "path": "Assets/FleetViewer/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    }
+  ]
+}

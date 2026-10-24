@@ -1,0 +1,11 @@
+{
+  "generation": "surface-light-08",
+  "modelSha256": "10744079e7ee154daac7345bac020ca6f0bf6c256032c9636244baa461333778",
+  "blendSha256": "05327285e4f3b0a09ddae357efbd7b6f730e946c79b35279a891fc9ae1e3074c",
+  "author": "Original X890 reconstruction",
+  "reference": "Chris Danelon production turntable; owner-supplied OBS recording",
+  "referenceUrl": "https://www.youtube.com/watch?v=vefkFrWLuNI&t=131s",
+  "ownerAuthority": "Owner confirmed pass08 and requested Sensor inclusion on2026-10-22",
+  "limits": "Dimensions, hidden fittings and photometry are authored fits; eight repeated lamps is an inferred count",
+  "originalStudyPreserved": true
+}

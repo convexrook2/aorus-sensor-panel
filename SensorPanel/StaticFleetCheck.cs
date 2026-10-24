@@ -11,19 +11,48 @@ internal sealed partial class PanelWindow
     // Explicit visible saved-data check; no extra work in ordinary monitoring.
     private async Task CheckStaticFleetAsync()
     {
-        string output=Path.Combine(PanelPaths.Artifacts,"showcase-rotation-check");Directory.CreateDirectory(output);
-        var rows=new List<object>();object? lastCadence=null;
+        bool tiltReview=Environment.GetCommandLineArgs().Contains("--check-showcase-tilt");
+        string output=Path.Combine(PanelPaths.Artifacts,tiltReview?"showcase-tilt-check":"showcase-rotation-check");Directory.CreateDirectory(output);
+        var rows=new List<object>();var tiltRows=new List<object>();object? lastCadence=null;
         try
         {
             if(previewPath is null||!windowed||shipPanel is null)throw new InvalidOperationException("Showcase review requires a windowed saved-data preview.");
             var readings=text.ToDictionary(pair=>pair.Key,pair=>pair.Value.Text);
             var originalGraphics=graphicsMode;ApplyGraphicsMode(ExpanseGraphicsMode.Efficient);
             shipPanel.SetShowcaseRotation(true);
-            foreach(string id in new[]{"Pella","Rocinante","Anubis"})
+            foreach(string id in tiltReview?new[]{"Pella","Arboghast","Rocinante","Anubis"}:new[]{"Pella","Rocinante","Anubis"})
             {
                 theme=PanelTheme.Resolve(id);ApplyTheme();Width=1280;Height=800;UpdateLayout();
                 shipPanel.CheckRotationControl();shipPanel.CheckBindings();
                 var viewport=shipPanel.ShipViewport;await viewport.WaitForReadyAsync();await Task.Delay(400);
+                if(tiltReview && id is "Pella" or "Arboghast")
+                {
+                    viewport.Reset();await Task.Delay(250);
+                    var samples=new List<JsonElement>();bool heldTilt=false;
+                    await viewport.StartMotionRecordingAsync();
+                    for(int sample=0;sample<60;sample++)
+                    {
+                        await Task.Delay(250);var state=await viewport.DiagnoseAsync();samples.Add(state);
+                        double elapsed=state.GetProperty("showcaseMotion").GetProperty("elapsed").GetDouble();
+                        if(!heldTilt && elapsed>=7.5)
+                        {
+                            SaveFrame(id+"-tilted");shipPanel.ToggleRotationControlForReview();await Task.Delay(300);
+                            var held=await viewport.DiagnoseAsync();await Task.Delay(500);var stillTilt=await viewport.DiagnoseAsync();
+                            if(held.GetProperty("rotationRadians").GetDouble()!=stillTilt.GetProperty("rotationRadians").GetDouble()
+                                ||held.GetProperty("framing").GetProperty("cameraPosition").GetRawText()!=stillTilt.GetProperty("framing").GetProperty("cameraPosition").GetRawText()
+                                ||held.GetProperty("frames").GetInt64()!=stillTilt.GetProperty("frames").GetInt64())
+                                throw new InvalidOperationException("Pause did not retain both rotation and tilt: "+id);
+                            shipPanel.ToggleRotationControlForReview();heldTilt=true;
+                        }
+                    }
+                    await viewport.SaveMotionRecordingAsync(Path.Combine(output,id+"-turn-and-tilt.webm"));
+                    bool tilted=samples.Any(x=>x.GetProperty("framing").GetProperty("cameraPosition")[1].GetDouble()<-.5);
+                    var returned=samples.Last();
+                    if(!heldTilt||!tilted||returned.GetProperty("showcaseMotion").GetProperty("elapsed").GetDouble()<13
+                        ||Math.Abs(returned.GetProperty("framing").GetProperty("cameraPosition")[1].GetDouble()-3.2)>.00001)
+                        throw new InvalidOperationException("Showcase did not tilt briefly and return to its normal view: "+id);
+                    SaveFrame(id+"-returned");tiltRows.Add(new{Ship=id,Tilted=tilted,PausedWhileTilted=heldTilt,Returned=true,Samples=samples});
+                }
                 var before=await viewport.DiagnoseAsync();await Task.Delay(2200);var rotating=await viewport.DiagnoseAsync();
                 double animationSeconds=rotating.GetProperty("animationSeconds").GetDouble()-before.GetProperty("animationSeconds").GetDouble();
                 double drawRate=animationSeconds>0?(rotating.GetProperty("frames").GetInt64()-before.GetProperty("frames").GetInt64())/animationSeconds:0;
@@ -41,6 +70,7 @@ internal sealed partial class PanelWindow
                 var paused=await viewport.DiagnoseAsync();await Task.Delay(700);var still=await viewport.DiagnoseAsync();
                 if(shipPanel.ShowcaseRotationEnabled||still.GetProperty("motion").GetBoolean()
                     ||still.GetProperty("frames").GetInt64()!=paused.GetProperty("frames").GetInt64()
+                    ||still.GetProperty("framing").GetProperty("cameraPosition").GetRawText()!=paused.GetProperty("framing").GetProperty("cameraPosition").GetRawText()
                     ||still.GetProperty("rotationRadians").GetDouble()!=paused.GetProperty("rotationRadians").GetDouble())
                     throw new InvalidOperationException("The showcase pause did not hold its exact angle: "+id);
                 SaveFrame(id+"-paused");
@@ -71,11 +101,11 @@ internal sealed partial class PanelWindow
                 throw new InvalidOperationException("Showcase controls changed sensor readings.");
             theme=PanelTheme.Resolve("Rocinante");ApplyTheme();shipPanel.SetShowcaseRotation(true);ApplyGraphicsMode(originalGraphics);UpdateLayout();SaveDisplayState();
             File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Passed=true,SavedData=true,ProcessId=Environment.ProcessId,
-                Scope="Visible native saved-data rotation, direct pause/resume control, exact paused angle, shared holotable viewport, three layouts, inactive stop and disposal on leaving ship themes. Not LIVE GPU or installation proof.",Rows=rows},JsonOptions));
+                Scope="Visible native saved-data turn/tilt/return, direct pause/resume control, exact paused view, shared holotable viewport, three layouts, inactive stop and disposal on leaving ship themes. Not LIVE GPU or installation proof.",Rows=rows,TiltRows=tiltRows},JsonOptions));
         }
         catch(Exception ex)
         {
-            File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Passed=false,Error=ex.ToString(),LastCadence=lastCadence,Rows=rows},JsonOptions));
+            File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Passed=false,Error=ex.ToString(),LastCadence=lastCadence,Rows=rows,TiltRows=tiltRows},JsonOptions));
             Environment.ExitCode=1;
         }
         finally {if(!Environment.GetCommandLineArgs().Contains("--leave-review-open")||Environment.ExitCode!=0)Close();}

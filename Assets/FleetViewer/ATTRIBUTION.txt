@@ -37,8 +37,8 @@ https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e
 Morrigan: Original reconstruction from Ryan Begemann / Mallacore fan blueprint and owner-provided physical-kit / Azzecco shape views. Scipio Africanus livery study; no reference pixels in textures.
 https://rjb-mallacore.artstation.com/projects/d0bQ0w
 
-Canterbury: Authored for this project; independent fan approximation.
-https://deningart.artstation.com/projects/XP8Vl
+Canterbury: Original X890 fan reconstruction after Ryan Dening concepts and Chris Danelon production views; owner-accepted finish14. No production mesh acquired.
+https://www.youtube.com/watch?v=a3lL1bhpl9c&t=11s
 
 Knight: Authored for this project; independent fan approximation.
 https://deningart.artstation.com/projects/QaqDE
@@ -64,8 +64,8 @@ https://deningart.artstation.com/projects/RyJwRm
 Hammurabi: Authored for this project; independent fan approximation.
 https://deningart.artstation.com/projects/RyJwRm
 
-Arboghast: Authored for this project; independent fan approximation.
-https://karlcrosby.artstation.com/projects/1ndxoZ
+Arboghast: Original X890 fan reconstruction after Chris Danelon production turntable references; owner-confirmed pass08. No production mesh acquired.
+https://www.youtube.com/watch?v=vefkFrWLuNI&t=131s
 
 SolRing: Authored reconstruction using TV S03E07, S03E08 and S04 exterior references. Not an official production mesh.
 https://expanse.fandom.com/wiki/Sol_gate

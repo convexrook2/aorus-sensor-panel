@@ -1,0 +1,18 @@
+{
+  "revision": "finish14",
+  "acceptedAt": "2026-10-24T02:25:32.118316+00:00",
+  "owner": "Lennon Bromfield",
+  "ownerInstruction": "notperfrect but good enough, accepted until we are in the fture with better AI, no disrspect time for a release.",
+  "releaseScope": "Prepared 1.8.12 changes + Canterbury",
+  "modelSha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
+  "blendSha256": "7d7d42777e8c3b62d49b0eb74915cba1106918a177b1b74adb18b0cfff4a1a7a",
+  "acceptance": "Current model accepted as sufficient; no claim of exact production geometry.",
+  "preserved": [
+    "accepted entrance",
+    "raised shroud and stepped surface relief",
+    "six aft cylinders",
+    "centerline spherical reactor with radial attachments",
+    "nine physical drive outlets"
+  ],
+  "limitations": "Hidden dimensions and fine fittings remain authored estimates; model acceptance is separate from native/package/release verification."
+}
