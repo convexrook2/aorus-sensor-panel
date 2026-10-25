@@ -21,7 +21,7 @@ internal sealed partial class PanelWindow
             if(previewPath is null||!windowed||shipPanel is null)
                 throw new InvalidOperationException("Native pixel check requires a windowed saved-data preview.");
             if(protect&&!Rookline.AssetProtection.AppAssets.Protected)throw new InvalidOperationException("Protected check requires assets.rl.");
-            foreach(string selected in hologramReview?new[]{"Pella","Arboghast"}:protect?new[]{"Pella","Rocinante"}:new[]{theme.Id})
+            foreach(string selected in hologramReview?new[]{"Pella","Arboghast"}:protect?new[]{"Pella","Scirocco","Rocinante"}:new[]{theme.Id})
             {
                 if(protect||hologramReview){shipPanel.CloseHolotable();theme=PanelTheme.Resolve(selected);ApplyTheme();}
                 foreach(var size in protect?new[]{new Size(1920,1080)}:new[]{new Size(1024,576),new Size(1920,1080)})
@@ -145,8 +145,8 @@ internal sealed partial class PanelWindow
         static void CheckExhaust(JsonElement renderer)
         {
             string? id=renderer.GetProperty("id").GetString();
-            if(id is not ("Arboghast" or "Knight"))return;
-            int drives=id=="Knight"?3:4,lamps=id=="Knight"?17:8;
+            if(id is not ("Arboghast" or "Knight" or "Pella" or "Scirocco"))return;
+            int drives=id=="Knight"?3:4,lamps=id switch { "Knight"=>17,"Pella"=>34,"Scirocco"=>14,_=>8 };
             var effect=renderer.GetProperty("engineEffects");
             if(effect.ValueKind!=JsonValueKind.Object||effect.GetProperty("engineCount").GetInt32()!=drives
                 ||effect.GetProperty("visiblePlumes").GetInt32()!=drives||!effect.GetProperty("burning").GetBoolean()

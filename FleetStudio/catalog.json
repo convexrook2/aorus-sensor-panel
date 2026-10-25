@@ -115,12 +115,12 @@
   },
   {
     "id": "Pella",
-    "title": "Pella / v26 thin layered armour",
+    "title": "Pella / accepted v27",
     "credit": "Geometry: Martin Taichl (@Martin), CC BY 4.0. Measured coating reference: Jakub.Vildomec MCRN Tachi / Rocinante fan model, CC BY 4.0. Adapted for this project.",
-    "note": "Thin overlapping outer skins on four engine pods and two forward armour fields, with the original emblems raised onto the coating. Smooth dark finish, recessed flat backing, hatches, lamps and four drives retained. Reference-guided panel interpretation; hidden construction is not production-certified. Nine additional localized practical lights at existing pod-edge and bow-service fixtures, plus a tiny red marker on the second existing antenna. The original 25 lights, four blue drives, hull, layered armour, maps and emblems remain unchanged. Exact fixture brightness is a show-reference interpretation, not a production lighting blueprint.",
+    "note": "Original source hull relief restored on the forebody, four pods, frame and armour components. Occluding smooth skins removed; existing Free Navy emblems conform to the restored surfaces. All 34 practical lights, four drive assemblies, recessed backing and material maps retained. STL raised lettering is preserved as source geometry. Credited fan mesh; not an official production asset.",
     "referenceUrl": "https://kelvintam.artstation.com/projects/v2358E",
     "sourceUrl": "https://www.printables.com/model/468982-raptor-class-light-cruiser-from-the-expanse",
-    "triangles": 1023503,
+    "triangles": 1388395,
     "materials": 21,
     "images": 16,
     "maps": {
@@ -130,20 +130,20 @@
       "metalRough": 6,
       "emissive": 0
     },
-    "model": "models/Pella-2a6126d5a157.glb.gz",
-    "sha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
-    "beforeModel": "models/Pella-68c816c89a33.glb.gz",
-    "beforeSha256": "d33064c102a2bd4529a34ea3315ce6e4cb394bff4de4f9ee5c9a7aee7603b83d",
+    "model": "models/Pella-df080b0037ce.glb.gz",
+    "sha256": "df080b0037ceb485ad4c8005e63c1a4b471171c60bf276ae3ea8ef365cce6d78",
+    "beforeModel": "models/Pella-2a6126d5a157.glb.gz",
+    "beforeSha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
     "beforeInfo": {
-      "triangles": 1022027,
+      "triangles": 1023503,
       "materials": 21
     },
     "coatingReferenceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
     "coatingReferenceCredit": "Jakub.Vildomec; CC BY 4.0",
     "coatingLicenseUrl": "https://creativecommons.org/licenses/by/4.0/",
     "beforeLabel": "Before finishing pass",
-    "beforeTitle": "Pella / recessed flat backing",
-    "beforeNote": "Recessed flat-faced internal backing replaces the protruding rounded filler. The smooth dark outer armour, hatches, two forward emblems, ship lights and four engines are unchanged. Reference-guided fan reconstruction; stealth panel layering remains a separate finishing pass.",
+    "beforeTitle": "Pella / previous v26",
+    "beforeNote": "Previous Pella before the accepted source-relief restoration.",
     "relatedSources": [
       {
         "label": "Kelvin Tam / Rocket Science production gallery (all exterior views)",
@@ -158,7 +158,23 @@
         "url": "https://thirupathinomula.artstation.com/projects/y4QPKK"
       }
     ],
-    "references": []
+    "renderMaps": {
+      "colour": 3,
+      "normal": 3,
+      "occlusion": 0,
+      "metalRough": 3,
+      "emissive": 0
+    },
+    "sourceBytes": 154541128,
+    "compressedBytes": 45174096,
+    "compressedSha256": "91319ce95071556a2af81f052ddb879950e9c8587badd33e7b519aa0fab7c7df",
+    "compression": "gzip-lossless",
+    "sourceLights": 34,
+    "lightUnitScale": 0.0014641288433382138,
+    "localLightShadows": true,
+    "editableSource": "Assets/Models/Source/Pella-v27/Pella.blend",
+    "adoption": "Owner accepted and requested Fleet Studio and SensorPanel integration on 2026-10-24",
+    "beforeEngineId": "PellaBeforeV27"
   },
   {
     "id": "Razorback",
@@ -615,24 +631,40 @@
   },
   {
     "id": "Scirocco",
-    "title": "MCRN Scirocco / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier project-authored class model. Its native geometry matches Hammurabi; production turnarounds are references for a future refinement.",
-    "referenceUrl": "https://deningart.artstation.com/projects/RyJwRm",
-    "triangles": 18958,
-    "materials": 9,
-    "images": 1,
+    "title": "Scirocco / accepted paint02",
+    "credit": "cg / Printables 477957 / CC BY 4.0; X890 materials, markings and work lights. Visual references: Ryan Dening / North Front and Axiom VFX.",
+    "note": "Owner-selected STL hull and relief preserved. Measured-face paint, rectangular armour tiles and fourteen work lights; four source-fitted drives. MCRN is registered to the dorsal roof and SCIROCCO to the narrow observed side field. Recesses have separate material masks. Fine tile pattern and wear are reconstructed; unverified opposite-side text and engine identifiers are omitted. Owner-accepted paint02; original selected hull geometry retained.",
+    "referenceUrl": "https://www.printables.com/model/477957-mcrn-scirocco-class-assault-cruiser-from-the-expan",
+    "triangles": 460489,
+    "materials": 18,
+    "images": 15,
     "maps": {
-      "colour": 1,
-      "normal": 0,
+      "colour": 13,
+      "normal": 13,
       "occlusion": 0,
-      "metalRough": 0,
+      "metalRough": 13,
       "emissive": 0
     },
-    "model": "models/Scirocco-b13bbd793799.glb.gz",
-    "sha256": "2ef834cc3d3f239a4182067bd3fdc7f0e708cae81a7a1cc38bb1167ef6e73741",
+    "model": "models/Scirocco-7cbe6ab1719d.glb.gz",
+    "sha256": "7cbe6ab1719ded37da2de370a51072ccc9c252b82f26097c7b8b145659563320",
     "relatedSources": [],
-    "references": []
+    "sourceUrl": "https://www.printables.com/model/477957-mcrn-scirocco-class-assault-cruiser-from-the-expan",
+    "renderMaps": {
+      "colour": 13,
+      "normal": 13,
+      "occlusion": 0,
+      "metalRough": 13,
+      "emissive": 0
+    },
+    "compressedSha256": "42f3dabf6ce74967038b6ade22e1173d8f481627595c81e677709859ccdacc20",
+    "sourceBytes": 102827548,
+    "compressedBytes": 47243915,
+    "compression": "gzip-lossless",
+    "sourceLights": 14,
+    "lightUnitScale": 0.0014641288433382138,
+    "localLightShadows": true,
+    "editableSource": "Assets/Models/Source/Scirocco-paint02/Scirocco.blend",
+    "adoption": "Owner accepted and requested Fleet Studio and SensorPanel integration on 2026-10-24"
   },
   {
     "id": "Hammurabi",

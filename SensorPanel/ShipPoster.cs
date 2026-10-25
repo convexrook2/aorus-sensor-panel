@@ -13,6 +13,7 @@ namespace SensorPanel;
 internal sealed class ShipPoster : Image
 {
     private static (string Id,BitmapSource Image,JsonElement Receipt)? cached;
+    internal static void ReleaseCache()=>cached=null;
     private readonly string ship;
     private readonly JsonElement receipt;
     internal ShipPoster(string id)

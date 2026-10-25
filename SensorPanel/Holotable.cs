@@ -187,6 +187,7 @@ internal sealed class Holotable : Grid
         "Razorback"=>"OWNER-SUPPLIED V2","Rocinante"=>"MARTIN TAICHL / CC BY 4.0",
         "Truman" or "AgathaKing"=>"MOHAMEDHUSSIEN",
         "Pella"=>"MARTIN TAICHL / CC BY 4.0 · ADAPTED",
+        "Scirocco"=>"CG / PRINTABLES 477957 / CC BY 4.0 · ADAPTED",
         "Anubis"=>"MARTIN TAICHL / CC BY 4.0 · ADAPTED",
         "Donnager" or "Dropship" or "Epstein"=>"CHRIS KUHN / OWLSTRAW",
         _=>"ORIGINAL FAN MODEL"

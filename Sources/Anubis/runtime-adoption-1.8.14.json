@@ -1,0 +1,35 @@
+{
+  "version": "1.8.14",
+  "ownerInstruction": "Accepted updated fleet and sensor panel with the updated ships, both Pella and Scirocco; continue to the next release step.",
+  "scope": "Pella and Scirocco registration and light-review controls added to the shared viewer. Existing Anubis geometry, materials, lighting, anchors and shared effect shaders remain unchanged.",
+  "candidate_sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+  "original_receipt_sha256": "356e38ef373f2489ba5be71d648cf793654a0708afb9ef22dd6d46d1b2455582",
+  "runtime_files": [
+    {
+      "path": "FleetStudio/ship-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "7ca716d60998304148ebb72725dee0ebe4a1e71fccc75e8d0353279712006552"
+    },
+    {
+      "path": "FleetStudio/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    },
+    {
+      "path": "FleetStudio/review.js",
+      "previous_sha256": "9d634a65c3d47098a54382734c90f9afdd3b043b0988b48f66cc2a5f82e46458",
+      "sha256": "1a609387d6a37d86af62d018e2191b46172a19603f0815fc158f649f67da67f4"
+    },
+    {
+      "path": "Assets/FleetViewer/rocinante-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "7ca716d60998304148ebb72725dee0ebe4a1e71fccc75e8d0353279712006552"
+    },
+    {
+      "path": "Assets/FleetViewer/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    }
+  ],
+  "previousRuntimeReceiptSha256": "78bc93cd015bd45e33959c7c01aa898329a3d1d4a3ccf3c337076065ef11b856"
+}

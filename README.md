@@ -18,6 +18,23 @@ The released 1.8.12 Canterbury finish14, Arboghast pass08, exhaust, holotable
 and Sol-navigation changes remain intact. Further geometry work on these
 accepted ships is stopped and ice is deferred.
 
+The **1.8.14 release candidate** includes the accepted Pella/Scirocco update below
+and an AORUS memory correction validated locally:
+optional scene disposal, bounded lossless animation buffers, lighter discovery
+and settings allocation, game-triggered FPS capture, reuse of compiled code,
+and AORUS-only garbage collection at idle. With LMU running, the six-minute LIVE
+check peaked at 91.94 MB across the app and its helpers, and 88.55 MB in the tray
+after returning from Expanse. See the [memory evidence and sampling scope](docs/AORUS-MEMORY.md).
+It has not replaced the installed 1.8.13 app.
+
+The owner-accepted **Pella v27** and **Scirocco paint02** are integrated into
+both source bundles with matching native portraits, their 34/14 source lights
+and four registered drives each. The per-user Fleet Studio desktop copy was
+refreshed and its encrypted package rendered successfully. SensorPanel's local
+encrypted package passed the saved-data showcase/holotable check; the installed
+monitor and public release remain unchanged. See the
+[October 24 integration record](docs/PELLA-SCIROCCO-INTEGRATION-20261024.md).
+
 ## Open Fleet Studio
 
 Fleet Studio is a development and reference-review tool. Sensor-panel releases
@@ -316,8 +333,12 @@ markings, red lettering, a bluish-grey optical finish and the corrected blue-whi
 drive exhaust. Its exact full model and editable source are preserved; see
 [finished Roci baseline](docs/ROCINANTE-S6-FINISHED.md).
 
-Agatha King has six illuminated drive throats. Pella has thin layered armour
-over its smooth dark finish and recessed backing. These remain credited fan
+Agatha King has six illuminated drive throats. Pella's October 24 source update
+restores the downloaded hull relief while retaining its 34 lights, dark finish
+and recessed backing; see [Pella restoration](Assets/Models/Source/Pella-v27/README.md).
+The restored Pella and painted Scirocco are installed in the separate Fleet
+Studio desktop viewer and prepared in SensorPanel; the monitor update is not
+yet installed or released. These remain credited fan
 studies; earlier approximations are labelled in the catalogue. Source and
 asset credits accompany `Assets/FleetViewer/`. Artwork loads locally and uses
 no runtime reference-image downloads. Ship and navigation motion stop when

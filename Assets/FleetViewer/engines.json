@@ -417,5 +417,145 @@
         "basis": "Least-squares circle fitted to official source annular outlet faces; canted normals retained. White hot core and violet flowing body follow TV references. Exact energy/length are an interpretation."
       }
     ]
+  },
+  "Pella": {
+    "engines": [
+      {
+        "position": [
+          0.35506535567460534,
+          -1.49257288687596,
+          0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      },
+      {
+        "position": [
+          -0.35506535567460534,
+          -1.49257288687596,
+          0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      },
+      {
+        "position": [
+          -0.35506535567460534,
+          -1.49257288687596,
+          -0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      },
+      {
+        "position": [
+          0.35506535567460534,
+          -1.49257288687596,
+          -0.35506535567460534
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.0678648734976254,
+        "length": 0.36,
+        "basis": "Existing four source-model throat discs"
+      }
+    ],
+    "finish": "Owner-accepted v27; four source-fitted drive outlets",
+    "modelSha256": "df080b0037ceb485ad4c8005e63c1a4b471171c60bf276ae3ea8ef365cce6d78"
+  },
+  "Scirocco": {
+    "modelSha256": "7cbe6ab1719ded37da2de370a51072ccc9c252b82f26097c7b8b145659563320",
+    "engines": [
+      {
+        "position": [
+          -0.0009375658230127827,
+          0.025,
+          -0.8861281595265602
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.33,
+        "length": 2.1,
+        "addCore": false,
+        "plumeProfile": "canterbury",
+        "basis": "Circle fit to selected STL nozzle ring at Blender Z=.20715; outlet diameter .73"
+      },
+      {
+        "position": [
+          0.8860593415580604,
+          0.025,
+          -0.0010322772183574136
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.33,
+        "length": 2.1,
+        "addCore": false,
+        "plumeProfile": "canterbury",
+        "basis": "Circle fit to selected STL nozzle ring at Blender Z=.20715; outlet diameter .73"
+      },
+      {
+        "position": [
+          0.0009635890565678365,
+          0.025,
+          0.8859645491931911
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.33,
+        "length": 2.1,
+        "addCore": false,
+        "plumeProfile": "canterbury",
+        "basis": "Circle fit to selected STL nozzle ring at Blender Z=.20715; outlet diameter .73"
+      },
+      {
+        "position": [
+          -0.886033359277996,
+          0.025,
+          0.0008687807485953103
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.33,
+        "length": 2.1,
+        "addCore": false,
+        "plumeProfile": "canterbury",
+        "basis": "Circle fit to selected STL nozzle ring at Blender Z=.20715; outlet diameter .73"
+      }
+    ],
+    "finish": "Owner-accepted paint02; four source-fitted drive outlets"
   }
 }

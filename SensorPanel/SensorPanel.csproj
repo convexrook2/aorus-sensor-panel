@@ -11,14 +11,19 @@
     <PlatformTarget>x64</PlatformTarget>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>../Assets/Branding/AorusFanMade.ico</ApplicationIcon>
-    <Version>1.8.13</Version>
+    <Version>1.8.14</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <SelfContained>false</SelfContained>
+    <PublishReadyToRun Condition="'$(RuntimeIdentifier)' != ''">true</PublishReadyToRun>
+    <!-- Reuse ReadyToRun code instead of retaining profiling data and extra
+         JIT tiers after optional graphics have been released. -->
+    <TieredCompilation>false</TieredCompilation>
     <RollForward>LatestPatch</RollForward>
     <Product>AORUS Sensor Panel - FAN MADE</Product>
     <Description>Independent fan-made AORUS hardware sensor panel</Description>
   </PropertyGroup>
   <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="9" />
     <!-- Preserve the prior web adaptation in source; the original native diagram is primary. -->
     <Compile Remove="BelterSystemView.cs" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
@@ -45,6 +50,7 @@
     <Content Include="../Assets/AORUS/@Resources/GIFs/L/*.png" Link="AORUS/@Resources/GIFs/L/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/AORUS/@Resources/GIFs/R/*.png" Link="AORUS/@Resources/GIFs/R/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/AORUS/@Resources/GIFs/GIF1/*.png" Link="AORUS/@Resources/GIFs/GIF1/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../Assets/AORUS/@Resources/GIFs/frames.json" Link="AORUS/@Resources/GIFs/frames.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="CopyFrameViewBridge" AfterTargets="Build" Condition="'$(BuildFrameViewBridge)' == 'true'">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\SensorCollector\bin\$(Configuration)\net10.0-windows\$(RuntimeIdentifier)\NvidiaFrameViewBridge.dll"

@@ -9,7 +9,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>../Assets/Branding/AorusFanMade.ico</ApplicationIcon>
     <Product>X890 Fleet Studio</Product>
-    <Version>1.8.13</Version>
+    <Version>1.8.14</Version>
     <Description>On-demand local ship viewer, independent of sensor monitoring</Description>
   </PropertyGroup>
   <ItemGroup>

@@ -20,6 +20,11 @@ __pycache__/
 *.pyc
 *.pyo
 
+# These exact accepted GLBs are versioned losslessly as .glb.gz. Keep local
+# editable uncompressed copies; Pella exceeds GitHub's individual blob limit.
+/Assets/Models/Source/Pella-v27/Pella.glb
+/Assets/Models/Source/Scirocco-paint02/Scirocco.glb
+
 # Copied Rainmeter/HWiNFO utilities are not used by the standalone panel.
 Assets/AORUS/@Resources/HWiNFOSharedMemoryViewer.exe
 Assets/AORUS/@Resources/RedistrutablePlugin/

@@ -14,27 +14,40 @@ public sealed class GameDiscovery
 {
     private DateTimeOffset nextRefresh;
     private IReadOnlyList<InstalledGame> games = [];
+    private Catalog catalog = new([]);
     public string Diagnostic { get; private set; } = "Game catalog not loaded.";
     public IReadOnlyList<InstalledGame> Installed { get { Refresh(); return games; } }
 
     public IReadOnlyList<RunningGame> Running()
     {
         Refresh(); var running = new List<RunningGame>();
-        foreach (var process in Process.GetProcesses())
+        // Enumerating Process.GetProcesses builds a system-wide process/thread
+        // snapshot every poll. Only visible, ownerless windows can qualify as
+        // a MainWindowHandle, so enumerate those HWNDs and inspect their PIDs.
+        var candidates = new HashSet<int>();
+        EnumWindows((window, _) =>
         {
-            using (process)
+            if (GetWindow(window, 4) == 0 && IsWindowVisible(window))
             {
-                try
-                {
-                    if (process.Id == Environment.ProcessId || process.MainWindowHandle == 0) continue;
-                    string? path = ImagePath(process.Id);
-                    if (path is null) continue;
-                    var game = Match(path, games);
-                    if (game is not null) running.Add(new(process.Id, game.Name, path, process.StartTime.ToUniversalTime(), game.Source));
-                }
-                catch (System.ComponentModel.Win32Exception) { }
-                catch (InvalidOperationException) { }
+                GetWindowThreadProcessId(window, out uint pid);
+                if (pid > 0 && pid != Environment.ProcessId) candidates.Add((int)pid);
             }
+            return true;
+        }, 0);
+        foreach (int pid in candidates)
+        {
+            try
+            {
+                string? path = ImagePath(pid);
+                if (path is null) continue;
+                var game = catalog.Match(path);
+                if (game is null) continue;
+                using var process = Process.GetProcessById(pid);
+                running.Add(new(pid, game.Name, path, process.StartTime.ToUniversalTime(), game.Source));
+            }
+            catch (System.ComponentModel.Win32Exception) { }
+            catch (InvalidOperationException) { }
+            catch (ArgumentException) { }
         }
         return running;
     }
@@ -50,11 +63,19 @@ public sealed class GameDiscovery
 
     internal static bool IsGameType(string type) => type.Equals("game", StringComparison.OrdinalIgnoreCase) || type.Equals("demo", StringComparison.OrdinalIgnoreCase);
     internal static InstalledGame? Match(string executable, IReadOnlyList<InstalledGame> installed)
+        =>new Catalog(installed).Match(executable);
+    internal sealed class Catalog(IReadOnlyList<InstalledGame> installed)
     {
-        string name = Path.GetFileNameWithoutExtension(executable);
-        if (new[] { "launcher", "crash", "helper", "setup", "updater", "server", "editor", "config", "webview", "cef" }
-            .Any(marker => name.Contains(marker, StringComparison.OrdinalIgnoreCase))) return null;
-        return installed.FirstOrDefault(g => Inside(executable, g.Directory));
+        private static readonly string[] excluded=["launcher","crash","helper","setup","updater","server","editor","config","webview","cef"];
+        private readonly (InstalledGame Game,string Prefix)[] paths=installed.Select(g=>(g,Path.GetFullPath(g.Directory).TrimEnd(Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar)+Path.DirectorySeparatorChar)).ToArray();
+        internal InstalledGame? Match(string executable)
+        {
+            string name=Path.GetFileNameWithoutExtension(executable);
+            foreach(string marker in excluded)if(name.Contains(marker,StringComparison.OrdinalIgnoreCase))return null;
+            string full=Path.GetFullPath(executable);
+            foreach(var entry in paths)if(full.StartsWith(entry.Prefix,StringComparison.OrdinalIgnoreCase))return entry.Game;
+            return null;
+        }
     }
     internal static bool Inside(string file, string directory)
         => Path.GetFullPath(file).StartsWith(Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
@@ -68,6 +89,7 @@ public sealed class GameDiscovery
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or ArgumentException) { notes.Add("Steam catalog unavailable: " + ex.Message); }
         // Unknown catalogs do not turn arbitrary foreground processes into games.
         games = result;
+        catalog = new(result);
         Diagnostic = $"Recognized {games.Count} installed games. " + string.Join(" ", notes);
     }
 
@@ -102,10 +124,22 @@ public sealed class GameDiscovery
     internal static string? ImagePath(int pid)
     {
         nint handle = OpenProcess(0x1000, false, (uint)pid); if (handle == 0) return null;
-        try { var name = new StringBuilder(32768); int length = name.Capacity; return QueryFullProcessImageName(handle, 0, name, ref length) ? name.ToString() : null; }
+        try
+        {
+            var name = new StringBuilder(512); int length = name.Capacity;
+            if (QueryFullProcessImageName(handle, 0, name, ref length)) return name.ToString();
+            if (Marshal.GetLastWin32Error() != 122) return null;
+            name.EnsureCapacity(32768); length = name.Capacity;
+            return QueryFullProcessImageName(handle, 0, name, ref length) ? name.ToString() : null;
+        }
         finally { CloseHandle(handle); }
     }
     [DllImport("kernel32.dll", SetLastError = true)] private static extern nint OpenProcess(uint access, [MarshalAs(UnmanagedType.Bool)] bool inherit, uint processId);
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool QueryFullProcessImageName(nint process, uint flags, StringBuilder name, ref int length);
     [DllImport("kernel32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool CloseHandle(nint handle);
+    private delegate bool EnumWindow(nint window, nint parameter);
+    [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool EnumWindows(EnumWindow callback, nint parameter);
+    [DllImport("user32.dll")] private static extern nint GetWindow(nint window, uint command);
+    [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool IsWindowVisible(nint window);
+    [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(nint window, out uint pid);
 }

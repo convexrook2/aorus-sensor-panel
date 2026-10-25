@@ -4,8 +4,8 @@
   "portraits": [
     {
       "id": "Pella",
-      "sourceSha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
-      "sha256": "33d2d2488f74ba23150a9d2571a4fff22110f5bd9a989efb17f046cde36c4a73",
+      "sourceSha256": "df080b0037ceb485ad4c8005e63c1a4b471171c60bf276ae3ea8ef365cce6d78",
+      "sha256": "c245402779d17c798f9bfa2f1c44eef1ca10b77c9e0658903c8f701f81c03d5f",
       "width": 1024,
       "height": 2048
     },
@@ -130,8 +130,8 @@
     },
     {
       "id": "Scirocco",
-      "sourceSha256": "b13bbd793799b15c8828a5ea2dd4a0ad1b95b1b788ea7b455a6ad004f1b75dd0",
-      "sha256": "7e9e29e41b0a1cc2adc8e6f0562649d771428c103d9cd9195a23a698b3ac81a2",
+      "sourceSha256": "7cbe6ab1719ded37da2de370a51072ccc9c252b82f26097c7b8b145659563320",
+      "sha256": "3868d66246d2c704d86e385e8f4d827c192fc6f72ce47d3c6777c3fe3c6df42a",
       "width": 1024,
       "height": 2048
     },

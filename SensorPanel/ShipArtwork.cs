@@ -27,7 +27,7 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
         new("Behemoth", "OPAS BEHEMOTH", "OPA", "CONVERTED WARSHIP", "FLEET ENGINEERING", "Original fan model"),
         new("Medina", "MEDINA STATION", "OPA", "STATION / NAUVOO HULL", "STATION ENGINEERING", "Original fan model"),
         new("Scopuli", "SCOPULI", "OPA", "LIGHT FREIGHTER", "CARGO ENGINEERING", "Original fan model"),
-        new("Scirocco", "MCRN SCIROCCO", "MCRN", "ASSAULT CRUISER", "MARINE ENGINEERING", "Original fan model"),
+        new("Scirocco", "MCRN SCIROCCO", "MCRN", "ASSAULT CRUISER", "MARINE ENGINEERING", "cg / Printables 477957 / CC BY 4.0 · adapted"),
         new("Hammurabi", "MCRN HAMMURABI", "MCRN", "SCIROCCO CLASS", "FLEET ENGINEERING", "Original fan model"),
         new("Guanshiyin", "GUANSHIYIN", "MAO-KWIK", "YACHT", "YACHT ENGINEERING", "Original fan model"),
         new("Arboghast", "UNS ARBOGHAST", "UN", "SCIENCE VESSEL", "SURVEY ENGINEERING", "X890 reconstruction / Chris Danelon references"),
@@ -42,6 +42,7 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
 internal sealed class ShipArtwork : Image
 {
     private static readonly Dictionary<string, BitmapSource> images = new();
+    internal static void ReleaseCache()=>images.Clear();
     public ShipArtwork(PanelTheme theme, bool portrait)
     {
         var image = GetImage(theme.ShipId ?? throw new InvalidOperationException("A ship image needs its identity."));

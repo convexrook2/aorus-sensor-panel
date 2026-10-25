@@ -26,6 +26,7 @@ internal sealed class PanelSettings
     private bool rebuilding;
     private int revision;
     public bool IsOpen => pane.Visibility==Visibility.Visible;
+    internal event Action? Closed;
     public bool IsPointerOver => pane.IsMouseOver || gear.IsMouseOver;
     internal Rect Bounds => new(pane.TranslatePoint(new Point(),Overlay),new Size(pane.ActualWidth,pane.ActualHeight));
 
@@ -56,13 +57,21 @@ internal sealed class PanelSettings
         Rebuild(); scroll.ScrollToTop();
     }
     private void Toggle() { if(IsOpen)Close();else Open(); }
-    public void Close() { pane.Visibility=Visibility.Collapsed; gear.Focus(); }
+    public void Close()
+    {
+        bool wasOpen=IsOpen;
+        pane.Visibility=Visibility.Collapsed;gear.Focus();
+        sections.Children.Clear();footer.Children.Clear();selectors.Clear();shipPage=null;
+        if(wasOpen)Closed?.Invoke();
+    }
     public void ApplyTheme()
     {
         var theme=currentTheme();
         Overlay.Resources["SettingsHoverSurface"]=theme.Surface;
         Overlay.Resources["SettingsScrollThumb"]=theme.Divider;
         Overlay.Resources["SettingsFocus"]=theme.Accent;
+        Overlay.Resources["SettingsOptionBackground"]=theme.Background;
+        Overlay.Resources["SettingsOptionForeground"]=theme.Foreground;
         pane.Background=theme.Background; pane.BorderBrush=theme.Divider;
         heading.Foreground=gear.Foreground=close.Foreground=theme.Foreground;
         gear.Background=theme.Surface;
@@ -197,11 +206,7 @@ internal sealed class PanelSettings
         var combo=new ComboBox { FontSize=13,MinHeight=30,MaxDropDownHeight=240,
             Background=theme.Background,Foreground=theme.Foreground,BorderBrush=theme.Divider,IsEnabled=group.IsEnabled,ToolTip=name };
         NavigationControls.Apply(combo);
-        var itemStyle=new Style(typeof(ComboBoxItem));
-        itemStyle.Setters.Add(new Setter(Control.BackgroundProperty,theme.Background));
-        itemStyle.Setters.Add(new Setter(Control.ForegroundProperty,theme.Foreground));
-        itemStyle.Setters.Add(new Setter(Control.PaddingProperty,new Thickness(8,6,8,6)));
-        combo.ItemContainerStyle=itemStyle;
+        combo.ItemContainerStyle=(Style)Overlay.Resources["SettingsOptionStyle"];
         AutomationProperties.SetName(combo,name); selectors[name]=combo;
         foreach(var item in group.Items.OfType<MenuItem>().Where(item=>item.Visibility==Visibility.Visible))
         {
@@ -279,8 +284,26 @@ internal sealed class PanelSettings
     }
     internal void SelectChoice(string control,string option)
     {
+        // Native reviews can lose activation while WebView shutdown completes.
+        // Reopen the same user-facing settings flow before selecting a control.
+        if(!IsOpen)Open();
         var selector=selectors[control];
         selector.SelectedItem=selector.Items.OfType<ComboBoxItem>().Single(item=>item.Tag is MenuItem command && command.Header?.ToString()==option);
+    }
+    internal async Task CheckPopupThemeAsync()
+    {
+        var selector=selectors["Theme"];
+        selector.IsDropDownOpen=true;
+        try
+        {
+            await Task.Delay(250);
+            var theme=currentTheme();
+            foreach(var item in selector.Items.OfType<ComboBoxItem>())
+                if(item.Background is not SolidColorBrush background||background.Color!=theme.Background.Color||
+                    item.Foreground is not SolidColorBrush foreground||foreground.Color!=theme.Foreground.Color)
+                    throw new InvalidOperationException("A settings popup lost its theme colours.");
+        }
+        finally{selector.IsDropDownOpen=false;}
     }
     internal void CheckExperienceControls(bool expanse)
     {
@@ -302,24 +325,7 @@ internal sealed class PanelSettings
             BorderBrush=theme.Divider,Padding=new(8,5,8,5),MinHeight=30,HorizontalContentAlignment=HorizontalAlignment.Center,
             Cursor=System.Windows.Input.Cursors.Hand };
         AutomationProperties.SetName(button,name);
-        var border=new FrameworkElementFactory(typeof(Border));
-        border.SetValue(Border.CornerRadiusProperty,new CornerRadius(4));
-        border.SetValue(Border.BackgroundProperty,new TemplateBindingExtension(Control.BackgroundProperty));
-        border.SetValue(Border.BorderBrushProperty,new TemplateBindingExtension(Control.BorderBrushProperty));
-        border.SetValue(Border.BorderThicknessProperty,new TemplateBindingExtension(Control.BorderThicknessProperty));
-        border.SetValue(Border.PaddingProperty,new TemplateBindingExtension(Control.PaddingProperty));
-        var presenter=new FrameworkElementFactory(typeof(ContentPresenter));
-        presenter.SetValue(ContentPresenter.VerticalAlignmentProperty,VerticalAlignment.Center);
-        presenter.SetValue(ContentPresenter.HorizontalAlignmentProperty,HorizontalAlignment.Center); border.AppendChild(presenter);
-        var template=new ControlTemplate(typeof(Button)) { VisualTree=border };
-        foreach(var property in new[] { UIElement.IsMouseOverProperty,UIElement.IsKeyboardFocusedProperty })
-        {
-            var trigger=new Trigger { Property=property,Value=true };
-            trigger.Setters.Add(new Setter(Control.BorderBrushProperty,new DynamicResourceExtension("SettingsFocus")));
-            template.Triggers.Add(trigger);
-        }
-        var disabled=new Trigger { Property=UIElement.IsEnabledProperty,Value=false };
-        disabled.Setters.Add(new Setter(UIElement.OpacityProperty,.45)); template.Triggers.Add(disabled);
-        button.Template=template;button.Click+=(_,_)=>action();return button;
+        button.Template=(ControlTemplate)Overlay.Resources["SettingsButtonTemplate"];
+        button.Click+=(_,_)=>action();return button;
     }
 }

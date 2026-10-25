@@ -1,5 +1,13 @@
 # X890 sensor-panel release flow
 
+October 24 continuation: Lennon accepted the updated Pella and Scirocco in
+both consumers and asked for the next release step. The 1.8.14 candidate
+includes those unchanged accepted ships and the prepared AORUS memory/FPS
+correction. Continue scoped source delivery, exact-source CI and package review;
+see [the candidate boundary](RELEASE-1.8.14.md). Record publication and any
+separate installation against the verified package. Do not install Fleet
+Studio again as a SensorPanel release side effect.
+
 October 23 corrective release authority: Lennon requested the accepted Knight
 with its portrait, lights and plumes in the app, with the accepted model unchanged,
 and requested release. This authorizes the scoped 1.8.13 commit/push, exact-source

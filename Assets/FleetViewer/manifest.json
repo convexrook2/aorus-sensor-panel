@@ -5,18 +5,18 @@
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 4701,
-      "sha256": "c4ffd4a77311bed23e12f71ccd79398651bcfd86a92280e360992adace73225e"
+      "bytes": 4880,
+      "sha256": "43b4199ea36f0bd742a79476979a124e5f125ae947ba8e0cf94be8db8825c871"
     },
     {
       "path": "catalog.json",
-      "bytes": 31198,
-      "sha256": "9713e0c9a94a78b5bf2d41269d13312e920f399267ccb47f98e7cbcd3d13b043"
+      "bytes": 31994,
+      "sha256": "6959706356996e6f960f4019a8a7e77908543fb90629f64c6fc340f6b44cc786"
     },
     {
       "path": "engines.json",
-      "bytes": 10919,
-      "sha256": "a884251f7c257a50c0067e63e5e2cedb91f1c2d14e90ee4081fa5091a1bec06b"
+      "bytes": 14451,
+      "sha256": "e23ed671b881611f49d14091f2e53d4af66cdebd5f9331dec0dd2b3c3a4a8544"
     },
     {
       "path": "holographic-stage.js",
@@ -110,8 +110,8 @@
     },
     {
       "path": "models/Pella.glb.gz",
-      "bytes": 36936450,
-      "sha256": "9c7a4f0aa6cfdeb487cfd29f4000fcaead2c6c067fc7214fa6d2ae8437115d5f"
+      "bytes": 45174096,
+      "sha256": "91319ce95071556a2af81f052ddb879950e9c8587badd33e7b519aa0fab7c7df"
     },
     {
       "path": "models/Razorback.glb.gz",
@@ -125,8 +125,8 @@
     },
     {
       "path": "models/Scirocco.glb.gz",
-      "bytes": 657572,
-      "sha256": "938c9a58ca7afe6dfaa433a0c073f86fa0ee239318bd17df1d8f3aaedce6bbff"
+      "bytes": 47243915,
+      "sha256": "42f3dabf6ce74967038b6ade22e1173d8f481627595c81e677709859ccdacc20"
     },
     {
       "path": "models/Scopuli.glb.gz",
@@ -206,7 +206,7 @@
     {
       "path": "portraits/index.json",
       "bytes": 5795,
-      "sha256": "6622971bb6afc34f6e90023123d1e484dc16b7c0ee60a77c8d91049aeaca0e40"
+      "sha256": "28fd2b175a48bdb241e1b448c061553618a689dcf2394fe2561bf5d11b2360c3"
     },
     {
       "path": "portraits/Knight.png",
@@ -230,8 +230,8 @@
     },
     {
       "path": "portraits/Pella.png",
-      "bytes": 531193,
-      "sha256": "33d2d2488f74ba23150a9d2571a4fff22110f5bd9a989efb17f046cde36c4a73"
+      "bytes": 673324,
+      "sha256": "c245402779d17c798f9bfa2f1c44eef1ca10b77c9e0658903c8f701f81c03d5f"
     },
     {
       "path": "portraits/Razorback.png",
@@ -245,8 +245,8 @@
     },
     {
       "path": "portraits/Scirocco.png",
-      "bytes": 783375,
-      "sha256": "7e9e29e41b0a1cc2adc8e6f0562649d771428c103d9cd9195a23a698b3ac81a2"
+      "bytes": 717369,
+      "sha256": "3868d66246d2c704d86e385e8f4d827c192fc6f72ce47d3c6777c3fe3c6df42a"
     },
     {
       "path": "portraits/Scopuli.png",
@@ -385,8 +385,8 @@
     },
     {
       "path": "viewer.js",
-      "bytes": 21208,
-      "sha256": "c08a7d60ae9ae9c9db5267990621c0141b757d23636cc8090488e4ea54dc1fec"
+      "bytes": 21246,
+      "sha256": "3c588fb7b6b0fb40b348d7bd394066e414858cec91bf68834b526be819d950e7"
     }
   ]
 }

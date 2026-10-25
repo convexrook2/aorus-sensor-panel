@@ -23,7 +23,7 @@ internal sealed partial class StudioWindow
                 await Task.Delay(500);
             }
             const string stateScript="({ship:document.body.dataset.loaded,ready:document.querySelector('#status').hidden,quality:document.body.dataset.quality,technical:document.querySelector('#technical').textContent,sourceSha256:document.body.dataset.modelSha256,orientation:document.body.dataset.orientation,sourceLights:Number(document.body.dataset.shipLights||0),engines:Number(document.body.dataset.engineCount||0),plumes:document.body.dataset.plumes==='true',frames:Number(document.querySelector('#motion').dataset.frames||0),angle:document.querySelector('#motion').dataset.cameraAngle})";
-            foreach(string ship in new[]{"Pella","RocinanteS6","Arboghast"})
+            foreach(string ship in new[]{"Pella","Scirocco","RocinanteS6","Arboghast"})
             {
                 await browser.ExecuteScriptAsync($"document.querySelector('#ship').value='{ship}';document.querySelector('#ship').dispatchEvent(new Event('change'));");
                 JsonElement sample=default;
@@ -35,6 +35,20 @@ internal sealed partial class StudioWindow
                 }
                 if(!sample.TryGetProperty("ship",out var loaded)||loaded.GetString()!=ship||!sample.GetProperty("ready").GetBoolean()||sample.GetProperty("quality").GetString()!="full")throw new InvalidOperationException("Protected full model did not load: "+ship);
                 JsonElement? exhaust=null;
+                if(ship is "Pella" or "Scirocco")
+                {
+                    string accepted=ship=="Pella"
+                        ? "df080b0037ceb485ad4c8005e63c1a4b471171c60bf276ae3ea8ef365cce6d78"
+                        : "7cbe6ab1719ded37da2de370a51072ccc9c252b82f26097c7b8b145659563320";
+                    int lights=ship=="Pella"?34:14;
+                    if(sample.GetProperty("sourceSha256").GetString()!=accepted
+                        ||sample.GetProperty("sourceLights").GetInt32()!=lights||sample.GetProperty("engines").GetInt32()!=4)
+                        throw new InvalidOperationException(ship+" accepted model, lights or four registered drives differ.");
+                    await browser.ExecuteScriptAsync("if(document.querySelector('#plumes').getAttribute('aria-pressed')!=='true')document.querySelector('#plumes').click();");
+                    await Task.Delay(500);
+                    exhaust=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync(stateScript));
+                    if(!exhaust.Value.GetProperty("plumes").GetBoolean())throw new InvalidOperationException(ship+" plume control did not enable the exhaust.");
+                }
                 if(ship=="Arboghast")
                 {
                     if(sample.GetProperty("sourceSha256").GetString()!="10744079e7ee154daac7345bac020ca6f0bf6c256032c9636244baa461333778"

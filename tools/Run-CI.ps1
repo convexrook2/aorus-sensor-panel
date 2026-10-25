@@ -37,6 +37,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Asset immutability/Jenkins cleanliness checks failed.' }
     & $PythonExecutable .\tools\Sync-FleetViewer.py --check
     if ($LASTEXITCODE -ne 0) { throw 'Monitor fleet integrity failed.' }
+    & $PythonExecutable .\tools\Build-AorusAnimationIndex.py --check
+    if ($LASTEXITCODE -ne 0) { throw 'AORUS animation index differs from original source frames.' }
     & $PythonExecutable .\tools\Check-FleetPortraits.py --self-test
     if ($LASTEXITCODE -ne 0) { throw 'Portrait validator regression checks failed.' }
     & $PythonExecutable .\tools\Check-FleetPortraits.py
@@ -55,6 +57,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Adopted Canterbury source/model/portrait identity failed.' }
     & $PythonExecutable .\tools\Check-KnightAdoption.py
     if ($LASTEXITCODE -ne 0) { throw 'Accepted Knight source/model/portrait identity failed.' }
+    & $PythonExecutable .\tools\Check-PellaSciroccoAdoption.py
+    if ($LASTEXITCODE -ne 0) { throw 'Accepted Pella/Scirocco model, lights, drives or portrait identity failed.' }
     node .\tools\Check-KnightPlumes.mjs
     if ($LASTEXITCODE -ne 0) { throw 'Knight fitted plume registration/lighting checks failed.' }
     node .\tools\Check-FleetPlumes.mjs
@@ -73,10 +77,14 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Restore or dependency audit failed.' }
     dotnet build .\X890.slnx -c Release --no-restore --tl:off
     if ($LASTEXITCODE -ne 0) { throw 'Release solution build failed.' }
+    dotnet build .\tools\AorusMemoryProbe\AorusMemoryProbe.csproj -c Release --tl:off
+    if($LASTEXITCODE -ne 0){throw 'External native memory probe build failed.'}
     & .\SensorCollector\bin\Release\net10.0-windows\SensorCollector.exe --self-test-managed
     if ($LASTEXITCODE -ne 0) { throw 'Managed sensor contracts failed.' }
     $mapping = Start-Process .\SensorPanel\bin\Release\net10.0-windows\SensorPanel.exe -ArgumentList '--check-mapping' -Wait -PassThru -WindowStyle Normal
     if ($mapping.ExitCode -ne 0) { throw 'Panel mapping/resource contracts failed.' }
+    $pixels=Start-Process .\SensorPanel\bin\Release\net10.0-windows\SensorPanel.exe -ArgumentList '--check-aorus-pixels' -Wait -PassThru -WindowStyle Normal
+    if($pixels.ExitCode -ne 0){throw 'AORUS animation decoded pixels changed.'}
     $rlTool = Join-Path $repoRoot 'tools\RlPack\bin\Release\net10.0\RlPack.dll'
     dotnet $rlTool self-test --output (Join-Path $ciRoot 'archive-checks')
     if ($LASTEXITCODE -ne 0) { throw 'Authenticated archive/rejection contracts failed.' }

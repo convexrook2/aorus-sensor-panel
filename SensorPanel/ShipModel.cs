@@ -14,6 +14,7 @@ internal sealed record ShipModelPart(MeshGeometry3D Mesh, Material Original, boo
 internal static class ShipModel
 {
     private static readonly Dictionary<string, IReadOnlyList<ShipModelPart>> cache = new();
+    internal static void ReleaseCache()=>cache.Clear();
     private sealed record MaterialInfo(string Name, string? Texture, float[] Colour, float[] Emissive, bool DoubleSided, string Alpha, string? EmissiveTexture);
     private sealed record SceneInfo(int Format, int Triangles, int Parts, MaterialInfo[] Materials);
     public static IReadOnlyList<ShipModelPart> Load(string ship, bool cacheResult = true)

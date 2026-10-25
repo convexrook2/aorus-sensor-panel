@@ -158,3 +158,13 @@ Sources/Anubis/identity.json pins the complete 198,192-triangle rendered assembl
 The legacy Anubis.ship and Source/Fleet/Anubis.glb remain earlier project-authored
 approximations for fallback/history; their authorship does not describe this new
 licensed full-model fleet entry. Production reference imagery is not redistributed.
+
+Scirocco / accepted paint02 full-model fleet (2026-10-24)
+Geometry: cg / Printables 477957, CC BY 4.0.
+https://www.printables.com/model/477957-mcrn-scirocco-class-assault-cruiser-from-the-expan
+https://creativecommons.org/licenses/by/4.0/
+X890 adaptation: measured-face paint, material maps, fourteen work lights and
+four source-fitted drive effects. Owner-selected assault_ship.stl hull and relief
+are retained. Production visual references: Ryan Dening / North Front and
+Axiom VFX; reference images are not redistributed. The legacy Scirocco.ship
+remains an earlier project-authored fallback, not the accepted full-model entry.

@@ -10,6 +10,12 @@ from the Windows Start menu. These shortcuts open the built app directly; no
 editor, command, build or server is needed each time. Close its window when done.
 
 The per-user desktop copy is in `%LOCALAPPDATA%\Programs\Fleet Studio`.
+The October 24 refresh includes **Pella / accepted v27** and
+**Scirocco / accepted paint02**, with their unchanged accepted exports, source
+lights and four registered drive outlets each. The installed encrypted desktop
+package passed model identity, light/outlet count, exhaust-control and rotation
+checks. This does not update the separately installed SensorPanel.
+
 For initial setup or to refresh that copy from current source, run
 `& .\FleetStudio\Install-Desktop.ps1` once from the repository root. Add `-Launch`
 to test the Desktop shortcut. Setup publishes Release files, checks the current

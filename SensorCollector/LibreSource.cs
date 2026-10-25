@@ -122,6 +122,10 @@ internal sealed class LibreSource : IDisposable
 
     private static void ReadHardware(IHardware hardware, List<Reading> readings)
     {
+        // The panel owns its bounded graphs and peaks. The library's default
+        // one-day sample history is unused and must not grow in the tray.
+        foreach (var sensor in hardware.Sensors)
+            if(sensor.ValuesTimeWindow!=TimeSpan.Zero)sensor.ValuesTimeWindow=TimeSpan.Zero;
         hardware.Update();
         foreach (var sensor in hardware.Sensors)
         {

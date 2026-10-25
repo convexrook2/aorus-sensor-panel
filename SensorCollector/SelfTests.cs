@@ -33,6 +33,7 @@ internal static class SelfTests
         if (checkNativeBridge) FrameViewSource.CheckAbi();
         else { FrameViewSource.CheckSamples(); Console.WriteLine("SKIP: optional FrameView native ABI (use --self-test with the built bridge)."); }
         CheckAutomaticGames();
+        CheckCaptureDemand();
         CheckPresentingApplications();
         CheckDesktopFrames();
         if (Svi3Source.TableSize(0x621202) != 0x994 || Svi3Source.TableSize(0x620205) != 0x994 || Svi3Source.TableSize(0x621201) != 0 ||
@@ -42,10 +43,42 @@ internal static class SelfTests
         if (PresentMonSource.AverageFps([5, 15, double.NaN, 0]) != 100 ||
             double.IsFinite(PresentMonSource.AverageFps([0, double.PositiveInfinity])) ||
             PresentMonSource.Csv("\"Game, test.exe\",1,\"a\"\"b\"")[0] != "Game, test.exe" ||
-            PresentMonSource.Csv("\"Game, test.exe\",1,\"a\"\"b\"")[2] != "a\"b")
+            PresentMonSource.Csv("\"Game, test.exe\",1,\"a\"\"b\"")[2] != "a\"b" ||
+            !PresentMonSource.CsvField("\"Game, test.exe\",123,\"a\"\"b\"",1).SequenceEqual("123") ||
+            !PresentMonSource.CsvField("\"Game\"\" one.exe\",\"456\",tail",1).SequenceEqual("456") ||
+            !PresentMonSource.CsvField("Game.exe,123,",2).IsEmpty ||
+            !PresentMonSource.CsvField("Game.exe,123",8).IsEmpty)
             throw new Exception("Displayed FPS must average frame durations, reject NA/zero intervals, and preserve quoted CSV fields.");
         Console.WriteLine("PASS: sensor contracts, voltage quarantine, DDR5 ratio/BCLK and FrameView sample validation." + (checkNativeBridge ? " Native x64 ABI validated." : " Native ABI not tested."));
         return 0;
+    }
+
+    private static void CheckCaptureDemand()
+    {
+        using var demand = new PresentMonDemand();
+        using var shutdown = new CancellationTokenSource();
+        var pending = Task.Run(() => demand.Acquire(shutdown.Token));
+        if (pending.Wait(50)) throw new Exception("Desktop-only startup must not acquire an FPS capture.");
+        demand.Update(true);
+        if (!pending.Wait(2000)) throw new Exception("A newly detected game must wake FPS capture.");
+        var first = pending.Result;
+        demand.Update(true);
+        if (first.IsCancellationRequested) throw new Exception("Desktop focus or another running game must retain capture.");
+        demand.Update(false);
+        if (!first.IsCancellationRequested) throw new Exception("The last game's exit must cancel even a quiet FPS pipe.");
+        // A new game arriving before the old helper retires must not resurrect
+        // the canceled read or lose the pending request for a fresh session.
+        demand.Update(true);
+        demand.Release();
+        var second = demand.Acquire(shutdown.Token);
+        if (second.IsCancellationRequested) throw new Exception("A later game must get a fresh capture token.");
+        shutdown.Cancel();
+        if (!second.IsCancellationRequested) throw new Exception("App shutdown must interrupt active FPS capture.");
+        demand.Release();
+        demand.Update(false);
+        try { demand.Acquire(shutdown.Token); throw new Exception("App shutdown must also interrupt idle FPS waiting."); }
+        catch (OperationCanceledException) { }
+        Console.WriteLine("PASS: FPS demand startup, focus retention, last-game exit, rapid restart and active/idle shutdown.");
     }
 
     private static void CheckDesktopFrames()
@@ -143,13 +176,24 @@ internal static class SelfTests
         writer.Write((byte)0); writer.Write(0u); writer.Write((byte)0); writer.Write(1u);
         writer.Write((byte)1); writer.Write(2u); writer.Write(System.Text.Encoding.UTF8.GetBytes("Game\0"));
         writer.Write((byte)1); writer.Write(3u); writer.Write(System.Text.Encoding.UTF8.GetBytes("Game A\0"));
+        writer.Write((byte)1);writer.Write(4u);writer.Write(System.Text.Encoding.UTF8.GetBytes(new string('x',512*1024)));writer.Write((byte)0);
         writer.Write((byte)8); writer.Write((byte)8); writer.Write((byte)8);
         long entryEnd = memory.Position; writer.Write(0u); long table = memory.Position;
-        writer.Write(4u); foreach (string key in new[] { "appinfo", "common", "type", "name" }) writer.Write(System.Text.Encoding.UTF8.GetBytes(key + "\0"));
+        writer.Write(10005u); foreach (string key in new[] { "appinfo", "common", "type", "name","unused" }) writer.Write(System.Text.Encoding.UTF8.GetBytes(key + "\0"));
+        for(int i=0;i<10000;i++)writer.Write(System.Text.Encoding.UTF8.GetBytes("unused-launch-configuration-"+i+"\0"));
         memory.Position = sizeOffset; writer.Write((uint)(entryEnd - entryStart)); memory.Position = 8; writer.Write(table); memory.Position = 0;
         using var reader = new BinaryReader(memory, System.Text.Encoding.UTF8, true);
+        long before=GC.GetAllocatedBytesForCurrentThread();
         var parsed = SteamAppCache.Read(reader, [123]);
+        if(GC.GetAllocatedBytesForCurrentThread()-before>64*1024)throw new Exception("Steam metadata retained/copied the unused application payload.");
         if (!parsed.TryGetValue(123, out var game) || game.Name != "Game A" || game.Type != "Game") throw new Exception("Steam's v41 indexed game metadata was not decoded correctly.");
+        var catalog=new GameDiscovery.Catalog(Enumerable.Range(0,250).Select(i=>new InstalledGame("Game "+i,@"C:\Games\Library"+i,"Steam game")).ToArray());
+        _=catalog.Match(@"C:\OrdinaryApps\App.exe");before=GC.GetAllocatedBytesForCurrentThread();
+        for(int i=0;i<1000;i++)if(catalog.Match(@"C:\OrdinaryApps\App.exe") is not null)throw new Exception("Unrecognized applications entered the game catalog.");
+        if(GC.GetAllocatedBytesForCurrentThread()-before>128*1024)throw new Exception("Game matching repeatedly normalized every installed path.");
+        memory.Position=sizeOffset;writer.Write((uint)(entryEnd-entryStart-1));memory.Position=0;
+        bool rejected=false;try{SteamAppCache.Read(reader,[123]);}catch(InvalidDataException){rejected=true;}
+        if(!rejected)throw new Exception("Steam metadata read crossed a truncated application boundary.");
         Console.WriteLine("PASS: automatic games, desktop exclusion, focus/exit selection and Steam v41 metadata.");
     }
 

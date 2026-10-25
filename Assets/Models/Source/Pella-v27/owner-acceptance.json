@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-24",
+  "ship": "Pella",
+  "revision": "v27",
+  "ownerInstruction": "accepted updated fleet and sensor panel with the updated ships, both pella and scirocco",
+  "modelSha256": "df080b0037ceb485ad4c8005e63c1a4b471171c60bf276ae3ea8ef365cce6d78",
+  "editableBlendSha256": "b3dcfcf2140247d9dc633ddeff232288f861522e6498ee86c7707607f85548c0",
+  "scope": "Accepted model, paint and lighting; integrate into Fleet Studio and SensorPanel. No geometry rebuild."
+}

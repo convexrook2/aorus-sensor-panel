@@ -8,8 +8,9 @@ namespace SensorPanel;
 // Camera zoom changes opacity only; there is no sky timer or particle renderer.
 internal static class SolarSky
 {
-    private static readonly Lazy<BitmapSource> panorama=new(Load);
-    internal static BitmapSource Panorama=>panorama.Value;
+    private static BitmapSource? panorama;
+    internal static BitmapSource Panorama=>panorama??=Load();
+    internal static void Release()=>panorama=null;
     internal static double Opacity(double zoom)
     {
         double wide=Math.Clamp((2.4-zoom)/(2.4-.65),0,1);

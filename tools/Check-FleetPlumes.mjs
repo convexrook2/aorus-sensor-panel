@@ -20,7 +20,8 @@ for(const [id,record] of Object.entries(engines)){
   const volume=volumes[i],anchor=record.engines[i],uniforms=volume.material.uniforms,stealth=anchor.plumeProfile==='stealth';
   if(id==='Anubis'||id==='AnubisOriginal')assert.equal(stealth,true,id+': stealth exhaust palette is missing');
   else assert.equal(stealth,false,id+': ordinary ship acquired a stealth palette');
-  const canterbury=id==='Canterbury',knight=id==='Knight';
+  // Scirocco paint02 was accepted with the same blue-white exhaust profile.
+  const canterbury=id==='Canterbury'||id==='Scirocco',knight=id==='Knight';
   assert.equal(anchor.plumeProfile==='knight',knight,id+': Knight profile routing');
   assert.equal(anchor.plumeProfile==='canterbury',canterbury,id+': Canterbury profile routing');
   const expectedNear=stealth?[.72,1,.8]:canterbury?[1,.98,1]:knight?[1,.97,1]:[1,.97,.91],expectedFar=stealth?[.22,.72,.4]:canterbury?[.25,.5,1]:knight?[.46,.37,1]:[.48,.78,1];

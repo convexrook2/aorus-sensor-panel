@@ -24,21 +24,29 @@ same PID. To repeat those cases with an existing patched source directory:
 
     pwsh -File tools/Test-PresentMonProcessLifetimes.ps1 -SourceDirectory <source-directory>
 
-The compatibility path uses --v1_metrics --no_track_display --no_track_gpu
---no_track_input --desktop_frames. Its app FPS is successful application-present cadence, not confirmed
-displayed FPS. The CSV's QPCTime is seconds even with --qpc_time_ms in v1 mode;
-the collector normalizes it to milliseconds. There is no Steam/game catalogue
-gate: any app producing supported present events can appear in the FPS menu.
-Static, minimized, or unsupported rendering paths may have no measurable FPS.
+The monitor uses --v1_metrics --no_track_display --no_track_gpu --no_track_input.
+Its game FPS is successful application-present cadence, not confirmed displayed
+FPS. The CSV's QPCTime is seconds even with --qpc_time_ms in v1 mode; the collector
+normalizes it to milliseconds. Only recognized running games are eligible.
+Desktop focus retains the running game, but ordinary applications and desktop
+composition do not become game FPS. Static, minimized, or unsupported rendering
+paths may have no measurable FPS.
 
-The same ETW session also subscribes to Microsoft-Windows-Dwm-Core CurrentFrameId
+Capture starts when the collector detects a recognized game and stops when the
+last game exits. One session remains active across foreground/game selection
+changes while any eligible game is running. The idle sensor monitor therefore
+has no FPS helper or discarded desktop CSV stream. Session shutdown runs off
+the sensor polling thread and unblocks a quiet redirected pipe. Capture restarts
+when a later game is detected; the existing one-second event window must fill
+before a fresh FPS value is available.
+
+The compatibility binary also supports --desktop_frames, which subscribes to Microsoft-Windows-Dwm-Core CurrentFrameId
 (event 451, version 0, FrameId payload). A bounded queue carries those observations
 to the existing output thread, which writes separate #X890DesktopFrame records;
 it does not manufacture application presents or interleave CSV writers.
-The collector accepts only the owner's Windows session and measures received,
-unique composition-frame intervals. Automatic switches to Windows desktop (DWM)
-when no app stream is available; the FPS source menu can also select it explicitly.
-This is session-wide composition FPS, not per-app FPS, monitor Hz, or confirmed
+This optional protocol measures received, unique composition-frame intervals.
+The monitor's game-only capture does not enable it or use a desktop fallback.
+The protocol is session-wide composition FPS, not per-app FPS, monitor Hz, or confirmed
 scan-out. No frame IDs are filled in after gaps, and stale data becomes unavailable.
 The real-time trace explicitly requests a one-second flush interval.
 

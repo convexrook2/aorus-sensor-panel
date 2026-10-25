@@ -13,14 +13,15 @@ public sealed class PresentMonSource : IDisposable
     private readonly CancellationTokenSource cancellation = new();
     private readonly PresentMonFrames frames = new();
     private readonly GameDiscovery gameDiscovery = new();
+    private readonly PresentMonDemand demand = new();
     private RunningGame[] runningGames = [];
+    private int[] capturePids = [];
     private readonly Thread worker;
     private int requestedPid;
     private string diagnostic = "Waiting for game frame events.";
     private string selectionDetail = "Automatic game selection.";
     private string selectedName = "";
     private string failureState = "no-data";
-    private Process? helper;
     private readonly string sessionName = $"X890Panel-{Environment.ProcessId}-{Guid.NewGuid():N}";
     private int previousGamePid;
     private bool disposed;
@@ -44,6 +45,8 @@ public sealed class PresentMonSource : IDisposable
     {
         GetWindowThreadProcessId(GetForegroundWindow(), out uint foreground);
         var running = gameDiscovery.Running().ToArray();
+        Volatile.Write(ref capturePids,running.Select(game=>game.ProcessId).ToArray());
+        demand.Update(running.Length > 0);
         lock (gate)
         {
             double qpcMs = QpcMs;
@@ -78,21 +81,29 @@ public sealed class PresentMonSource : IDisposable
         if (executable is null) { SetDiagnostic("Portable PresentMon 2.6.0 executable is missing."); return; }
         while (!cancellation.IsCancellationRequested)
         {
+            CancellationToken capture = default;
+            Process? process = null;
+            Task<string>? errors = null;
+            Task? stopping = null;
+            CancellationTokenRegistration stopCapture = default;
             try
             {
+                capture = demand.Acquire(cancellation.Token);
+                capture.ThrowIfCancellationRequested();
                 var start = new ProcessStartInfo(executable) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
                 foreach (string argument in new[] { "--session_name", sessionName, "--output_stdout", "--no_console_stats", "--qpc_time_ms", "--no_track_input", "--no_track_gpu", "--exclude", "SensorPanel.exe" }) start.ArgumentList.Add(argument);
                 if (runtimeFrames) { start.ArgumentList.Add("--v1_metrics"); start.ArgumentList.Add("--no_track_display"); }
-                using var process = Process.Start(start) ?? throw new InvalidOperationException("PresentMon did not start.");
-                lock (gate) helper = process;
-                if (cancellation.IsCancellationRequested) RequestStop(process);
-                // One external ETW session observes every presenting application.
-                var errors = process.StandardError.ReadToEndAsync();
+                process = Process.Start(start) ?? throw new InvalidOperationException("PresentMon did not start.");
+                // Keep this session while any recognized game runs, including
+                // desktop focus. Stop off the sensor thread; closing the child
+                // also releases a quiet synchronous redirected-pipe read.
+                stopCapture = capture.Register(() => stopping = Task.Run(() => RequestStop(process)));
+                errors = process.StandardError.ReadToEndAsync();
                 Dictionary<string, int>? columns = null;
                 string? line;
                 while ((line = process.StandardOutput.ReadLine()) is not null)
                 {
-                    if (cancellation.IsCancellationRequested) continue;
+                    if (capture.IsCancellationRequested) continue;
                     if (line.StartsWith("Application,", StringComparison.Ordinal))
                     {
                         columns = Csv(line).Select((name, index) => (name, index)).ToDictionary(x => x.name, x => x.index, StringComparer.OrdinalIgnoreCase);
@@ -100,6 +111,12 @@ public sealed class PresentMonSource : IDisposable
                         continue;
                     }
                     if (columns is null) continue;
+                    // Ordinary desktop/browser frames cannot supply game FPS.
+                    // Reject them before allocating every CSV field or storing
+                    // a frame history for every presenting application.
+                    if(!columns.TryGetValue("ProcessID",out int pidColumn)||
+                        !int.TryParse(CsvField(line.AsSpan(),pidColumn),out int eligiblePid)||
+                        !Volatile.Read(ref capturePids).Contains(eligiblePid))continue;
                     var values = Csv(line);
                     string Field(string key) => columns.TryGetValue(key, out int index) && index < values.Count ? values[index] : "";
                     if (!int.TryParse(Field("ProcessID"), out int framePid) || framePid == Environment.ProcessId ||
@@ -114,15 +131,31 @@ public sealed class PresentMonSource : IDisposable
                 }
                 process.WaitForExit();
                 string error = errors.GetAwaiter().GetResult().Trim();
-                if (process.ExitCode != 0)
+                if (process.ExitCode != 0 && !capture.IsCancellationRequested)
                 {
                     lock (gate) failureState = error.Contains("access denied", StringComparison.OrdinalIgnoreCase) ? "access-denied" : "unavailable";
                     SetDiagnostic($"PresentMon exit {process.ExitCode}: {error}");
                 }
             }
+            catch (OperationCanceledException) when (capture.IsCancellationRequested || cancellation.IsCancellationRequested) { }
             catch (Exception ex) { SetDiagnostic(ex.Message); }
-            finally { lock (gate) helper = null; }
-            cancellation.Token.WaitHandle.WaitOne(5000);
+            finally
+            {
+                stopCapture.Dispose();
+                stopping?.GetAwaiter().GetResult();
+                if (process is not null)
+                {
+                    // Drain stdout during normal ETW shutdown so a full pipe
+                    // cannot prevent the helper's output thread from exiting.
+                    var remaining = process.StandardOutput.ReadToEndAsync();
+                    if (!process.HasExited) RequestStop(process);
+                    try { Task.WhenAll(remaining, errors ?? Task.FromResult("")).Wait(TimeSpan.FromSeconds(1)); }
+                    catch (AggregateException) { }
+                    process.Dispose();
+                }
+                demand.Release();
+            }
+            if (!capture.IsCancellationRequested) cancellation.Token.WaitHandle.WaitOne(5000);
         }
     }
 
@@ -145,6 +178,28 @@ public sealed class PresentMonSource : IDisposable
             else field.Append(c);
         }
         fields.Add(field.ToString()); return fields;
+    }
+    internal static ReadOnlySpan<char> CsvField(ReadOnlySpan<char> line,int column)
+    {
+        int start=0,current=0;bool quoted=false;
+        for(int i=0;i<=line.Length;i++)
+        {
+            if(i<line.Length&&line[i]=='"')
+            {
+                if(quoted&&i+1<line.Length&&line[i+1]=='"'){i++;continue;}
+                quoted=!quoted;
+            }
+            if(i==line.Length||line[i]==','&&!quoted)
+            {
+                if(current++==column)
+                {
+                    var field=line[start..i];
+                    return field.Length>=2&&field[0]=='"'&&field[^1]=='"'?field[1..^1]:field;
+                }
+                start=i+1;
+            }
+        }
+        return [];
     }
     internal static bool TryFrameTime(Func<string, string> field, bool runtime, out double stamp, out double interval)
     {
@@ -172,10 +227,8 @@ public sealed class PresentMonSource : IDisposable
     public void Dispose()
     {
         if (disposed) return; disposed = true; cancellation.Cancel();
-        Process? running; lock (gate) running = helper;
-        if (running is not null) RequestStop(running);
         worker.Join(TimeSpan.FromSeconds(6));
-        if (!worker.IsAlive) cancellation.Dispose();
+        if (!worker.IsAlive) { demand.Dispose(); cancellation.Dispose(); }
     }
     private void RequestStop(Process process)
     {

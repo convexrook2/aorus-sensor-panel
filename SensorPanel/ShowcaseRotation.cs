@@ -9,6 +9,7 @@ internal sealed partial class ShipPanel
 {
     private bool showcaseRotation=PanelPreferences.ShowcaseRotation;
     private Button? rotationControl;
+    internal Task GraphicsRetirement { get; private set; }=Task.CompletedTask;
     internal event Action<bool>? ShowcaseRotationChanged;
     internal bool ShowcaseRotationEnabled=>showcaseRotation;
     internal bool ShowcaseRotationActive=>holotable is null&&shipViewport?.MotionActive==true;
@@ -53,9 +54,20 @@ internal sealed partial class ShipPanel
     }
     internal void SuspendShowcase()
     {
+        SetActive(false);
         CloseHolotable();shipViewport?.SetMotion(false);
         if(shipViewport?.Parent is Panel parent)parent.Children.Remove(shipViewport);
-        shipViewport?.Dispose();shipViewport=null;configuration="";
+        shipViewport?.Dispose();
+        GraphicsRetirement=shipViewport?.Retirement??Task.CompletedTask;
+        shipViewport=null;configuration="";
+        projection?.Dispose();projection=null;
+        showcaseBackdrop?.SetMotion(false);showcaseCrew?.SetMotion(false);
+        Children.Clear();bound.Clear();
+        shipPoster=null;shipMedia=null;holotableAccess=null;
+        showcaseBackdrop=null;showcaseCrew=null;heading=faction=mediaCredit=null;
+        shipChoices=null;rotationControl=null;activeTheme=null;selectedShip=null;
+        SolarBodyAssets.Release();SolarGateModel.Release();SolarSky.Release();
+        ShipPoster.ReleaseCache();ShipArtwork.ReleaseCache();ShipModel.ReleaseCache();
     }
     internal void CheckRotationControl()
     {

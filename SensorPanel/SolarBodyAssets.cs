@@ -15,6 +15,7 @@ internal static class SolarBodyAssets
     private static readonly Dictionary<string, string> sources = new();
     private static readonly MeshGeometry3D sphere = Sphere();
     internal static IReadOnlyDictionary<string, string> Sources => sources;
+    internal static void Release() { cache.Clear(); sources.Clear(); }
 
     internal static Model3DGroup Load(string id)
     {

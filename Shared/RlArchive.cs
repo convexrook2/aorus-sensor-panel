@@ -55,6 +55,23 @@ public sealed class RlArchive
         dataKey=Derive(key,salt,product+"/data");
     }
     public bool Contains(string path){ValidatePath(path);return entries.ContainsKey(path);}
+    // Reuse a caller-owned buffer for frequently read, already-compressed
+    // artwork. Authentication and archive layout are identical to Read.
+    public int ReadInto(string path,Span<byte> destination)
+    {
+        ValidatePath(path);
+        if(!entries.TryGetValue(path,out var entry))throw new FileNotFoundException("Asset absent from .rl archive.",path);
+        if(destination.Length<entry.Original)throw new InvalidDataException("Asset destination is too small.");
+        if(entry.Gzip){Read(path).CopyTo(destination);return entry.Original;}
+        if(entry.Stored-28!=entry.Original)throw new InvalidDataException("Asset length mismatch.");
+        using var file=File.OpenRead(archivePath);file.Position=dataStart+entry.Offset;
+        Span<byte> nonce=stackalloc byte[12],tag=stackalloc byte[16];
+        file.ReadExactly(nonce);file.ReadExactly(tag);
+        var plain=destination[..entry.Original];file.ReadExactly(plain);
+        try{using var aes=new AesGcm(dataKey,16);aes.Decrypt(nonce,plain,tag,plain,DataAad(product,entry));}
+        catch{CryptographicOperations.ZeroMemory(plain);throw;}
+        return entry.Original;
+    }
     public byte[] Read(string path)
     {
         ValidatePath(path);

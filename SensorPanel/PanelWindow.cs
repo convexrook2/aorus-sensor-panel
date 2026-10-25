@@ -78,6 +78,7 @@ internal sealed partial class PanelWindow : Window
         selectedFpsPid = fpsPid;
         this.previewPath = previewPath; this.capturePath = capturePath;
         if (previewTheme is not null) theme = PanelTheme.Resolve(previewTheme);
+        ExperienceMemory.Apply(theme.ShipConsole);
         fit = previewPath is null;
         Title = PanelBranding.Name;
         Icon = PanelBranding.WindowIcon;
@@ -95,26 +96,11 @@ internal sealed partial class PanelWindow : Window
         var surface = new Grid(); surface.Children.Add(viewport); Content = surface;
         BuildLayout();
         foreach (string key in new[] { "cpuTemperature", "cpuTemperatureMax", "gpuTemperature", "gpuTemperatureMax", "cpuCcdMax", "boardSystem", "boardPch", "boardVrm", "cpuFan", "cpuOptionalFan", "boardPump", "gpuFan" }) text[key] = new TextBlock { Text = "—" };
-        shipPanel = new(text);shipPanel.SetGraphicsMode(graphicsMode);
         if(theme.ShipConsole)expanseTheme=theme.Id;else aorusTheme=theme.Id;
-        shipPanel.ShipSelectionRequested += ship =>
-        {
-            if (theme.Showcase) { SelectShowcaseShip(ship, true); return; }
-            theme=PanelTheme.All.Single(choice=>choice.ShipId==ship && !choice.Showcase);
-            if (previewPath is null) PanelPreferences.SaveTheme(theme.Id);
-            ApplyTheme(); SaveDisplayState();
-        };
-        shipPanel.NavigationChanged += () => { if (IsLoaded) SaveDisplayState(); };
-        shipPanel.ShowcaseRotationChanged += enabled =>
-        {
-            if(previewPath is null)PanelPreferences.SaveShowcaseRotation(enabled);
-            if(IsLoaded)SaveDisplayState();
-        };
-        shipPanel.ShipOptionsRequested += () => settings?.Open(shipOptions);
         showcaseClock.Tick += (_, _) =>
         {
-            if (CanCycleShowcase && settings?.IsOpen != true && shipPanel.HolotableOpen != true)
-                SelectShowcaseShip(ExpanseMedia.Next(shipPanel.FeaturedShipId), false);
+            if (CanCycleShowcase && settings?.IsOpen != true && shipPanel?.HolotableOpen != true)
+                SelectShowcaseShip(ExpanseMedia.Next(shipPanel?.FeaturedShipId), false);
         };
         IsVisibleChanged += (_, _) => RefreshVisualActivity();
         StateChanged += (_, _) => RefreshVisualActivity();
@@ -139,6 +125,7 @@ internal sealed partial class PanelWindow : Window
         };
         ContextMenu = BuildMenu();
         settings = new PanelSettings(this, ContextMenu, shipOptions!, () => theme);
+        settings.Closed+=()=>CollectAorusGarbage(full:true);
         surface.Children.Add(settings.Overlay);
         ContextMenuOpening += (_, e) => { e.Handled = true; settings.Open(); };
         PreviewMouseDown += (_, e) =>
@@ -151,6 +138,7 @@ internal sealed partial class PanelWindow : Window
         displayRefresh.Tick += (_, _) => { displayRefresh.Stop(); RefreshConnectedDisplay(); };
         SourceInitialized += (_, _) =>
         {
+            ApplyWindowRenderer();
             PlaceInitialDisplay();
             HwndSource.FromHwnd(new WindowInteropHelper(this).Handle)?.AddHook(DisplayMessage);
         };
@@ -172,6 +160,7 @@ internal sealed partial class PanelWindow : Window
             if(Environment.GetCommandLineArgs().Contains("--check-true-scale"))_=CheckTrueScaleAsync();
             if(Environment.GetCommandLineArgs().Contains("--check-solar-radiance"))_=CheckSolarRadianceAsync();
             if(Environment.GetCommandLineArgs().Contains("--check-experience"))_=CheckExperienceAsync();
+            if(Environment.GetCommandLineArgs().Any(a=>a is "--check-aorus-memory" or "--check-aorus-memory-live"))_=CheckAorusMemoryAsync();
             UpdateShowcaseClock();
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(SaveDisplayState));
         };
@@ -649,6 +638,7 @@ internal sealed partial class PanelWindow : Window
         text["uptime"].Text = $"{(int)uptime.TotalHours:00}:{uptime.Minutes:00}";
         if (previewPath is null && latest is not null && DateTimeOffset.UtcNow - lastReceived > TimeSpan.FromMilliseconds(Math.Max(5000, Volatile.Read(ref pollingIntervalMs)*2)) && !stale)
             Clear("Readings expired; waiting for sensors");
+        CollectAorusGarbage();
     }
 
     private void Clear(string message)
@@ -739,17 +729,39 @@ internal sealed partial class PanelWindow : Window
     {
         if (text.TryGetValue("fanMade", out var label)) label.Foreground = panelLayout?.Mode == "Portrait" ? theme.Foreground : Brushes.White;
     }
+    private void EnsureShipPanel()
+    {
+        if(shipPanel is not null)return;
+        shipPanel=new(text);shipPanel.SetGraphicsMode(graphicsMode);
+        shipPanel.ShipSelectionRequested+=ship=>
+        {
+            if(theme.Showcase){SelectShowcaseShip(ship,true);return;}
+            theme=PanelTheme.All.Single(choice=>choice.ShipId==ship&&!choice.Showcase);
+            if(previewPath is null)PanelPreferences.SaveTheme(theme.Id);
+            ApplyTheme();SaveDisplayState();
+        };
+        shipPanel.NavigationChanged+=()=>{if(IsLoaded)SaveDisplayState();};
+        shipPanel.ShowcaseRotationChanged+=enabled=>
+        {
+            if(previewPath is null)PanelPreferences.SaveShowcaseRotation(enabled);
+            if(IsLoaded)SaveDisplayState();
+        };
+        shipPanel.ShipOptionsRequested+=()=>settings?.Open(shipOptions);
+    }
     private void ApplyTheme()
     {
+        ExperienceMemory.Apply(theme.ShipConsole);
+        ApplyWindowRenderer();
+        if(theme.ShipConsole)EnsureShipPanel();
         if (shipPanel is not null)
         {
             if (theme.ShipConsole) shipPanel.Configure(theme, ActualWidth > 0 && ActualHeight > 0 ? ActualWidth / ActualHeight : 16.0 / 9, layoutMode);
             if (theme.Showcase && previewPath is null) shipPanel.SetShowcaseScene(PanelPreferences.ExpanseShip);
-            if(!theme.ShipConsole)shipPanel.SuspendShowcase();
-            viewport.Child = theme.ShipConsole ? shipPanel : board;
-            shipPanel.SetMotion(holographicMotion && theme.ShipConsole);
-            shipPanel.SetReadoutEffects(readoutPulse,gaugeTransitions);
+            if(!theme.ShipConsole){shipPanel.SuspendShowcase();shipPanel=null;}
+            shipPanel?.SetMotion(holographicMotion && theme.ShipConsole);
+            shipPanel?.SetReadoutEffects(readoutPulse,gaugeTransitions);
         }
+        viewport.Child=theme.ShipConsole?shipPanel:board;
         if (artworkAnimation is not null) artworkAnimation.Enabled = animateArtwork && !theme.ShipConsole;
         if (theme.ShipConsole) artworkAnimation?.ReleaseFrames();
         if (animationCommand is not null) animationCommand.IsEnabled = !theme.ShipConsole;
@@ -774,14 +786,23 @@ internal sealed partial class PanelWindow : Window
         cpuGraph.ApplyTheme(theme); gpuGraph.ApplyTheme(gpuTheme);
         cpuBar.ApplyTheme(theme); gpuBar.ApplyTheme(gpuTheme); memoryBar.ApplyTheme(theme);
         settings?.ApplyTheme();
+        if(IsLoaded)CollectAorusGarbage(full:true);
         UpdateShowcaseClock();
     }
-    private bool CanCycleShowcase => !closing && !checkingThemes && theme.Showcase && showcaseCycle && IsLoaded && IsVisible && WindowState!=WindowState.Minimized && SystemParameters.ClientAreaAnimation;
+    private void ApplyWindowRenderer()
+    {
+        // The small 2D dashboard does not need a Direct3D presentation cache.
+        // Expanse retains hardware rendering, including its full solar scene.
+        if(PresentationSource.FromVisual(this) is HwndSource source)
+            source.CompositionTarget.RenderMode=theme.ShipConsole?RenderMode.Default:RenderMode.SoftwareOnly;
+    }
+    private bool CanCycleShowcase => !closing && !checkingThemes && themeChange.IsCompleted && theme.Showcase && showcaseCycle && IsLoaded && IsVisible && WindowState!=WindowState.Minimized && SystemParameters.ClientAreaAnimation;
     private void RefreshVisualActivity()
     {
         bool active=IsVisible && WindowState!=WindowState.Minimized;
         shipPanel?.SetActive(active && theme.ShipConsole);
         if (artworkAnimation is not null) artworkAnimation.Enabled=active && animateArtwork && !theme.ShipConsole;
+        if(!active && !theme.ShipConsole)artworkAnimation?.ReleaseFrames();
         if (active && animateArtwork && !theme.ShipConsole && IsLoaded) _=LoadArtwork();
         UpdateShowcaseClock();
     }

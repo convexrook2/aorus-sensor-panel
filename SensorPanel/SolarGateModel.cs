@@ -18,20 +18,22 @@ internal sealed class SolarGateModel
     private const int TextureSize=128;
     private sealed record Part(MeshGeometry3D Mesh,Material Material,bool Aperture);
     private sealed record Definition(Part[] Parts,Model3DGroup Frozen,string PackedHash,int Triangles);
-    private static readonly Lazy<Definition> definition=new(Load);
+    private static Definition? definition;
+    private static Definition Shared=>definition??=Load();
+    internal static void Release()=>definition=null;
     private static readonly (double X,double Y)[] noiseGrid=MakeNoise();
     private readonly WriteableBitmap field=new(TextureSize,TextureSize,96,96,PixelFormats.Bgra32,null);
     private readonly byte[] pixels=new byte[TextureSize*TextureSize*4];
     private double lastTime=double.NaN;
     private long fieldUpdates;
     internal Model3DGroup Model {get;}=new();
-    internal static Model3DGroup FrozenModel=>definition.Value.Frozen;
-    internal static string PackedHash=>definition.Value.PackedHash;
+    internal static Model3DGroup FrozenModel=>Shared.Frozen;
+    internal static string PackedHash=>Shared.PackedHash;
 
     internal SolarGateModel()
     {
         var aperture=new EmissiveMaterial(new ImageBrush(field){Stretch=Stretch.Fill});
-        foreach(var part in definition.Value.Parts)
+        foreach(var part in Shared.Parts)
         {
             var material=part.Aperture?aperture:part.Material;
             Model.Children.Add(new GeometryModel3D(part.Mesh,material){BackMaterial=material});
@@ -51,7 +53,7 @@ internal sealed class SolarGateModel
     }
 
     internal object Diagnose()=>new{source=AssetPath,decodedSha256=DecodedSha256,packedSha256=PackedHash,
-        triangles=definition.Value.Triangles,nativeBatches=definition.Value.Parts.Length,
+        triangles=Shared.Triangles,nativeBatches=Shared.Parts.Length,
         aperture="Separate two-sided opaque animated transit field",fieldTime=lastTime,fieldUpdates,
         sourceUnmodified=true,nativeMaterialAdaptation=true};
 

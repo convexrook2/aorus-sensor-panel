@@ -20,6 +20,7 @@ internal sealed class FleetViewport : Grid, IDisposable
         Foreground=Brushes.LightBlue, TextWrapping=TextWrapping.Wrap,
         HorizontalAlignment=HorizontalAlignment.Center, VerticalAlignment=VerticalAlignment.Center };
     private WebView2CompositionControl? browser;
+    internal Task Retirement { get; private set; }=Task.CompletedTask;
     private Canvas? browserSurface;
     private Window? owner;
     private Task? initialization;
@@ -82,15 +83,16 @@ internal sealed class FleetViewport : Grid, IDisposable
             string profile=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"X890Sensor","FleetWebView2");
             var environment=await CoreWebView2Environment.CreateAsync(userDataFolder:profile);
             if(disposed)return;
-            browser=new WebView2CompositionControl { DefaultBackgroundColor=System.Drawing.Color.Transparent, UseLayoutRounding=false };
+            var createdBrowser=new WebView2CompositionControl { DefaultBackgroundColor=System.Drawing.Color.Transparent, UseLayoutRounding=false };
+            browser=createdBrowser;
             // Canvas keeps the larger raster surface out of parent measurement.
             // Its inverse transform preserves the established layout and input.
             browserSurface=new Canvas { ClipToBounds=true };
             browserSurface.Children.Add(browser);Children.Insert(0,browserSurface);
             UpdateCaptureSize();
-            await browser.EnsureCoreWebView2Async(environment);
-            if(disposed)return;
-            var core=browser.CoreWebView2;
+            await createdBrowser.EnsureCoreWebView2Async(environment);
+            if(disposed)return; // Retirement closes it after initialization completes.
+            var core=createdBrowser.CoreWebView2;
             Rookline.AssetProtection.AppAssets.Host(core,Host,"FleetViewer");
             core.Settings.AreDefaultContextMenusEnabled=false;
             core.Settings.IsStatusBarEnabled=false;
@@ -320,7 +322,27 @@ internal sealed class FleetViewport : Grid, IDisposable
             owner.DpiChanged-=OwnerDpiChanged;
         }
         SystemParameters.StaticPropertyChanged-=AnimationPreferenceChanged;
-        browser?.Dispose();browser=null;browserSurface=null;
+        var retiring=browser;browser=null;browserSurface=null;
+        Retirement=RetireBrowserAsync(initialization,retiring);
         Children.Clear();
+    }
+    private static async Task RetireBrowserAsync(Task? initialization,WebView2CompositionControl? retiring)
+    {
+        // Disposing the WPF wrapper before EnsureCoreWebView2Async finishes can
+        // leave a late-created controller alive. Close the completed controller.
+        if(initialization is not null)await initialization;
+        var processes=retiring?.CoreWebView2?.Environment.GetProcessInfos().Select(info=>info.ProcessId).ToArray()??[];
+        retiring?.Dispose();
+        await Task.WhenAll(processes.Select(WaitForRuntimeExitAsync));
+    }
+    private static async Task WaitForRuntimeExitAsync(int pid)
+    {
+        try
+        {
+            using var process=System.Diagnostics.Process.GetProcessById(pid);
+            await process.WaitForExitAsync();
+        }
+        catch(ArgumentException){} // Already exited before its handle was opened.
+        catch(InvalidOperationException){} // Exited during handle acquisition.
     }
 }

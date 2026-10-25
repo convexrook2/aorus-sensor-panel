@@ -12,6 +12,8 @@ internal static class App
     {
         try
         {
+            using var memorySampler = AorusMemorySampler.Start(args);
+            if(args.Contains("--check-aorus-pixels"))return ArtworkAnimation.CheckPixels();
             // WPF hosts the window; WinForms supplies only the tray. Configure
             // process DPI before either framework creates an HWND.
             System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.PerMonitorV2);
@@ -73,6 +75,7 @@ internal static class App
                 catch (AbandonedMutexException) { ownsInstance = true; }
                 if (!ownsInstance) { MessageBox.Show("The panel is already running. Double-click its FAN MADE tray icon to show it.", PanelBranding.Name); return 0; }
             }
+            ExperienceMemory.Apply(PanelTheme.Resolve(previewTheme??PanelPreferences.Theme).ShipConsole);
             var application = new Application { ShutdownMode = ShutdownMode.OnMainWindowClose };
             if (args.Contains("--readme")) { PanelBranding.ShowReadme(); return application.Run(); }
             application.DispatcherUnhandledException += (_, e) =>
@@ -100,7 +103,9 @@ internal static class App
                 throw new ArgumentException("--measure-fleet-rendering requires --check-holotable-live.");
             if(checkHolotable && (preview is not null || !args.Contains("--windowed") || !args.Contains("--runtime-check")))
                 throw new ArgumentException("--check-holotable-live requires --windowed --runtime-check and actual live monitoring.");
-            return application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed"),args.Contains("--runtime-check"),checkHolotable));
+            int result=application.Run(new PanelWindow(preview, capture, fpsPid, args.Contains("--benchmark-polling"),previewSize,args.Contains("--sensor-preview"),previewTheme,checkThemes,checkShips,checkNavigation,args.Contains("--windowed"),args.Contains("--runtime-check"),checkHolotable));
+            memorySampler?.Dispose();
+            return result!=0?result:Environment.ExitCode;
         }
         catch (System.ComponentModel.Win32Exception ex) when(ex.NativeErrorCode==1223)
         {

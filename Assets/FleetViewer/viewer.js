@@ -135,9 +135,9 @@ try {
    shipShadows=ownShipShadows(gltf.scene);
    // Reviewed ships opt into their own registered exhaust. Source model
    // statistics are captured above, before separate effect meshes are added.
-   if(['Rocinante','Anubis','Arboghast','Canterbury','Knight'].includes(entry.id)){
+   if(['Rocinante','Anubis','Arboghast','Canterbury','Knight','Pella','Scirocco'].includes(entry.id)){
      const drive=engines[entry.id==='Rocinante'?'RocinanteS6':entry.id];
-     if(['Arboghast','Canterbury','Knight'].includes(entry.id)&&drive?.modelSha256!==modelSha)throw Error('Drive registration differs from '+entry.id+' model');
+     if(['Arboghast','Canterbury','Knight','Pella','Scirocco'].includes(entry.id)&&drive?.modelSha256!==modelSha)throw Error('Drive registration differs from '+entry.id+' model');
      shipEffects=makeShipEffects(oriented,gltf.scene,drive.engines,center,3.2/max);
      shipEffects.setLights(true);shipEffects.setPlumes(true);
    }

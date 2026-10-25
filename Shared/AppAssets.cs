@@ -12,6 +12,14 @@ internal static class AppAssets
     {RlArchive.ValidatePath(path);return archive.Value?.Contains(path)??File.Exists(Path.Combine(AppContext.BaseDirectory,path));}
     internal static byte[] Read(string path)
     {RlArchive.ValidatePath(path);return archive.Value?.Read(path)??File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,path));}
+    internal static int ReadInto(string path,Span<byte> destination)
+    {
+        RlArchive.ValidatePath(path);
+        if(archive.Value is {} packed)return packed.ReadInto(path,destination);
+        using var file=File.OpenRead(Path.Combine(AppContext.BaseDirectory,path));
+        if(file.Length>destination.Length)throw new InvalidDataException("Asset destination is too small.");
+        int length=checked((int)file.Length);file.ReadExactly(destination[..length]);return length;
+    }
     internal static Stream Open(string path)=>new MemoryStream(Read(path),false);
     internal static void Host(CoreWebView2 core,string host,string root)
     {

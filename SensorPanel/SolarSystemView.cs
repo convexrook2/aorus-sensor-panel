@@ -13,7 +13,7 @@ using System.Windows.Threading;
 namespace SensorPanel;
 
 /// <summary>The original navigation diagram, with schematic and physical NASA-vector projections.</summary>
-internal sealed class SolarSystemView : Grid
+internal sealed class SolarSystemView : Grid, IDisposable
 {
     private readonly MapSurface map;
     private readonly TextBlock heading;
@@ -92,6 +92,7 @@ internal sealed class SolarSystemView : Grid
 
     public void FocusBody(string id, bool animate = true) => map.FocusBody(id, animate);
     public void SetMotion(bool enabled) => map.SetMotion(enabled);
+    public void Dispose() { map.Dispose(); Children.Clear(); }
     internal void SetGraphicsMode(ExpanseGraphicsMode mode)=>map.SetGraphicsMode(mode);
     internal void SetContext(string context) => heading.ToolTip = context;
     internal void SetTrueScale(bool enabled) { map.SetTrueScale(enabled); SyncStatus(); }
@@ -202,7 +203,7 @@ internal sealed class SolarSystemView : Grid
         private readonly List<(Body Body, Rect Bounds)> labelTargets = new();
         private readonly List<Rect> labelBounds = new();
         private readonly (Point Point, double Radius, double Opacity)[] stars;
-        private bool motion = true, loaded, moving, checking, cameraRendering;
+        private bool motion = true, loaded, moving, checking, cameraRendering, disposed;
         private double time, lastTime, yaw = -.24, tilt = .35, zoom = 1, targetZoom = 1, jd, timeRate = 21600, statusTime;
         private long frames;
         private long sceneUpdates,backgroundPaints,foregroundPaints,pointerUpdates;
@@ -267,7 +268,14 @@ internal sealed class SolarSystemView : Grid
             beltLayer=new BeltLayer(this);
             Children.Add(galaxy);Children.Add(starLayer);Children.Add(beltLayer);Children.Add(orbitLayer);Children.Add(backdrop);Children.Add(viewport);Children.Add(overlay);
             timer.Tick += Tick;
-            Loaded += (_, _) => { loaded = true; SystemParameters.StaticPropertyChanged += ParametersChanged; UpdateTimer(); Refresh(); };
+            Loaded += (_, _) =>
+            {
+                if(disposed)return;
+                loaded=true;
+                SystemParameters.StaticPropertyChanged-=ParametersChanged;
+                SystemParameters.StaticPropertyChanged+=ParametersChanged;
+                UpdateTimer();Refresh();
+            };
             Unloaded += (_, _) =>
             {
                 loaded = false; SystemParameters.StaticPropertyChanged -= ParametersChanged;
@@ -297,7 +305,16 @@ internal sealed class SolarSystemView : Grid
 
         private bool efficient;
         internal void SetGraphicsMode(ExpanseGraphicsMode mode){efficient=mode==ExpanseGraphicsMode.Efficient;UpdateTimer();}
-        private bool CanAnimate => motion && loaded && IsVisible && IsEnabled && SystemParameters.ClientAreaAnimation;
+        private bool CanAnimate => !disposed && motion && loaded && IsVisible && IsEnabled && SystemParameters.ClientAreaAnimation;
+        internal void Dispose()
+        {
+            disposed=true;motion=false;loaded=false;PauseTimer();
+            SystemParameters.StaticPropertyChanged-=ParametersChanged;
+            viewport.Children.Clear();scene.Children.Clear();models.Clear();transforms.Clear();
+            starLayer.CacheMode=null;orbitLayer.CacheMode=null;beltLayer.CacheMode=null;
+            galaxy.Source=null;gateModel=null;Children.Clear();
+            text.Clear();hitTargets.Clear();labelTargets.Clear();labelBounds.Clear();
+        }
         private void ParametersChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(SystemParameters.ClientAreaAnimation)) UpdateTimer();
@@ -317,6 +334,7 @@ internal sealed class SolarSystemView : Grid
         }
         private void UpdateTimer()
         {
+            if(disposed)return;
             if (CanAnimate)
             {
                 UpdateCadence();
@@ -503,6 +521,7 @@ internal sealed class SolarSystemView : Grid
             && p.X - radius <= ActualWidth && p.Y - radius <= ActualHeight;
         private void Refresh()
         {
+            if(disposed)return;
             if (ActualWidth < 2 || ActualHeight < 2 || overlay is null) return;
             sceneUpdates++;
             camera.Width = ActualWidth;
