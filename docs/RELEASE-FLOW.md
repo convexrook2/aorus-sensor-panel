@@ -151,7 +151,8 @@ the owner's installed product.
 
 ## Next safe action
 
-Complete the 1.8.15 installer correction checks, commit/push the reviewed slice
-and build its exact revision in Jenkins. Review and publish those verified bytes.
-Preserve all accepted ships and unrelated work. Production installation and new
-LIVE/hardware validation remain separate.
+The 1.8.15 correction is published from successful Jenkins #19; its public download
+matches the reviewed installer. See [the result](RELEASE-1.8.15-RESULT.md).
+Windows reports 1.8.14 installed. Run the new installer only as an authorized
+production upgrade; installed file/native/LIVE verification remains separate.
+Preserve all accepted ships and unrelated work.

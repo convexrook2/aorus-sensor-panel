@@ -8,11 +8,12 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
-The **1.8.15 installer correction** lets Setup close a running SensorPanel,
+The published **1.8.15 installer correction** lets Setup close a running SensorPanel,
 including a tray-only instance, before replacing its files. The automatic-close
 option uses Windows Restart Manager and forces closure if required. Saved
 preferences and the accepted ships are unchanged. See the
-[upgrade behavior and validation](docs/INSTALLER-UPGRADE.md).
+[upgrade behavior and validation](docs/INSTALLER-UPGRADE.md) and
+[verified release result](docs/RELEASE-1.8.15-RESULT.md).
 
 The **1.8.13 correction** adds the accepted Knight review 04 that was omitted
 from 1.8.12: the exact silver-hull model, matching portrait, seventeen work
@@ -31,13 +32,14 @@ and settings allocation, game-triggered FPS capture, reuse of compiled code,
 and AORUS-only garbage collection at idle. With LMU running, the six-minute LIVE
 check peaked at 91.94 MB across the app and its helpers, and 88.55 MB in the tray
 after returning from Expanse. See the [memory evidence and sampling scope](docs/AORUS-MEMORY.md).
-It has not replaced the installed 1.8.13 app.
+Windows' installation record reports 1.8.14 as installed on October 25.
 
 The owner-accepted **Pella v27** and **Scirocco paint02** are integrated into
 both source bundles with matching native portraits, their 34/14 source lights
 and four registered drives each. The per-user Fleet Studio desktop copy was
 refreshed and its encrypted package rendered successfully. SensorPanel's exact CI installer payload passed the saved-data showcase/holotable
-check and was published with a verified download. Installation remains pending;
+check and was published with a verified download. The subsequent 1.8.14
+installation is recorded by Windows; fresh installed native/LIVE checks were not run here;
 see the [1.8.14 release result](docs/RELEASE-1.8.14-RESULT.md). See the
 [October 24 integration record](docs/PELLA-SCIROCCO-INTEGRATION-20261024.md).
 
@@ -343,8 +345,9 @@ Agatha King has six illuminated drive throats. Pella's October 24 source update
 restores the downloaded hull relief while retaining its 34 lights, dark finish
 and recessed backing; see [Pella restoration](Assets/Models/Source/Pella-v27/README.md).
 The restored Pella and painted Scirocco are installed in the separate Fleet
-Studio desktop viewer and published in SensorPanel 1.8.14; the monitor update
-has not yet been installed by this release task. These remain credited fan
+Studio desktop viewer and published in SensorPanel 1.8.14, which Windows now
+reports installed. The 1.8.15 installer correction retains those same models.
+These remain credited fan
 studies; earlier approximations are labelled in the catalogue. Source and
 asset credits accompany `Assets/FleetViewer/`. Artwork loads locally and uses
 no runtime reference-image downloads. Ship and navigation motion stop when
