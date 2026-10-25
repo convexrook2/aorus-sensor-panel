@@ -1,4 +1,6 @@
-# SensorPanel 1.8.14 candidate
+# SensorPanel 1.8.14 candidate boundary
+
+Published after validation; see [the release result](RELEASE-1.8.14-RESULT.md).
 
 Lennon accepted Pella v27 and Scirocco paint02 and requested their integration
 into Fleet Studio and SensorPanel. After the completed integration report
