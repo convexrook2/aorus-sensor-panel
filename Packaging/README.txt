@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.8.14 | Windows x64
+Version 1.8.15 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -164,7 +164,13 @@ Resource use depends on hardware, display size, theme and workload. There
 is no universal resource-use or game-FPS guarantee.
 
 UPDATE / UNINSTALL
-Exit from the tray before updating or uninstalling. Remove the application
+Setup can update a running panel, including one hidden in the tray. Leave
+"Automatically close the applications" selected if Setup displays that page.
+Setup closes applications using its installed files before replacing them,
+forcing closure if necessary. Your saved preferences remain in place.
+Use the final Launch option or your shortcut to open the updated panel.
+
+For uninstalling, exit the panel from its tray menu first, then remove it
 through Windows Settings > Apps. Its startup task and installed files are
 removed; shared runtimes, drivers and user preferences are preserved.
 

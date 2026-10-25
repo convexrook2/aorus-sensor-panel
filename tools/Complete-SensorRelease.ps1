@@ -116,7 +116,9 @@ try {
     if ($panelRoot -ne (Join-Path $env:ProgramFiles 'AORUS Sensor Panel FAN MADE')) { throw 'Unexpected production installation folder; preserve it.' }
     $panelExe = Join-Path $panelRoot 'SensorPanel.exe'
     $running = @(Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -in @($panelExe,(Join-Path $panelRoot 'SensorCollector.exe')) })
-    if ($running.Count) { throw 'Exit the installed sensor panel before upgrading; published CI installer is ready.' }
+    if ($running.Count) {
+        Write-Host ("Installer will close applications using the installed package, including PID(s): " + ($running.ProcessId -join ', '))
+    }
     $selectedTasks = [string]$installed.'Inno Setup: Selected Tasks'
     if ($selectedTasks -notmatch '^(desktopicon|startup)?(,(desktopicon|startup))*$') { throw 'Unexpected installer task choice; inspect it before upgrading.' }
     $scheduler = New-Object -ComObject Schedule.Service; $scheduler.Connect()

@@ -1,5 +1,5 @@
 #define AppName "AORUS Sensor Panel - FAN MADE"
-#define AppVersion "1.8.14"
+#define AppVersion "1.8.15"
 #ifndef PackageRoot
   #error PackageRoot must identify the validated shared-runtime publish directory.
 #endif
@@ -34,9 +34,11 @@ OutputBaseFilename=AORUS-Sensor-Panel-FAN-MADE-Setup
 Compression=lzma2
 SolidCompression=yes
 DiskSpanning=no
-CloseApplications=no
+; Restart Manager closes only applications using this installation's files,
+; including a panel hidden in the tray, before cleanup or replacement begins.
+CloseApplications=force
 RestartApplications=no
-AppMutex=Local\AORUS-FAN-MADE-SensorPanel-1B7C308F
+AppMutex={code:UninstallAppMutex}
 InfoBeforeFile=README.txt
 [Tasks]
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Shortcuts:"
@@ -70,6 +72,14 @@ const
 var
   RuntimePage: TWizardPage;
   RuntimeLabel: TNewStaticText;
+
+function UninstallAppMutex(Param: String): String;
+begin
+  { Keep the existing uninstall guard. Setup must reach Restart Manager instead
+    of blocking at startup and asking the owner to exit the panel manually. }
+  if IsUninstaller then Result := 'Local\AORUS-FAN-MADE-SensorPanel-1B7C308F'
+  else Result := '';
+end;
 
 function StableRuntimeVersion(Version: String): Boolean;
 var

@@ -1,5 +1,13 @@
 # X890 sensor-panel release flow
 
+October 25 installer correction: after requesting the installer, Lennon asked
+that it force-close a running SensorPanel and update. The 1.8.15 continuation
+changes installer shutdown handling and removes the release wrapper's manual-exit
+block. Accepted ships and monitoring behavior remain unchanged. Deliver a new
+version through scoped commit/push, exact-source CI, package review and publication;
+do not replace the published 1.8.14 bytes. Executing the production installer
+remains a separate action. See [installer upgrade validation](INSTALLER-UPGRADE.md).
+
 October 24 continuation: Lennon accepted the updated Pella and Scirocco in
 both consumers and asked for the next release step. The 1.8.14 candidate
 includes those unchanged accepted ships and the prepared AORUS memory/FPS
@@ -110,8 +118,9 @@ Pella and Guanshiyin v11 and all unrelated work.
    Do not rebuild or silently replace bytes after approval.
 7. **Upgrade after approval.** Installation is a separate action. Preserve the
    current install, startup/shortcut choices and preferences. Identify any
-   running process by executable path and ownership before stopping it; prefer
-   the owner's tray Exit. Perform the authorized in-place upgrade, verify exit
+   running process by executable path and ownership. From 1.8.15, let Setup's
+   Restart Manager close applications using that installation's files, including
+   the tray instance; do not kill unrelated processes by name. Perform the authorized in-place upgrade, verify exit
    code/version/file hashes and run the agreed installed native/LIVE acceptance
    visibly. Do not deploy or install Fleet Studio as a side effect.
 8. **Close out and report.** Save the source/CI/package/public-download/install
@@ -142,7 +151,7 @@ the owner's installed product.
 
 ## Next safe action
 
-Complete the authorized 1.8.13 Knight-only adoption gates, commit the reviewed
-slice, push and run exact-SHA Jenkins with installer compilation. Review and
-publish those verified bytes. Preserve the accepted model and unrelated work.
-Installation and new LIVE/hardware validation remain separate.
+Complete the 1.8.15 installer correction checks, commit/push the reviewed slice
+and build its exact revision in Jenkins. Review and publish those verified bytes.
+Preserve all accepted ships and unrelated work. Production installation and new
+LIVE/hardware validation remain separate.

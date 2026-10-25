@@ -8,6 +8,12 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+The **1.8.15 installer correction** lets Setup close a running SensorPanel,
+including a tray-only instance, before replacing its files. The automatic-close
+option uses Windows Restart Manager and forces closure if required. Saved
+preferences and the accepted ships are unchanged. See the
+[upgrade behavior and validation](docs/INSTALLER-UPGRADE.md).
+
 The **1.8.13 correction** adds the accepted Knight review 04 that was omitted
 from 1.8.12: the exact silver-hull model, matching portrait, seventeen work
 lights and three fitted white/violet plumes. See the
