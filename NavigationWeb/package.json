@@ -16,7 +16,7 @@
     "build-donnager": "tsx tools/assemble-donnager.ts"
   },
   "devDependencies": {
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.6.6",
     "@types/three": "^0.185.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
