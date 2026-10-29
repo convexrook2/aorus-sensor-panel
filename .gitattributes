@@ -14,6 +14,9 @@ FleetStudio/ship-effects.js text eol=lf
 FleetStudio/light-glow.js text eol=lf
 # These accepted bytes are shared with the native exact-hash bundle.
 FleetStudio/review.js -text whitespace=cr-at-eol
+FleetStudio/source-area-lights.js -text whitespace=cr-at-eol
+FleetStudio/vendor/three/examples/jsm/lights/RectAreaLightUniformsLib.js -text whitespace=cr-at-eol
+FleetStudio/vendor/three/examples/jsm/lights/RectAreaLightTexturesLib.js -text whitespace=cr-at-eol
 FleetStudio/vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js -text whitespace=cr-at-eol
 FleetStudio/vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js -text whitespace=cr-at-eol
 Sources/Anubis/*.py text eol=lf

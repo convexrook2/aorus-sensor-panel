@@ -1,24 +1,25 @@
 {
   "Guanshiyin": {
+    "modelSha256": "1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017",
     "engines": [
       {
         "position": [
           0,
-          -1.668302043956042,
-          -0.053196281642447225
+          -10.515,
+          0.87
         ],
         "direction": [
           0,
           -1,
           0
         ],
-        "radius": 0.07091627138249336,
-        "length": 0.4254976282949602,
-        "basis": "Existing source-model drive component: blue",
-        "addCore": false
+        "radius": 0.58,
+        "length": 3.8,
+        "addCore": false,
+        "basis": "Raised96 drive outlet; rigid +90 degree Z authoring transform from the saved Blender source"
       }
     ],
-    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+    "finish": "Raised96 outlet fitted to the full exported mesh; authored visual plume settings."
   },
   "Morrigan": {
     "engines": [
@@ -1724,5 +1725,26 @@
     ],
     "finish": "Separate inspection revision; original source retained",
     "modelSha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0"
+  },
+  "GuanshiyinV11": {
+    "engines": [
+      {
+        "position": [
+          0,
+          -1.668302043956042,
+          -0.053196281642447225
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.07091627138249336,
+        "length": 0.4254976282949602,
+        "basis": "Existing source-model drive component: blue",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
   }
 }

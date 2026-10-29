@@ -5,18 +5,18 @@
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 4880,
-      "sha256": "43b4199ea36f0bd742a79476979a124e5f125ae947ba8e0cf94be8db8825c871"
+      "bytes": 4719,
+      "sha256": "1905ae5be02144cab7e773532b2dd2d62628daf21f74e86ac4429acb1f598a37"
     },
     {
       "path": "catalog.json",
-      "bytes": 31994,
-      "sha256": "6959706356996e6f960f4019a8a7e77908543fb90629f64c6fc340f6b44cc786"
+      "bytes": 32380,
+      "sha256": "4e0abae0a2ea18b3f67796beb4634bb2048b24030d983d8756d00c160b40fffb"
     },
     {
       "path": "engines.json",
-      "bytes": 14451,
-      "sha256": "e23ed671b881611f49d14091f2e53d4af66cdebd5f9331dec0dd2b3c3a4a8544"
+      "bytes": 15058,
+      "sha256": "7c5e62e6b434b7c723ca8d8c334e2fd246001a940ba19da5a6b071daf6537324"
     },
     {
       "path": "holographic-stage.js",
@@ -80,8 +80,8 @@
     },
     {
       "path": "models/Guanshiyin.glb.gz",
-      "bytes": 5620908,
-      "sha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb"
+      "bytes": 40090254,
+      "sha256": "0159b8e139bf96047d4edca3d1d49bde678436ad4c48c359f9075acb41054255"
     },
     {
       "path": "models/Hammurabi.glb.gz",
@@ -195,8 +195,8 @@
     },
     {
       "path": "portraits/Guanshiyin.png",
-      "bytes": 609105,
-      "sha256": "0898ead3d9efa6c4b9977b4d88b2c9d93d2e11f712972dac2abcc3366ba45344"
+      "bytes": 556350,
+      "sha256": "5cdb973d3a81e467d351ed48eaa4a1e3d9a662c2e90558e8636e28309c047f84"
     },
     {
       "path": "portraits/Hammurabi.png",
@@ -206,7 +206,7 @@
     {
       "path": "portraits/index.json",
       "bytes": 5795,
-      "sha256": "28fd2b175a48bdb241e1b448c061553618a689dcf2394fe2561bf5d11b2360c3"
+      "sha256": "9eb409368207f371775172483afab17bc4f28a9af06c84e9e9e1d66fda218580"
     },
     {
       "path": "portraits/Knight.png",
@@ -279,6 +279,11 @@
       "sha256": "56498dd02f735604c463d16183d5ec4015807679f677cc5f03a834b36e5b3894"
     },
     {
+      "path": "source-area-lights.js",
+      "bytes": 1517,
+      "sha256": "c3be9e6e013e36cba41268a36962ab9f1a486f19d10b02b3f6cd0e8ecbe8b882"
+    },
+    {
       "path": "vendor/three/build/three.core.js",
       "bytes": 1443056,
       "sha256": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759"
@@ -297,6 +302,16 @@
       "path": "vendor/three/examples/jsm/environments/RoomEnvironment.js",
       "bytes": 4960,
       "sha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4"
+    },
+    {
+      "path": "vendor/three/examples/jsm/lights/RectAreaLightTexturesLib.js",
+      "bytes": 314764,
+      "sha256": "6dd4043bb052594357a5eeff13dc0519f0a80b100b97ec80c12808f887897bc1"
+    },
+    {
+      "path": "vendor/three/examples/jsm/lights/RectAreaLightUniformsLib.js",
+      "bytes": 1014,
+      "sha256": "494fef2d731ff1689050cc6040ad78d927c22b9125a12f532beb0374c2811c6e"
     },
     {
       "path": "vendor/three/examples/jsm/loaders/GLTFLoader.js",
@@ -385,8 +400,8 @@
     },
     {
       "path": "viewer.js",
-      "bytes": 21246,
-      "sha256": "3c588fb7b6b0fb40b348d7bd394066e414858cec91bf68834b526be819d950e7"
+      "bytes": 21438,
+      "sha256": "f69e451eb181ee831d9932ae5211670f8adbe04758f6ac3b6c8206278ffdd9e3"
     }
   ]
 }

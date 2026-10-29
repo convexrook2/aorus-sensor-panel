@@ -30,6 +30,17 @@ https://www.youtube.com/watch?v=YXtIQub_YtI&t=188s
 Original licensed sources: https://www.thingiverse.com/thing:2060044 and https://www.thingiverse.com/thing:1235700
 CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 
+Guanshiyin / full gold mast wrap103
+Authored fan reconstruction after Lee Fitzgerald / North Front production
+concepts and The Expanse exterior references. Source-fitted horse mural
+artwork follows the artist's reference. No official production mesh acquired.
+https://leefitzgerald.artstation.com/projects/X1rzxL
+X890: separate wrapped gill panels and physical zigzag clearances, raised
+detailed drive, fitted lamp fixtures, procedural contour livery and authored
+plume registration, full hollow gold return behind the bow mast, and dual
+bow gallery guardrails with rectangular lamps informed by saved S03E01 frames.
+Lamp spacing and hidden mechanics remain interpreted.
+
 Scirocco: cg / Printables 477957 / CC BY 4.0; X890 materials, markings and work lights. Visual references: Ryan Dening / North Front and Axiom VFX.
 https://www.printables.com/model/477957-mcrn-scirocco-class-assault-cruiser-from-the-expan
 CC BY 4.0: https://creativecommons.org/licenses/by/4.0/

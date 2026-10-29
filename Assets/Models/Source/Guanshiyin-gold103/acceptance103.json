@@ -1,0 +1,21 @@
+{
+  "ship": "Guanshiyin",
+  "status": "owner_accepted_complete",
+  "ownerStatement": "Fully accepted, this ship is now complete.",
+  "acceptedOn": "2026-10-28",
+  "timezone": "America/Toronto",
+  "revision": "gold103B",
+  "fleetStudioTitle": "Guanshiyin / full gold mast wrap103",
+  "source": "Guanshiyin-FULL-GOLD-MAST-WRAP103B.blend",
+  "sourceSha256": "9a5fc03b7bed8562610b894773944f828da4a862eaca3b70ba19b0374c44a96c",
+  "glb": "Guanshiyin-full-gold-wrap103.glb",
+  "glbSha256": "1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017",
+  "fleetStudioModel": "models/Guanshiyin-1a5ec3894f68.glb.gz",
+  "installedFleetStudioArchiveSha256": "07cf725c4cd10b2275e5b58a1ec67c9c847fde7af3209c08234a8d8b6fcbbf3b",
+  "triangles": 3174446,
+  "sourceAreaLights": 31,
+  "nativeEvidence": "artifacts/guanshiyin-gold103-20261028/native-final/result.json",
+  "scope": "Completed ship including wrapped separated gills, detailed raised drive, lighting, dual illuminated guardrails and full gold wrap behind the mast.",
+  "hold": "No further ship changes unless Lennon explicitly reopens the scope.",
+  "effect": "Acceptance record only; source geometry, exported assets and installed package unchanged. No SensorPanel integration, publication, CI, commit or push authorized by this record."
+}

@@ -9,6 +9,7 @@ import {EmissiveGlowPass} from './light-glow.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {makePortal} from './portal.js';
 import {makeShipEffects,configurePlumeRendering,ownShipShadows} from './ship-effects.js';
+import {restoreSourceAreaLights} from './source-area-lights.js';
 const $=s=>document.querySelector(s);
 let renderer,scene,root,entry,portal,field,composer,shipEffects,shipShadows;
 const originals=new Map(),specialMaterials=new Set();
@@ -118,12 +119,15 @@ try{
    const scale=3.2/maximum;gltf.scene.position.sub(center);root.scale.setScalar(scale);
    document.body.dataset.sourceMaximum=maximum.toFixed(6);document.body.dataset.fitScale=scale.toFixed(6);document.body.dataset.modelFile=file;
    if(!['gate','survey-disc'].includes(entry.orientation)){const axis=size.x>=size.y&&size.x>=size.z?new THREE.Vector3(1,0,0):size.z>size.y?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);const flip=requestedPrevious?(entry.beforeFlipLongitudinal??entry.flipLongitudinal):entry.flipLongitudinal;root.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,flip?-1:1,0));}
+   const sourceAreas=entry.sourceAreaLights&&!requestedPrevious?restoreSourceAreaLights(gltf.scene,scale):0;
+   document.body.dataset.sourceAreaLights=sourceAreas;
    let lights=0;
    root.traverse(o=>{
      // Inspection exposure calibration: Blender's glTF exporter converts watts
      // using 683 lm/W; the existing studio rig uses artistic unit intensities.
      // Keep source light placement/colour, and calibrate only the display copy.
      if(o.isPointLight||o.isSpotLight){o.intensity*=(entry.lightUnitScale??1/683)*scale*scale;if(o.distance)o.distance*=scale;lights++;}
+     if(o.isRectAreaLight)lights++;
      if(o.isSpotLight&&entry.localLightShadows){o.castShadow=true;o.shadow.mapSize.set(512,512);o.shadow.camera.near=.003;o.shadow.camera.far=6;o.shadow.bias=-.00002;o.shadow.normalBias=.0005;}
      if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;
      if(entry.id==='SolRing'&&o.name.startsWith('Active_aperture')){field=o;portal=makePortal();specialMaterials.add(portal);o.material.dispose();o.material=portal;o.castShadow=false;o.receiveShadow=false;}
@@ -224,6 +228,14 @@ try{
  // Explicit developer diagnostics. Normal use leaves these state overrides off.
  window.fleetPlumeReview={
   state:()=>({ship:entry?.id,...shipEffects?.stats()}),
+  sourceView(eye,aim,zoom=1){
+   if(!root)throw Error('Load a model before setting a source review view');
+   if(spin)$('#rotate').click();root.updateMatrixWorld(true);const model=root.children[0];
+   controls.target.copy(model.localToWorld(new THREE.Vector3(...aim)));
+   camera.position.copy(model.localToWorld(new THREE.Vector3(...eye)));
+   camera.up.copy(new THREE.Vector3(0,0,1).transformDirection(model.matrixWorld));
+   camera.zoom=zoom;camera.updateProjectionMatrix();controls.update();invalidate();
+  },
   freeze(value){freezePlumeReview=Boolean(value);invalidate();},
   diagnose(){const gl=renderer.getContext(),errors=[];let pendingPlumeShadows=0;
    for(let i=0;i<16;i++){const error=gl.getError();if(!error)break;errors.push(error);}

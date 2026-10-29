@@ -22,8 +22,8 @@ internal sealed partial class StudioWindow
                 if(await browser.ExecuteScriptAsync("Boolean(document.body.dataset.loaded&&document.querySelector('#status').hidden)")=="true")break;
                 await Task.Delay(500);
             }
-            const string stateScript="({ship:document.body.dataset.loaded,ready:document.querySelector('#status').hidden,quality:document.body.dataset.quality,technical:document.querySelector('#technical').textContent,sourceSha256:document.body.dataset.modelSha256,orientation:document.body.dataset.orientation,sourceLights:Number(document.body.dataset.shipLights||0),engines:Number(document.body.dataset.engineCount||0),plumes:document.body.dataset.plumes==='true',frames:Number(document.querySelector('#motion').dataset.frames||0),angle:document.querySelector('#motion').dataset.cameraAngle})";
-            foreach(string ship in new[]{"Pella","Scirocco","RocinanteS6","Arboghast"})
+            const string stateScript="({ship:document.body.dataset.loaded,ready:document.querySelector('#status').hidden,status:document.querySelector('#status').textContent,quality:document.body.dataset.quality,technical:document.querySelector('#technical').textContent,sourceSha256:document.body.dataset.modelSha256,orientation:document.body.dataset.orientation,sourceLights:Number(document.body.dataset.shipLights||0),engines:Number(document.body.dataset.engineCount||0),plumes:document.body.dataset.plumes==='true',frames:Number(document.querySelector('#motion').dataset.frames||0),angle:document.querySelector('#motion').dataset.cameraAngle})";
+            foreach(string ship in new[]{"Guanshiyin","Pella","Scirocco","RocinanteS6","Arboghast"})
             {
                 await browser.ExecuteScriptAsync($"document.querySelector('#ship').value='{ship}';document.querySelector('#ship').dispatchEvent(new Event('change'));");
                 JsonElement sample=default;
@@ -33,8 +33,76 @@ internal sealed partial class StudioWindow
                     sample=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync(stateScript));
                     if(sample.TryGetProperty("ship",out var id)&&id.GetString()==ship&&sample.GetProperty("ready").GetBoolean())break;
                 }
-                if(!sample.TryGetProperty("ship",out var loaded)||loaded.GetString()!=ship||!sample.GetProperty("ready").GetBoolean()||sample.GetProperty("quality").GetString()!="full")throw new InvalidOperationException("Protected full model did not load: "+ship);
+                if(!sample.TryGetProperty("ship",out var loaded)||loaded.GetString()!=ship||!sample.GetProperty("ready").GetBoolean()||sample.GetProperty("quality").GetString()!="full")throw new InvalidOperationException("Protected full model did not load: "+ship+"; state: "+sample.GetRawText());
                 JsonElement? exhaust=null;
+                if(ship=="Guanshiyin")
+                {
+                    const string corrected="1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017";
+                    int restoredAreas=JsonSerializer.Deserialize<int>(await browser.ExecuteScriptAsync("Number(document.body.dataset.sourceAreaLights||0)"));
+                    if(restoredAreas!=31||sample.GetProperty("sourceSha256").GetString()!=corrected
+                        ||sample.GetProperty("sourceLights").GetInt32()!=31||sample.GetProperty("engines").GetInt32()!=1
+                        ||!sample.GetProperty("technical").GetString()!.Contains("3,174,446"))
+                        throw new InvalidOperationException("Guanshiyin full gold mast wrap103, full geometry, source lights or raised drive differ; restored areas="+restoredAreas+"; state="+sample.GetRawText());
+                    await browser.ExecuteScriptAsync("document.querySelector('#lighting').value='studio';document.querySelector('#lighting').dispatchEvent(new Event('change'));");
+                    foreach(var pose in new[]{
+                        (Name:"bow-gold-port",Eye:"[14,15,5]"),
+                        (Name:"bow-gold-starboard",Eye:"[-14,15,5]")})
+                    {
+                        await browser.ExecuteScriptAsync($"window.fleetPlumeReview.sourceView({pose.Eye},[0,7.3,0.35],5);");
+                        await Task.Delay(800);
+                        using var capture=File.Create(Path.Combine(output,"Guanshiyin-"+pose.Name+".png"));
+                        await browser.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png,capture);
+                    }
+                    foreach(var pose in new[]{
+                        (Name:"dual-rails-port",Eye:"[14,15,5]"),
+                        (Name:"dual-rails-starboard",Eye:"[-14,15,5]"),
+                        (Name:"dual-rails-axial",Eye:"[0,25,-0.1]")})
+                    {
+                        await browser.ExecuteScriptAsync($"window.fleetPlumeReview.sourceView({pose.Eye},[0,7.3,-0.35],4.5);");
+                        await Task.Delay(800);
+                        using var capture=File.Create(Path.Combine(output,"Guanshiyin-"+pose.Name+".png"));
+                        await browser.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png,capture);
+                    }
+                    foreach(var pose in new[]{
+                        (Name:"gold-shell-side",Eye:"[20,7.2,0.8]"),
+                        (Name:"gold-shell-quarter",Eye:"[14,15,5]"),
+                        (Name:"gold-shell-above",Eye:"[10,11,12]")})
+                    {
+                        await browser.ExecuteScriptAsync($"window.fleetPlumeReview.sourceView({pose.Eye},[0,7.2,0.65],5);");
+                        await Task.Delay(800);
+                        using var capture=File.Create(Path.Combine(output,"Guanshiyin-"+pose.Name+".png"));
+                        await browser.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png,capture);
+                    }
+                    await browser.ExecuteScriptAsync("document.querySelector('#ship-lights').click();");
+                    var unlit=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync("({lights:Number(document.body.dataset.activeSourceLights),emitters:Number(document.body.dataset.activeEmitters)})"));
+                    if(unlit.GetProperty("lights").GetInt32()!=0||unlit.GetProperty("emitters").GetInt32()!=0)
+                        throw new InvalidOperationException("Guanshiyin light control did not disable source lamps and emitters.");
+                    await browser.ExecuteScriptAsync("document.querySelector('#ship-lights').click();document.querySelector('#lighting').value='ship';document.querySelector('#lighting').dispatchEvent(new Event('change'));");
+                    foreach(var pose in new[]{
+                        (Name:"lighting-gills",Eye:"[24,12,-10]",Aim:"[0,1,-0.1]",Zoom:"3"),
+                        (Name:"lighting-rear",Eye:"[25,-20,13]",Aim:"[0,-1,0.5]",Zoom:"1.5"),
+                        (Name:"lighting-bow",Eye:"[14,18,5]",Aim:"[0,6.9,-0.2]",Zoom:"5")})
+                    {
+                        await browser.ExecuteScriptAsync($"window.fleetPlumeReview.sourceView({pose.Eye},{pose.Aim},{pose.Zoom});");
+                        await Task.Delay(800);
+                        using var capture=File.Create(Path.Combine(output,"Guanshiyin-"+pose.Name+".png"));
+                        await browser.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png,capture);
+                    }
+                    var gpu=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync("window.fleetPlumeReview.diagnose()"));
+                    if(gpu.GetProperty("errors").GetArrayLength()!=0)throw new InvalidOperationException("Guanshiyin lighting produced WebGL errors: "+gpu.GetRawText());
+                    await browser.ExecuteScriptAsync("document.querySelector('#lighting').value='studio';document.querySelector('#lighting').dispatchEvent(new Event('change'));document.querySelector('#plumes').click();");
+                    await Task.Delay(600);
+                    exhaust=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync(stateScript));
+                    if(!exhaust.Value.GetProperty("plumes").GetBoolean())throw new InvalidOperationException("Guanshiyin registered drive plume did not enable.");
+                    foreach(string pose in new[]{"hero","side","opposite","aft","nose","rear"})
+                    {
+                        await browser.ExecuteScriptAsync($"document.querySelector('[data-view={pose}]')?.click();");
+                        await Task.Delay(600);
+                        using var capture=File.Create(Path.Combine(output,"Guanshiyin-"+pose+".png"));
+                        await browser.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png,capture);
+                    }
+                    await browser.ExecuteScriptAsync("document.querySelector('[data-view=hero]').click();");
+                }
                 if(ship is "Pella" or "Scirocco")
                 {
                     string accepted=ship=="Pella"
@@ -77,7 +145,10 @@ internal sealed partial class StudioWindow
             File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Passed=true,Protected=true,Executable=Environment.ProcessPath,
                 Version=typeof(App).Assembly.GetName().Version?.ToString(),ArchiveSha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,"assets.rl")))),Rows=rows},new JsonSerializerOptions{WriteIndented=true}));
         }
-        catch(Exception ex){File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Passed=false,Error=ex.ToString(),Rows=rows}));}
+        catch(Exception ex){
+            if(browser?.CoreWebView2 is { } core){using var image=File.Create(Path.Combine(output,"failure.png"));await core.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png,image);}
+            File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Passed=false,Error=ex.ToString(),Rows=rows}));
+        }
         finally{Close();}
     }
 }

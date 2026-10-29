@@ -59,6 +59,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Accepted Knight source/model/portrait identity failed.' }
     & $PythonExecutable .\tools\Check-PellaSciroccoAdoption.py
     if ($LASTEXITCODE -ne 0) { throw 'Accepted Pella/Scirocco model, lights, drives or portrait identity failed.' }
+    & $PythonExecutable .\tools\Check-GuanshiyinAdoption.py
+    if ($LASTEXITCODE -ne 0) { throw 'Completed Guanshiyin model, source area lights, drive or portrait identity failed.' }
     node .\tools\Check-KnightPlumes.mjs
     if ($LASTEXITCODE -ne 0) { throw 'Knight fitted plume registration/lighting checks failed.' }
     node .\tools\Check-FleetPlumes.mjs

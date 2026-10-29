@@ -23,7 +23,7 @@ public sealed class PresentMonSource : IDisposable
     private string selectedName = "";
     private string failureState = "no-data";
     private readonly string sessionName = $"X890Panel-{Environment.ProcessId}-{Guid.NewGuid():N}";
-    private int previousGamePid;
+    private RunningGame? previousGame;
     private bool disposed;
     private bool runtimeFrames;
 
@@ -50,11 +50,15 @@ public sealed class PresentMonSource : IDisposable
         lock (gate)
         {
             double qpcMs = QpcMs;
+            foreach(var old in runningGames)
+                if(!running.Any(game=>GameDiscovery.SameProcess(game,old)))frames.RemoveProcess(old.ProcessId);
             runningGames = running;
             int requested = ProcessId;
-            var game = GameDiscovery.Select(running, (int)foreground, previousGamePid, requested);
+            int resolved=GameDiscovery.ResolveRequestedPid(running,requested,previousGame);
+            if(resolved!=requested){Interlocked.CompareExchange(ref requestedPid,resolved,requested);requested=ProcessId;}
+            var game = GameDiscovery.Select(running, (int)foreground, previousGame?.ProcessId??0, requested);
             int pid = game?.ProcessId ?? 0;
-            previousGamePid = pid;
+            previousGame = game;
             selectedName = game?.Name ?? "";
             selectionDetail = game is null
                 ? (requested > 0 ? $"Selected PID {requested} is not a recognized running game. " : "No recognized game is running. ") + gameDiscovery.Diagnostic

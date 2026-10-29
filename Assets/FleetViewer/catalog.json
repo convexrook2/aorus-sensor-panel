@@ -144,39 +144,36 @@
   },
   {
     "id": "Guanshiyin",
-    "title": "Guanshiyin / V05 reference pass v11",
-    "credit": "Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.",
-    "note": "Owner-selected v11 Fleet Studio model. Further Guanshiyin modeling is stopped.",
+    "title": "Guanshiyin / full gold mast wrap103",
+    "credit": "Authored Guanshiyin reconstruction after Lee Fitzgerald / North Front production concepts and TV exterior references; source-fitted horse mural artwork. Fan study, not an official production mesh.",
+    "note": "Full hollow gold shroud fills the space behind the bow mast, reaching back/up to the front gill collar. Only the undersized gold component is replaced; all 655 other objects, dual illuminated guardrails, mast, white fairing, gills, drive and 31 source lights are held.",
     "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
-    "triangles": 98140,
-    "materials": 18,
-    "images": 7,
-    "maps": {
-      "colour": 6,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 1
-    },
+    "triangles": 3174446,
+    "materials": 25,
+    "images": 4,
     "model": "models/Guanshiyin.glb.gz",
-    "sha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
+    "sha256": "1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017",
     "relatedSources": [
       {
         "label": "Artist / exterior reference",
         "url": "https://leefitzgerald.artstation.com/projects/X1rzxL"
       }
     ],
-    "referenceComparisonStatus": "Owner-selected v11 for the local Fleet Studio viewer.",
-    "sourceBytes": 7214944,
-    "compressedBytes": 5620908,
+    "referenceComparisonStatus": "Owner103 correction defines the full gold aft mast shroud extent; original production views constrain its wrap and boundaries. Hidden wall dimensions remain authored; visual acceptance pending.",
+    "lights": 31,
+    "localLightShadows": false,
+    "sourceAreaLights": true,
+    "sourceId": "Guanshiyin",
+    "sourceBytes": 83254352,
+    "compressedBytes": 40090254,
     "compression": "gzip-lossless",
-    "compressedSha256": "701ce20d6170d67130085a376fbfdacf744eae37cfed6d0f65ac76d24c9b2edb",
+    "compressedSha256": "0159b8e139bf96047d4edca3d1d49bde678436ad4c48c359f9075acb41054255",
     "renderMaps": {
-      "colour": 6,
+      "colour": 4,
       "normal": 0,
       "occlusion": 0,
       "metalRough": 0,
-      "emissive": 1
+      "emissive": 0
     },
     "lightUnitScale": 0.0014641288433382138
   },

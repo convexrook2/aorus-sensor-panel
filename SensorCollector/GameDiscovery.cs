@@ -15,6 +15,7 @@ public sealed class GameDiscovery
     private DateTimeOffset nextRefresh;
     private IReadOnlyList<InstalledGame> games = [];
     private Catalog catalog = new([]);
+    private Dictionary<int,RunningGame> knownProcesses = [];
     public string Diagnostic { get; private set; } = "Game catalog not loaded.";
     public IReadOnlyList<InstalledGame> Installed { get { Refresh(); return games; } }
 
@@ -22,12 +23,13 @@ public sealed class GameDiscovery
     {
         Refresh(); var running = new List<RunningGame>();
         // Enumerating Process.GetProcesses builds a system-wide process/thread
-        // snapshot every poll. Only visible, ownerless windows can qualify as
-        // a MainWindowHandle, so enumerate those HWNDs and inspect their PIDs.
-        var candidates = new HashSet<int>();
+        // snapshot every poll. A game may use an owned top-level window or
+        // temporarily replace its HWND during loading. Retain previously
+        // verified PIDs, but recheck each executable against the game catalog.
+        var candidates = new HashSet<int>(knownProcesses.Keys);
         EnumWindows((window, _) =>
         {
-            if (GetWindow(window, 4) == 0 && IsWindowVisible(window))
+            if (IsCandidateWindow(IsWindowVisible(window),GetWindow(window,4)))
             {
                 GetWindowThreadProcessId(window, out uint pid);
                 if (pid > 0 && pid != Environment.ProcessId) candidates.Add((int)pid);
@@ -43,12 +45,14 @@ public sealed class GameDiscovery
                 var game = catalog.Match(path);
                 if (game is null) continue;
                 using var process = Process.GetProcessById(pid);
-                running.Add(new(pid, game.Name, path, process.StartTime.ToUniversalTime(), game.Source));
+                DateTime started=ReadStartedAt(()=>process.StartTime.ToUniversalTime(),knownProcesses.GetValueOrDefault(pid)?.StartedAt);
+                running.Add(new(pid, game.Name, path, started, game.Source));
             }
             catch (System.ComponentModel.Win32Exception) { }
             catch (InvalidOperationException) { }
             catch (ArgumentException) { }
         }
+        knownProcesses=running.ToDictionary(game=>game.ProcessId);
         return running;
     }
 
@@ -60,6 +64,22 @@ public sealed class GameDiscovery
         : running.FirstOrDefault(g => g.ProcessId == foregroundPid)
         ?? running.FirstOrDefault(g => g.ProcessId == previousPid)
         ?? running.OrderByDescending(g => g.StartedAt).ThenBy(g => g.ProcessId).FirstOrDefault();
+
+    internal static bool IsCandidateWindow(bool visible,nint owner) => visible;
+    internal static int ResolveRequestedPid(IReadOnlyList<RunningGame> running,int requestedPid,RunningGame? previouslySelected)
+    {
+        if(requestedPid<=0||previouslySelected?.ProcessId!=requestedPid)return requestedPid;
+        var current=running.FirstOrDefault(game=>game.ProcessId==requestedPid);
+        return current is null||!SameProcess(current,previouslySelected)?0:requestedPid;
+    }
+    internal static bool SameProcess(RunningGame current,RunningGame previous)
+        => current.ProcessId==previous.ProcessId&&current.Executable.Equals(previous.Executable,StringComparison.OrdinalIgnoreCase)
+        &&(current.StartedAt==DateTime.MinValue||previous.StartedAt==DateTime.MinValue||current.StartedAt==previous.StartedAt);
+    internal static DateTime ReadStartedAt(Func<DateTime> read,DateTime? known)
+    {
+        try{return read();}
+        catch(System.ComponentModel.Win32Exception){return known??DateTime.MinValue;}
+    }
 
     internal static bool IsGameType(string type) => type.Equals("game", StringComparison.OrdinalIgnoreCase) || type.Equals("demo", StringComparison.OrdinalIgnoreCase);
     internal static InstalledGame? Match(string executable, IReadOnlyList<InstalledGame> installed)

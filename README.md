@@ -8,6 +8,14 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+The **1.8.16 update** adds the completed, owner-accepted Guanshiyin
+with its original geometry, source lights, drive and matching native portrait.
+It also improves verified game discovery and expires completed-game FPS pins.
+Battlefield 6's blank FPS reading remains unresolved; the owner deferred its
+next live check. The owner requested the full GitHub release flow; source,
+exact-commit CI, package, publication and installation remain separate evidence;
+see the [integration and validation record](docs/GUANSHIYIN-SENSOR-20261028.md).
+
 The published **1.8.15 installer correction** lets Setup close a running SensorPanel,
 including a tray-only instance, before replacing its files. The automatic-close
 option uses Windows Restart Manager and forces closure if required. Saved

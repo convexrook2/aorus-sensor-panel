@@ -34,7 +34,7 @@ Published assets are authenticated/encrypted in `assets.rl`, loaded in memory;
 source files remain editable. See [the shared .rl standard](../docs/RL-ASSET-STANDARD.md).
 
 For development, open `X890.code-workspace` in VS Code, select
-**Fleet Studio · desktop** in Run and Debug, and press F5. Alternatively
+**Fleet Studio Â· desktop** in Run and Debug, and press F5. Alternatively
 double-click `Start-Desktop.cmd`; these development paths build from source.
 The independent C# WPF host uses WebView2 virtual-host mapping in development
 and in-memory protected resource responses in published copies. It does not
@@ -98,11 +98,11 @@ candidate, then builds the desktop host and opens a bow close-up beside the
 owner-supplied production reference. That comparison keeps the previous
 Anubis available beside local research references, and includes the remaining
 fleet for comparison with Guanshiyin's accepted lights. This profile remains a separate
-inspection route; normal **Fleet Studio · desktop** launches now include the
+inspection route; normal **Fleet Studio Â· desktop** launches now include the
 owner-accepted assembly as **Anubis / production-reference finish**. The main
 native fleet uses the identical lossless GLB. See [Anubis source and identity](../Sources/Anubis/README.md).
 The owner accepted the corrected full-interior bow lighting and shared fleet glow,
-noting it is a bit bright but accepted. **Anubis main fleet → F5** imports that
+noting it is a bit bright but accepted. **Anubis main fleet â†’ F5** imports that
 exact pinned revision with rollback, runs the main-fleet checks and launches the
 normal catalogue. Finalization completed on 2026-10-20; both source fleets and
 the Debug desktop copy use the accepted 067fc6... GLB. Repeating that profile
@@ -143,21 +143,47 @@ in the original checkout.
 The catalogue contains 23 ship/station/gate variants and their available
 comparison revisions. Latest included revisions are Pella's thin layered armour
 over its recessed flat backing, Agatha King's v4 fitted drive lighting,
-Guanshiyin V05 reference pass v11, Morrigan / Scipio Africanus v4, Donnager's v5 fitted
+Guanshiyin full gold mast wrap103, Morrigan / Scipio Africanus v4, Donnager's v5 fitted
 lights and the separate Rocinante Season 6 v6 study. Earlier approximations
 remain explicitly labelled. These are review assets, not final owner acceptance
 or a native sensor-panel installation.
 
-## Guanshiyin V05 reference pass
+## Guanshiyin full gold mast wrap103
 
-The owner selected the v11 model for the local Fleet Studio viewer. Its
-geometry, embedded textures, and fitted drive anchor are the only Guanshiyin
-version in the active catalogue. An editable, self-contained v11 Blender source
-is retained under `artifacts/fleet-preview/Fleet-Studio/blender/Guanshiyin/`.
+The owner's follow-up replaces the undersized gold rim with a full hollow
+shroud behind the bow mast. The broad gold shell reaches back/up to the front
+gill collar, covering the marked void while remaining open underneath. Only
+that gold component changes; all655 other objects, including the white
+triangular fairing, mast, gills, drive, dual rails and31 source lights, are held.
+
+The retained rails102B correction has two separate U-shaped bow
+gallery rails with common uprights and rectangular mounted lamps at eleven
+stations per level. Production front-quarter and bow-end views guide the rail
+layout; the saved S03E01 Bobbie exterior/HUD frames guide local lamp fittings.
+The wide-angle HUD frame is not a dimensional calibration.
+
+The open zigzag gill gaps, wrapped upper panels, detailed raised drive,
+shoulder/mural coves and canopy lights are retained. The eleven superseded
+round rail caps remain hidden in favor of rectangular lenses. The rig has31
+source lights. Its full export contains3,174,446 triangles and one fitted drive
+outlet. The earlier
+v11 remains recoverable through **Previous v11**; other ships are unchanged.
+
 This is an authored reconstruction after
-[Lee Fitzgerald / North Front's V05 reference set](https://leefitzgerald.artstation.com/projects/X1rzxL),
-with an original generated horse mural. No further Guanshiyin modeling is
-planned. Other ships retain their existing models and comparisons.
+[Lee Fitzgerald / North Front's V05 reference set](https://leefitzgerald.artstation.com/projects/X1rzxL)
+and TV exterior references, including source-fitted horse mural artwork.
+Fixture spacing and hidden mechanics are construction interpretations.
+The editable source and export evidence are under
+`Sources/Ship-STL-Library/Guanshiyin-outline-study/blender-draft01/reference-fit18/gap96`
+and the `lighting98` / `rails102` / `gold103` directories. Procedural contour colours are baked to lossless textures;
+existing image dimensions and all geometry remain intact. Source area-light
+dimensions and power travel in glTF node metadata. Fleet Studio restores all31
+as rectangular area lights, retaining the broad diffuse wash and reflections
+instead of the fallback spotlights' round highlights. This source-area path is
+enabled only for the current Guanshiyin; the other ships retain their rigs.
+Desktop refresh and protected native checks are recorded in
+the adoption receipt; source adoption alone does not update the installed app.
+The accepted final model is also integrated into SensorPanel 1.8.16; sensor-panel installation and Fleet Studio installation remain separate.
 
 ## Pella coating and bow correction
 
@@ -286,7 +312,7 @@ separately from this distribution.
 - Earlier Pella coating validation: twelve Blender views under one studio rig, both forward
   close-ups, both pod close-ups, and browser checks of camera views, rotation,
   lights, plumes, alternate lighting and previous-version restore.
-- Earlier short-window check at 800×400: all seven camera buttons remain clear of the
+- Earlier short-window check at 800Ã—400: all seven camera buttons remain clear of the
   footer controls; normal browser dimensions are restored after inspection.
 - Earlier coating preservation check: 991 existing source files, 142 installed
   files and 111 earlier preview files match their checkpoint. The original
@@ -310,7 +336,7 @@ Visual references, linked for inspection only:
 - [Kelvin Tam / Rocket Science production gallery](https://kelvintam.artstation.com/projects/v2358E)
 - [Thirupathi Nomula production modelling reel](https://thirupathinomula.artstation.com/projects/y4QPKK)
 - [Generation Films Pella breakdown](https://www.youtube.com/watch?v=eZg1ocpLXOE):
-  0:54–1:04 exterior pass and 1:51–1:54 docking exterior; all frames before 2:00
+  0:54â€“1:04 exterior pass and 1:51â€“1:54 docking exterior; all frames before 2:00
   were reviewed locally.
 
 Reference photographs, production renders and video are **not redistributed**

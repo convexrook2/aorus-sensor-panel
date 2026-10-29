@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {restoreSourceAreaLights} from './source-area-lights.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
@@ -115,6 +116,7 @@ try {
    const bounds=new THREE.Box3().setFromObject(gltf.scene),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
    const max=Math.max(size.x,size.y,size.z);if(!(max>0&&Number.isFinite(max)))throw Error('Invalid ship bounds');
    gltf.scene.position.sub(center);oriented.scale.setScalar(3.2/max);
+   modelStats.sourceAreaLights=entry.sourceAreaLights?restoreSourceAreaLights(gltf.scene,3.2/max):0;
    const axis=size.x>=size.y&&size.x>=size.z?new THREE.Vector3(1,0,0):size.z>size.y?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
    // Preserve source orientation for the XY gate and Y-up survey disc.
    if(!['gate','survey-disc'].includes(entry.orientation))oriented.quaternion.setFromUnitVectors(axis,new THREE.Vector3(0,entry.flipLongitudinal?-1:1,0));
@@ -135,9 +137,9 @@ try {
    shipShadows=ownShipShadows(gltf.scene);
    // Reviewed ships opt into their own registered exhaust. Source model
    // statistics are captured above, before separate effect meshes are added.
-   if(['Rocinante','Anubis','Arboghast','Canterbury','Knight','Pella','Scirocco'].includes(entry.id)){
+   if(['Rocinante','Anubis','Arboghast','Canterbury','Knight','Pella','Scirocco','Guanshiyin'].includes(entry.id)){
      const drive=engines[entry.id==='Rocinante'?'RocinanteS6':entry.id];
-     if(['Arboghast','Canterbury','Knight','Pella','Scirocco'].includes(entry.id)&&drive?.modelSha256!==modelSha)throw Error('Drive registration differs from '+entry.id+' model');
+     if(['Arboghast','Canterbury','Knight','Pella','Scirocco','Guanshiyin'].includes(entry.id)&&drive?.modelSha256!==modelSha)throw Error('Drive registration differs from '+entry.id+' model');
      shipEffects=makeShipEffects(oriented,gltf.scene,drive.engines,center,3.2/max);
      shipEffects.setLights(true);shipEffects.setPlumes(true);
    }

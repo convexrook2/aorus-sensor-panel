@@ -9,6 +9,11 @@ internal sealed class PresentMonFrames
     internal sealed record Frame(string Application, int Pid, string SwapChain, double QpcMs, double DisplayMs);
     private readonly Dictionary<(int Pid, string Chain), Queue<Frame>> streams = new();
 
+    internal void RemoveProcess(int pid)
+    {
+        foreach(var key in streams.Keys.Where(key=>key.Pid==pid).ToArray())streams.Remove(key);
+    }
+
     internal void Add(Frame frame, double now)
     {
         if (frame.Pid <= 0 || !double.IsFinite(frame.QpcMs) || !double.IsFinite(frame.DisplayMs) ||

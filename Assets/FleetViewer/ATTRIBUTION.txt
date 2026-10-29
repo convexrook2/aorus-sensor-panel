@@ -16,7 +16,7 @@ https://www.artstation.com/artwork/xYGE4O
 Tynan: Authored for this project; V4 production drawings by Frank Yang / North Front Studio.
 https://frankyang.artstation.com/projects/3oAAeo
 
-Guanshiyin: Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.
+Guanshiyin: Authored Guanshiyin reconstruction after Lee Fitzgerald / North Front production concepts and TV exterior references; source-fitted horse mural artwork. Fan study, not an official production mesh.
 https://leefitzgerald.artstation.com/projects/X1rzxL
 
 Donnager: Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.
@@ -42,8 +42,6 @@ https://www.youtube.com/watch?v=a3lL1bhpl9c&t=11s
 
 Knight: Original geometry: SYFY / Voodoo Manufacturing, Thingiverse 2060044 and 1235700, CC BY 4.0. Production design: Ryan Dening / North Front; development commentary by Chris Danelon. X890: recorded assembly registration, separate mechanical refinements, authored paint/wear and lighting. Reference images are review evidence, not texture maps.
 https://www.youtube.com/watch?v=YXtIQub_YtI&t=188s
-Original licensed sources: https://www.thingiverse.com/thing:2060044 and https://www.thingiverse.com/thing:1235700
-CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 
 Anubis: Geometry: Martin Taichl / Martin / taichl, CC BY 4.0. Source geometry retained; X890 registered fittings, procedural charcoal finish, existing emissive cap materials and separate drive effect. Unofficial fan recreation.
 https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse
@@ -62,7 +60,6 @@ https://www.syfy.com/the-expanse/photos/the-expanse-concept-art
 
 Scirocco: cg / Printables 477957 / CC BY 4.0; X890 materials, markings and work lights. Visual references: Ryan Dening / North Front and Axiom VFX.
 https://www.printables.com/model/477957-mcrn-scirocco-class-assault-cruiser-from-the-expan
-CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 
 Hammurabi: Authored for this project; independent fan approximation.
 https://deningart.artstation.com/projects/RyJwRm

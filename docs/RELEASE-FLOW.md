@@ -1,5 +1,15 @@
 # X890 sensor-panel release flow
 
+October 28 authority: Lennon requested the full GitHub release flow for 1.8.16,
+including the completed Guanshiyin and bounded game discovery/FPS selection
+corrections. Battlefield 6 live confirmation is explicitly deferred and its
+blank FPS reading remains unresolved. Use a scoped release commit based on
+published main while preserving the local study branch, checkout and real
+index. Research checkpoints must not enter the release. Run normal privacy
+and exact-source CI/package gates, then publish the reviewed installer; no
+local-only packaging exception is requested. Installation remains a separate
+phase. See [the integration record](GUANSHIYIN-SENSOR-20261028.md).
+
 October 25 installer correction: after requesting the installer, Lennon asked
 that it force-close a running SensorPanel and update. The 1.8.15 continuation
 changes installer shutdown handling and removes the release wrapper's manual-exit

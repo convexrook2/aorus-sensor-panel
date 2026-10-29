@@ -523,8 +523,12 @@ internal sealed partial class PanelWindow : Window
             while (!cancellation.IsCancellationRequested)
             {
                 long started = Stopwatch.GetTimestamp();
-                collector.FpsProcessId = Volatile.Read(ref selectedFpsPid);
+                int requestedFpsPid=Volatile.Read(ref selectedFpsPid);
+                collector.FpsProcessId = requestedFpsPid;
                 var snapshot = collector.Read();
+                // A completed game's pin expires. Preserve a newer menu choice
+                // if the owner selected another source while this poll ran.
+                Interlocked.CompareExchange(ref selectedFpsPid,collector.FpsProcessId,requestedFpsPid);
                 Volatile.Write(ref fpsApplications, collector.FpsApplications);
                 var statistics = runtime.Read();
                 Interlocked.Increment(ref collectionCycles);

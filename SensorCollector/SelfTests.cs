@@ -141,6 +141,22 @@ internal static class SelfTests
     {
         var first = new RunningGame(101, "Game A", @"C:\Games\A\Game.exe", DateTime.UtcNow.AddMinutes(-2), "Steam game");
         var second = first with { ProcessId = 202, Name = "Game B", StartedAt = DateTime.UtcNow };
+        // A visible owned HWND is still a game's top-level rendering window.
+        // Installation-path/type matching remains the independent eligibility gate.
+        if(!GameDiscovery.IsCandidateWindow(true,123)||!GameDiscovery.IsCandidateWindow(true,0)
+            ||GameDiscovery.IsCandidateWindow(false,0)||GameDiscovery.IsCandidateWindow(false,123))
+            throw new Exception("Visible owned game windows must enter executable verification; invisible windows must not.");
+        if(GameDiscovery.ResolveRequestedPid([second],101,first)!=0
+            ||GameDiscovery.ResolveRequestedPid([first,second],101,first)!=101
+            ||GameDiscovery.ResolveRequestedPid([second],999,first)!=999
+            ||GameDiscovery.ResolveRequestedPid([second],0,first)!=0
+            ||GameDiscovery.ResolveRequestedPid([first with { StartedAt=first.StartedAt.AddSeconds(10) }],101,first)!=0)
+            throw new Exception("A verified FPS pin must clear on game exit or PID reuse, retain a live game, and not rewrite an unverified explicit pin.");
+        DateTime Denied()=>throw new System.ComponentModel.Win32Exception(5);
+        if(GameDiscovery.ReadStartedAt(Denied,first.StartedAt)!=first.StartedAt
+            ||GameDiscovery.ReadStartedAt(Denied,null)!=DateTime.MinValue
+            ||GameDiscovery.ReadStartedAt(()=>second.StartedAt,first.StartedAt)!=second.StartedAt)
+            throw new Exception("A verified executable must remain detected when optional process timing is access denied.");
         if (GameDiscovery.Select([first, second], 202, 101)?.ProcessId != 202 ||
             GameDiscovery.Select([first, second], 999, 101)?.ProcessId != 101 ||
             GameDiscovery.Select([second], 999, 101)?.ProcessId != 202 ||
@@ -162,6 +178,15 @@ internal static class SelfTests
             frames.Games([second], 110).Any(a => a.ProcessId != 202) || frames.Games([], 110).Length != 0 ||
             frames.Games([first, second], 3111).Length != 0)
             throw new Exception("FPS menu must expose fresh recognized games with their names, excluding desktop/apps and exited games.");
+        var lifetimeFrames=new PresentMonFrames();
+        foreach(int pid in new[]{101,202})
+        {
+            lifetimeFrames.Add(new("game.exe",pid,"0x1",100,10),110);
+            lifetimeFrames.Add(new("game.exe",pid,"0x1",110,10),110);
+        }
+        lifetimeFrames.RemoveProcess(101);
+        if(lifetimeFrames.Read(101,110).Length!=0||lifetimeFrames.Read(202,110).Length!=2)
+            throw new Exception("Exiting/reused game PIDs must lose their old frames without discarding another game's valid capture.");
         InstalledGame[] installed = [new("Game A", @"C:\Games\A", "Steam game")];
         if (GameDiscovery.Match(@"C:\Games\A\Game.exe", installed) is null ||
             GameDiscovery.Match(@"C:\Games\A2\Game.exe", installed) is not null ||

@@ -21,22 +21,15 @@
   },
   {
     "id": "Guanshiyin",
-    "title": "Guanshiyin / V05 reference pass v11",
-    "credit": "Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.",
-    "note": "Owner-selected v11 Fleet Studio model. Further Guanshiyin modeling is stopped.",
+    "title": "Guanshiyin / full gold mast wrap103",
+    "credit": "Authored Guanshiyin reconstruction after Lee Fitzgerald / North Front production concepts and TV exterior references; source-fitted horse mural artwork. Fan study, not an official production mesh.",
+    "note": "Full hollow gold shroud fills the space behind the bow mast, reaching back/up to the front gill collar. Only the undersized gold component is replaced; all 655 other objects, dual illuminated guardrails, mast, white fairing, gills, drive and 31 source lights are held.",
     "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
-    "triangles": 98140,
-    "materials": 18,
-    "images": 7,
-    "maps": {
-      "colour": 6,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 1
-    },
-    "model": "models/Guanshiyin-6808d1f10962.glb.gz",
-    "sha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
+    "triangles": 3174446,
+    "materials": 25,
+    "images": 4,
+    "model": "models/Guanshiyin-1a5ec3894f68.glb.gz",
+    "sha256": "1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017",
     "relatedSources": [
       {
         "label": "Artist / exterior reference",
@@ -44,7 +37,21 @@
       }
     ],
     "references": [],
-    "referenceComparisonStatus": "Owner-selected v11 for the local Fleet Studio viewer."
+    "referenceComparisonStatus": "Owner103 correction defines the full gold aft mast shroud extent; original production views constrain its wrap and boundaries. Hidden wall dimensions remain authored; visual acceptance pending.",
+    "lights": 31,
+    "localLightShadows": false,
+    "beforeModel": "models/Guanshiyin-6808d1f10962.glb.gz",
+    "beforeSha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
+    "beforeTitle": "Guanshiyin / V05 reference pass v11",
+    "beforeNote": "Owner-selected v11 Fleet Studio model. Further Guanshiyin modeling is stopped.",
+    "beforeCredit": "Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.",
+    "beforeEngineId": "GuanshiyinV11",
+    "beforeInfo": {
+      "triangles": 98140,
+      "materials": 18
+    },
+    "beforeLabel": "Previous v11",
+    "sourceAreaLights": true
   },
   {
     "id": "Morrigan",
@@ -150,7 +157,7 @@
         "url": "https://kelvintam.artstation.com/projects/v2358E"
       },
       {
-        "label": "Generation Films / exterior pass at 0:54\u20131:04, docking at 1:51\u20131:54",
+        "label": "Generation Films / exterior pass at 0:54–1:04, docking at 1:51–1:54",
         "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE&t=54s"
       },
       {

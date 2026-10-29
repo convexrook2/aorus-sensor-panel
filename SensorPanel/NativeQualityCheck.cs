@@ -21,7 +21,7 @@ internal sealed partial class PanelWindow
             if(previewPath is null||!windowed||shipPanel is null)
                 throw new InvalidOperationException("Native pixel check requires a windowed saved-data preview.");
             if(protect&&!Rookline.AssetProtection.AppAssets.Protected)throw new InvalidOperationException("Protected check requires assets.rl.");
-            foreach(string selected in hologramReview?new[]{"Pella","Arboghast"}:protect?new[]{"Pella","Scirocco","Rocinante"}:new[]{theme.Id})
+            foreach(string selected in hologramReview?new[]{"Pella","Arboghast"}:protect?new[]{"Guanshiyin","Pella","Scirocco","Rocinante"}:new[]{theme.Id})
             {
                 if(protect||hologramReview){shipPanel.CloseHolotable();theme=PanelTheme.Resolve(selected);ApplyTheme();}
                 foreach(var size in protect?new[]{new Size(1920,1080)}:new[]{new Size(1024,576),new Size(1920,1080)})
@@ -50,8 +50,10 @@ internal sealed partial class PanelWindow
                         ||renderer.GetProperty("sourceSha256").GetString()!=receipt.GetProperty("sourceSha256").GetString())
                         throw new InvalidOperationException("The interactive holotable does not use the portrait's identical full model.");
                     // Allow WPF's asynchronous capture to consume the arranged frame.
-                    for(int attempt=0;attempt<12&&(Math.Abs(host.GetProperty("captureWidth").GetDouble()-renderer.GetProperty("width").GetDouble())>1
-                        ||Math.Abs(host.GetProperty("captureHeight").GetDouble()-renderer.GetProperty("height").GetDouble())>1);attempt++)
+                    for(int attempt=0;attempt<40&&(Math.Abs(host.GetProperty("captureWidth").GetDouble()-renderer.GetProperty("width").GetDouble())>1
+                        ||Math.Abs(host.GetProperty("captureHeight").GetDouble()-renderer.GetProperty("height").GetDouble())>1
+                        ||renderer.GetProperty("width").GetDouble()+1<host.GetProperty("screenWidth").GetDouble()
+                        ||renderer.GetProperty("height").GetDouble()+1<host.GetProperty("screenHeight").GetDouble());attempt++)
                     {
                         shipPanel.ShipViewport.Reset();await Task.Delay(250);
                         renderer=await shipPanel.ShipViewport.DiagnoseAsync();
@@ -59,7 +61,7 @@ internal sealed partial class PanelWindow
                     }
                     if(renderer.GetProperty("width").GetDouble()+1<host.GetProperty("screenWidth").GetDouble()
                         ||renderer.GetProperty("height").GetDouble()+1<host.GetProperty("screenHeight").GetDouble())
-                        throw new InvalidOperationException("The model canvas is still being enlarged: "+prefix+"holotable");
+                        throw new InvalidOperationException("The model canvas is still being enlarged: "+prefix+"holotable; host="+host.GetRawText()+"; renderer="+renderer.GetRawText());
                     await Task.Delay(400);
                     var idleBefore=await shipPanel.ShipViewport.DiagnoseAsync();var watch=System.Diagnostics.Stopwatch.StartNew();await Task.Delay(700);
                     var idleAfter=await shipPanel.ShipViewport.DiagnoseAsync();
@@ -145,8 +147,11 @@ internal sealed partial class PanelWindow
         static void CheckExhaust(JsonElement renderer)
         {
             string? id=renderer.GetProperty("id").GetString();
-            if(id is not ("Arboghast" or "Knight" or "Pella" or "Scirocco"))return;
-            int drives=id=="Knight"?3:4,lamps=id switch { "Knight"=>17,"Pella"=>34,"Scirocco"=>14,_=>8 };
+            if(id is not ("Arboghast" or "Knight" or "Pella" or "Scirocco" or "Guanshiyin"))return;
+            int drives=id switch { "Guanshiyin"=>1,"Knight"=>3,_=>4 },lamps=id switch { "Guanshiyin"=>31,"Knight"=>17,"Pella"=>34,"Scirocco"=>14,_=>8 };
+            if(id=="Guanshiyin"&&(renderer.GetProperty("sourceSha256").GetString()!="1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017"
+                ||renderer.GetProperty("triangles").GetInt32()!=3174446||renderer.GetProperty("sourceAreaLights").GetInt32()!=31))
+                throw new InvalidOperationException("Guanshiyin must use the owner-complete103B model with all31 restored rectangular source lights.");
             var effect=renderer.GetProperty("engineEffects");
             if(effect.ValueKind!=JsonValueKind.Object||effect.GetProperty("engineCount").GetInt32()!=drives
                 ||effect.GetProperty("visiblePlumes").GetInt32()!=drives||!effect.GetProperty("burning").GetBoolean()

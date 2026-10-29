@@ -1,5 +1,5 @@
 {
-  "revision": "Fleet Studio / accepted Arboghast pass08 and registered plumes / 2026-10-22",
+  "revision": "Fleet Studio / Guanshiyin full gold mast wrap103 / 2026-10-28",
   "catalogue_entries": 23,
   "assets": [
     {
@@ -524,23 +524,37 @@
       "images": 15,
       "lights": 14,
       "accepted_export_bytes_exact": true
+    },
+    {
+      "file": "models/Guanshiyin-1a5ec3894f68.glb.gz",
+      "sha256": "1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017",
+      "gzip_sha256": "0159b8e139bf96047d4edca3d1d49bde678436ad4c48c359f9075acb41054255",
+      "source_sha256": "9a5fc03b7bed8562610b894773944f828da4a862eaca3b70ba19b0374c44a96c",
+      "binary_sha256": "ed16f2ca0b7b56902727c1b93bb4fcea7d148c9a67e4318f99acfe63657ec701",
+      "triangles": 3174446,
+      "rendered_triangles": 3174446,
+      "materials": 25,
+      "images": 4,
+      "lights": 31,
+      "native_area_lights": 31,
+      "compressed_bytes": 40090254,
+      "uncompressed_bytes": 83254352
     }
   ],
   "current": {
-    "file": "models/Pella-df080b0037ce.glb.gz",
-    "sha256": "df080b0037ceb485ad4c8005e63c1a4b471171c60bf276ae3ea8ef365cce6d78",
-    "gzip_sha256": "91319ce95071556a2af81f052ddb879950e9c8587badd33e7b519aa0fab7c7df",
-    "source_sha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
-    "geometry_source_sha256": "c06878f57e5b9f04043793226f8c6a06b082848273ea6fc9e9369f474c8dedd6",
-    "binary_sha256": "e0f904655a55e7e9d075ca75128881bad55639092c9927cecb396ef328ac606d",
-    "triangles": 1388371,
-    "rendered_triangles": 1388395,
-    "materials": 21,
-    "images": 16,
-    "lights": 34,
-    "compressed_bytes": 45174096,
-    "uncompressed_bytes": 154541128,
-    "light_rig_preserved": true
+    "file": "models/Guanshiyin-1a5ec3894f68.glb.gz",
+    "sha256": "1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017",
+    "gzip_sha256": "0159b8e139bf96047d4edca3d1d49bde678436ad4c48c359f9075acb41054255",
+    "source_sha256": "9a5fc03b7bed8562610b894773944f828da4a862eaca3b70ba19b0374c44a96c",
+    "binary_sha256": "ed16f2ca0b7b56902727c1b93bb4fcea7d148c9a67e4318f99acfe63657ec701",
+    "triangles": 3174446,
+    "rendered_triangles": 3174446,
+    "materials": 25,
+    "images": 4,
+    "lights": 31,
+    "native_area_lights": 31,
+    "compressed_bytes": 40090254,
+    "uncompressed_bytes": 83254352
   },
   "previous": {
     "file": "models/Pella-68c816c89a33.glb.gz",

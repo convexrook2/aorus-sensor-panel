@@ -1,0 +1,22 @@
+{
+  "modelSha256": "1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017",
+  "engines": [
+    {
+      "position": [
+        0,
+        -10.515,
+        0.87
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.58,
+      "length": 3.8,
+      "addCore": false,
+      "basis": "Raised96 drive outlet; rigid +90 degree Z authoring transform from the saved Blender source"
+    }
+  ],
+  "finish": "Raised96 outlet fitted to the full exported mesh; authored visual plume settings."
+}
