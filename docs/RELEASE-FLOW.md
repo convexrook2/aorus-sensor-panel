@@ -161,8 +161,11 @@ the owner's installed product.
 
 ## Next safe action
 
-The 1.8.15 correction is published from successful Jenkins #19; its public download
-matches the reviewed installer. See [the result](RELEASE-1.8.15-RESULT.md).
-Windows reports 1.8.14 installed. Run the new installer only as an authorized
+The 1.8.16 update is published from successful Jenkins #26; the tag and public
+download match the reviewed exact-source installer. Its CI payload passed
+native saved-data showcase/holotable checks. See [the result](RELEASE-1.8.16-RESULT.md).
+Windows reports 1.8.15 installed. Run the new installer only as an authorized
 production upgrade; installed file/native/LIVE verification remains separate.
+Battlefield 6's blank FPS reading remains unresolved and the owner deferred
+its controlled live check.
 Preserve all accepted ships and unrelated work.

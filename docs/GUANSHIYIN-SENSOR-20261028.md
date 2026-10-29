@@ -1,5 +1,10 @@
 # Guanshiyin SensorPanel integration — October 28, 2026
 
+Release closeout: [1.8.16 was published and its download verified](RELEASE-1.8.16-RESULT.md)
+after exact-source Jenkins #26 and native review of the CI payload. The
+preparation states below are historical; production installation and the BF6
+live check remain pending.
+
 The owner accepted the completed Guanshiyin and requested all recent updates
 in SensorPanel. The bundle audit found only Guanshiyin had different geometry
 or image bytes. Other Fleet Studio/native hash differences were existing
