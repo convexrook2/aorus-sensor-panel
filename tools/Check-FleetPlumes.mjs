@@ -8,6 +8,20 @@ const source=read('FleetStudio/ship-effects.js');
 assert.ok(source.equals(read('Assets/FleetViewer/rocinante-effects.js')),'Shared effects must agree');
 const {makeShipEffects,configurePlumeRendering,ownShipShadows}=await import('data:text/javascript;base64,'+Buffer.from(source.toString().replace("from 'three'",'from '+JSON.stringify(threeURL))).toString('base64'));
 const engines=JSON.parse(read('FleetStudio/engines.json'));let drives=0;
+// Exercise the actual native viewer setup branch, not only its effect factory.
+const viewer=read('Assets/FleetViewer/viewer.js').toString();
+const setupStart=viewer.indexOf('   // Reviewed ships opt into'),setupEnd=viewer.indexOf('   // Centre after',setupStart);
+assert.ok(setupStart>=0&&setupEnd>setupStart,'Native effect setup branch missing');
+const setup=new Function('entry','engines','modelSha','makeShipEffects','oriented','gltf','center','max',
+ 'let shipEffects=null;'+viewer.slice(setupStart,setupEnd)+';return shipEffects;');
+for(const id of ['Donnager','AgathaKing','Guanshiyin','Pella','Scirocco','Knight']){
+ let received;
+ const effect={setLights(value){this.lit=value;},setPlumes(value){this.burning=value;}};
+ const factory=(_root,_model,anchors)=>{received=anchors;return effect;};
+ assert.equal(setup({id},engines,engines[id].modelSha256,factory,{}, {scene:{}},{},1),effect,id+': native renderer omitted registered effects');
+ assert.equal(received,engines[id].engines);assert.equal(effect.lit,true);assert.equal(effect.burning,true);
+ assert.throws(()=>setup({id},engines,'wrong-model',factory,{}, {scene:{}},{},1),/Drive registration differs/,id+': stale drive registration accepted');
+}
 for(const [id,record] of Object.entries(engines)){
  const root=new THREE.Group(),model=new THREE.Group(),hull=new THREE.MeshStandardMaterial({emissive:0x221100,emissiveIntensity:3});
  model.add(new THREE.Mesh(new THREE.BoxGeometry(.1,.1,.1),hull),new THREE.SpotLight(0xffcc99,7));root.add(model);root.scale.setScalar(.017);
