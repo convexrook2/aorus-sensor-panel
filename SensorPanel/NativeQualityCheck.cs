@@ -23,7 +23,7 @@ internal sealed partial class PanelWindow
             if(protect&&!Rookline.AssetProtection.AppAssets.Protected)throw new InvalidOperationException("Protected check requires assets.rl.");
             foreach(string selected in hologramReview?new[]{"Pella","Arboghast"}:protect?new[]{"Donnager","AgathaKing","Guanshiyin","Pella","Scirocco","Rocinante"}:new[]{theme.Id})
             {
-                if(protect||hologramReview){shipPanel.CloseHolotable();theme=PanelTheme.Resolve(selected);ApplyTheme();}
+                if(protect||hologramReview){shipPanel.CloseHolotable();theme=PanelTheme.Resolve(selected=="Donnager"?"MCRN":selected);ApplyTheme();}
                 foreach(var size in protect?new[]{new Size(1920,1080)}:new[]{new Size(1024,576),new Size(1920,1080)})
                 {
                     Width=size.Width;Height=size.Height;UpdateLayout();await Task.Delay(400);
