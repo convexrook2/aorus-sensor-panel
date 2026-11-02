@@ -179,13 +179,13 @@
   },
   {
     "id": "Donnager",
-    "title": "Donnager / v5 fitted ship lights",
+    "title": "Donnager / accepted v6b",
     "credit": "Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.",
-    "note": "Full source geometry and dark/orange finish retained. HDR emission and localized spill fitted to existing white/red/amber/drive emitters. Production-gallery comparison; no native installation or final owner acceptance.",
+    "note": "Accepted V6B charcoal armour, exposed machinery, fitted open nozzle liners and 64 source lights; original hull, markings and weapons retained.",
     "referenceUrl": "https://gautamsingh.artstation.com/projects/ZyEXR",
     "sourceUrl": "https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28",
-    "triangles": 1804024,
-    "materials": 11,
+    "triangles": 1848436,
+    "materials": 12,
     "images": 6,
     "maps": {
       "colour": 4,
@@ -195,17 +195,21 @@
       "emissive": 0
     },
     "model": "models/Donnager.glb.gz",
-    "sha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
+    "sha256": "51e1a585ef18ea407c7699a94b7d973043efbb94d16c1590bacc60140e8f36a9",
     "relatedSources": [
       {
         "label": "Artist / exterior reference",
         "url": "https://gautamsingh.artstation.com/projects/ZyEXR"
       }
     ],
-    "sourceBytes": 128640456,
-    "compressedBytes": 49175887,
+    "referenceComparisonStatus": "Accepted local model review; authored fan reconstruction, not an official production mesh.",
+    "lights": 64,
+    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02",
+    "sourceId": "Donnager",
+    "sourceBytes": 161781696,
+    "compressedBytes": 59540378,
     "compression": "gzip-lossless",
-    "compressedSha256": "10807a4529dc595e153bc20eafdf02e3fd88d8c26be6adc7a59341afaac77944",
+    "compressedSha256": "30576e2f2d7c8fb8ae39ff0a5c06d718da1f8c6aaae7de1cd1337de5cfeacfbd",
     "renderMaps": {
       "colour": 4,
       "normal": 4,
@@ -323,14 +327,14 @@
   },
   {
     "id": "AgathaKing",
-    "title": "Agatha King / v4 fitted drive lighting",
+    "title": "AgathaKing / accepted v16d",
     "credit": "Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front.",
-    "note": "Six recessed luminous drive throats and local spill at existing emissive fittings. Original v3 pale armour, slate-blue bands, muted olive trim and all source geometry/maps retained. Reference-guided fan study; name and UN insignia placement remain unverified.",
+    "note": "Owner-accepted V16 surface repair: partial coplanar intersections trimmed; metallic finish, source textures, 54 lights and six drives retained.",
     "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
     "sourceUrl": "https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e",
-    "flipLongitudinal": true,
-    "triangles": 297861,
-    "materials": 3,
+    "flipLongitudinal": false,
+    "triangles": 1250901,
+    "materials": 11,
     "images": 4,
     "maps": {
       "colour": 1,
@@ -340,23 +344,27 @@
       "emissive": 1
     },
     "model": "models/AgathaKing.glb.gz",
-    "sha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
+    "sha256": "fedbfda735582b899231d79f23676550dbeee2d3652aa8b602e19623993880d8",
     "relatedSources": [
       {
         "label": "Lee Fitzgerald / North Front: Agatha King V03 production concepts",
         "url": "https://leefitzgerald.artstation.com/projects/X1rzxL"
       }
     ],
-    "sourceBytes": 62246608,
-    "compressedBytes": 47329112,
+    "referenceComparisonStatus": "Accepted local model review; authored fan reconstruction, not an official production mesh.",
+    "lights": 54,
+    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02",
+    "sourceId": "AgathaKing",
+    "sourceBytes": 68285248,
+    "compressedBytes": 39775323,
     "compression": "gzip-lossless",
-    "compressedSha256": "6503f7822cef0b57d478f81af895b2f441614b588488124d85e0bc5b16137541",
+    "compressedSha256": "a5e27d8c6238e62cfbce8b372fdb3152ea05eeb8022cc0afc97e5fd4c65cfea1",
     "renderMaps": {
       "colour": 1,
-      "normal": 1,
-      "occlusion": 1,
-      "metalRough": 1,
-      "emissive": 1
+      "normal": 5,
+      "occlusion": 5,
+      "metalRough": 0,
+      "emissive": 5
     },
     "lightUnitScale": 0.0014641288433382138
   },

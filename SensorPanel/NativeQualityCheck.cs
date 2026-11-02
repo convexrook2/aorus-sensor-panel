@@ -21,7 +21,7 @@ internal sealed partial class PanelWindow
             if(previewPath is null||!windowed||shipPanel is null)
                 throw new InvalidOperationException("Native pixel check requires a windowed saved-data preview.");
             if(protect&&!Rookline.AssetProtection.AppAssets.Protected)throw new InvalidOperationException("Protected check requires assets.rl.");
-            foreach(string selected in hologramReview?new[]{"Pella","Arboghast"}:protect?new[]{"Guanshiyin","Pella","Scirocco","Rocinante"}:new[]{theme.Id})
+            foreach(string selected in hologramReview?new[]{"Pella","Arboghast"}:protect?new[]{"Donnager","AgathaKing","Guanshiyin","Pella","Scirocco","Rocinante"}:new[]{theme.Id})
             {
                 if(protect||hologramReview){shipPanel.CloseHolotable();theme=PanelTheme.Resolve(selected);ApplyTheme();}
                 foreach(var size in protect?new[]{new Size(1920,1080)}:new[]{new Size(1024,576),new Size(1920,1080)})
@@ -147,8 +147,8 @@ internal sealed partial class PanelWindow
         static void CheckExhaust(JsonElement renderer)
         {
             string? id=renderer.GetProperty("id").GetString();
-            if(id is not ("Arboghast" or "Knight" or "Pella" or "Scirocco" or "Guanshiyin"))return;
-            int drives=id switch { "Guanshiyin"=>1,"Knight"=>3,_=>4 },lamps=id switch { "Guanshiyin"=>31,"Knight"=>17,"Pella"=>34,"Scirocco"=>14,_=>8 };
+            if(id is not ("Arboghast" or "Knight" or "Pella" or "Scirocco" or "Guanshiyin" or "Donnager" or "AgathaKing"))return;
+            int drives=id switch { "Guanshiyin"=>1,"Knight"=>3,"AgathaKing"=>6,_=>4 },lamps=id switch { "Guanshiyin"=>31,"Knight"=>17,"Pella"=>34,"Scirocco"=>14,"Donnager"=>64,"AgathaKing"=>54,_=>8 };
             if(id=="Guanshiyin"&&(renderer.GetProperty("sourceSha256").GetString()!="1a5ec3894f687c5effbb58808224639e8ce6539dc290625c79d67f681615a017"
                 ||renderer.GetProperty("triangles").GetInt32()!=3174446||renderer.GetProperty("sourceAreaLights").GetInt32()!=31))
                 throw new InvalidOperationException("Guanshiyin must use the owner-complete103B model with all31 restored rectangular source lights.");

@@ -1,5 +1,13 @@
 # X890 sensor-panel release flow
 
+November 2 authority: Lennon requested completion of the queued release. Version
+1.8.17 includes accepted Donnager V6B and Agatha King V16 in both source consumers,
+their matching native portraits and scoped identity/rendered checks. Use the
+Codex terminal for command-line validation under the updated owner agreement.
+Preserve the study checkout/index with a scoped release tree on published main;
+run normal exact-source CI and native package gates, then publish the reviewed
+installer. Installation remains separate. See [the integration record](CAPITAL-SHIPS-1.8.17.md).
+
 October 28 authority: Lennon requested the full GitHub release flow for 1.8.16,
 including the completed Guanshiyin and bounded game discovery/FPS selection
 corrections. Battlefield 6 live confirmation is explicitly deferred and its

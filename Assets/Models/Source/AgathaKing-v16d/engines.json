@@ -1,0 +1,101 @@
+{
+  "modelSha256": "fedbfda735582b899231d79f23676550dbeee2d3652aa8b602e19623993880d8",
+  "engines": [
+    {
+      "position": [
+        -0.35843396186828613,
+        -1.9888335466384888,
+        -0.2069479525089264
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.13770597700431672,
+      "length": 0.7830339868872911,
+      "addCore": false,
+      "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
+    },
+    {
+      "position": [
+        -0.35843396186828613,
+        -1.9888335466384888,
+        0.20693930983543396
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.13770597700431672,
+      "length": 0.7830339868872911,
+      "addCore": false,
+      "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
+    },
+    {
+      "position": [
+        -4.76837158203125e-07,
+        -1.9888336658477783,
+        -0.4138849079608917
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.13770597700431672,
+      "length": 0.7830339868872911,
+      "addCore": false,
+      "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
+    },
+    {
+      "position": [
+        -4.76837158203125e-07,
+        -1.9888335466384888,
+        0.4138832986354828
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.13770597700431672,
+      "length": 0.7830339868872911,
+      "addCore": false,
+      "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
+    },
+    {
+      "position": [
+        0.35843348503112793,
+        -1.9888335466384888,
+        -0.2069479525089264
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.13770597700431672,
+      "length": 0.7830339868872911,
+      "addCore": false,
+      "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
+    },
+    {
+      "position": [
+        0.35843348503112793,
+        -1.9888335466384888,
+        0.20693930983543396
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.13770597700431672,
+      "length": 0.7830339868872911,
+      "addCore": false,
+      "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
+    }
+  ]
+}

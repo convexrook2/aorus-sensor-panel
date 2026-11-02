@@ -44,3 +44,9 @@ Lamp spacing and hidden mechanics remain interpreted.
 Scirocco: cg / Printables 477957 / CC BY 4.0; X890 materials, markings and work lights. Visual references: Ryan Dening / North Front and Axiom VFX.
 https://www.printables.com/model/477957-mcrn-scirocco-class-assault-cruiser-from-the-expan
 CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+
+Donnager: Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.
+https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28
+
+AgathaKing: Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front.
+https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e

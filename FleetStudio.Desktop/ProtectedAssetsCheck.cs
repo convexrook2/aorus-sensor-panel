@@ -23,7 +23,7 @@ internal sealed partial class StudioWindow
                 await Task.Delay(500);
             }
             const string stateScript="({ship:document.body.dataset.loaded,ready:document.querySelector('#status').hidden,status:document.querySelector('#status').textContent,quality:document.body.dataset.quality,technical:document.querySelector('#technical').textContent,sourceSha256:document.body.dataset.modelSha256,orientation:document.body.dataset.orientation,sourceLights:Number(document.body.dataset.shipLights||0),engines:Number(document.body.dataset.engineCount||0),plumes:document.body.dataset.plumes==='true',frames:Number(document.querySelector('#motion').dataset.frames||0),angle:document.querySelector('#motion').dataset.cameraAngle})";
-            foreach(string ship in new[]{"Guanshiyin","Pella","Scirocco","RocinanteS6","Arboghast"})
+            foreach(string ship in new[]{"Donnager","AgathaKing","Guanshiyin","Pella","Scirocco","RocinanteS6","Arboghast"})
             {
                 await browser.ExecuteScriptAsync($"document.querySelector('#ship').value='{ship}';document.querySelector('#ship').dispatchEvent(new Event('change'));");
                 JsonElement sample=default;

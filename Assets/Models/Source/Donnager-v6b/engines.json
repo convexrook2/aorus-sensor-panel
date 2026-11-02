@@ -1,0 +1,69 @@
+{
+  "engines": [
+    {
+      "position": [
+        -0.374991,
+        -1.998,
+        0.374991
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.1008,
+      "length": 0.605,
+      "addCore": false,
+      "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
+    },
+    {
+      "position": [
+        0.374991,
+        -1.998,
+        0.374991
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.1008,
+      "length": 0.605,
+      "addCore": false,
+      "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
+    },
+    {
+      "position": [
+        0.374991,
+        -1.998,
+        -0.374991
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.1008,
+      "length": 0.605,
+      "addCore": false,
+      "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
+    },
+    {
+      "position": [
+        -0.374991,
+        -1.998,
+        -0.374991
+      ],
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "radius": 0.1008,
+      "length": 0.605,
+      "addCore": false,
+      "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
+    }
+  ],
+  "modelSha256": "51e1a585ef18ea407c7699a94b7d973043efbb94d16c1590bacc60140e8f36a9"
+}

@@ -8,6 +8,11 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+The **1.8.17 release candidate** adds accepted Donnager V6B and Agatha King V16
+to Fleet Studio and SensorPanel, preserving their full geometry, source lights,
+drive registrations and matching native portraits. Exact-source CI and package
+review precede publication. See [the integration record](docs/CAPITAL-SHIPS-1.8.17.md).
+
 The published **1.8.16 update** adds the completed, owner-accepted Guanshiyin
 with its original geometry, source lights, drive and matching native portrait.
 It also improves verified game discovery and expires completed-game FPS pins.

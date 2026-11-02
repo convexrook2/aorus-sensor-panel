@@ -264,70 +264,70 @@
     "engines": [
       {
         "position": [
-          -110.98806765,
-          -68.26816915,
-          -295.91
+          -0.374991,
+          -1.998,
+          0.374991
         ],
         "direction": [
           0,
-          0,
-          -1
+          -1,
+          0
         ],
-        "radius": 30.016268266,
-        "length": 180.097609596,
-        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
-        "addCore": false
+        "radius": 0.1008,
+        "length": 0.605,
+        "addCore": false,
+        "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
       },
       {
         "position": [
-          -110.98807355,
-          153.7076849,
-          -295.91
+          0.374991,
+          -1.998,
+          0.374991
         ],
         "direction": [
           0,
-          0,
-          -1
+          -1,
+          0
         ],
-        "radius": 30.016251798000003,
-        "length": 180.09751078800002,
-        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
-        "addCore": false
+        "radius": 0.1008,
+        "length": 0.605,
+        "addCore": false,
+        "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
       },
       {
         "position": [
-          110.98804865,
-          153.70766700000001,
-          -295.91
+          0.374991,
+          -1.998,
+          -0.374991
         ],
         "direction": [
           0,
-          0,
-          -1
+          -1,
+          0
         ],
-        "radius": 30.016257271999997,
-        "length": 180.097543632,
-        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
-        "addCore": false
+        "radius": 0.1008,
+        "length": 0.605,
+        "addCore": false,
+        "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
       },
       {
         "position": [
-          110.98806504999999,
-          -68.26817804999999,
-          -295.91
+          -0.374991,
+          -1.998,
+          -0.374991
         ],
         "direction": [
           0,
-          0,
-          -1
+          -1,
+          0
         ],
-        "radius": 30.016264126000003,
-        "length": 180.097584756,
-        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
-        "addCore": false
+        "radius": 0.1008,
+        "length": 0.605,
+        "addCore": false,
+        "basis": "Four measured source bell mouths, normalized to a 4-unit ship; no bow ports used"
       }
     ],
-    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+    "modelSha256": "51e1a585ef18ea407c7699a94b7d973043efbb94d16c1590bacc60140e8f36a9"
   },
   "Rocinante": {
     "engines": [
@@ -446,105 +446,105 @@
     "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
   },
   "AgathaKing": {
+    "modelSha256": "fedbfda735582b899231d79f23676550dbeee2d3652aa8b602e19623993880d8",
     "engines": [
       {
         "position": [
-          -2.3149100000000002,
-          1.42883,
-          1.865
+          -0.35843396186828613,
+          -1.9888335466384888,
+          -0.2069479525089264
         ],
         "direction": [
           0,
-          0,
-          1
+          -1,
+          0
         ],
-        "radius": 0.102,
-        "length": 0.58,
+        "radius": 0.13770597700431672,
+        "length": 0.7830339868872911,
         "addCore": false,
-        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+        "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
       },
       {
         "position": [
-          -2.3149100000000002,
-          1.7354,
-          1.865
+          -0.35843396186828613,
+          -1.9888335466384888,
+          0.20693930983543396
         ],
         "direction": [
           0,
-          0,
-          1
+          -1,
+          0
         ],
-        "radius": 0.102,
-        "length": 0.58,
+        "radius": 0.13770597700431672,
+        "length": 0.7830339868872911,
         "addCore": false,
-        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+        "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
       },
       {
         "position": [
-          -2.0494149999999998,
-          1.27555,
-          1.865
+          -4.76837158203125e-07,
+          -1.9888336658477783,
+          -0.4138849079608917
         ],
         "direction": [
           0,
-          0,
-          1
+          -1,
+          0
         ],
-        "radius": 0.102,
-        "length": 0.58,
+        "radius": 0.13770597700431672,
+        "length": 0.7830339868872911,
         "addCore": false,
-        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+        "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
       },
       {
         "position": [
-          -2.0494149999999998,
-          1.8886850000000002,
-          1.865
+          -4.76837158203125e-07,
+          -1.9888335466384888,
+          0.4138832986354828
         ],
         "direction": [
           0,
-          0,
-          1
+          -1,
+          0
         ],
-        "radius": 0.102,
-        "length": 0.58,
+        "radius": 0.13770597700431672,
+        "length": 0.7830339868872911,
         "addCore": false,
-        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+        "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
       },
       {
         "position": [
-          -1.78392,
-          1.42883,
-          1.865
+          0.35843348503112793,
+          -1.9888335466384888,
+          -0.2069479525089264
         ],
         "direction": [
           0,
-          0,
-          1
+          -1,
+          0
         ],
-        "radius": 0.102,
-        "length": 0.58,
+        "radius": 0.13770597700431672,
+        "length": 0.7830339868872911,
         "addCore": false,
-        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+        "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
       },
       {
         "position": [
-          -1.78392,
-          1.7354,
-          1.865
+          0.35843348503112793,
+          -1.9888335466384888,
+          0.20693930983543396
         ],
         "direction": [
           0,
-          0,
-          1
+          -1,
+          0
         ],
-        "radius": 0.102,
-        "length": 0.58,
+        "radius": 0.13770597700431672,
+        "length": 0.7830339868872911,
         "addCore": false,
-        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+        "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
       }
-    ],
-    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+    ]
   },
   "Canterbury": {
     "modelSha256": "290778c8f5e70e3076e994d8c58d54e375c8438ceacd57728ad4eca6ea9e0d35",
@@ -1743,6 +1743,176 @@
         "length": 0.4254976282949602,
         "basis": "Existing source-model drive component: blue",
         "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "DonnagerBeforeAccepted": {
+    "engines": [
+      {
+        "position": [
+          -110.98806765,
+          -68.26816915,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016268266,
+        "length": 180.097609596,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          -110.98807355,
+          153.7076849,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016251798000003,
+        "length": 180.09751078800002,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          110.98804865,
+          153.70766700000001,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016257271999997,
+        "length": 180.097543632,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      },
+      {
+        "position": [
+          110.98806504999999,
+          -68.26817804999999,
+          -295.91
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ],
+        "radius": 30.016264126000003,
+        "length": 180.097584756,
+        "basis": "Existing source-model drive component: Engines_Emit_Main_Engine_Blue_0",
+        "addCore": false
+      }
+    ],
+    "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"
+  },
+  "AgathaKingBeforeAccepted": {
+    "engines": [
+      {
+        "position": [
+          -2.3149100000000002,
+          1.42883,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -2.3149100000000002,
+          1.7354,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -2.0494149999999998,
+          1.27555,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -2.0494149999999998,
+          1.8886850000000002,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -1.78392,
+          1.42883,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
+      },
+      {
+        "position": [
+          -1.78392,
+          1.7354,
+          1.865
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "radius": 0.102,
+        "length": 0.58,
+        "addCore": false,
+        "basis": "Measured centres of the six existing source bells; recessed cores are in the model"
       }
     ],
     "finish": "Preview effects follow existing geometry; incomplete rough models remain labelled as studies"

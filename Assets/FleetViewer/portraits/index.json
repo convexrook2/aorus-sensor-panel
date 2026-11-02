@@ -39,8 +39,8 @@
     },
     {
       "id": "Donnager",
-      "sourceSha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
-      "sha256": "f14131f2c91e72eda67973ea7ad78eb5f6df8811837e65362ccf1b01302f7b93",
+      "sourceSha256": "51e1a585ef18ea407c7699a94b7d973043efbb94d16c1590bacc60140e8f36a9",
+      "sha256": "3234d505f9ecab90fe847183c1b62748e834357d2d9c0f940e78a0442ea3ae36",
       "width": 1024,
       "height": 2048
     },
@@ -67,8 +67,8 @@
     },
     {
       "id": "AgathaKing",
-      "sourceSha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
-      "sha256": "ed43e2444fce32776a4ea720e3ceb5eca67efdf7d393155b597970bf874f4051",
+      "sourceSha256": "fedbfda735582b899231d79f23676550dbeee2d3652aa8b602e19623993880d8",
+      "sha256": "54fe58f3eee1d4345c70578ce32918c31a127c9f3aaba92b963bfd94ea2c92b7",
       "width": 1024,
       "height": 2048
     },

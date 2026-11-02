@@ -5,18 +5,18 @@
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 4719,
-      "sha256": "1905ae5be02144cab7e773532b2dd2d62628daf21f74e86ac4429acb1f598a37"
+      "bytes": 5196,
+      "sha256": "809fac00b3a7f7f7c9a01b2c03d3c4e5e5c41f7211550656f87c72766419bb43"
     },
     {
       "path": "catalog.json",
-      "bytes": 32380,
-      "sha256": "4e0abae0a2ea18b3f67796beb4634bb2048b24030d983d8756d00c160b40fffb"
+      "bytes": 32750,
+      "sha256": "16841cb09eebd4a2cf3b5674161cc04ce56c203dfce26b9ac6b73011c9ec419b"
     },
     {
       "path": "engines.json",
-      "bytes": 15058,
-      "sha256": "7c5e62e6b434b7c723ca8d8c334e2fd246001a940ba19da5a6b071daf6537324"
+      "bytes": 19495,
+      "sha256": "d5cc86c347d7f17395fcde3cfc9999fb596345e9199c57011d15cfb0f99f5024"
     },
     {
       "path": "holographic-stage.js",
@@ -35,8 +35,8 @@
     },
     {
       "path": "models/AgathaKing.glb.gz",
-      "bytes": 47329112,
-      "sha256": "6503f7822cef0b57d478f81af895b2f441614b588488124d85e0bc5b16137541"
+      "bytes": 39775323,
+      "sha256": "a5e27d8c6238e62cfbce8b372fdb3152ea05eeb8022cc0afc97e5fd4c65cfea1"
     },
     {
       "path": "models/Anubis.glb.gz",
@@ -65,8 +65,8 @@
     },
     {
       "path": "models/Donnager.glb.gz",
-      "bytes": 49175887,
-      "sha256": "10807a4529dc595e153bc20eafdf02e3fd88d8c26be6adc7a59341afaac77944"
+      "bytes": 59540378,
+      "sha256": "30576e2f2d7c8fb8ae39ff0a5c06d718da1f8c6aaae7de1cd1337de5cfeacfbd"
     },
     {
       "path": "models/Dropship.glb.gz",
@@ -150,8 +150,8 @@
     },
     {
       "path": "portraits/AgathaKing.png",
-      "bytes": 1119635,
-      "sha256": "ed43e2444fce32776a4ea720e3ceb5eca67efdf7d393155b597970bf874f4051"
+      "bytes": 964782,
+      "sha256": "54fe58f3eee1d4345c70578ce32918c31a127c9f3aaba92b963bfd94ea2c92b7"
     },
     {
       "path": "portraits/Anubis.png",
@@ -180,8 +180,8 @@
     },
     {
       "path": "portraits/Donnager.png",
-      "bytes": 951009,
-      "sha256": "f14131f2c91e72eda67973ea7ad78eb5f6df8811837e65362ccf1b01302f7b93"
+      "bytes": 922295,
+      "sha256": "3234d505f9ecab90fe847183c1b62748e834357d2d9c0f940e78a0442ea3ae36"
     },
     {
       "path": "portraits/Dropship.png",
@@ -206,7 +206,7 @@
     {
       "path": "portraits/index.json",
       "bytes": 5795,
-      "sha256": "9eb409368207f371775172483afab17bc4f28a9af06c84e9e9e1d66fda218580"
+      "sha256": "ef50876bc9b15f1427b8068cf047e08b38cf884cca2a988c906e7b1efcd59934"
     },
     {
       "path": "portraits/Knight.png",

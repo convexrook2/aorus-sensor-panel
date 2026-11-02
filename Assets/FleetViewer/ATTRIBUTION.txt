@@ -73,3 +73,9 @@ https://expanse.fandom.com/wiki/Sol_gate
 
 
 Three.js: MIT licence. See vendor/three/LICENSE.
+
+Donnager: Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.
+https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28
+
+AgathaKing: Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front.
+https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e

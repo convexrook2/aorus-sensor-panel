@@ -1,0 +1,17 @@
+{
+  "ship": "Donnager",
+  "revision": "v6b",
+  "status": "owner_accepted",
+  "ownerStatement": "nice, next ship",
+  "acceptedOn": "2026-10-29",
+  "releaseAuthorizedOn": "2026-11-02",
+  "glbSha256": "51e1a585ef18ea407c7699a94b7d973043efbb94d16c1590bacc60140e8f36a9",
+  "gzipSha256": "30576e2f2d7c8fb8ae39ff0a5c06d718da1f8c6aaae7de1cd1337de5cfeacfbd",
+  "editableSource": "Donnager-v6b.blend",
+  "editableSha256": "57f047a041975d16af27fbe8120339d0086a1ca0d7cc9744837964f4a88cc48c",
+  "triangles": 1848436,
+  "materials": 12,
+  "images": 6,
+  "sourceLights": 64,
+  "drives": 4
+}

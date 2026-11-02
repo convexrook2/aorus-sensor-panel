@@ -157,7 +157,7 @@
         "url": "https://kelvintam.artstation.com/projects/v2358E"
       },
       {
-        "label": "Generation Films / exterior pass at 0:54–1:04, docking at 1:51–1:54",
+        "label": "Generation Films / exterior pass at 0:54\u20131:04, docking at 1:51\u20131:54",
         "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE&t=54s"
       },
       {
@@ -248,13 +248,13 @@
   },
   {
     "id": "Donnager",
-    "title": "Donnager / v5 fitted ship lights",
+    "title": "Donnager / accepted v6b",
     "credit": "Chris Kuhn / owlstraw; CC BY 4.0. Authored finish study from Gautam Singh / Spin VFX production references.",
-    "note": "Full source geometry and dark/orange finish retained. HDR emission and localized spill fitted to existing white/red/amber/drive emitters. Production-gallery comparison; no native installation or final owner acceptance.",
+    "note": "Accepted V6B charcoal armour, exposed machinery, fitted open nozzle liners and 64 source lights; original hull, markings and weapons retained.",
     "referenceUrl": "https://gautamsingh.artstation.com/projects/ZyEXR",
     "sourceUrl": "https://sketchfab.com/3d-models/mcrn-donnager-the-expanse-05e9f9006d914fcd96e95fbd452aaa28",
-    "triangles": 1804024,
-    "materials": 11,
+    "triangles": 1848436,
+    "materials": 12,
     "images": 6,
     "maps": {
       "colour": 4,
@@ -263,24 +263,28 @@
       "metalRough": 4,
       "emissive": 0
     },
-    "model": "models/Donnager-d2d04df3c413.glb.gz",
-    "sha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
-    "beforeModel": "models/Donnager-before-671582ddaed9.glb.gz",
-    "beforeSha256": "407bedc431f4bc9f91eb4b204820dc29153e0b52129880f494c382bf6f6111a5",
-    "beforeInfo": {
-      "triangles": 1804024,
-      "materials": 11
-    },
-    "beforeTitle": "Donnager / v2 production finish",
-    "beforeLabel": "Compare v2",
-    "beforeEngineId": "DonnagerEarlier",
+    "model": "models/Donnager-51e1a585ef18.glb.gz",
+    "sha256": "51e1a585ef18ea407c7699a94b7d973043efbb94d16c1590bacc60140e8f36a9",
     "relatedSources": [
       {
         "label": "Artist / exterior reference",
         "url": "https://gautamsingh.artstation.com/projects/ZyEXR"
       }
     ],
-    "references": []
+    "references": [],
+    "referenceComparisonStatus": "Accepted local model review; authored fan reconstruction, not an official production mesh.",
+    "lights": 64,
+    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02",
+    "beforeModel": "models/Donnager-d2d04df3c413.glb.gz",
+    "beforeSha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
+    "beforeTitle": "Donnager / v5 fitted ship lights",
+    "beforeLabel": "Compare previous fleet model",
+    "beforeInfo": {
+      "triangles": 1804024,
+      "materials": 11
+    },
+    "beforeEngineId": "DonnagerBeforeAccepted",
+    "beforeFlipLongitudinal": false
   },
   {
     "id": "Rocinante",
@@ -393,14 +397,14 @@
   },
   {
     "id": "AgathaKing",
-    "title": "Agatha King / v4 fitted drive lighting",
+    "title": "AgathaKing / accepted v16d",
     "credit": "Geometry: mohamedhussien, CC BY 4.0. Paint reference: owner-supplied Ryan Begemann / Mallacore artwork (2021); Agatha production reference: Lee Fitzgerald / North Front.",
-    "note": "Six recessed luminous drive throats and local spill at existing emissive fittings. Original v3 pale armour, slate-blue bands, muted olive trim and all source geometry/maps retained. Reference-guided fan study; name and UN insignia placement remain unverified.",
+    "note": "Owner-accepted V16 surface repair: partial coplanar intersections trimmed; metallic finish, source textures, 54 lights and six drives retained.",
     "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
     "sourceUrl": "https://sketchfab.com/3d-models/truman-class-ec7e5f790d2940e489bf28c6e6d4427e",
-    "flipLongitudinal": true,
-    "triangles": 297861,
-    "materials": 3,
+    "flipLongitudinal": false,
+    "triangles": 1250901,
+    "materials": 11,
     "images": 4,
     "maps": {
       "colour": 1,
@@ -409,14 +413,8 @@
       "metalRough": 1,
       "emissive": 1
     },
-    "model": "models/AgathaKing-5f8518a59a1f.glb.gz",
-    "sha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
-    "beforeModel": "models/AgathaKing-7be202fb1617.glb.gz",
-    "beforeSha256": "b7e447dfc20d1e8b3843ad3139ed94d044975ba0a4ed704f1a74622f962ce906",
-    "beforeInfo": {
-      "triangles": 293253,
-      "materials": 1
-    },
+    "model": "models/AgathaKing-fedbfda73558.glb.gz",
+    "sha256": "fedbfda735582b899231d79f23676550dbeee2d3652aa8b602e19623993880d8",
     "relatedSources": [
       {
         "label": "Lee Fitzgerald / North Front: Agatha King V03 production concepts",
@@ -424,10 +422,19 @@
       }
     ],
     "references": [],
-    "beforeTitle": "Agatha King / v3 reference paint",
-    "beforeNote": "Pale armour, slate-blue bands and muted olive joint trim from the owner-supplied Mallacore reference. Previous version shows v2.",
-    "beforeLabel": "Before finishing pass",
-    "beforeEngineId": "AgathaKing-v3"
+    "referenceComparisonStatus": "Accepted local model review; authored fan reconstruction, not an official production mesh.",
+    "lights": 54,
+    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02",
+    "beforeModel": "models/AgathaKing-5f8518a59a1f.glb.gz",
+    "beforeSha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
+    "beforeTitle": "Agatha King / v4 fitted drive lighting",
+    "beforeLabel": "Compare previous fleet model",
+    "beforeInfo": {
+      "triangles": 297861,
+      "materials": 3
+    },
+    "beforeEngineId": "AgathaKingBeforeAccepted",
+    "beforeFlipLongitudinal": true
   },
   {
     "id": "Canterbury",

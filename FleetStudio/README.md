@@ -3,6 +3,12 @@
 
 # Fleet Studio
 
+November 2 update: accepted Donnager V6B and Agatha King V16 now use the exact
+accepted exports in both source consumers, with 64/four and 54/six source
+lights/drives respectively. Their previous fleet models remain comparisons.
+SensorPanel 1.8.17 carries matching native portraits. Installation and public
+release evidence remain separate; see [the integration record](../docs/CAPITAL-SHIPS-1.8.17.md).
+
 ## Desktop app (normal launch)
 
 Double-click **Fleet Studio** on the Windows Desktop, or open **Fleet Studio**
@@ -34,7 +40,7 @@ Published assets are authenticated/encrypted in `assets.rl`, loaded in memory;
 source files remain editable. See [the shared .rl standard](../docs/RL-ASSET-STANDARD.md).
 
 For development, open `X890.code-workspace` in VS Code, select
-**Fleet Studio Â· desktop** in Run and Debug, and press F5. Alternatively
+**Fleet Studio · desktop** in Run and Debug, and press F5. Alternatively
 double-click `Start-Desktop.cmd`; these development paths build from source.
 The independent C# WPF host uses WebView2 virtual-host mapping in development
 and in-memory protected resource responses in published copies. It does not
@@ -98,11 +104,11 @@ candidate, then builds the desktop host and opens a bow close-up beside the
 owner-supplied production reference. That comparison keeps the previous
 Anubis available beside local research references, and includes the remaining
 fleet for comparison with Guanshiyin's accepted lights. This profile remains a separate
-inspection route; normal **Fleet Studio Â· desktop** launches now include the
+inspection route; normal **Fleet Studio · desktop** launches now include the
 owner-accepted assembly as **Anubis / production-reference finish**. The main
 native fleet uses the identical lossless GLB. See [Anubis source and identity](../Sources/Anubis/README.md).
 The owner accepted the corrected full-interior bow lighting and shared fleet glow,
-noting it is a bit bright but accepted. **Anubis main fleet â†’ F5** imports that
+noting it is a bit bright but accepted. **Anubis main fleet → F5** imports that
 exact pinned revision with rollback, runs the main-fleet checks and launches the
 normal catalogue. Finalization completed on 2026-10-20; both source fleets and
 the Debug desktop copy use the accepted 067fc6... GLB. Repeating that profile
@@ -183,7 +189,7 @@ instead of the fallback spotlights' round highlights. This source-area path is
 enabled only for the current Guanshiyin; the other ships retain their rigs.
 Desktop refresh and protected native checks are recorded in
 the adoption receipt; source adoption alone does not update the installed app.
-The accepted final model is also integrated into SensorPanel 1.8.16; sensor-panel installation and Fleet Studio installation remain separate.
+This replacement applies to Fleet Studio; SensorPanel's assets are unchanged.
 
 ## Pella coating and bow correction
 
@@ -312,7 +318,7 @@ separately from this distribution.
 - Earlier Pella coating validation: twelve Blender views under one studio rig, both forward
   close-ups, both pod close-ups, and browser checks of camera views, rotation,
   lights, plumes, alternate lighting and previous-version restore.
-- Earlier short-window check at 800Ã—400: all seven camera buttons remain clear of the
+- Earlier short-window check at 800×400: all seven camera buttons remain clear of the
   footer controls; normal browser dimensions are restored after inspection.
 - Earlier coating preservation check: 991 existing source files, 142 installed
   files and 111 earlier preview files match their checkpoint. The original
@@ -336,7 +342,7 @@ Visual references, linked for inspection only:
 - [Kelvin Tam / Rocket Science production gallery](https://kelvintam.artstation.com/projects/v2358E)
 - [Thirupathi Nomula production modelling reel](https://thirupathinomula.artstation.com/projects/y4QPKK)
 - [Generation Films Pella breakdown](https://www.youtube.com/watch?v=eZg1ocpLXOE):
-  0:54â€“1:04 exterior pass and 1:51â€“1:54 docking exterior; all frames before 2:00
+  0:54–1:04 exterior pass and 1:51–1:54 docking exterior; all frames before 2:00
   were reviewed locally.
 
 Reference photographs, production renders and video are **not redistributed**

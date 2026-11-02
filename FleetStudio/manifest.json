@@ -1,5 +1,5 @@
 {
-  "revision": "Fleet Studio / Guanshiyin full gold mast wrap103 / 2026-10-28",
+  "revision": "Fleet Studio / accepted Donnager V6B and Agatha V16 / 2026-11-02",
   "catalogue_entries": 23,
   "assets": [
     {
@@ -539,6 +539,30 @@
       "native_area_lights": 31,
       "compressed_bytes": 40090254,
       "uncompressed_bytes": 83254352
+    },
+    {
+      "file": "models/Donnager-51e1a585ef18.glb.gz",
+      "sha256": "51e1a585ef18ea407c7699a94b7d973043efbb94d16c1590bacc60140e8f36a9",
+      "gzip_sha256": "30576e2f2d7c8fb8ae39ff0a5c06d718da1f8c6aaae7de1cd1337de5cfeacfbd",
+      "triangles": 1848436,
+      "materials": 12,
+      "images": 6,
+      "lights": 64,
+      "compressed_bytes": 59540378,
+      "uncompressed_bytes": 161781696,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/AgathaKing-fedbfda73558.glb.gz",
+      "sha256": "fedbfda735582b899231d79f23676550dbeee2d3652aa8b602e19623993880d8",
+      "gzip_sha256": "a5e27d8c6238e62cfbce8b372fdb3152ea05eeb8022cc0afc97e5fd4c65cfea1",
+      "triangles": 1250901,
+      "materials": 11,
+      "images": 4,
+      "lights": 54,
+      "compressed_bytes": 39775323,
+      "uncompressed_bytes": 68285248,
+      "geometry_and_image_bytes_exact": true
     }
   ],
   "current": {

@@ -1,0 +1,17 @@
+{
+  "ship": "AgathaKing",
+  "revision": "v16d",
+  "status": "owner_accepted",
+  "ownerStatement": "agattha good",
+  "acceptedOn": "2026-10-30",
+  "releaseAuthorizedOn": "2026-11-02",
+  "glbSha256": "fedbfda735582b899231d79f23676550dbeee2d3652aa8b602e19623993880d8",
+  "gzipSha256": "a5e27d8c6238e62cfbce8b372fdb3152ea05eeb8022cc0afc97e5fd4c65cfea1",
+  "editableSource": "AgathaKing-v16d.blend",
+  "editableSha256": "55494e78d2f6bc111c11ab5c987ad3731160a3bffa8810ae4db0a101edca3909",
+  "triangles": 1250901,
+  "materials": 11,
+  "images": 4,
+  "sourceLights": 54,
+  "drives": 6
+}
