@@ -30,3 +30,8 @@ pass normal privacy, exact-source CI, authenticated package and native package
 checks before publication. The accepted geometry and textures are not rebuilt.
 Installation remains a separate phase. Battlefield 6 live confirmation remains
 deferred, with no claim that its blank FPS value is fixed.
+
+Published November 2 from `ede66e4d322bdedb7c16478096d0ae08f8c10a9b`
+after Jenkins #35 and the exact CI payload's 12 native views passed. Public
+installer, README and checksum downloads match the reviewed files. Neither
+installed application was replaced. See [the release result](RELEASE-1.8.17-RESULT.md).

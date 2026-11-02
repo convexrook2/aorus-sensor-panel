@@ -8,6 +8,10 @@ Preserve the study checkout/index with a scoped release tree on published main;
 run normal exact-source CI and native package gates, then publish the reviewed
 installer. Installation remains separate. See [the integration record](CAPITAL-SHIPS-1.8.17.md).
 
+Completed November 2: [v1.8.17 release result](RELEASE-1.8.17-RESULT.md),
+exact-source Jenkins #35, 12 native package views and verified public downloads.
+No installation or Fleet Studio deployment was performed.
+
 October 28 authority: Lennon requested the full GitHub release flow for 1.8.16,
 including the completed Guanshiyin and bounded game discovery/FPS selection
 corrections. Battlefield 6 live confirmation is explicitly deferred and its
