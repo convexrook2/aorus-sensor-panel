@@ -1,5 +1,5 @@
 #define AppName "AORUS Sensor Panel - FAN MADE"
-#define AppVersion "1.8.18"
+#define AppVersion "1.8.19"
 #ifndef PackageRoot
   #error PackageRoot must identify the validated shared-runtime publish directory.
 #endif

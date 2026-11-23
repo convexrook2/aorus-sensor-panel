@@ -309,6 +309,29 @@ internal sealed partial class PanelWindow : Window
                 item.Click += (_, _) => Volatile.Write(ref selectedFpsPid, pid);
                 fpsApplications.Items.Add(item);
             }
+            if (previewPath is null)
+            {
+                fpsApplications.Items.Add(new Separator());
+                var addGame = new MenuItem { Header = "Add game executable…" };
+                addGame.Click += (_, _) =>
+                {
+                    var dialog = new Microsoft.Win32.OpenFileDialog { Title = "Select the game executable", Filter = "Executables (*.exe)|*.exe" };
+                    if (dialog.ShowDialog(this) == true) ChangeGameRegistration(() => ManualGameRegistration.Add(dialog.FileName));
+                };
+                fpsApplications.Items.Add(addGame);
+                var registered = ManualGameRegistration.List();
+                if (registered.Count > 0)
+                {
+                    var removeGame = new MenuItem { Header = "Remove manually added game" };
+                    foreach (var game in registered)
+                    {
+                        var item = new MenuItem { Header = game.Name, ToolTip = game.Executable };
+                        item.Click += (_, _) => ChangeGameRegistration(() => ManualGameRegistration.Remove(game.Executable!));
+                        removeGame.Items.Add(item);
+                    }
+                    fpsApplications.Items.Add(removeGame);
+                }
+            }
         };
         menu.Items.Add(fpsApplications);
         var full = new MenuItem { Header = "Fit to display" }; full.Click += (_, _) => FitToDisplay(); menu.Items.Add(full);
@@ -863,6 +886,13 @@ internal sealed partial class PanelWindow : Window
     {
         if (message==0x007E) { displayRefresh.Stop(); displayRefresh.Start(); }
         return 0;
+    }
+
+    private void ChangeGameRegistration(Action change)
+    {
+        try { change(); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or System.Security.SecurityException)
+        { MessageBox.Show(this, ex.Message, PanelBranding.Name); }
     }
 
     private void RefreshConnectedDisplay()

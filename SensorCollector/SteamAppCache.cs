@@ -2,12 +2,43 @@ using System.Text;
 
 namespace SensorCollector;
 
-// Read-only v40/v41 local Steam cache. Header/entry layout documented by
-// https://github.com/xPaw/SteamAppInfo. Unknown formats fail closed.
+// Read-only Steam application metadata. v40/v41 use one file; v42 uses shards
+// with a fixed-size index followed by a shared string table and app payloads.
 internal static class SteamAppCache
 {
     internal sealed record Metadata(string Name, string Type);
     private enum Key : byte { Other, AppInfo, Common, Name, Type }
+    private const uint ShardedVersion = 0x0756442a;
+
+    internal static Dictionary<uint, Metadata> ReadCatalog(string cache, HashSet<uint> wanted, List<string> notes)
+    {
+        var root = Path.Combine(cache, "appinfo");
+        var shards = Directory.Exists(root) ? Directory.GetFiles(root, "appinfo_??.vdf") : [];
+        if (shards.Length == 0) return Read(Path.Combine(cache, "appinfo.vdf"), wanted);
+
+        var result = new Dictionary<uint, Metadata>();
+        var remaining = new HashSet<uint>(wanted);
+        int unavailable = 0;
+        foreach (string path in shards)
+        {
+            if (remaining.Count == 0) break;
+            try
+            {
+                foreach (var (id, metadata) in Read(path, remaining))
+                {
+                    result.Add(id, metadata);
+                    remaining.Remove(id);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            {
+                unavailable++;
+            }
+        }
+        notes.Add($"Steam sharded cache matched {result.Count}/{wanted.Count} locally installed apps ({unavailable} unreadable shards).");
+        return result;
+    }
+
     public static Dictionary<uint, Metadata> Read(string path, HashSet<uint> wanted)
     {
         using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
@@ -22,6 +53,7 @@ internal static class SteamAppCache
     internal static Dictionary<uint, Metadata> Read(BinaryReader reader, HashSet<uint> wanted)
     {
         uint version = reader.ReadUInt32(); reader.ReadUInt32();
+        if (version == ShardedVersion) return ReadShard(reader, wanted);
         if (version is not (0x07564428 or 0x07564429)) throw new InvalidDataException("Unsupported Steam appinfo version.");
         Key[]? keys = null;
         long entriesEnd = reader.BaseStream.Length;
@@ -50,6 +82,45 @@ internal static class SteamAppCache
                 if(name is not null&&type is not null)metadata[appId]=new(name,type);
             }
             reader.BaseStream.Position = end;
+        }
+        return metadata;
+    }
+
+    private static Dictionary<uint, Metadata> ReadShard(BinaryReader reader, HashSet<uint> wanted)
+    {
+        const int headerSize = 44, recordSize = 80, payloadPrefixSize = 20;
+        var stream = reader.BaseStream;
+        stream.Position = 16; // after the universe and shard identifiers
+        uint count = reader.ReadUInt32();
+        uint indexSize = reader.ReadUInt32(), keyCount = reader.ReadUInt32();
+        uint keyBytes = reader.ReadUInt32(), dataBytes = reader.ReadUInt32();
+        long keyStart = headerSize + (long)indexSize;
+        long dataStart = keyStart + keyBytes;
+        // Some shards leave padding after the fixed-size records.
+        if (indexSize < (long)count * recordSize || indexSize % sizeof(uint) != 0 || keyCount > Math.Min(keyBytes, 100000) ||
+            dataStart + dataBytes != stream.Length)
+            throw new InvalidDataException("Invalid Steam shard layout.");
+
+        var metadata = new Dictionary<uint, Metadata>();
+        Key[]? keys = null;
+        for (uint i = 0; i < count; i++)
+        {
+            stream.Position = headerSize + (long)i * recordSize;
+            uint appId = reader.ReadUInt32(), offset = reader.ReadUInt32(), size = reader.ReadUInt32();
+            if (!wanted.Contains(appId)) continue;
+            if (size <= payloadPrefixSize || size > 16 * 1024 * 1024 || (long)offset + size > dataBytes)
+                throw new InvalidDataException("Invalid Steam shard app bounds.");
+            if (keys is null)
+            {
+                stream.Position = keyStart;
+                keys = new Key[keyCount];
+                for (int k = 0; k < keys.Length; k++) keys[k] = ReadKey(reader, dataStart);
+                if (stream.Position != dataStart) throw new InvalidDataException("Invalid Steam shard string table.");
+            }
+            stream.Position = dataStart + offset + payloadPrefixSize;
+            string? name = null, type = null;
+            Object(reader, keys, 0, 0, dataStart + offset + size, ref name, ref type);
+            if (name is not null && type is not null) metadata[appId] = new(name, type);
         }
         return metadata;
     }

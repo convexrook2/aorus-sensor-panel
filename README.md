@@ -8,6 +8,11 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+Sensor Panel checks for a newer stable installer on startup and every six hours
+while running. A tray notification announces an available version. Use **Check
+for updates** in the tray menu to check manually, or **Download v…** to open the
+release and run Setup when ready.
+
 The **1.8.18 update** adds accepted Medina V4 to the Expanse showcase
 and holotable with 20 source lights, eight registered plumes and a matching
 portrait. Fleet Studio's source bundle uses the same accepted export.
@@ -394,7 +399,10 @@ and [Rocinante UI](https://rhys.artstation.com/projects/q9Am1L).
 | CPU usage, memory use, uptime and network traffic | Windows APIs/counters. |
 | FPS | External Windows ETW/PresentMon for recognized running games. The FPS source menu lists games only. No desktop fallback, injected hooks or game-memory access. |
 
-Automatic FPS selection uses the local Steam game catalog, follows the foreground
+Automatic FPS selection uses local Steam, Epic, EA, GOG, Xbox and Windows game
+records, including registered game libraries on other drives. For portable
+games, choose **Add game executable…** in the **FPS source** menu.
+Automatic selection follows the foreground
 recognized game, and retains that running game while another application has
 focus. Tools, ordinary applications and desktop composition are excluded. With
 no recognized game running, FPS is unavailable and the source shows No game.

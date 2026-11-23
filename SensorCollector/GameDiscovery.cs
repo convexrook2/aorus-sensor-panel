@@ -7,12 +7,13 @@ using System.Text.RegularExpressions;
 
 namespace SensorCollector;
 
-public sealed record InstalledGame(string Name, string Directory, string Source);
+public sealed record InstalledGame(string Name, string Directory, string Source, string? Executable = null);
 public sealed record RunningGame(int ProcessId, string Name, string Executable, DateTime StartedAt, string Source);
 
 public sealed class GameDiscovery
 {
     private DateTimeOffset nextRefresh;
+    private int registrationRevision;
     private IReadOnlyList<InstalledGame> games = [];
     private Catalog catalog = new([]);
     private Dictionary<int,RunningGame> knownProcesses = [];
@@ -87,14 +88,21 @@ public sealed class GameDiscovery
     internal sealed class Catalog(IReadOnlyList<InstalledGame> installed)
     {
         private static readonly string[] excluded=["launcher","crash","helper","setup","updater","server","editor","config","webview","cef"];
-        private readonly (InstalledGame Game,string Prefix)[] paths=installed.Select(g=>(g,Path.GetFullPath(g.Directory).TrimEnd(Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar)+Path.DirectorySeparatorChar)).ToArray();
+        private readonly (InstalledGame Game,string Prefix)[] paths = installed.Where(g => g.Executable is null)
+            .Select(g => (g, Path.GetFullPath(g.Directory).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar))
+            .OrderByDescending(entry => entry.Item2.Length).ToArray();
+        private readonly Dictionary<string, InstalledGame> exact = installed.Where(g => g.Executable is not null)
+            .GroupBy(g => g.Executable!, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.FirstOrDefault(game => game.Source == ManualGameRegistration.Source) ?? g.First(), StringComparer.OrdinalIgnoreCase);
         internal InstalledGame? Match(string executable)
         {
+            string full = Path.GetFullPath(executable);
+            var registration = exact.GetValueOrDefault(full);
+            if (registration?.Source == ManualGameRegistration.Source) return registration;
             string name=Path.GetFileNameWithoutExtension(executable);
             foreach(string marker in excluded)if(name.Contains(marker,StringComparison.OrdinalIgnoreCase))return null;
-            string full=Path.GetFullPath(executable);
             foreach(var entry in paths)if(full.StartsWith(entry.Prefix,StringComparison.OrdinalIgnoreCase))return entry.Game;
-            return null;
+            return registration;
         }
     }
     internal static bool Inside(string file, string directory)
@@ -102,11 +110,14 @@ public sealed class GameDiscovery
 
     private void Refresh()
     {
-        if (DateTimeOffset.UtcNow < nextRefresh) return;
+        int revision = ManualGameRegistration.Revision;
+        if (DateTimeOffset.UtcNow < nextRefresh && revision == registrationRevision) return;
+        registrationRevision = revision;
         nextRefresh = DateTimeOffset.UtcNow.AddSeconds(30);
         var result = new List<InstalledGame>(); var notes = new List<string>();
         try { LoadSteam(result, notes); }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or ArgumentException) { notes.Add("Steam catalog unavailable: " + ex.Message); }
+        OtherGameCatalog.Load(result, notes);
         // Unknown catalogs do not turn arbitrary foreground processes into games.
         games = result;
         catalog = new(result);
@@ -134,7 +145,7 @@ public sealed class GameDiscovery
                 if (Inside(root, common) && System.IO.Directory.Exists(root)) installed.Add((appId, Field("name"), root));
             }
         }
-        var metadata = SteamAppCache.Read(Path.Combine(steamRoot, "appcache", "appinfo.vdf"), installed.Select(g => g.AppId).ToHashSet());
+        var metadata = SteamAppCache.ReadCatalog(Path.Combine(steamRoot, "appcache"), installed.Select(g => g.AppId).ToHashSet(), notes);
         foreach (var entry in installed)
             if (metadata.TryGetValue(entry.AppId, out var app) && IsGameType(app.Type))
                 result.Add(new(app.Name, entry.Directory, $"Steam app {entry.AppId}; common/type={app.Type}"));

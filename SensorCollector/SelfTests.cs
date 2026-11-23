@@ -219,7 +219,86 @@ internal static class SelfTests
         memory.Position=sizeOffset;writer.Write((uint)(entryEnd-entryStart-1));memory.Position=0;
         bool rejected=false;try{SteamAppCache.Read(reader,[123]);}catch(InvalidDataException){rejected=true;}
         if(!rejected)throw new Exception("Steam metadata read crossed a truncated application boundary.");
-        Console.WriteLine("PASS: automatic games, desktop exclusion, focus/exit selection and Steam v41 metadata.");
+        CheckSteamShard();
+        CheckNonSteamGames();
+        Console.WriteLine("PASS: automatic games, desktop exclusion, focus/exit selection, Steam v41/v42 metadata and non-Steam discovery.");
+    }
+
+    private static void CheckNonSteamGames()
+    {
+        string directory = Directory.CreateTempSubdirectory("x890-game-catalog-").FullName;
+        string executable = Path.Combine(directory, "Game.exe");
+        try
+        {
+            File.WriteAllBytes(executable, []);
+            var registered = new InstalledGame("Portable game", directory, ManualGameRegistration.Source, executable);
+            var catalog = new GameDiscovery.Catalog([registered]);
+            if (catalog.Match(executable) != registered || catalog.Match(Path.Combine(directory, "Other.exe")) is not null)
+                throw new Exception("A portable registration must recognize only its exact executable.");
+
+            InstalledGame? Epic(string category, bool incomplete, string launch)
+            {
+                using var json = System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    DisplayName = "Epic game", InstallLocation = directory, LaunchExecutable = launch,
+                    AppCategories = new[] { "public", category }, bIsIncompleteInstall = incomplete
+                }));
+                return OtherGameCatalog.ParseEpic(json.RootElement);
+            }
+            if (Epic("games", false, "Game.exe") is null || Epic("applications", false, "Game.exe") is not null ||
+                Epic("games", true, "Game.exe") is not null || Epic("games", false, @"..\Game.exe") is not null)
+                throw new Exception("Epic discovery must recognize complete local games with an executable inside the registered directory.");
+        }
+        finally
+        {
+            File.Delete(executable);
+            Directory.Delete(directory);
+        }
+    }
+
+    private static void CheckSteamShard()
+    {
+        var encoding = System.Text.Encoding.UTF8;
+        using var shard = new MemoryStream();
+        using var writer = new BinaryWriter(shard, encoding, true);
+        byte[] table = encoding.GetBytes("appinfo\0common\0type\0name\0");
+        byte[] Payload(string name, string type)
+        {
+            using var stream = new MemoryStream();
+            using var data = new BinaryWriter(stream, encoding, true);
+            data.Write(new byte[20]);
+            data.Write((byte)0); data.Write(0u);
+            data.Write((byte)0); data.Write(1u);
+            data.Write((byte)1); data.Write(2u); data.Write(encoding.GetBytes(type + "\0"));
+            data.Write((byte)1); data.Write(3u); data.Write(encoding.GetBytes(name + "\0"));
+            data.Write(new byte[] { 8, 8, 8 });
+            return stream.ToArray();
+        }
+        var game = Payload("VR game", "Game");
+        var tool = Payload("VR compositor", "Tool");
+        foreach (uint field in new uint[] { 0x0756442a, 1, 0, 256, 2, 164, 4, (uint)table.Length, (uint)(game.Length + tool.Length), 0, 0 })
+            writer.Write(field);
+        void Index(uint id, int offset, int size)
+        {
+            writer.Write(id); writer.Write((uint)offset); writer.Write((uint)size); writer.Write(new byte[68]);
+        }
+        Index(123, 0, game.Length);
+        Index(456, game.Length, tool.Length);
+        writer.Write(0u);
+        writer.Write(table); writer.Write(game); writer.Write(tool);
+        shard.Position = 0;
+        using var reader = new BinaryReader(shard, encoding, true);
+        var parsed = SteamAppCache.Read(reader, [123, 456, 789]);
+        if (parsed.Count != 2 || parsed[123] != new SteamAppCache.Metadata("VR game", "Game") ||
+            parsed[456] != new SteamAppCache.Metadata("VR compositor", "Tool"))
+            throw new Exception("Steam v42 game and tool metadata were not decoded correctly.");
+
+        shard.Position = 44 + 80 + 4;
+        writer.Write(uint.MaxValue);
+        shard.Position = 0;
+        try { SteamAppCache.Read(reader, [456]); }
+        catch (InvalidDataException) { return; }
+        throw new Exception("Steam v42 accepted a payload pointer outside its shard.");
     }
 
     internal sealed class FakeWmiObject
