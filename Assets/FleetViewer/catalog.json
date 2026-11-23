@@ -27,7 +27,7 @@
         "url": "https://kelvintam.artstation.com/projects/v2358E"
       },
       {
-        "label": "Generation Films / exterior pass at 0:54\u20131:04, docking at 1:51\u20131:54",
+        "label": "Generation Films / exterior pass at 0:54–1:04, docking at 1:51–1:54",
         "url": "https://www.youtube.com/watch?v=eZg1ocpLXOE&t=54s"
       },
       {
@@ -590,33 +590,36 @@
   },
   {
     "id": "Medina",
-    "title": "Medina station / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier station configuration of the Nauvoo base, with distinct fittings. Existing geometry retained; not a newly reconstructed station.",
-    "referenceUrl": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
-    "triangles": 66794,
-    "materials": 10,
-    "images": 1,
+    "title": "Medina Station / accepted V4",
+    "credit": "RingBuilder / Printables 729020. X890: plated hull, service pipe, lamps and eight drive assemblies.",
+    "note": "Former Nauvoo and Behemoth. ROOK accepted V4 with all twenty source lights and eight measured exhaust outlets.",
+    "referenceUrl": "https://www.printables.com/model/729020-nauvoobehemothmedina-station-the-expanse",
+    "triangles": 132587,
+    "materials": 18,
+    "images": 3,
     "maps": {
-      "colour": 1,
+      "colour": 2,
       "normal": 0,
       "occlusion": 0,
-      "metalRough": 0,
+      "metalRough": 1,
       "emissive": 0
     },
     "model": "models/Medina.glb.gz",
-    "sha256": "ad72a33ff8667caf8aec31db26e00bb67a3257217c32607b1163bffbe4365b23",
-    "sourceBytes": 4197788,
-    "compressedBytes": 1037274,
+    "sha256": "770578ca43f2f8cf72690578b2d595dfb2fe510b505984ac5acfd64003587b6d",
+    "sourceBytes": 13780788,
+    "compressedBytes": 7872665,
     "compression": "gzip-lossless",
-    "compressedSha256": "430cc1391a63ff635f24af2625bf9ce0af2bf605e85bde2321d4e22c1ab780f4",
+    "compressedSha256": "2d6c5b88eb484661063d45ac820a71f986981135d3beba98e77d53d7ae5763e1",
     "renderMaps": {
-      "colour": 1,
+      "colour": 2,
       "normal": 0,
       "occlusion": 0,
-      "metalRough": 0,
+      "metalRough": 1,
       "emissive": 0
-    }
+    },
+    "lights": 20,
+    "sourceId": "Medina",
+    "lightUnitScale": 0.0014641288433382138
   },
   {
     "id": "Scopuli",

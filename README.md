@@ -8,6 +8,11 @@ without Rainmeter or the HWiNFO application.
 from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
+The **1.8.18 update** adds accepted Medina V4 to the Expanse showcase
+and holotable with 20 source lights, eight registered plumes and a matching
+portrait. Fleet Studio's source bundle uses the same accepted export.
+See [the release notes](Packaging/ReleaseNotes-1.8.18.md).
+
 The published **1.8.17 update** adds accepted Donnager V6B and Agatha King V16
 to SensorPanel and Fleet Studio's source bundle, preserving their full geometry,
 source lights, registered drive effects and matching native portraits. Jenkins

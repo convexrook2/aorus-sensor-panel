@@ -14,7 +14,7 @@ const setupStart=viewer.indexOf('   // Reviewed ships opt into'),setupEnd=viewer
 assert.ok(setupStart>=0&&setupEnd>setupStart,'Native effect setup branch missing');
 const setup=new Function('entry','engines','modelSha','makeShipEffects','oriented','gltf','center','max',
  'let shipEffects=null;'+viewer.slice(setupStart,setupEnd)+';return shipEffects;');
-for(const id of ['Donnager','AgathaKing','Guanshiyin','Pella','Scirocco','Knight']){
+for(const id of ['Donnager','AgathaKing','Guanshiyin','Pella','Scirocco','Knight','Medina']){
  let received;
  const effect={setLights(value){this.lit=value;},setPlumes(value){this.burning=value;}};
  const factory=(_root,_model,anchors)=>{received=anchors;return effect;};

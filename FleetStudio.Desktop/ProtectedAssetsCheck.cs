@@ -23,7 +23,7 @@ internal sealed partial class StudioWindow
                 await Task.Delay(500);
             }
             const string stateScript="({ship:document.body.dataset.loaded,ready:document.querySelector('#status').hidden,status:document.querySelector('#status').textContent,quality:document.body.dataset.quality,technical:document.querySelector('#technical').textContent,sourceSha256:document.body.dataset.modelSha256,orientation:document.body.dataset.orientation,sourceLights:Number(document.body.dataset.shipLights||0),engines:Number(document.body.dataset.engineCount||0),plumes:document.body.dataset.plumes==='true',frames:Number(document.querySelector('#motion').dataset.frames||0),angle:document.querySelector('#motion').dataset.cameraAngle})";
-            foreach(string ship in new[]{"Donnager","AgathaKing","Guanshiyin","Pella","Scirocco","RocinanteS6","Arboghast"})
+            foreach(string ship in new[]{"Donnager","AgathaKing","Guanshiyin","Pella","Scirocco","RocinanteS6","Arboghast","Medina"})
             {
                 await browser.ExecuteScriptAsync($"document.querySelector('#ship').value='{ship}';document.querySelector('#ship').dispatchEvent(new Event('change'));");
                 JsonElement sample=default;
@@ -126,6 +126,19 @@ internal sealed partial class StudioWindow
                     await Task.Delay(500);
                     exhaust=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync(stateScript));
                     if(!exhaust.Value.GetProperty("plumes").GetBoolean())throw new InvalidOperationException("Arboghast plume control did not enable the exhaust.");
+                }
+                if(ship=="Medina")
+                {
+                    const string accepted="770578ca43f2f8cf72690578b2d595dfb2fe510b505984ac5acfd64003587b6d";
+                    if(sample.GetProperty("sourceSha256").GetString()!=accepted
+                        ||sample.GetProperty("sourceLights").GetInt32()!=20||sample.GetProperty("engines").GetInt32()!=8)
+                        throw new InvalidOperationException("Medina must use accepted V4 with twenty source lights and eight drives.");
+                    await browser.ExecuteScriptAsync("if(document.querySelector('#plumes').getAttribute('aria-pressed')!=='true')document.querySelector('#plumes').click();");
+                    await Task.Delay(500);
+                    var effects=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync("window.fleetPlumeReview.state()"));
+                    if(effects.GetProperty("visiblePlumes").GetInt32()!=8||effects.GetProperty("activePlumeLights").GetInt32()!=8)
+                        throw new InvalidOperationException("Medina's plume toggle must enable all eight plumes and spill lights.");
+                    exhaust=JsonSerializer.Deserialize<JsonElement>(await browser.ExecuteScriptAsync(stateScript));
                 }
                 await browser.ExecuteScriptAsync("if(document.querySelector('#rotate').getAttribute('aria-pressed')!=='true')document.querySelector('#rotate').click();");
                 await Task.Delay(1500);

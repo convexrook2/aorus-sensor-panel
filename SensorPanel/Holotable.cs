@@ -182,6 +182,7 @@ internal sealed class Holotable : Grid
     internal static string ModelCredit(string ship)=>ship switch
     {
         "SolRing"=>"ORIGINAL V3 FAN RECONSTRUCTION",
+        "Medina"=>"RINGBUILDER / PRINTABLES · X890 ADAPTATION",
         "Arboghast"=>"X890 RECONSTRUCTION / CHRIS DANELON REFERENCES",
         "Knight"=>"SYFY / VOODOO · CC BY 4.0 · X890 ADAPTATION",
         "Razorback"=>"OWNER-SUPPLIED V2","Rocinante"=>"MARTIN TAICHL / CC BY 4.0",

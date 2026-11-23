@@ -749,5 +749,179 @@
         "basis": "Existing six independent bell registrations, transformed with the exact hull normalization"
       }
     ]
+  },
+  "Medina": {
+    "modelSha256": "770578ca43f2f8cf72690578b2d595dfb2fe510b505984ac5acfd64003587b6d",
+    "engines": [
+      {
+        "position": [
+          2.442,
+          -11.532,
+          -0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 01 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      },
+      {
+        "position": [
+          1.726755,
+          -11.532,
+          -1.726755
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 02 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      },
+      {
+        "position": [
+          0.0,
+          -11.532,
+          -2.442
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 03 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      },
+      {
+        "position": [
+          -1.726755,
+          -11.532,
+          -1.726755
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 04 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      },
+      {
+        "position": [
+          -2.442,
+          -11.532,
+          -0.0
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 05 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      },
+      {
+        "position": [
+          -1.726755,
+          -11.532,
+          1.726755
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 06 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      },
+      {
+        "position": [
+          -0.0,
+          -11.532,
+          2.442
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 07 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      },
+      {
+        "position": [
+          1.726755,
+          -11.532,
+          1.726755
+        ],
+        "direction": [
+          0,
+          -1,
+          0
+        ],
+        "radius": 0.48437,
+        "length": 4.9,
+        "color": [
+          0.07,
+          0.32,
+          1
+        ],
+        "addCore": false,
+        "basis": "Drive 08 | stepped casing and open liner: measured lip and minimum free inner radius 0.49337"
+      }
+    ],
+    "finish": "Eight measured Medina outlets with shared blue-white volumetric exhaust"
   }
 }

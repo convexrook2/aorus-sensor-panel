@@ -5,18 +5,18 @@
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 5196,
-      "sha256": "809fac00b3a7f7f7c9a01b2c03d3c4e5e5c41f7211550656f87c72766419bb43"
+      "bytes": 5301,
+      "sha256": "17a83850e4df518f95c5e358c804cfa0ece3f6c9299a24b9c756fee825d8ff70"
     },
     {
       "path": "catalog.json",
-      "bytes": 32750,
-      "sha256": "16841cb09eebd4a2cf3b5674161cc04ce56c203dfce26b9ac6b73011c9ec419b"
+      "bytes": 32865,
+      "sha256": "8e284e41eab676f2144507aa7d2bf9507d47ed24345adc348c1cf16ac3d2f1fb"
     },
     {
       "path": "engines.json",
-      "bytes": 19495,
-      "sha256": "d5cc86c347d7f17395fcde3cfc9999fb596345e9199c57011d15cfb0f99f5024"
+      "bytes": 23407,
+      "sha256": "caffab7759d7fb88612f34a438797ed04cca98b14b45c3f83177def32697a4e1"
     },
     {
       "path": "holographic-stage.js",
@@ -95,8 +95,8 @@
     },
     {
       "path": "models/Medina.glb.gz",
-      "bytes": 1037274,
-      "sha256": "430cc1391a63ff635f24af2625bf9ce0af2bf605e85bde2321d4e22c1ab780f4"
+      "bytes": 7872665,
+      "sha256": "2d6c5b88eb484661063d45ac820a71f986981135d3beba98e77d53d7ae5763e1"
     },
     {
       "path": "models/Morrigan.glb.gz",
@@ -206,7 +206,7 @@
     {
       "path": "portraits/index.json",
       "bytes": 5795,
-      "sha256": "ef50876bc9b15f1427b8068cf047e08b38cf884cca2a988c906e7b1efcd59934"
+      "sha256": "0085e11940aac2179b9e22c5dc5330910c6f994c3222b59c7c7485dd52251dfd"
     },
     {
       "path": "portraits/Knight.png",
@@ -215,8 +215,8 @@
     },
     {
       "path": "portraits/Medina.png",
-      "bytes": 564416,
-      "sha256": "2bde18ecbf613d6427916a2f8d58c017fa7954db2381c129470ed86009d1905a"
+      "bytes": 873143,
+      "sha256": "c430e71c2f9dcc3d862ba26bd759eb241b6a413badd01379eca315ad19c9e07b"
     },
     {
       "path": "portraits/Morrigan.png",
@@ -400,8 +400,8 @@
     },
     {
       "path": "viewer.js",
-      "bytes": 21486,
-      "sha256": "8afba11c926f3f6664589714b0586ffca45908aa3e82a19dfa80e55b5b217f74"
+      "bytes": 21504,
+      "sha256": "75d493e4e3e35aadac78b45328bea8a26efc75f8ad5b24cc4ba50dc4c0020025"
     }
   ]
 }

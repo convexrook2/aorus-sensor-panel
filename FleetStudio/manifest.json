@@ -1,5 +1,5 @@
 {
-  "revision": "Fleet Studio / accepted Donnager V6B and Agatha V16 / 2026-11-02",
+  "revision": "Fleet Studio / accepted Medina V4 / 2026-11-23",
   "catalogue_entries": 23,
   "assets": [
     {
@@ -562,6 +562,20 @@
       "lights": 54,
       "compressed_bytes": 39775323,
       "uncompressed_bytes": 68285248,
+      "geometry_and_image_bytes_exact": true
+    },
+    {
+      "file": "models/Medina-770578ca43f2.glb.gz",
+      "sha256": "770578ca43f2f8cf72690578b2d595dfb2fe510b505984ac5acfd64003587b6d",
+      "gzip_sha256": "2d6c5b88eb484661063d45ac820a71f986981135d3beba98e77d53d7ae5763e1",
+      "source_sha256": "770578ca43f2f8cf72690578b2d595dfb2fe510b505984ac5acfd64003587b6d",
+      "binary_sha256": "ae076df1298eaa5498746da97948967b922a488cbafbb08efb1fbb133c4df646",
+      "triangles": 132587,
+      "materials": 18,
+      "images": 3,
+      "lights": 20,
+      "compressed_bytes": 7872665,
+      "uncompressed_bytes": 13780788,
       "geometry_and_image_bytes_exact": true
     }
   ],

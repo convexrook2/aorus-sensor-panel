@@ -137,7 +137,7 @@ try{
    // Blender keeps spaces in node names in some exporter revisions.
    if(entry.id==='SolRing'&&!field){root.traverse(o=>{if(o.isMesh&&o.name.includes('Active aperture')){field=o;portal=makePortal();specialMaterials.add(portal);o.material.dispose();o.material=portal;originals.set(o,portal);o.castShadow=false;o.receiveShadow=false;}});if(!field)throw Error('The separate gate aperture was not found');}
    const anchorEntry=requestedPrevious&&entry.beforeEngineId?entry.beforeEngineId:entry.id;
-   if(['Arboghast','Canterbury','Knight','Pella','Scirocco'].includes(entry.id)&&engines[anchorEntry]?.modelSha256!==hash)throw Error(entry.id+' drive registration differs from the loaded model');
+   if(['Arboghast','Canterbury','Knight','Pella','Scirocco','Medina'].includes(entry.id)&&engines[anchorEntry]?.modelSha256!==hash)throw Error(entry.id+' drive registration differs from the loaded model');
    shipShadows=ownShipShadows(gltf.scene);shipEffects=makeShipEffects(root,gltf.scene,engines[anchorEntry]?.engines||[],center,scale);
    scene.add(root);root.updateMatrixWorld(true);renderer.shadowMap.needsUpdate=true;
    const displayTitle=requestedPrevious&&entry.beforeTitle?entry.beforeTitle:entry.title+(requestedPrevious?' / previous':'');
