@@ -67,7 +67,7 @@ internal sealed partial class ShipPanel
         showcaseBackdrop=null;showcaseCrew=null;heading=faction=mediaCredit=null;
         shipChoices=null;rotationControl=null;activeTheme=null;selectedShip=null;
         SolarBodyAssets.Release();SolarGateModel.Release();SolarSky.Release();
-        ShipPoster.ReleaseCache();ShipArtwork.ReleaseCache();ShipModel.ReleaseCache();
+        ShipPoster.ReleaseCache();
     }
     internal void CheckRotationControl()
     {

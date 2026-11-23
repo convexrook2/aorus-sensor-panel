@@ -101,20 +101,6 @@
       "height": 2048
     },
     {
-      "id": "Nauvoo",
-      "sourceSha256": "cf40797eb7aa7bc51592edb6bdeafcc6dd0a30b6ce4b8c65cd50e5e389f71f09",
-      "sha256": "2891c984e72d0f633924be966fd5fee98d572ea4b52e8ad5e450ade005b2733e",
-      "width": 1024,
-      "height": 2048
-    },
-    {
-      "id": "Behemoth",
-      "sourceSha256": "c1ddcba52494f4d37ff0245fcf61947b743d55f2454586172b260f963269e447",
-      "sha256": "9e2d196f134b664508600f3d06f4e7a8fc7a748286001817f4422d92e59e292a",
-      "width": 1024,
-      "height": 2048
-    },
-    {
       "id": "Medina",
       "sourceSha256": "770578ca43f2f8cf72690578b2d595dfb2fe510b505984ac5acfd64003587b6d",
       "sha256": "c430e71c2f9dcc3d862ba26bd759eb241b6a413badd01379eca315ad19c9e07b",

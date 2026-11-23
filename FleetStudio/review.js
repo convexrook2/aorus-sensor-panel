@@ -99,7 +99,8 @@ try{
  async function load(id,reset=true){
    finishLightPass();
    clipVideo.pause();clipPanel.hidden=true;
-   const token=++loadId,requestedPrevious=previous,selected=catalog.find(e=>e.id===id)||catalog[0];
+   const currentId=({nauvoo:'Medina',behemoth:'Medina',medina:'Medina',rocinante:'RocinanteS6'})[id.toLowerCase()]??id;
+   const token=++loadId,requestedPrevious=previous,selected=catalog.find(e=>e.id===currentId)||catalog[0];
    const file=requestedPrevious&&selected.beforeModel?selected.beforeModel:selected.model;
    const expected=requestedPrevious&&selected.beforeModel?selected.beforeSha256:selected.sha256;
    $('#status').hidden=false;$('#status').textContent='Loading '+selected.title+'…';

@@ -92,9 +92,12 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
                 ShipId = ship.Id, SecondaryAccent = Brush(mars ? "#E9C080" : "#E7BF7D") };
         }
     }
-    public static PanelTheme Resolve(string? id) => All.FirstOrDefault(t => string.Equals(t.Id,
-        id is not null && (id.Equals("AgathaKing",StringComparison.OrdinalIgnoreCase) || id.Equals("Truman",StringComparison.OrdinalIgnoreCase)) ? "UNN" : id,
-        StringComparison.OrdinalIgnoreCase)) ?? All[0];
+    public static PanelTheme Resolve(string? id)
+    {
+        string? current = id is null ? null : ShipProfile.CanonicalId(id);
+        if (string.Equals(current, "AgathaKing", StringComparison.OrdinalIgnoreCase)) current = "UNN";
+        return All.FirstOrDefault(theme => string.Equals(theme.Id, current, StringComparison.OrdinalIgnoreCase)) ?? All[0];
+    }
     private static SolidColorBrush Brush(string value)
     {
         var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
@@ -160,6 +163,11 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
             if (theme.Backdrop is DrawingBrush backdrop && backdrop.Drawing.Bounds != new Rect(0, 0, 1024, 576))
                 throw new InvalidOperationException($"Theme {theme.Id} decoration escaped the background canvas.");
         }
-        ShipArtwork.Check();
+        var shipThemes = All.Where(theme => theme.ShipConsole && !theme.Showcase).ToArray();
+        if (shipThemes.Length != ShipProfile.All.Count || shipThemes.Select(theme => theme.ShipId).Distinct().Count() != shipThemes.Length ||
+            Resolve("Nauvoo").ShipId != "Medina" || Resolve("behemoth").ShipId != "Medina" ||
+            All.Any(theme => theme.Id is "Nauvoo" or "Behemoth"))
+            throw new InvalidOperationException("Each ship needs one theme, with legacy station names mapped to Medina.");
+        foreach (var theme in shipThemes) new ShipPoster(theme.ShipId!).Check();
     }
 }

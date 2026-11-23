@@ -246,25 +246,20 @@ internal sealed partial class ShipPanel : Canvas
         if (activeTheme is null || shipMedia is null) return;
         shipMedia.BeginAnimation(OpacityProperty,null); shipMedia.Opacity=1;
         shipMedia.Children.Clear();
-        bool model=FleetViewport.Supports(vessel.Id);
-        if (holotableAccess is not null) holotableAccess.IsEnabled=model;
-        if (model)
-        {
-            shipPoster=new ShipPoster(vessel.Id);shipMedia.Children.Add(shipPoster);
-            shipViewport??=new FleetViewport();
-            shipViewport.SetGraphicsMode(graphicsMode);
-            shipViewport.SetShip(vessel.Id);shipViewport.SetHolotableMode(false);
-            shipMedia.Children.Add(shipViewport);UpdateShowcaseRotation();
-        }
-        else shipMedia.Children.Add(new ShipArtwork(activeTheme with { ShipId=vessel.Id },true) { Opacity=.7 });
+        if (holotableAccess is not null) holotableAccess.IsEnabled=true;
+        shipPoster=new ShipPoster(vessel.Id);shipMedia.Children.Add(shipPoster);
+        shipViewport??=new FleetViewport();
+        shipViewport.SetGraphicsMode(graphicsMode);
+        shipViewport.SetShip(vessel.Id);shipViewport.SetHolotableMode(false);
+        shipMedia.Children.Add(shipViewport);UpdateShowcaseRotation();
         if (faction is not null) faction.Text=vessel.Faction;
         if (mediaCredit is not null)
         {
-            mediaCredit.Text=activeTheme.Showcase ? "LOCAL SCENE PACK / FAN MADE" : model ? "MODEL  /  "+Holotable.ModelCredit(vessel.Id) : "ARTWORK  /  "+vessel.Artist;
+            mediaCredit.Text=activeTheme.Showcase ? "LOCAL SCENE PACK / FAN MADE" : "MODEL  /  "+Holotable.ModelCredit(vessel.Id);
             if (activeTheme.Showcase)
             {
                 var scene=ExpanseMedia.ForShip(vessel.Id);
-                mediaCredit.ToolTip=scene.Credit+"\n"+scene.Source+"\n"+(model ? Holotable.ModelCredit(vessel.Id) : vessel.Artist);
+                mediaCredit.ToolTip=scene.Credit+"\n"+scene.Source+"\n"+Holotable.ModelCredit(vessel.Id);
             }
         }
         showcaseBackdrop?.Show(vessel.Id);

@@ -94,6 +94,7 @@ try {
     $formerAssets+=@($nativeAssets | ForEach-Object {'SolarNavigation\'+$_.FullName.Substring($nativeAssetRoot.Length+1)})
     $formerAssets+=@('SolarNavigation\nasa-horizons.json.gz','SolarNavigation\nasa-checkpoints.json')
     $formerAssets+=@(Get-ChildItem -LiteralPath $nativeAssetRoot -File | Where-Object Extension -in @('.txt','.md') | ForEach-Object {'SolarNavigation\'+$_.Name})
+    $formerAssets+=@(Get-Content -LiteralPath ".\Packaging\RetiredFleetAssets.txt")
     foreach($relative in $formerAssets | Sort-Object -Unique){
         if($relative -match '["{}:*?]' -or [IO.Path]::IsPathRooted($relative) -or ($relative.Split('\') -contains '..')){throw 'Unsafe old asset cleanup path.'}
         $cleanupLines+='Type: files; Name: "{app}\'+$relative+'"'

@@ -36,6 +36,7 @@ internal static class PanelPreferences
         var legacy=JsonSerializer.Deserialize<Preferences>("{\"Theme\":\"MCRN\",\"PollingIntervalMs\":2000,\"ShowcaseRotation\":false}")!;
         var roundTrip=JsonSerializer.Deserialize<Preferences>(JsonSerializer.Serialize(legacy with {ExpanseRendering="Efficient",AorusTheme="Dark",ExpanseTheme="MCRN"}))!;
         if(legacy.ExpanseRendering!="FullFidelity"||roundTrip.ExpanseRendering!="Efficient"||roundTrip.AorusTheme!="Dark"||roundTrip.ExpanseTheme!="MCRN"
+            ||ResolveExpanseShip("Nauvoo")!="Medina"||ResolveExpanseShip("Behemoth")!="Medina"
             ||roundTrip.Theme!="MCRN"||roundTrip.PollingIntervalMs!=2000||roundTrip.ShowcaseRotation)
             throw new InvalidOperationException("Experience preferences failed migration/serialization or altered unrelated settings.");
     }
@@ -43,9 +44,14 @@ internal static class PanelPreferences
     public static bool GaugeTransitions => Load().GaugeTransitions;
     public static bool ExpanseCycle => Load().ExpanseCycle;
     public static int ExpanseSceneSeconds => Load().ExpanseSceneSeconds is >= 15 and <= 120 ? Load().ExpanseSceneSeconds : 45;
-    public static string ExpanseShip => ExpanseMedia.Ships.Contains(ShipProfile.CanonicalId(Load().ExpanseShip)) ? ShipProfile.CanonicalId(Load().ExpanseShip) : "Rocinante";
+    public static string ExpanseShip => ResolveExpanseShip(Load().ExpanseShip);
+    private static string ResolveExpanseShip(string ship)
+    {
+        string current = ShipProfile.CanonicalId(ship);
+        return ExpanseMedia.Ships.Contains(current) ? current : "Rocinante";
+    }
     public static void SaveExpanseCycle(bool enabled) => Write(Load() with { ExpanseCycle = enabled });
-    public static void SaveExpanseShip(string ship) => Write(Load() with { ExpanseShip = ExpanseMedia.Ships.Contains(ShipProfile.CanonicalId(ship)) ? ShipProfile.CanonicalId(ship) : "Rocinante" });
+    public static void SaveExpanseShip(string ship) => Write(Load() with { ExpanseShip = ResolveExpanseShip(ship) });
     public static void SaveExpanseSceneSeconds(int value) => Write(Load() with { ExpanseSceneSeconds = value is >= 15 and <= 120 ? value : 45 });
     public static void SaveHolographicMotion(bool enabled) => Write(Load() with { HolographicMotion = enabled });
     public static void SaveShowcaseRotation(bool enabled) => Write(Load() with { ShowcaseRotation = enabled });

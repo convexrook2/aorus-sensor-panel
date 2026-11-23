@@ -980,11 +980,11 @@ internal sealed partial class PanelWindow : Window
                 {
                     string expected=choice.ShipId switch
                     {
-                        "Rocinante" or "Nauvoo"=>"Tycho", "Donnager"=>"Callisto",
+                        "Rocinante"=>"Tycho", "Donnager"=>"Callisto",
                         "AgathaKing" or "Razorback" or "Guanshiyin"=>"Earth", "Tynan" or "Medina"=>"Medina",
                         "Morrigan" or "Dropship" or "Epstein" or "Pella"=>"Mars",
                         "Canterbury" or "Knight"=>"Ceres", "Anubis" or "Scopuli"=>"Eros",
-                        "Behemoth" or "SolRing"=>"SolGate", "Scirocco"=>"Ganymede", "Hammurabi"=>"Io",
+                        "SolRing"=>"SolGate", "Scirocco"=>"Ganymede", "Hammurabi"=>"Io",
                         "Arboghast"=>"Venus", "BashiBazouk"=>"Sun", _=>throw new InvalidOperationException("Missing ship navigation check.")
                     };
                     if (shipPanel!.NavigationFocus!=expected) throw new InvalidOperationException("Ship selection focused the wrong planet or station.");

@@ -4,3 +4,5 @@
 - Restores discovery when Steam uses its newer sharded metadata cache.
 - Discovers games from registered Steam, Epic, EA, GOG, Xbox and Windows installations.
 - Adds exact executable registration in the FPS source menu for portable games.
+- Consolidates Nauvoo, Behemoth and Medina under the accepted Medina V4. Saved selections use the current model and portrait.
+- Ships only current fleet models and their matching artwork.

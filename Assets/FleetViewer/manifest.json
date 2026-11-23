@@ -1,17 +1,17 @@
 {
   "lossless": true,
-  "ships": 22,
+  "ships": 20,
   "source": "Reviewed Fleet Studio catalogue; scoped model updates",
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 5301,
-      "sha256": "17a83850e4df518f95c5e358c804cfa0ece3f6c9299a24b9c756fee825d8ff70"
+      "bytes": 5042,
+      "sha256": "273bca19129c07e4aa08a320aea65b1818b28be471f8e2a246aba7b522f4e011"
     },
     {
       "path": "catalog.json",
-      "bytes": 32865,
-      "sha256": "8e284e41eab676f2144507aa7d2bf9507d47ed24345adc348c1cf16ac3d2f1fb"
+      "bytes": 30776,
+      "sha256": "a5eb82ace3dd9a05a17f474722d6f82df8ab966f53ba4e0cf4cf93bd53a4922e"
     },
     {
       "path": "engines.json",
@@ -52,11 +52,6 @@
       "path": "models/BashiBazouk.glb.gz",
       "bytes": 3594133,
       "sha256": "2260165936b60062bee086aeedc40f71faca35d433184cb5d470c25712353826"
-    },
-    {
-      "path": "models/Behemoth.glb.gz",
-      "bytes": 1027882,
-      "sha256": "1c802282b5941e5e782f2dcf88870e018239ffa95688166b824ecc1518b02c28"
     },
     {
       "path": "models/Canterbury.glb.gz",
@@ -102,11 +97,6 @@
       "path": "models/Morrigan.glb.gz",
       "bytes": 2102363,
       "sha256": "251b760884aa4410f3818ac7f49c931288994c26467a2d197ce215bc82f68ad0"
-    },
-    {
-      "path": "models/Nauvoo.glb.gz",
-      "bytes": 1007130,
-      "sha256": "9de2f7120f29684ec4a677106b066102407c5f0601ddc32aef17a3478a62e36a"
     },
     {
       "path": "models/Pella.glb.gz",
@@ -169,11 +159,6 @@
       "sha256": "f313e9c5b7d94496670f9f8ba908b7d0705f4068379ae54460bbc96d25ed276b"
     },
     {
-      "path": "portraits/Behemoth.png",
-      "bytes": 772414,
-      "sha256": "9e2d196f134b664508600f3d06f4e7a8fc7a748286001817f4422d92e59e292a"
-    },
-    {
       "path": "portraits/Canterbury.png",
       "bytes": 887081,
       "sha256": "c464ffa21b990e6abbb45ab065e3290a3e20f76acb751525e7246691e8c78d47"
@@ -205,8 +190,8 @@
     },
     {
       "path": "portraits/index.json",
-      "bytes": 5795,
-      "sha256": "0085e11940aac2179b9e22c5dc5330910c6f994c3222b59c7c7485dd52251dfd"
+      "bytes": 5277,
+      "sha256": "b10d2c151c66dc39c5c6a5038aa7aacda6be2799152d613269231ea94346d62e"
     },
     {
       "path": "portraits/Knight.png",
@@ -222,11 +207,6 @@
       "path": "portraits/Morrigan.png",
       "bytes": 652618,
       "sha256": "ad64671acbf18c1b7be797d14b029197489c2865520f697c261fbee2af7c6c64"
-    },
-    {
-      "path": "portraits/Nauvoo.png",
-      "bytes": 771711,
-      "sha256": "2891c984e72d0f633924be966fd5fee98d572ea4b52e8ad5e450ade005b2733e"
     },
     {
       "path": "portraits/Pella.png",

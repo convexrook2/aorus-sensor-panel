@@ -2,7 +2,7 @@
   <PropertyGroup>
     <RlProductId Condition="'$(MSBuildProjectName)' == 'SensorPanel'">X890.Sensor</RlProductId>
     <RlProductId Condition="'$(MSBuildProjectName)' == 'FleetStudio.Desktop'">X890.FleetStudio</RlProductId>
-    <RlAssetRoots Condition="'$(MSBuildProjectName)' == 'SensorPanel'">FleetViewer;SolarNavigation;Models;Ships;AORUS</RlAssetRoots>
+    <RlAssetRoots Condition="'$(MSBuildProjectName)' == 'SensorPanel'">FleetViewer;SolarNavigation;Ships;AORUS</RlAssetRoots>
     <RlAssetRoots Condition="'$(MSBuildProjectName)' == 'FleetStudio.Desktop'">FleetStudio</RlAssetRoots>
     <RlKeyFile Condition="'$(RlKeyFile)' == ''">$(LOCALAPPDATA)\LennonBuildKeys\$(RlProductId)-v2.key</RlKeyFile>
     <RlGeneratedKey>$(MSBuildProjectDirectory)\obj\RlAssets\$(Configuration)\ProductAssetKey.g.cs</RlGeneratedKey>

@@ -225,7 +225,7 @@ internal sealed class FleetViewport : Grid, IDisposable
         interactive=enabled;IsHitTestVisible=enabled;Focusable=enabled;
         RefreshLayout();PublishActivity();
     }
-    internal static bool Supports(string? id)=>id=="SolRing" || ShipPortrait.Supports(id);
+    internal static bool Supports(string? id)=>id is not null && ShipProfile.All.Any(ship => ship.Id == ShipProfile.CanonicalId(id));
     internal void SetHolotableMode(bool enabled,Color? accent=null)
     {
         if(accent is {} c)stageColour=$"#{c.R:X2}{c.G:X2}{c.B:X2}";

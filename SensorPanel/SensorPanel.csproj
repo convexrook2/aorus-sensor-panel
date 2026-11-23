@@ -30,9 +30,7 @@
     <Using Remove="System.Drawing" />
     <Using Remove="System.Windows.Forms" />
     <Resource Include="../Assets/Branding/AorusFanMade.ico" Link="Branding/AorusFanMade.ico" />
-    <Content Include="../Assets/Ships/*.jpg" Link="Ships/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/Ships/Rocinante-Crew.png" Link="Ships/Rocinante-Crew.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-    <Content Include="../Assets/Models/*.ship" Link="Models/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/Models/ATTRIBUTION.txt" Link="Holotable-Model-Credits.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Assets/FleetViewer/**/*" Link="FleetViewer/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../Packaging/README.txt" Link="README.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />

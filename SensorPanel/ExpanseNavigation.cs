@@ -20,8 +20,6 @@ internal static class ExpanseNavigation
         "Knight" => new("Ceres", "CANTERBURY / CERES ROUTE", "CARRIER ASSOCIATION", "https://expanse.fandom.com/wiki/Knight"),
         "Anubis" => new("Eros", "EROS / PROTOGEN OPERATION", "STORY ASSOCIATION", "https://expanse.fandom.com/wiki/Anubis_(TV)"),
         "Pella" => new("Mars", "FORMER MCRN HULL / FREE NAVY", "HULL ORIGIN", "https://expanse.fandom.com/wiki/Pella_(TV)"),
-        "Nauvoo" => new("Tycho", "TYCHO STATION", "CONSTRUCTION SITE", "https://expanse.fandom.com/wiki/Nauvoo_(TV)"),
-        "Behemoth" => new("SolGate", "SOL RING / EXPEDITION", "STORY ASSOCIATION", "https://expanse.fandom.com/wiki/Nauvoo_(TV)"),
         "Medina" => new("Medina", "MEDINA / RING SPACE", "FICTIONAL STATION", "https://expanse.fandom.com/wiki/Nauvoo_(TV)"),
         "Scopuli" => new("Eros", "EROS / REGISTRATION", "REGISTERED PORT", "https://expanse.fandom.com/wiki/Scopuli"),
         "Scirocco" => new("Ganymede", "GANYMEDE / MCRN", "STORY ASSOCIATION", "https://expanse.fandom.com/wiki/Scirocco-class_(TV)"),

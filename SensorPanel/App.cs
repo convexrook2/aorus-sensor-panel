@@ -35,14 +35,14 @@ internal static class App
             string? previewTheme = null;
             if (themeIndex >= 0)
             {
-                if (preview is null || themeIndex + 1 >= args.Length || !PanelTheme.All.Any(t => t.Id == args[themeIndex + 1]))
+                if (preview is null || themeIndex + 1 >= args.Length || !PanelTheme.All.Any(t => t.Id == ShipProfile.CanonicalId(args[themeIndex + 1])))
                     throw new ArgumentException("--preview-theme requires --preview and a supported theme ID: " + string.Join(", ", PanelTheme.All.Select(t => t.Id)));
                 previewTheme = args[themeIndex + 1];
             }
             bool checkThemes = args.Contains("--preview-check-themes");
             int initialThemeIndex=Array.IndexOf(args,"--theme");
             string? initialTheme=initialThemeIndex>=0 && initialThemeIndex+1<args.Length ? args[initialThemeIndex+1] : null;
-            if(args.Contains("--theme") && (initialTheme is null || !PanelTheme.All.Any(t=>t.Id==initialTheme)))
+            if(args.Contains("--theme") && (initialTheme is null || !PanelTheme.All.Any(t=>t.Id==ShipProfile.CanonicalId(initialTheme))))
                 throw new ArgumentException("--theme requires a supported theme ID.");
             if(initialTheme is not null && previewTheme is not null)
                 throw new ArgumentException("Use only one of --theme and --preview-theme.");

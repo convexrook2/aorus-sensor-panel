@@ -40,17 +40,6 @@
     "referenceComparisonStatus": "Owner103 correction defines the full gold aft mast shroud extent; original production views constrain its wrap and boundaries. Hidden wall dimensions remain authored; visual acceptance pending.",
     "lights": 31,
     "localLightShadows": false,
-    "beforeModel": "models/Guanshiyin-6808d1f10962.glb.gz",
-    "beforeSha256": "6c01a52e3cc53412eb3d7f4344b6cf0a4029609b2e2e6f18a061fe4548f5ace4",
-    "beforeTitle": "Guanshiyin / V05 reference pass v11",
-    "beforeNote": "Owner-selected v11 Fleet Studio model. Further Guanshiyin modeling is stopped.",
-    "beforeCredit": "Authored reconstruction after Lee Fitzgerald / North Front V05; original generated running-horse mural and typeset name plaque.",
-    "beforeEngineId": "GuanshiyinV11",
-    "beforeInfo": {
-      "triangles": 98140,
-      "materials": 18
-    },
-    "beforeLabel": "Previous v11",
     "sourceAreaLights": true
   },
   {
@@ -71,15 +60,6 @@
     },
     "model": "models/Morrigan-c0834f8155a7.glb.gz",
     "sha256": "5cc655a6c5eff342637bb2f999f7e44446015badef35a856a22932d131b6925f",
-    "beforeModel": "models/Morrigan-before-2e49cec0a831.glb.gz",
-    "beforeSha256": "14f59f757bf2b529b59377920f9e1911f626116887c05f5fe83856e1419d9a0c",
-    "beforeTitle": "MCRN Morrigan / earlier fan study",
-    "beforeInfo": {
-      "triangles": 6054,
-      "materials": 8
-    },
-    "beforeLabel": "Compare earlier hull",
-    "beforeEngineId": "MorriganEarlier",
     "relatedSources": [
       {
         "label": "Artist / exterior reference",
@@ -139,18 +119,9 @@
     },
     "model": "models/Pella-df080b0037ce.glb.gz",
     "sha256": "df080b0037ceb485ad4c8005e63c1a4b471171c60bf276ae3ea8ef365cce6d78",
-    "beforeModel": "models/Pella-2a6126d5a157.glb.gz",
-    "beforeSha256": "2a6126d5a1570607f8687fc671f85e8afdea04f624fd05ff737fc6021be53ff0",
-    "beforeInfo": {
-      "triangles": 1023503,
-      "materials": 21
-    },
     "coatingReferenceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
     "coatingReferenceCredit": "Jakub.Vildomec; CC BY 4.0",
     "coatingLicenseUrl": "https://creativecommons.org/licenses/by/4.0/",
-    "beforeLabel": "Before finishing pass",
-    "beforeTitle": "Pella / previous v26",
-    "beforeNote": "Previous Pella before the accepted source-relief restoration.",
     "relatedSources": [
       {
         "label": "Kelvin Tam / Rocket Science production gallery (all exterior views)",
@@ -180,8 +151,7 @@
     "lightUnitScale": 0.0014641288433382138,
     "localLightShadows": true,
     "editableSource": "Assets/Models/Source/Pella-v27/Pella.blend",
-    "adoption": "Owner accepted and requested Fleet Studio and SensorPanel integration on 2026-10-24",
-    "beforeEngineId": "PellaBeforeV27"
+    "adoption": "Owner accepted and requested Fleet Studio and SensorPanel integration on 2026-10-24"
   },
   {
     "id": "Razorback",
@@ -274,39 +244,7 @@
     "references": [],
     "referenceComparisonStatus": "Accepted local model review; authored fan reconstruction, not an official production mesh.",
     "lights": 64,
-    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02",
-    "beforeModel": "models/Donnager-d2d04df3c413.glb.gz",
-    "beforeSha256": "2710f458cc91191aa5507826d88bfb552cccc591746050ba046cd0d42035c511",
-    "beforeTitle": "Donnager / v5 fitted ship lights",
-    "beforeLabel": "Compare previous fleet model",
-    "beforeInfo": {
-      "triangles": 1804024,
-      "materials": 11
-    },
-    "beforeEngineId": "DonnagerBeforeAccepted",
-    "beforeFlipLongitudinal": false
-  },
-  {
-    "id": "Rocinante",
-    "title": "Rocinante / Tachi source",
-    "credit": "Jakub.Vildomec; CC BY 4.0.",
-    "note": "Original downloaded MCRN Tachi fan asset and livery. Source geometry and maps are unchanged; no season-specific Rocinante conversion is claimed.",
-    "referenceUrl": "https://www.artstation.com/artwork/zQwR6",
-    "sourceUrl": "https://sketchfab.com/3d-models/mcrn-tachi-expanse-tv-show-76fc983ab08c449b9042491a00e621cf",
-    "triangles": 140863,
-    "materials": 4,
-    "images": 10,
-    "maps": {
-      "colour": 4,
-      "normal": 3,
-      "occlusion": 3,
-      "metalRough": 3,
-      "emissive": 0
-    },
-    "model": "models/Rocinante-1d65e23b0762.glb.gz",
-    "sha256": "b961bddac54c1e80dd573cf70f9be01e2468761ef26924c8812c8af77e054e03",
-    "relatedSources": [],
-    "references": []
+    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02"
   },
   {
     "id": "RocinanteS6",
@@ -316,16 +254,6 @@
     "triangles": 687992,
     "materials": 93,
     "images": 10,
-    "beforeModel": "models/Rocinante-1d65e23b0762.glb.gz",
-    "beforeEngineId": "Rocinante",
-    "beforeLabel": "Compare Tachi",
-    "beforeInfo": {
-      "triangles": 140863,
-      "materials": 4
-    },
-    "beforeTitle": "Rocinante / original Tachi source",
-    "beforeCredit": "Jakub.Vildomec; CC BY 4.0.",
-    "beforeNote": "Original Tachi source shown for era and geometry comparison. The separate Season 6 CSL refit is available by switching Compare Tachi off.",
     "note": "Owner-finished Season 6 revision: smooth armour, paired existing relief markings, red lettering, shared grey panel finish and bluish-grey optical sheen. Nine modeled light fixtures and the correctly anchored blue-white drive exhaust are retained. Full geometry and maps preserved; original Tachi remains a separate comparison.",
     "credit": "Geometry: Martin Taichl / Martin, CC BY 4.0. Adapted PBR finish, CSL material, local lights and drive effects for X890. TV/replica photos are comparison references, not texture pixels. Not official production geometry.",
     "referenceUrl": "https://www.printables.com/model/136343-rocinante-from-the-expanse",
@@ -347,8 +275,7 @@
         "url": "https://expanse.fandom.com/wiki/Carbon_silicate_lace_plating"
       }
     ],
-    "references": [],
-    "beforeSha256": "b961bddac54c1e80dd573cf70f9be01e2468761ef26924c8812c8af77e054e03"
+    "references": []
   },
   {
     "id": "Dropship",
@@ -424,17 +351,7 @@
     "references": [],
     "referenceComparisonStatus": "Accepted local model review; authored fan reconstruction, not an official production mesh.",
     "lights": 54,
-    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02",
-    "beforeModel": "models/AgathaKing-5f8518a59a1f.glb.gz",
-    "beforeSha256": "863227b6e6231d5352bd6b9c37da2b3495ba6ecca74fac71326a885b79aa71fc",
-    "beforeTitle": "Agatha King / v4 fitted drive lighting",
-    "beforeLabel": "Compare previous fleet model",
-    "beforeInfo": {
-      "triangles": 297861,
-      "materials": 3
-    },
-    "beforeEngineId": "AgathaKingBeforeAccepted",
-    "beforeFlipLongitudinal": true
+    "adoption": "Owner-accepted model; Fleet Studio and SensorPanel release integration authorized 2026-11-02"
   },
   {
     "id": "Canterbury",
@@ -545,61 +462,7 @@
       "emissive": 0
     },
     "sourceUrl": "https://www.printables.com/model/123750-amun-ra-class-stealth-frigate-from-the-expanse",
-    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
-    "beforeModel": "models/Anubis-7fd35b3de9e6.glb.gz",
-    "beforeSha256": "35e381d401c4ead4004a748006a4b98ce34c0f386478f624973b66eeb17f3250",
-    "beforeTitle": "Anubis / earlier fan study",
-    "beforeFlipLongitudinal": false,
-    "beforeEngineId": "AnubisOriginal",
-    "beforeLabel": "Compare earlier Anubis",
-    "beforeCredit": "Authored for this project; independent fan approximation.",
-    "beforeNote": "Earlier simplified project-authored fan study. Detailed topology and hidden surfaces remain interpreted; no new refinement in this pass.",
-    "beforeInfo": {
-      "triangles": 2754,
-      "materials": 9
-    }
-  },
-  {
-    "id": "Nauvoo",
-    "title": "LDSS Nauvoo / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier generation-ship fan study. Shares a parametric base with Behemoth and Medina, with separate era fittings; no new refinement.",
-    "referenceUrl": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
-    "triangles": 62630,
-    "materials": 9,
-    "images": 1,
-    "maps": {
-      "colour": 1,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 0
-    },
-    "model": "models/Nauvoo-cf40797eb7aa.glb.gz",
-    "sha256": "f2bb1a1cd8d73f3bcb0e84272de479d27350e35e578e54edf6b609cb8cfb0d41",
-    "relatedSources": [],
-    "references": []
-  },
-  {
-    "id": "Behemoth",
-    "title": "OPAS Behemoth / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier converted-warship fan configuration of the Nauvoo base. Existing geometry is retained; linked production collection includes interior studies.",
-    "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
-    "triangles": 65606,
-    "materials": 9,
-    "images": 1,
-    "maps": {
-      "colour": 1,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 0
-    },
-    "model": "models/Behemoth-c1ddcba52494.glb.gz",
-    "sha256": "55993fc88c13b49feffeab0a82a57e107c7a1a8ad80dc06f013e4255db597320",
-    "relatedSources": [],
-    "references": []
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
   },
   {
     "id": "Medina",

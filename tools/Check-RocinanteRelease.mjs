@@ -41,5 +41,5 @@ assert.ok(Math.abs(anchor.position[0]-center.x)<1e-6&&Math.abs(anchor.position[2
 assert.ok(Math.abs(anchor.position[1]-(outlet-.002))<1e-6,'Plume must start beyond the physical outlet, in source-world coordinates');
 assert.ok(anchor.radius<radius&&anchor.radius>radius*.95);assert.equal(anchor.addCore,false);
 for(const [id,e] of Object.entries(engines))if(id!=='RocinanteS6')assert.ok(e.engines.every(a=>a.style!=='rocinante-s6'),'Roci style leaked to '+id);
-assert.equal(studio.beforeEngineId,'Rocinante');
+assert.ok(!studio.beforeModel && !Object.hasOwn(engines,'Rocinante'),'Only the current Rocinante may ship');
 console.log('PASS: frozen Roci source/export, native/Studio parity, nine fixture objects, measured outlet and Roci-only exhaust. No native rendering or installation tested.');

@@ -10,9 +10,14 @@ def require(condition,message):
 manifest=json.loads((ROOT/'manifest.json').read_text())
 catalog=json.loads((ROOT/'catalog.json').read_text())
 require(bool(catalog) and len({e['id'] for e in catalog})==len(catalog),'Empty or duplicate catalogue')
-assets=manifest.get('assets',[manifest['current'],manifest['previous']])
+assets=manifest['assets']
 by_file={e['file']:e for e in assets}
 require(len(by_file)==len(assets),'Duplicate manifest files')
+current={entry['model'] for entry in catalog}
+actual={path.relative_to(ROOT).as_posix() for path in (ROOT/'models').rglob('*') if path.is_file()}
+require(len(current)==len(catalog) and current==set(by_file)==actual,'Bundle must contain one current model per ship')
+require(not ({'Nauvoo','Behemoth','Rocinante'} & {entry['id'] for entry in catalog}), 'Retired ship identifiers still in Studio catalogue')
+require(all(not any(key.startswith('before') for key in entry) for entry in catalog),'A superseded comparison is still published')
 for expected in assets:
     key=expected['file'];path=(ROOT/key).resolve()
     require(path.is_relative_to(ROOT.resolve()),f'{key}: file outside package')
@@ -47,6 +52,7 @@ for expected in assets:
     if 'binary_sha256'in expected:require(digest(raw[28+jl:28+jl+bl])==expected['binary_sha256'],f'{key}: source geometry/image bytes')
     print(f'{key}: PASS, {triangles:,} triangles, {expected["lights"]} lights, embedded maps, exact SHA-256')
 engines=json.loads((ROOT/'engines.json').read_text())
+require(set(engines)=={entry['id'] for entry in catalog},'Only current ships may have Studio engine registrations')
 for entry in catalog:
     for field,sha in [('model','sha256'),('beforeModel','beforeSha256')]:
         if not entry.get(field):continue

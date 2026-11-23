@@ -529,66 +529,6 @@
     "lightUnitScale": 0.0014641288433382138
   },
   {
-    "id": "Nauvoo",
-    "title": "LDSS Nauvoo / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier generation-ship fan study. Shares a parametric base with Behemoth and Medina, with separate era fittings; no new refinement.",
-    "referenceUrl": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
-    "triangles": 62630,
-    "materials": 9,
-    "images": 1,
-    "maps": {
-      "colour": 1,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 0
-    },
-    "model": "models/Nauvoo.glb.gz",
-    "sha256": "cf40797eb7aa7bc51592edb6bdeafcc6dd0a30b6ce4b8c65cd50e5e389f71f09",
-    "sourceBytes": 4042036,
-    "compressedBytes": 1007130,
-    "compression": "gzip-lossless",
-    "compressedSha256": "9de2f7120f29684ec4a677106b066102407c5f0601ddc32aef17a3478a62e36a",
-    "renderMaps": {
-      "colour": 1,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 0
-    }
-  },
-  {
-    "id": "Behemoth",
-    "title": "OPAS Behemoth / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier converted-warship fan configuration of the Nauvoo base. Existing geometry is retained; linked production collection includes interior studies.",
-    "referenceUrl": "https://leefitzgerald.artstation.com/projects/X1rzxL",
-    "triangles": 65606,
-    "materials": 9,
-    "images": 1,
-    "maps": {
-      "colour": 1,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 0
-    },
-    "model": "models/Behemoth.glb.gz",
-    "sha256": "c1ddcba52494f4d37ff0245fcf61947b743d55f2454586172b260f963269e447",
-    "sourceBytes": 4152148,
-    "compressedBytes": 1027882,
-    "compression": "gzip-lossless",
-    "compressedSha256": "1c802282b5941e5e782f2dcf88870e018239ffa95688166b824ecc1518b02c28",
-    "renderMaps": {
-      "colour": 1,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 0
-    }
-  },
-  {
     "id": "Medina",
     "title": "Medina Station / accepted V4",
     "credit": "RingBuilder / Printables 729020. X890: plated hull, service pipe, lamps and eight drive assemblies.",

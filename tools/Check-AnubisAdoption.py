@@ -31,7 +31,7 @@ base=(ROOT/'Sources/Anubis/Anubis-accepted-before-red.glb').read_bytes()
 adopt.require(adopt.sha(base)==adopt.BASE_HASH,'Accepted base identity')
 adopt.require(adopt.sha(source)==identity['sha256' if candidate else 'glb_sha256'],'Anubis source identity disagrees')
 if not candidate:
-    adopt.accepted_review(source, ROOT/'Sources/Anubis/runtime-adoption-1.8.18.json')
+    adopt.accepted_review(source, ROOT/'Sources/Anubis/runtime-adoption-1.8.19.json')
     adopt.require(adopt.sha(source)==studio['sha256']==native['sha256'],'Anubis fleet identities disagree')
     adopt.require(gzip.decompress((ROOT/'FleetStudio'/studio['model']).read_bytes())==source,'Studio source parity')
     adopt.require(gzip.decompress((ROOT/'Assets/FleetViewer'/native['model']).read_bytes())==source,'Native source parity')
@@ -67,7 +67,7 @@ engines=read('FleetStudio/engines.json')['Anubis']
 adopt.require(engines==read('Assets/FleetViewer/engines.json')['Anubis'],'Drive parity')
 anchor=engines['engines'][0]
 adopt.require(anchor['position']==[173.6,-30,0] and anchor['direction']==[1,0,0] and anchor['style']=='anubis-production' and anchor['addCore'] is False,'Drive anchor/style')
-adopt.require(studio['flipLongitudinal'] and native['flipLongitudinal'] and studio['beforeFlipLongitudinal'] is False,'Source/retained orientation')
+adopt.require(studio['flipLongitudinal'] and native['flipLongitudinal'],'Accepted source orientation')
 acquisition=read('Sources/Anubis/source-acquisition.json')
 for item in acquisition['files']:
     path=ROOT/'Sources/Anubis'/item['file'].replace('\\','/')

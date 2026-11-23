@@ -1,0 +1,36 @@
+{
+  "version": "1.8.19",
+  "ownerInstruction": "ROOK requested one current asset per ship and a private archive of superseded assets.",
+  "scope": "Legacy catalogue identifiers resolve to their current releases. The accepted Anubis remains the same source and uses its existing lighting and drive registration.",
+  "candidate_sha256": "067fc6b196b64a2fe90e2df63a87ad76d15cea22433f6c05cece38ab3420c43f",
+  "original_receipt_sha256": "356e38ef373f2489ba5be71d648cf793654a0708afb9ef22dd6d46d1b2455582",
+  "runtime_files": [
+    {
+      "path": "FleetStudio/ship-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "7ca716d60998304148ebb72725dee0ebe4a1e71fccc75e8d0353279712006552"
+    },
+    {
+      "path": "FleetStudio/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    },
+    {
+      "path": "FleetStudio/review.js",
+      "previous_sha256": "9d634a65c3d47098a54382734c90f9afdd3b043b0988b48f66cc2a5f82e46458",
+      "sha256": "550eddcf98873c1a4496d40e90b68e42fcabd402ef93227df8b8a1175a74151a",
+      "previous_runtime_sha256": "9bc74966d7cfa2d53fc2acabc6bee428eb7eb9665340379fba943755a01e76a7"
+    },
+    {
+      "path": "Assets/FleetViewer/rocinante-effects.js",
+      "previous_sha256": "0a84e463d59fa960670d6c3c5c3ed43750ad1a8ab212af4faa49dc4deb10a853",
+      "sha256": "7ca716d60998304148ebb72725dee0ebe4a1e71fccc75e8d0353279712006552"
+    },
+    {
+      "path": "Assets/FleetViewer/light-glow.js",
+      "previous_sha256": "d4dd191b041438ffc32f75c19378e138af995c46edcb42a476e134c78d209045",
+      "sha256": "c13830c8b180a6860bb9319f9ecdbdb24cda4e45e245eed1ac6dee50852d367f"
+    }
+  ],
+  "previousRuntimeReceiptSha256": "16a77e3f6ad1b42bc39b93a57153e49a6c6212d6d4d6080cb0e4a91b6cbb368b"
+}
