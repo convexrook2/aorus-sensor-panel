@@ -26,7 +26,7 @@
     <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="9" />
     <!-- Preserve the prior web adaptation in source; the original native diagram is primary. -->
     <Compile Remove="BelterSystemView.cs" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4370.26" />
     <Using Remove="System.Drawing" />
     <Using Remove="System.Windows.Forms" />
     <Resource Include="../Assets/Branding/AorusFanMade.ico" Link="Branding/AorusFanMade.ico" />
