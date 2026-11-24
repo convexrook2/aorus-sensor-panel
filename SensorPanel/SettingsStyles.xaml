@@ -1,12 +1,54 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ControlTemplate x:Key="SettingsTabsTemplate" TargetType="TabControl">
+    <DockPanel>
+      <Border DockPanel.Dock="Top" Margin="0,0,0,12" Padding="0,0,0,4"
+              BorderBrush="{DynamicResource SettingsDivider}" BorderThickness="0,0,0,1">
+        <UniformGrid IsItemsHost="True" Rows="1" KeyboardNavigation.DirectionalNavigation="Cycle" />
+      </Border>
+      <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
+    </DockPanel>
+  </ControlTemplate>
+  <Style x:Key="SettingsTabStyle" TargetType="TabItem">
+    <Setter Property="Foreground" Value="{DynamicResource SettingsMuted}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Margin" Value="0,0,2,0" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="TabItem">
+          <Border x:Name="TabSurface" Background="Transparent" BorderBrush="Transparent"
+                  BorderThickness="1" CornerRadius="4" Padding="4,2">
+            <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="TabSurface" Property="Background" Value="{DynamicResource SettingsHoverSurface}" />
+              <Setter Property="Foreground" Value="{DynamicResource SettingsForeground}" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter TargetName="TabSurface" Property="Background" Value="{DynamicResource SettingsHoverSurface}" />
+              <Setter TargetName="TabSurface" Property="BorderBrush" Value="{DynamicResource SettingsDivider}" />
+              <Setter Property="Foreground" Value="{DynamicResource SettingsForeground}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+              <Setter TargetName="TabSurface" Property="BorderBrush" Value="{DynamicResource SettingsFocus}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
   <ControlTemplate x:Key="SettingsButtonTemplate" TargetType="Button">
     <Border CornerRadius="4" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
       <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
     </Border>
     <ControlTemplate.Triggers>
-      <Trigger Property="IsMouseOver" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource SettingsFocus}" /></Trigger>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="BorderBrush" Value="{DynamicResource SettingsFocus}" />
+      </Trigger>
       <Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource SettingsFocus}" /></Trigger>
       <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45" /></Trigger>
     </ControlTemplate.Triggers>
@@ -21,7 +63,7 @@
     <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent" /></ControlTemplate></Setter.Value></Setter>
   </Style>
   <Style TargetType="ScrollBar">
-    <Setter Property="Width" Value="6" />
+    <Setter Property="Width" Value="10" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Template">
       <Setter.Value>

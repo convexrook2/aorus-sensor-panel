@@ -9,9 +9,9 @@ from GitHub Releases. Releases include setup instructions and SHA-256 checksums.
 Hardware support depends on the available sensor interfaces and drivers.
 
 Sensor Panel checks for a newer stable installer on startup and every six hours
-while running. A tray notification announces an available version. Use **Check
-for updates** in the tray menu to check manually, or **Download v…** to open the
-release and run Setup when ready.
+while running. Click the update notification to open **Settings → App**. The
+App tab shows the running version, **Check for updates**, and the last result.
+When an update is available, choose **Open release page** and run the installer.
 
 The **1.8.18 update** adds accepted Medina V4 to the Expanse showcase
 and holotable with 20 source lights, eight registered plumes and a matching
@@ -206,12 +206,17 @@ are preserved.
 
 ## Controls and appearance
 
-Settings opens with an **Experience** selector:
+Open **Settings** with the gear or by right-clicking the panel. **Appearance**
+contains Experience, Theme and visual effects. **Display** contains screen
+placement, layout and artwork scaling. **Sensors** contains polling and FPS
+source. **App** contains updates, startup, help and tray actions.
+
+The **Experience** selector offers:
 
 - **AORUS · Lite Mode** uses the original monitoring panel and colour themes.
   Expanse ship graphics are released and solar/background animation is stopped.
 - **The Expanse Experience** exposes ship themes and **Rendering** directly in
-  the same card. **Full Fidelity** is the default for a new rendering preference:
+  the same section. **Full Fidelity** is the default for a new rendering preference:
   ship drawing follows browser animation frames and solar animation follows
   native composition frames without artificial application frame caps.
   **Efficient** keeps the same models, textures, lights, shadows, AO and native

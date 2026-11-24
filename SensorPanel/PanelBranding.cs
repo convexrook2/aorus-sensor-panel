@@ -39,12 +39,14 @@ internal sealed class PanelTray : IDisposable
     private readonly System.Windows.Forms.NotifyIcon icon;
     private readonly System.Drawing.Icon artwork;
     private readonly System.Windows.Forms.ContextMenuStrip menu = new();
-    private readonly System.Windows.Forms.ToolStripMenuItem checkForUpdates;
-    private readonly System.Windows.Forms.ToolStripMenuItem downloadUpdate;
     private readonly DispatcherTimer updateTimer;
     private readonly CancellationTokenSource updateLifetime = new();
     private PanelRelease? availableUpdate;
     internal bool Visible => icon.Visible;
+    internal bool IsCheckingForUpdates { get; private set; }
+    internal Version? AvailableVersion => availableUpdate?.Version;
+    internal string UpdateStatus { get; private set; } = "";
+    internal event Action? UpdateStatusChanged;
     public PanelTray(PanelWindow window)
     {
         artwork = PanelBranding.TrayIcon();
@@ -54,32 +56,29 @@ internal sealed class PanelTray : IDisposable
         menu.Items.Add("Fit to display", null, (_, _) => window.Dispatcher.Invoke(window.FitToDisplay));
         menu.Items.Add("Hide to tray", null, (_, _) => window.Dispatcher.Invoke(window.HidePanel));
         menu.Items.Add("Open README", null, (_, _) => window.Dispatcher.Invoke(PanelBranding.ShowReadme));
-        checkForUpdates = new("Check for updates", null, async (_, _) => await CheckForUpdatesAsync(true));
-        downloadUpdate = new("Download update", null, (_, _) => OpenUpdate()) { Visible = false };
-        menu.Items.Add(checkForUpdates);
-        menu.Items.Add(downloadUpdate);
         menu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         menu.Items.Add("Exit", null, (_, _) => window.Dispatcher.Invoke(window.Close));
         icon = new System.Windows.Forms.NotifyIcon { Text = PanelBranding.Name, Icon = artwork, ContextMenuStrip = menu, Visible = true };
         icon.DoubleClick += (_, _) => window.Dispatcher.Invoke(Restore);
-        icon.BalloonTipClicked += (_, _) => OpenUpdate();
+        icon.BalloonTipClicked += (_, _) => window.Dispatcher.Invoke(window.ShowUpdateSettings);
         updateTimer = new DispatcherTimer(TimeSpan.FromHours(6), DispatcherPriority.Background,
-            async (_, _) => await CheckForUpdatesAsync(false), window.Dispatcher);
+            async (_, _) => await CheckForUpdatesAsync(notifyAvailable: true), window.Dispatcher);
         updateTimer.Start();
-        _ = CheckForUpdatesAsync(false);
+        _ = CheckForUpdatesAsync(notifyAvailable: true);
     }
 
-    private async Task CheckForUpdatesAsync(bool manual)
+    internal async Task CheckForUpdatesAsync(bool notifyAvailable = false)
     {
-        if (!checkForUpdates.Enabled) return;
-        checkForUpdates.Enabled = false;
+        if (IsCheckingForUpdates) return;
+        IsCheckingForUpdates = true;
+        SetUpdateStatus("Checking for updates…");
         var cancellation = updateLifetime.Token;
         var latest = await PanelUpdateService.CheckAsync(cancellation);
         if (cancellation.IsCancellationRequested) return;
-        checkForUpdates.Enabled = true;
+        IsCheckingForUpdates = false;
         if (latest is null)
         {
-            if (manual) Notify("Update check unavailable", "Sensor Panel couldn't check GitHub Releases. Try again later.");
+            SetUpdateStatus("Couldn’t check GitHub Releases. Try again later.");
             return;
         }
 
@@ -87,28 +86,31 @@ internal sealed class PanelTray : IDisposable
         {
             bool newAlert = latest.Version != availableUpdate?.Version;
             availableUpdate = latest;
-            downloadUpdate.Text = $"Download v{PanelUpdateService.Label(latest.Version)}";
-            downloadUpdate.Visible = true;
-            if (newAlert || manual) Notify("Sensor Panel update available", $"Version {PanelUpdateService.Label(latest.Version)} is ready. Click to open the release page.");
+            SetUpdateStatus($"Version {PanelUpdateService.Label(latest.Version)} is available.");
+            if (notifyAvailable && newAlert)
+                icon.ShowBalloonTip(8000, "Sensor Panel update available",
+                    "Open Settings → App to review the update.", System.Windows.Forms.ToolTipIcon.Info);
         }
         else
         {
             availableUpdate = null;
-            downloadUpdate.Visible = false;
-            if (manual) Notify("Sensor Panel is up to date", $"You're running v{PanelUpdateService.Label(PanelUpdateService.CurrentVersion)}.");
+            SetUpdateStatus("You’re up to date.");
         }
     }
 
-    private void Notify(string title, string message) =>
-        icon.ShowBalloonTip(8000, title, message, System.Windows.Forms.ToolTipIcon.Info);
+    private void SetUpdateStatus(string status)
+    {
+        UpdateStatus = status;
+        UpdateStatusChanged?.Invoke();
+    }
 
-    private void OpenUpdate()
+    internal void OpenUpdate()
     {
         if (availableUpdate is not { } release) return;
         try { using var browser = Process.Start(new ProcessStartInfo(release.Page.AbsoluteUri) { UseShellExecute = true }); }
         catch (System.ComponentModel.Win32Exception)
         {
-            Notify("Couldn't open the release page", "Open the Sensor Panel project on GitHub to download the update.");
+            SetUpdateStatus("Couldn’t open the release page.");
         }
     }
 

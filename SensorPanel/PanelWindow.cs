@@ -124,7 +124,7 @@ internal sealed partial class PanelWindow : Window
             else if (e.Key == Key.F11) ToggleFit(); else if (e.Key == Key.Escape && fit) ToggleFit();
         };
         ContextMenu = BuildMenu();
-        settings = new PanelSettings(this, ContextMenu, shipOptions!, () => theme);
+        settings = new PanelSettings(this, ContextMenu, shipOptions!, () => theme, () => tray);
         settings.Closed+=()=>CollectAorusGarbage(full:true);
         surface.Children.Add(settings.Overlay);
         ContextMenuOpening += (_, e) => { e.Handled = true; settings.Open(); };
@@ -148,7 +148,12 @@ internal sealed partial class PanelWindow : Window
             // Reapply native monitor bounds after that initial layout completes.
             if (display is not null) Displays.Place(this, display, fit,previewSize);
             UpdatePanelLayout();
-            if (previewPath is null) tray = new PanelTray(this);
+            if (previewPath is null)
+            {
+                tray = new PanelTray(this);
+                tray.UpdateStatusChanged+=settings.RefreshUpdater;
+                settings.RefreshUpdater();
+            }
             Start();
             RefreshVisualActivity();
             if (runtimeCheck && previewPath is null) _=CheckLiveRuntimeAsync(checkHolotable);
@@ -743,6 +748,12 @@ internal sealed partial class PanelWindow : Window
     {
         ShowPanel();
         if (IsVisible) settings?.Open();
+    }
+
+    internal void ShowUpdateSettings()
+    {
+        ShowPanel();
+        if (IsVisible) settings?.OpenUpdates();
     }
 
     private static Stretch ScalingStretch(string mode) => mode switch { "Fill"=>Stretch.UniformToFill, "Stretch"=>Stretch.Fill, _=>Stretch.Uniform };
