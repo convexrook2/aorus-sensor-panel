@@ -213,8 +213,8 @@ internal sealed partial class ShipPanel : Canvas
             shipChoices.BorderThickness = new Thickness(0, 0, 0, 1);
             var live = Bind("status", 11, theme.Muted);
             live.TextAlignment = TextAlignment.Right;
-            Put(this, live, new(plan.Width-465, 24, 220, 20));
-            Put(this, Label("Ship", 12, theme.Muted), new(plan.Width-238, 24, 39, 20));
+            Put(this, live, new(plan.Width-495, 24, 220, 20));
+            Put(this, Label("Ship", 12, theme.Muted), new(plan.Width-268, 24, 39, 20));
         }
         // Canonical vessel IDs sort by ship name without faction prefixes.
         foreach (var ship in ShipProfile.All.OrderBy(ship=>ship.Id,StringComparer.OrdinalIgnoreCase))
@@ -227,14 +227,14 @@ internal sealed partial class ShipPanel : Canvas
             if (shipChoices.SelectedItem is not ComboBoxItem { Tag: ShipProfile choice } || choice.Id==selectedShip) return;
             ShipSelectionRequested?.Invoke(choice.Id);
         };
-        Put(this,shipChoices,deckHeader ? new(plan.Width-201, 17, 179, 31)
+        Put(this,shipChoices,deckHeader ? new(plan.Width-231, 17, 179, 31)
             : new(plan.Sidebar.X+5,plan.Sidebar.Y-34,plan.Sidebar.Width-38,26));
-        var shipOptions=new Button { Content=deckHeader ? "⚙" : "⋯", FontSize=17, Foreground=theme.Foreground,
+        var shipOptions=new Button { Content="⋯", FontSize=17, Foreground=theme.Foreground,
             Background=theme.Surface, BorderBrush=theme.Divider, Padding=new Thickness(0),
             Cursor=Cursors.Hand, ToolTip="Ship options" };
         System.Windows.Automation.AutomationProperties.SetName(shipOptions,"Ship options");
         shipOptions.Click+=(_,_)=>ShipOptionsRequested?.Invoke();
-        Put(this,shipOptions,deckHeader ? new(plan.Width-48, plan.Height-38, 26, 26)
+        Put(this,shipOptions,deckHeader ? new(plan.Width-48, 20, 26, 26)
             : new(plan.Sidebar.Right-29,plan.Sidebar.Y-34,24,26));
         Hardware(plan.Cpu, theme, false); Hardware(plan.Gpu, theme.ForGpu(), true);
         SmallCard(plan.Memory, theme, false); SmallCard(plan.Network, theme.ForGpu(), true);
