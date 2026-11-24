@@ -246,23 +246,6 @@
     "ReferencePixelsBundled": false
   },
   {
-    "Ship": "Scopuli",
-    "Title": "Scopuli / original reference-guided fan model",
-    "Artist": "Authored for this project",
-    "Url": "https://expanse.fandom.com/wiki/Scopuli",
-    "License": "Original fan approximation; no third-party mesh licence claimed",
-    "SourceSHA256": "49EFFE9E695075D0CF7F277FE47C5CED502F4CABD59A38AB01A4BED8FB074CF6",
-    "SceneSHA256": "D428A238CBB0EB9CF2F2504B25F53581E9EE8B7B58C3571646F1A17F2008CBD4",
-    "SourceTriangles": 4864,
-    "RenderTriangles": 4864,
-    "SceneBytes": 574767,
-    "OriginalPaint": true,
-    "Selection": "TV-series hull or era-specific configuration",
-    "Preparation": "tools/Build-ExpanseFleet.py + tools/Convert-HoloScene.py",
-    "EditableSource": "Assets/Models/Source/Fleet/Scopuli.glb",
-    "ReferencePixelsBundled": false
-  },
-  {
     "Ship": "Scirocco",
     "Title": "Scirocco / original reference-guided fan model",
     "Artist": "Authored for this project",

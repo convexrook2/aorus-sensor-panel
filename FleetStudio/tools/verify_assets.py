@@ -16,7 +16,7 @@ require(len(by_file)==len(assets),'Duplicate manifest files')
 current={entry['model'] for entry in catalog}
 actual={path.relative_to(ROOT).as_posix() for path in (ROOT/'models').rglob('*') if path.is_file()}
 require(len(current)==len(catalog) and current==set(by_file)==actual,'Bundle must contain one current model per ship')
-require(not ({'Nauvoo','Behemoth','Rocinante'} & {entry['id'] for entry in catalog}), 'Retired ship identifiers still in Studio catalogue')
+require(not ({'Nauvoo','Behemoth','Rocinante','Scopuli'} & {entry['id'] for entry in catalog}), 'Retired ship identifiers still in Studio catalogue')
 require(all(not any(key.startswith('before') for key in entry) for entry in catalog),'A superseded comparison is still published')
 for expected in assets:
     key=expected['file'];path=(ROOT/key).resolve()

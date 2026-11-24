@@ -983,7 +983,7 @@ internal sealed partial class PanelWindow : Window
                         "Rocinante"=>"Tycho", "Donnager"=>"Callisto",
                         "AgathaKing" or "Razorback" or "Guanshiyin"=>"Earth", "Tynan" or "Medina"=>"Medina",
                         "Morrigan" or "Dropship" or "Epstein" or "Pella"=>"Mars",
-                        "Canterbury" or "Knight"=>"Ceres", "Anubis" or "Scopuli"=>"Eros",
+                        "Canterbury" or "Knight"=>"Ceres", "Anubis"=>"Eros",
                         "SolRing"=>"SolGate", "Scirocco"=>"Ganymede", "Hammurabi"=>"Io",
                         "Arboghast"=>"Venus", "BashiBazouk"=>"Sun", _=>throw new InvalidOperationException("Missing ship navigation check.")
                     };

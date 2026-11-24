@@ -14,7 +14,7 @@ The existing Rocinante, Donnager, Truman, Dropship, Epstein and Razorback meshes
 are preserved. Agatha King shares the existing credited Truman mesh.
 
 Included: Tynan, Morrigan, Canterbury, Knight, Anubis, Pella, Nauvoo, Behemoth,
-Medina, Scopuli, Scirocco, Hammurabi and Arboghast.
+Medina, Scirocco, Hammurabi and Arboghast.
 
 Geometry, UV maps, panel paint and small stencils are authored in
 tools/Build-ExpanseFleet.py. No production meshes, purchased assets, Sketchfab

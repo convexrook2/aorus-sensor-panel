@@ -54,7 +54,7 @@ def verify():
     manifest=read(DEST/'manifest.json');catalog=read(DEST/'catalog.json')
     require(manifest['ships']==len(catalog),'Manifest ship count')
     require(len({e['id'] for e in catalog})==len(catalog),'Duplicate ship ID')
-    require(not {'Nauvoo','Behemoth'} & {e['id'] for e in catalog},'Retired station model is still a native selection')
+    require(not {'Nauvoo','Behemoth','Scopuli'} & {e['id'] for e in catalog},'Retired ship model is still a native selection')
     models={e['model'] for e in catalog}
     require(len(models)==len(catalog) and models=={p.relative_to(DEST).as_posix() for p in (DEST/'models').rglob('*') if p.is_file()},
             'Native bundle must contain one current model per ship')

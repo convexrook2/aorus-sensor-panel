@@ -21,7 +21,6 @@ internal static class ExpanseNavigation
         "Anubis" => new("Eros", "EROS / PROTOGEN OPERATION", "STORY ASSOCIATION", "https://expanse.fandom.com/wiki/Anubis_(TV)"),
         "Pella" => new("Mars", "FORMER MCRN HULL / FREE NAVY", "HULL ORIGIN", "https://expanse.fandom.com/wiki/Pella_(TV)"),
         "Medina" => new("Medina", "MEDINA / RING SPACE", "FICTIONAL STATION", "https://expanse.fandom.com/wiki/Nauvoo_(TV)"),
-        "Scopuli" => new("Eros", "EROS / REGISTRATION", "REGISTERED PORT", "https://expanse.fandom.com/wiki/Scopuli"),
         "Scirocco" => new("Ganymede", "GANYMEDE / MCRN", "STORY ASSOCIATION", "https://expanse.fandom.com/wiki/Scirocco-class_(TV)"),
         "Hammurabi" => new("Io", "IO / MCRN FLEET", "STORY ASSOCIATION", "https://expanse.fandom.com/wiki/Hammurabi_(TV)"),
         "Guanshiyin" => new("Earth", "EARTH / MAO-KWIK", "OWNER AFFILIATION", "https://expanse.fandom.com/wiki/Guanshiyin"),

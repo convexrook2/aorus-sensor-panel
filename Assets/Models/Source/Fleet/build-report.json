@@ -203,28 +203,6 @@
       "nativeSha256": "dc8bd3b7b08b5a387e65ad694a572d48a775b62fd21094e5512749be79564131"
     },
     {
-      "id": "Scopuli",
-      "triangles": 4864,
-      "materials": 7,
-      "components": 57,
-      "bounds": [
-        [
-          -0.5640000000000001,
-          -1.52,
-          -0.44
-        ],
-        [
-          0.5640000000000001,
-          1.77,
-          0.404
-        ]
-      ],
-      "sourceSha256": "49effe9e695075d0cf7f277fe47c5ced502f4cabd59a38ab01a4bed8fb074cf6",
-      "source": "Assets\\Models\\Source\\Fleet\\Scopuli.glb",
-      "native": "Assets\\Models\\Scopuli.ship",
-      "nativeSha256": "d428a238cbb0eb9cf2f2504b25f53581e9ee8b7b58c3571646f1a17f2008cbd4"
-    },
-    {
       "id": "Scirocco",
       "triangles": 18958,
       "materials": 9,

@@ -108,13 +108,6 @@
       "height": 2048
     },
     {
-      "id": "Scopuli",
-      "sourceSha256": "49effe9e695075d0cf7f277fe47c5ced502f4cabd59a38ab01a4bed8fb074cf6",
-      "sha256": "c8b5ac85b1a12d165d0df3a9244b7cb6cefc97d67ba1ee05f0d42a9f2a8b7058",
-      "width": 1024,
-      "height": 2048
-    },
-    {
       "id": "Scirocco",
       "sourceSha256": "7cbe6ab1719ded37da2de370a51072ccc9c252b82f26097c7b8b145659563320",
       "sha256": "3868d66246d2c704d86e385e8f4d827c192fc6f72ce47d3c6777c3fe3c6df42a",

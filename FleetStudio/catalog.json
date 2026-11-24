@@ -487,27 +487,6 @@
     "lights": 20
   },
   {
-    "id": "Scopuli",
-    "title": "Scopuli / earlier fan study",
-    "credit": "Authored for this project; independent fan approximation.",
-    "note": "Earlier simplified project-authored fan study. Full final exterior orthographic coverage remains unresolved; no new refinement.",
-    "referenceUrl": "https://www.syfy.com/the-expanse/photos/the-expanse-concept-art",
-    "triangles": 4864,
-    "materials": 7,
-    "images": 1,
-    "maps": {
-      "colour": 1,
-      "normal": 0,
-      "occlusion": 0,
-      "metalRough": 0,
-      "emissive": 0
-    },
-    "model": "models/Scopuli-49effe9e6950.glb.gz",
-    "sha256": "22eed9a44975eaae2913a6439b8c200648ab1f62ab7fdf70174dd94c4f10c5d1",
-    "relatedSources": [],
-    "references": []
-  },
-  {
     "id": "Scirocco",
     "title": "Scirocco / accepted paint02",
     "credit": "cg / Printables 477957 / CC BY 4.0; X890 materials, markings and work lights. Visual references: Ryan Dening / North Front and Axiom VFX.",

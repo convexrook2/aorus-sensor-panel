@@ -1,6 +1,6 @@
 {
   "revision": "Fleet Studio / current model per ship / v1.8.19",
-  "catalogue_entries": 20,
+  "catalogue_entries": 19,
   "assets": [
     {
       "file": "models/SolRing-463844ce94fe.glb.gz",
@@ -98,20 +98,6 @@
       "lights": 0,
       "compressed_bytes": 8321129,
       "uncompressed_bytes": 17589696,
-      "geometry_and_image_bytes_exact": true
-    },
-    {
-      "file": "models/Scopuli-49effe9e6950.glb.gz",
-      "sha256": "22eed9a44975eaae2913a6439b8c200648ab1f62ab7fdf70174dd94c4f10c5d1",
-      "gzip_sha256": "862e3c8e78cb73a74b191ce6cf5425ef1a42f7b5cf686af5309cf9ccff5d10a4",
-      "source_sha256": "49effe9e695075d0cf7f277fe47c5ced502f4cabd59a38ab01a4bed8fb074cf6",
-      "binary_sha256": "9a6f43a530c547a1230111e165128989dcf3f8eb9ea3627da381260e59819eb6",
-      "triangles": 4864,
-      "materials": 7,
-      "images": 1,
-      "lights": 0,
-      "compressed_bytes": 568780,
-      "uncompressed_bytes": 746988,
       "geometry_and_image_bytes_exact": true
     },
     {

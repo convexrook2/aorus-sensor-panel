@@ -1,17 +1,17 @@
 {
   "lossless": true,
-  "ships": 20,
+  "ships": 19,
   "source": "Reviewed Fleet Studio catalogue; scoped model updates",
   "files": [
     {
       "path": "ATTRIBUTION.txt",
-      "bytes": 5042,
-      "sha256": "273bca19129c07e4aa08a320aea65b1818b28be471f8e2a246aba7b522f4e011"
+      "bytes": 4907,
+      "sha256": "cb8e3d421549f8e0150081c872bb6ce36cb9c632c76487ebd4404811906eb13f"
     },
     {
       "path": "catalog.json",
-      "bytes": 30776,
-      "sha256": "a5eb82ace3dd9a05a17f474722d6f82df8ab966f53ba4e0cf4cf93bd53a4922e"
+      "bytes": 29748,
+      "sha256": "97904076462a847d4f2eacc865ba406bea46e13afa486d41db42397b90ae6178"
     },
     {
       "path": "engines.json",
@@ -119,11 +119,6 @@
       "sha256": "42f3dabf6ce74967038b6ade22e1173d8f481627595c81e677709859ccdacc20"
     },
     {
-      "path": "models/Scopuli.glb.gz",
-      "bytes": 569457,
-      "sha256": "f0f8aa2d443ffb6db5c15ecc1f069f5a0bfd6c7431585f2a0c90d3d6c17dcb07"
-    },
-    {
       "path": "models/SolRing.glb.gz",
       "bytes": 4228604,
       "sha256": "7152881b089c5ceecede9d6adf5d1605d9048378f73b1a4f6d08d997c94db505"
@@ -190,8 +185,8 @@
     },
     {
       "path": "portraits/index.json",
-      "bytes": 5277,
-      "sha256": "b10d2c151c66dc39c5c6a5038aa7aacda6be2799152d613269231ea94346d62e"
+      "bytes": 5018,
+      "sha256": "7986322b24511c24c1d4c96544acc9db56eeb02e743029eb1b2974d6ecdafcfa"
     },
     {
       "path": "portraits/Knight.png",
@@ -227,11 +222,6 @@
       "path": "portraits/Scirocco.png",
       "bytes": 717369,
       "sha256": "3868d66246d2c704d86e385e8f4d827c192fc6f72ce47d3c6777c3fe3c6df42a"
-    },
-    {
-      "path": "portraits/Scopuli.png",
-      "bytes": 649833,
-      "sha256": "c8b5ac85b1a12d165d0df3a9244b7cb6cefc97d67ba1ee05f0d42a9f2a8b7058"
     },
     {
       "path": "portraits/SolRing.png",

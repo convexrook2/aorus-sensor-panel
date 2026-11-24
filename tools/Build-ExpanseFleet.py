@@ -545,30 +545,6 @@ def nauvoo(name='Nauvoo'):
     return h
 
 
-def scopuli():
-    h=Hull('Scopuli',(115,121,116),(153,108,63))
-    h.box((0,.13,0),(.55,2.54,.42),'frame')
-    h.loft([(.15,.42,.36),(.98,.42,.36),(1.32,.35,.29),(1.50,.20,.20)])
-    h.box((0,-.84,0),(.72,.56,.61),'paint')
-    h.engine((0,-1.16,0),.29,.36)
-    for s in [-1,1]:
-        h.box((s*.44,.48,-.01),(.22,1.62,.54),'paint')
-        h.box((s*.44,-.30,.09),(.19,.21,.22),'dark')
-        for y in [-.14,.13,.40,.67,.94]:
-            h.box((s*.45,y,.275),(.17,.015,.025),'silver')
-            h.box((s*.555,y,.03),(.018,.12,.25),'dark')
-        h.beam((s*.29,-.52,-.18),(s*.49,-1.10,-.16),.025,'frame')
-        h.rcs((s*.48,1.06,.13),(s,0,0))
-        h.sphere((s*.27,-.72,-.30),.14,'silver',(1,1.2,1))
-    h.box((0,1.18,.30),(.31,.19,.04),'glass')
-    h.decal((0,.60,.369),.33,.14,0)
-    h.decal((0,-.84,.314),.31,.14,2)
-    for y in [.0,.36,.73]:
-        h.beam((-.23,y,.395),(.23,y,.395),.009,'copper')
-    h.beam((.12,1.36,.13),(.12,1.77,.13),.004,'silver')
-    return h
-
-
 def scirocco(name='Scirocco'):
     h=Hull(name,(130,137,132),(185,77,39))
     stations=[(-.83,.52,.40),(-.24,.57,.43),(1.34,.58,.43),(1.58,.49,.38)]
@@ -639,7 +615,7 @@ def tynan_production():
 BUILDERS={'Tynan':tynan_production,'Morrigan':morrigan,'Canterbury':canterbury,'Knight':knight,
           'Anubis':anubis,'Pella':pella,'Nauvoo':nauvoo,
           'Behemoth':lambda:nauvoo('Behemoth'),'Medina':lambda:nauvoo('Medina'),
-          'Scopuli':scopuli,'Scirocco':scirocco,'Hammurabi':lambda:scirocco('Hammurabi'),
+          'Scirocco':scirocco,'Hammurabi':lambda:scirocco('Hammurabi'),
           'Arboghast':arboghast,'BashiBazouk':bashi_bazouk}
 
 

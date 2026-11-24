@@ -61,7 +61,7 @@ remaining triangles retained. WPF lighting approximates the GLB's PBR materials.
 
 ORIGINAL REFERENCE-GUIDED FLEET MODELS
 Tynan, Morrigan, Canterbury, Knight, Anubis, Nauvoo, Behemoth, Medina,
-Scopuli, Scirocco, Hammurabi, Guanshiyin and Arboghast.
+Scirocco, Hammurabi, Guanshiyin and Arboghast.
 Authored for this project with tools/Build-ExpanseFleet.py; editable GLBs,
 generation report and reference provenance: Assets/Models/Source/Fleet/.
 Geometry, UV maps, panel textures and stencils are authored by the generator.
@@ -77,7 +77,7 @@ Visual-reference credits:
   https://frankyang.artstation.com/projects/3oAAeo
 - Morrigan: existing Ryan Begemann / Mallacore orthographic reference.
   https://www.reddit.com/r/TheExpanse/comments/ts4tfm/
-- Canterbury, Knight, Anubis, Nauvoo/Behemoth/Medina, Scopuli, Scirocco/Hammurabi,
+- Canterbury, Knight, Anubis, Nauvoo/Behemoth/Medina, Scirocco/Hammurabi,
   Guanshiyin and Arboghast: TV exterior references collected by The Expanse Wiki.
   Individual source URLs and interpretation limits are in Fleet/references.json.
 - Scirocco production concept reference credits North Front Studio.

@@ -37,6 +37,7 @@ internal static class PanelPreferences
         var roundTrip=JsonSerializer.Deserialize<Preferences>(JsonSerializer.Serialize(legacy with {ExpanseRendering="Efficient",AorusTheme="Dark",ExpanseTheme="MCRN"}))!;
         if(legacy.ExpanseRendering!="FullFidelity"||roundTrip.ExpanseRendering!="Efficient"||roundTrip.AorusTheme!="Dark"||roundTrip.ExpanseTheme!="MCRN"
             ||ResolveExpanseShip("Nauvoo")!="Medina"||ResolveExpanseShip("Behemoth")!="Medina"
+            ||ResolveExpanseShip("Scopuli")!="Rocinante"||PanelTheme.Resolve("Scopuli").Id!="Rocinante"
             ||roundTrip.Theme!="MCRN"||roundTrip.PollingIntervalMs!=2000||roundTrip.ShowcaseRotation)
             throw new InvalidOperationException("Experience preferences failed migration/serialization or altered unrelated settings.");
     }

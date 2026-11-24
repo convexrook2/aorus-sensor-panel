@@ -96,6 +96,7 @@ internal sealed record PanelTheme(string Id, string Name, SolidColorBrush Backgr
     {
         string? current = id is null ? null : ShipProfile.CanonicalId(id);
         if (string.Equals(current, "AgathaKing", StringComparison.OrdinalIgnoreCase)) current = "UNN";
+        if (string.Equals(current, "Scopuli", StringComparison.OrdinalIgnoreCase)) current = "Rocinante";
         return All.FirstOrDefault(theme => string.Equals(theme.Id, current, StringComparison.OrdinalIgnoreCase)) ?? All[0];
     }
     private static SolidColorBrush Brush(string value)

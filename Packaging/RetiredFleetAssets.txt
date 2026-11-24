@@ -1,7 +1,9 @@
 FleetViewer\models\Behemoth.glb.gz
 FleetViewer\models\Nauvoo.glb.gz
+FleetViewer\models\Scopuli.glb.gz
 FleetViewer\portraits\Behemoth.png
 FleetViewer\portraits\Nauvoo.png
+FleetViewer\portraits\Scopuli.png
 Models\AgathaKing.ship
 Models\Anubis.ship
 Models\Arboghast.ship

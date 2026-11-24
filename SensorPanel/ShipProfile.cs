@@ -17,7 +17,6 @@ internal sealed record ShipProfile(string Id, string Name, string Faction, strin
         new("Anubis", "ANUBIS", "PROTOGEN", "STEALTH FRIGATE", "SYSTEMS ENGINEERING", "Original fan model"),
         new("Pella", "PELLA", "FREE NAVY", "LIGHT CRUISER", "FLEET ENGINEERING", "Martin Taichl / CC BY 4.0 · adapted"),
         new("Medina", "MEDINA STATION", "OPA", "FORMER NAUVOO / BEHEMOTH", "STATION ENGINEERING", "RingBuilder / X890"),
-        new("Scopuli", "SCOPULI", "OPA", "LIGHT FREIGHTER", "CARGO ENGINEERING", "Original fan model"),
         new("Scirocco", "MCRN SCIROCCO", "MCRN", "ASSAULT CRUISER", "MARINE ENGINEERING", "cg / Printables 477957 / CC BY 4.0 · adapted"),
         new("Hammurabi", "MCRN HAMMURABI", "MCRN", "SCIROCCO CLASS", "FLEET ENGINEERING", "Original fan model"),
         new("Guanshiyin", "GUANSHIYIN", "MAO-KWIK", "YACHT", "YACHT ENGINEERING", "Original fan model"),
