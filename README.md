@@ -238,6 +238,12 @@ A cached static grid overlays the existing space/media background. The Pella
 palette and typography apply to the instruments; scope walls and targeting
 artwork are removed. See [Pella console](docs/PELLA-CONSOLE.md).
 
+Open Flight Deck is the Expanse ship layout. It puts a theme-coloured halo behind
+the native ship viewer and shades the live CPU and GPU temperature traces in the
+ship's colours. Switching ships zooms the solar map to the ship's destination.
+Use Reset on the map for the whole-system view. A live `--capture` of an Expanse
+theme waits for 60 readings so the temperature history is visible.
+
 The [ship reference library](docs/references/README.md) keeps credits and source
 links by ship, including the owner-selected Rocinante diagnostic blueprint for
 a future look-and-feel revisit. Reference artwork is separate from runtime assets.

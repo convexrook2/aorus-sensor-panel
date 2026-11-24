@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Web.WebView2.Core;
@@ -19,6 +20,7 @@ internal sealed class FleetViewport : Grid, IDisposable
     private readonly TextBlock status = new() { Text="LOADING SHIP…", FontSize=10,
         Foreground=Brushes.LightBlue, TextWrapping=TextWrapping.Wrap,
         HorizontalAlignment=HorizontalAlignment.Center, VerticalAlignment=VerticalAlignment.Center };
+    private readonly bool openDeckBackdrop;
     private WebView2CompositionControl? browser;
     internal Task Retirement { get; private set; }=Task.CompletedTask;
     private Canvas? browserSurface;
@@ -41,8 +43,9 @@ internal sealed class FleetViewport : Grid, IDisposable
     internal string ShipId => ship;
     private static TaskCompletionSource Completion() => new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    internal FleetViewport()
+    internal FleetViewport(bool openDeckBackdrop = false)
     {
+        this.openDeckBackdrop=openDeckBackdrop;
         ClipToBounds=true; UseLayoutRounding=false;
         Children.Add(status);
         Loaded+=OnLoaded;
@@ -163,7 +166,12 @@ internal sealed class FleetViewport : Grid, IDisposable
         try{core.PostWebMessageAsJson(JsonSerializer.Serialize(message));}
         catch(InvalidOperationException ex){Fail(ex);}
     }
-    private void SendScene()=>Send(new{type="scene",id=ship,interactive,holotable=holotableMode,stageColour,graphicsMode=graphicsMode.ToString()});
+    private void SendScene()=>Send(new{type="scene",id=ship,interactive,holotable=holotableMode,openDeckBackdrop,stageColour,graphicsMode=graphicsMode.ToString()});
+    internal void TrackFallback(ShipPoster poster)
+    {
+        if (openDeckBackdrop)
+            BindingOperations.SetBinding(poster, VisibilityProperty, new Binding(nameof(Visibility)) { Source = status });
+    }
     internal void SetGraphicsMode(ExpanseGraphicsMode mode)
     {if(graphicsMode==mode)return;graphicsMode=mode;SendScene();}
     private void RefreshLayout()

@@ -12,6 +12,7 @@ internal static class App
     {
         try
         {
+            if (args.Contains("--open-deck")) AppContext.SetSwitch(ShipPanel.OpenFlightDeckSwitch, true);
             using var memorySampler = AorusMemorySampler.Start(args);
             if(args.Contains("--check-aorus-pixels"))return ArtworkAnimation.CheckPixels();
             // WPF hosts the window; WinForms supplies only the tray. Configure

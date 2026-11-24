@@ -44,6 +44,16 @@ try {
  ao.kernelRadius=.075;ao.minDistance=.0005;ao.maxDistance=.035;
  const plumeDepth=configurePlumeRendering(camera,ao);
  const lightGlow=new EmissiveGlowPass(scene,camera);
+ // Feather only the outer emission on the native deck. The shared extraction
+ // and Studio composite stay identical to the accepted Anubis lighting.
+ const glowComposite=lightGlow._compositeMaterial;
+ glowComposite.uniforms.featherEdges={value:false};
+ glowComposite.fragmentShader='uniform bool featherEdges;\n'+glowComposite.fragmentShader.replace(
+  'float haloAlpha=',`if(featherEdges){
+   vec2 edge=min(vUv,1.0-vUv);
+   halo*=smoothstep(0.0,0.14,edge.x)*smoothstep(0.0,0.09,edge.y);
+  }
+  float haloAlpha=`);
  composer.addPass(plumeDepth);composer.addPass(renderPass);composer.addPass(ao);composer.addPass(lightGlow);composer.addPass(new OutputPass());
  const holographicStage=makeHolographicStage(),displayStage=holographicStage.group;
  displayStage.visible=false;scene.add(displayStage);
@@ -211,7 +221,7 @@ try {
    displayStage:displayStage.visible,hologram:{...holographicStage.diagnose(camera),visible:displayStage.visible,animated:hologramMotion},inspection:{quaternion:root?.quaternion.toArray()??null,zoom:root?.scale.x??1},rotationRadians:root?.rotation.y??0,showcaseMotion:{enabled:!interactive&&!holotable,elapsed:showcaseSeconds},frameLimit:efficient?30:null,graphicsMode:efficient?'Efficient':'FullFidelity',
    orientation:entry?.orientation??'ship',gateNormal,
    aperture:aperture?{visible:aperture.visible,time:portal.uniforms.time.value,doubleSided:portal.side===THREE.DoubleSide,name:aperture.name}:null,
-   transparent:true,pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,
+   transparent:true,transparentBackground:scene.background===null,pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,
    frames,animationSeconds:seconds,modelReady:!!root,renderPipeline:'Fleet Studio / Three.js PBR',
    engineEffects:shipEffects?.stats()??null,toneMapping:'AgX',geometryReduced:false,texturesResampled:false,lastFrameStats,
    renderProfile:profile?{state:profile.state,samples:profile.cpu.length,gpuSamples:profile.gpu.length,gpuTimerSupported:!!timerQuery,
@@ -224,9 +234,10 @@ try {
      const nextEfficient=message.graphicsMode==='Efficient';if(nextEfficient!==efficient){efficient=nextEfficient;nextMotionFrame=0;invalidate();}
      const changed=interactive!==!!message.interactive||holotable!==!!message.holotable;
      holotable=!!message.holotable;interactive=!!message.interactive;controls.enabled=interactive;
-     // Prepared portraits bake the glow against their dark display background.
-     // This avoids browser premultiplied-alpha artefacts in PNG captures.
-     scene.background=holotable?null:new THREE.Color(0x040c13);
+     // Prepared portraits bake glow against the dark stage. Open Flight Deck
+     // and the holotable composite the full render over their host backdrops.
+     scene.background=holotable||message.openDeckBackdrop===true?null:new THREE.Color(0x040c13);
+     glowComposite.uniforms.featherEdges.value=!holotable&&message.openDeckBackdrop===true;
      if(message.stageColour)holographicStage.setColour(message.stageColour);
      if(changed)reset();load(message.id).catch(failure);
    } else if(message.type==='activity'){

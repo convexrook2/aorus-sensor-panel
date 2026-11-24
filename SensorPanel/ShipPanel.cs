@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -101,13 +102,15 @@ internal sealed partial class ShipPanel : Canvas
         var plan = Calculate(aspect, layout);
         bool pella=theme.ShipId=="Pella";
         bool gate=theme.ShipId=="SolRing";
-        if(pella || theme.RociConsole || gate)plan=PellaPlan(plan);
+        if (openFlightDeck) plan = OpenDeckPlan(plan);
+        else if(pella || theme.RociConsole || gate)plan=PellaPlan(plan);
         string key = $"{theme.Id}:{theme.Showcase}:{plan.Width}:{plan.Height}:{plan.Mode}";
         if (configuration == key) return;
         string? sceneShip = theme.ShipId;
         configuration = key; Mode = plan.Mode;
         bool reopenHolotable=HolotableOpen;
         CloseHolotable(); activeTheme = theme;
+        if (openFlightDeck) theme = OpenDeckTheme(theme);
         shipViewport?.SetMotion(false);
         if(shipViewport?.Parent is Panel previousHost)previousHost.Children.Remove(shipViewport);
         foreach (var element in new FrameworkElement[] { cpuDial, gpuDial, cpuGraph, gpuGraph })
@@ -120,42 +123,59 @@ internal sealed partial class ShipPanel : Canvas
         showcaseCrew?.SetMotion(false);
         showcaseCrew=null;
         heading=faction=mediaCredit=null; sidebarBounds=plan.Sidebar;
-        Children.Clear(); bound.Clear(); Width = plan.Width; Height = plan.Height; Background = theme.Backdrop;
+        Children.Clear(); bound.Clear(); Width = plan.Width; Height = plan.Height;
+        if (openFlightDeck) AddOpenDeckBackdrop(plan, theme.Accent.Color);
+        else Background = theme.Backdrop;
         if (theme.Showcase || pella || theme.RociConsole || gate)
         {
             showcaseBackdrop=new ExpanseBackdrop();
             showcaseBackdrop.SetMotion(motion);
             Put(this,showcaseBackdrop,new(0,0,plan.Width,plan.Height));
         }
-        if(pella)Put(this,new PellaGrid(theme.Accent.Color),new(0,0,plan.Width,plan.Height));
-        if(theme.RociConsole)Put(this,new PellaGrid(Color.FromRgb(118,158,154)),new(0,0,plan.Width,plan.Height));
-        if(gate)Put(this,new PellaGrid(theme.Accent.Color),new(0,0,plan.Width,plan.Height));
+        if (!openFlightDeck)
+        {
+            if(pella)Put(this,new PellaGrid(theme.Accent.Color),new(0,0,plan.Width,plan.Height));
+            if(theme.RociConsole)Put(this,new PellaGrid(Color.FromRgb(118,158,154)),new(0,0,plan.Width,plan.Height));
+            if(gate)Put(this,new PellaGrid(theme.Accent.Color),new(0,0,plan.Width,plan.Height));
+        }
         bool portrait = Mode == "Portrait";
         double bodyX=plan.Cpu.X;
         bool reuseProjection=projection is not null;
         if (projection is null)
         {
-            projection=new SolarSystemView();
+            projection=new SolarSystemView(openFlightDeck);
             projection.SetGraphicsMode(graphicsMode);
             projection.BodySelected+=_=>NavigationChanged?.Invoke();
         }
         Put(this, projection, plan.Navigation);
-        projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase || pella || theme.RociConsole || gate ? (byte)115 : (byte)232,3,12,21));
+        if (openFlightDeck) projection.ApplyOpenDeck(theme);
+        else projection.Background=new SolidColorBrush(Color.FromArgb(theme.Showcase || pella || theme.RociConsole || gate ? (byte)115 : (byte)232,3,12,21));
         selectedShip=sceneShip;
         var navigation=ExpanseNavigation.ForShip(selectedShip);
         projection?.FocusBody(navigation.Body,reuseProjection);
         projection?.SetContext(navigation.Relation+" · "+navigation.Place+"\n"+navigation.Source);
         var vessel = ShipProfile.Resolve(selectedShip ?? throw new InvalidOperationException("A ship console needs its vessel profile."));
         string title = theme.Showcase ? "THE EXPANSE" : vessel.Name;
-        heading = Label(title, portrait ? 15 : 18, theme.Header, true);
-        if (theme.Showcase) heading.ToolTip=vessel.Name+" · "+vessel.Role;
-        Put(this, heading, new(bodyX, 14, plan.Width-bodyX-(portrait ? 18 : 260), 26));
-        Put(this, Bind("date", portrait ? 12 : 14, theme.Muted), new(portrait ? bodyX : plan.Width - 230, portrait ? 40 : 17, 214, 22));
-        Put(this, Bind("boardName", portrait ? 10 : 12, theme.Muted),
-            new(bodyX, portrait ? 63 : 43, plan.Width-bodyX-18, 18));
-        Put(this, new Border { Background=theme.Chrome, Opacity=.32, CornerRadius=new CornerRadius(10) }, plan.Sidebar);
+        if (openFlightDeck) AddOpenDeckIdentity(plan, theme, vessel);
+        else
+        {
+            heading = Label(title, portrait ? 15 : 18, theme.Header, true);
+            if (theme.Showcase) heading.ToolTip=vessel.Name+" · "+vessel.Role;
+            Put(this, heading, new(bodyX, 14, plan.Width-bodyX-(portrait ? 18 : 260), 26));
+        }
+        bool deckHeader = openFlightDeck && !portrait;
+        if (!deckHeader)
+        {
+            Put(this, Bind("date", portrait ? 12 : 14, theme.Muted), new(portrait ? bodyX : plan.Width - 230, portrait ? 40 : 17, 214, 22));
+            Put(this, Bind("boardName", portrait ? 10 : 12, theme.Muted),
+                new(bodyX, portrait ? 63 : 43, plan.Width-bodyX-18, 18));
+        }
+        if (!openFlightDeck) Put(this, new Border { Background=theme.Chrome, Opacity=.32, CornerRadius=new CornerRadius(10) }, plan.Sidebar);
+        var mediaBounds = new Rect(plan.Sidebar.X+4, plan.Sidebar.Y+(deckHeader ? 134 : openFlightDeck ? 107 : 36),
+            plan.Sidebar.Width-8, Math.Max(80,plan.Sidebar.Height-(openFlightDeck ? 160 : 64)));
         shipMedia=new Grid { ClipToBounds=true, IsHitTestVisible=false };
-        Put(this,shipMedia,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-64)));
+        if (openFlightDeck) shipMedia.Background=OpenDeckShipGlow(theme.Accent.Color);
+        Put(this,shipMedia,mediaBounds);
         // Keep the portrait decorative; a separate accessible button owns input.
         var hitArea=new FrameworkElementFactory(typeof(Border));
         hitArea.SetValue(Border.BackgroundProperty,Brushes.Transparent);
@@ -163,17 +183,20 @@ internal sealed partial class ShipPanel : Canvas
             Template=new ControlTemplate(typeof(Button)) { VisualTree=hitArea } };
         System.Windows.Automation.AutomationProperties.SetName(holotableAccess,"Open ship holotable");
         holotableAccess.Click+=(_,_)=>OpenHolotable();
-        Put(this,holotableAccess,new(plan.Sidebar.X+4,plan.Sidebar.Y+36,plan.Sidebar.Width-8,Math.Max(80,plan.Sidebar.Height-64)));
+        Put(this,holotableAccess,mediaBounds);
         AddShowcaseRotationControl(theme,portrait);
-        if (theme.Showcase && !theme.RociConsole)
+        if (!openFlightDeck && theme.Showcase && !theme.RociConsole)
         {
             showcaseCrew=new ExpanseCrew();
             showcaseCrew.SetMotion(motion);
             Put(this,showcaseCrew,new(plan.Sidebar.X+8,plan.Sidebar.Bottom-150,plan.Sidebar.Width-16,132));
         }
-        if(theme.RociConsole)AddRociIdentity(plan.Sidebar);
-        faction=Label(vessel.Faction,portrait ? 13 : 19,theme.Accent,true);
-        Put(this, faction, new(plan.Sidebar.X+10, plan.Sidebar.Y+12, plan.Sidebar.Width-20, 24));
+        if (!openFlightDeck)
+        {
+            if(theme.RociConsole)AddRociIdentity(plan.Sidebar);
+            faction=Label(vessel.Faction,portrait ? 13 : 19,theme.Accent,true);
+            Put(this, faction, new(plan.Sidebar.X+10, plan.Sidebar.Y+12, plan.Sidebar.Width-20, 24));
+        }
         shipChoices=new ComboBox {
             FontSize=portrait ? 8 : 10, Foreground=theme.Foreground, Background=theme.Surface, BorderBrush=theme.Divider,
             ToolTip="Select a ship to focus its associated planet or station", MaxDropDownHeight=240 };
@@ -182,6 +205,17 @@ internal sealed partial class ShipPanel : Canvas
         itemStyle.Setters.Add(new Setter(Control.ForegroundProperty,theme.Foreground));
         shipChoices.ItemContainerStyle=itemStyle;
         NavigationControls.Apply(shipChoices);
+        if (deckHeader)
+        {
+            shipChoices.FontSize = 14;
+            shipChoices.FontFamily = OpenDeckText;
+            shipChoices.Background = Brushes.Transparent;
+            shipChoices.BorderThickness = new Thickness(0, 0, 0, 1);
+            var live = Bind("status", 11, theme.Muted);
+            live.TextAlignment = TextAlignment.Right;
+            Put(this, live, new(plan.Width-465, 24, 220, 20));
+            Put(this, Label("Ship", 12, theme.Muted), new(plan.Width-238, 24, 39, 20));
+        }
         // Canonical vessel IDs sort by ship name without faction prefixes.
         foreach (var ship in ShipProfile.All.OrderBy(ship=>ship.Id,StringComparer.OrdinalIgnoreCase))
             shipChoices.Items.Add(new ComboBoxItem { Content=ship.Name, Tag=ship });
@@ -193,18 +227,21 @@ internal sealed partial class ShipPanel : Canvas
             if (shipChoices.SelectedItem is not ComboBoxItem { Tag: ShipProfile choice } || choice.Id==selectedShip) return;
             ShipSelectionRequested?.Invoke(choice.Id);
         };
-        Put(this,shipChoices,new(plan.Sidebar.X+5,plan.Sidebar.Y-34,plan.Sidebar.Width-38,26));
-        var shipOptions=new Button { Content="⋯", FontSize=17, Foreground=theme.Foreground,
+        Put(this,shipChoices,deckHeader ? new(plan.Width-201, 17, 179, 31)
+            : new(plan.Sidebar.X+5,plan.Sidebar.Y-34,plan.Sidebar.Width-38,26));
+        var shipOptions=new Button { Content=deckHeader ? "⚙" : "⋯", FontSize=17, Foreground=theme.Foreground,
             Background=theme.Surface, BorderBrush=theme.Divider, Padding=new Thickness(0),
             Cursor=Cursors.Hand, ToolTip="Ship options" };
         System.Windows.Automation.AutomationProperties.SetName(shipOptions,"Ship options");
         shipOptions.Click+=(_,_)=>ShipOptionsRequested?.Invoke();
-        Put(this,shipOptions,new(plan.Sidebar.Right-29,plan.Sidebar.Y-34,24,26));
+        Put(this,shipOptions,deckHeader ? new(plan.Width-48, plan.Height-38, 26, 26)
+            : new(plan.Sidebar.Right-29,plan.Sidebar.Y-34,24,26));
         Hardware(plan.Cpu, theme, false); Hardware(plan.Gpu, theme.ForGpu(), true);
         SmallCard(plan.Memory, theme, false); SmallCard(plan.Network, theme.ForGpu(), true);
         CoolingCard(plan.Board, theme);
-        Put(this, Bind("status", portrait ? 9 : 11, theme.Muted), new(20, plan.Height - 22, plan.Width - 160, 18));
-        Put(this, Label("FAN MADE", 10, theme.Muted), new(plan.Width - 116, plan.Height - 23, 92, 18));
+        if (!deckHeader)
+            Put(this, Bind("status", portrait ? 9 : 11, theme.Muted), new(20, plan.Height - 22, plan.Width - 160, 18));
+        Put(this, Label("FAN MADE", 10, theme.Muted), new(plan.Width - (deckHeader ? 131 : 116), plan.Height - 23, 92, 18));
         if (!portrait)
         {
             mediaCredit=Label("",9,theme.Muted);
@@ -212,7 +249,8 @@ internal sealed partial class ShipPanel : Canvas
         }
         UpdateSceneMedia(vessel,false);
         cpuDial.ApplyTheme(theme); gpuDial.ApplyTheme(theme.ForGpu());
-        cpuGraph.ApplyTheme(theme); gpuGraph.ApplyTheme(theme.ForGpu());
+        cpuGraph.ApplyTheme(theme, fillArea: openFlightDeck);
+        gpuGraph.ApplyTheme(theme.ForGpu(), fillArea: openFlightDeck);
         SetReadoutEffects(readoutPulse, gaugeTransitions); SetMotion(motion);
         if(reopenHolotable)OpenHolotable();
     }
@@ -248,11 +286,12 @@ internal sealed partial class ShipPanel : Canvas
         shipMedia.Children.Clear();
         if (holotableAccess is not null) holotableAccess.IsEnabled=true;
         shipPoster=new ShipPoster(vessel.Id);shipMedia.Children.Add(shipPoster);
-        shipViewport??=new FleetViewport();
+        shipViewport??=new FleetViewport(openFlightDeck);
+        shipViewport.TrackFallback(shipPoster);
         shipViewport.SetGraphicsMode(graphicsMode);
         shipViewport.SetShip(vessel.Id);shipViewport.SetHolotableMode(false);
         shipMedia.Children.Add(shipViewport);UpdateShowcaseRotation();
-        if (faction is not null) faction.Text=vessel.Faction;
+        if (faction is not null && !openFlightDeck) faction.Text=vessel.Faction;
         if (mediaCredit is not null)
         {
             mediaCredit.Text=activeTheme.Showcase ? "LOCAL SCENE PACK / FAN MADE" : "MODEL  /  "+Holotable.ModelCredit(vessel.Id);
@@ -277,7 +316,9 @@ internal sealed partial class ShipPanel : Canvas
     {
         if (shipMedia is not null)
         {
-            shipMedia.Height=Math.Max(80,sidebarBounds.Height-100-(showcaseCrew?.HasImage == true ? 146 : activeTheme?.RociConsole==true ? 146 : 0));
+            double reserved = openFlightDeck ? (Mode == "Portrait" ? 160 : 187)
+                : 100+(showcaseCrew?.HasImage == true || activeTheme?.RociConsole==true ? 146 : 0);
+            shipMedia.Height=Math.Max(80,sidebarBounds.Height-reserved);
             if (holotableAccess is not null) holotableAccess.Height=shipMedia.Height;
             if(rotationControl is not null)SetTop(rotationControl,GetTop(shipMedia)+shipMedia.Height+6);
         }
@@ -285,6 +326,7 @@ internal sealed partial class ShipPanel : Canvas
 
     private void Hardware(Rect bounds, PanelTheme theme, bool gpu)
     {
+        if (openFlightDeck) { OpenDeckHardware(bounds, theme, gpu); return; }
         var card = MakeCard(bounds, theme);
         bool narrow = bounds.Width < 420;
         Put(card, Label(gpu ? "02  /  GPU" : "01  /  CPU", 10, theme.Accent, true), new(17, 12, bounds.Width - 34, 17));
@@ -305,7 +347,8 @@ internal sealed partial class ShipPanel : Canvas
     {
         var card = MakeCard(bounds, theme);
         bool compact = bounds.Height < 120;
-        Put(card, Label(network ? "04  /  NETWORK" : "03  /  MEMORY", 10, theme.Accent, true), new(17, 9, bounds.Width - 34, 18));
+        string heading = openFlightDeck ? (network ? "Network" : "Memory") : (network ? "04  /  NETWORK" : "03  /  MEMORY");
+        Put(card, Label(heading, openFlightDeck ? 14 : 10, openFlightDeck ? theme.Foreground : theme.Accent, true), new(17, 9, bounds.Width - 34, 18));
         var fields = network ? new[] { ("UPLOAD", "upload"), ("DOWNLOAD", "download"), ("FPS SOURCE", "fpsApplication") }
             : new[] { ("MEMORY LOAD", "memory"), ("RAM CLOCK", "memoryClock"), ("UPTIME", "uptime") };
         double width = (bounds.Width - 34) / 3;
@@ -319,7 +362,8 @@ internal sealed partial class ShipPanel : Canvas
     {
         var card = MakeCard(bounds, theme);
         bool narrow = bounds.Width < 500;
-        Put(card, Label("05  /  BOARD & COOLING", 9, theme.Accent, true), new(17, 6, bounds.Width-34, 15));
+        Put(card, Label(openFlightDeck ? "Board & cooling" : "05  /  BOARD & COOLING", openFlightDeck ? 13 : 9,
+            openFlightDeck ? theme.Foreground : theme.Accent, true), new(17, 6, bounds.Width-34, 17));
         var fields = new[] { ("SYSTEM", "boardSystem"), ("PCH", "boardPch"), ("VRM MOS", "boardVrm"),
             ("CPU FAN", "cpuFan"), ("CPU OPT", "cpuOptionalFan"), ("PUMP", "boardPump"), ("GPU FAN", "gpuFan") };
         int columns = narrow ? 4 : fields.Length;
@@ -327,7 +371,7 @@ internal sealed partial class ShipPanel : Canvas
         for (int i=0; i<fields.Length; i++)
         {
             double x=17+(i%columns)*width, y=24+(i/columns)*41;
-            if (i%columns>0) Put(card,new Border { Background=theme.Divider, Opacity=.6 },new(x-7,y,1,34));
+            if (!openFlightDeck && i%columns>0) Put(card,new Border { Background=theme.Divider, Opacity=.6 },new(x-7,y,1,34));
             Metric(card,fields[i].Item1,fields[i].Item2,"",new(x,y,width-12,39),theme,narrow ? 18 : 22);
         }
     }
@@ -336,6 +380,7 @@ internal sealed partial class ShipPanel : Canvas
     {
         var card = new Canvas { ClipToBounds = true };
         Put(this, card, bounds);
+        if (openFlightDeck) return card;
         if(theme.RociConsole)
         {
             RociInstrumentPlane(card,bounds,theme);
@@ -352,23 +397,31 @@ internal sealed partial class ShipPanel : Canvas
     }
     private void Metric(Canvas card, string caption, string key, string suffix, Rect bounds, PanelTheme theme, double size)
     {
-        Put(card, Label(caption, 9, theme.Muted), new(bounds.X, bounds.Y, bounds.Width, 15));
+        if (openFlightDeck && caption == caption.ToUpperInvariant())
+            caption = OpenDeckCaption(caption);
+        Put(card, Label(caption, openFlightDeck ? 11 : 9, theme.Muted), new(bounds.X, bounds.Y, bounds.Width, 15));
         Brush ink = key.Contains("Power", StringComparison.OrdinalIgnoreCase) || key == "voltage" ? Brushes.LightSalmon
             : key == "fps" || key == "download" ? Brushes.Aquamarine
             : key is "fpsApplication" or "uptime" ? theme.Foreground : theme.Accent;
         if(theme.ConsoleStyle=="Pella" || theme.RociConsole)ink=theme.Foreground;
+        if (openFlightDeck) ink = key=="fps" ? theme.Accent : theme.Foreground;
         var value = Bind(key, size, ink, suffix);
         if (key == "fps") value.FontWeight=FontWeights.SemiBold;
         value.FontFamily = theme.ConsoleStyle is "Mars" or "Belt" or "Patrol" or "Landing" ? new FontFamily("Consolas") : new FontFamily("Segoe UI");
         if(theme.RociConsole)value.FontFamily=new FontFamily("Consolas");
         if(theme.ConsoleStyle=="Pella")
         {value.FontFamily=new FontFamily("Bahnschrift SemiCondensed");value.FontStyle=FontStyles.Italic;}
+        if (openFlightDeck)
+        {
+            value.FontFamily=OpenDeckText;value.FontStyle=FontStyles.Normal;value.FontWeight=FontWeights.SemiBold;
+            Typography.SetNumeralAlignment(value, FontNumeralAlignment.Tabular);
+        }
         var host = new Viewbox { Child = value, Stretch = Stretch.Uniform, StretchDirection = StretchDirection.DownOnly,
             HorizontalAlignment = HorizontalAlignment.Left };
         Put(card, host, new(bounds.X, bounds.Y + 15, bounds.Width, bounds.Height - 15));
     }
-    private static TextBlock Label(string text, double size, Brush foreground, bool heading = false)
-        => new() { Text = text, FontFamily = new FontFamily(heading ? "Bahnschrift" : "Segoe UI"), FontSize = size,
+    private TextBlock Label(string text, double size, Brush foreground, bool heading = false)
+        => new() { Text = text, FontFamily = openFlightDeck ? OpenDeckText : new FontFamily(heading ? "Bahnschrift" : "Segoe UI"), FontSize = size,
             FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal, Foreground = foreground, TextTrimming = TextTrimming.CharacterEllipsis };
     private TextBlock Bind(string key, double size, Brush foreground, string suffix = "")
     {
@@ -381,7 +434,20 @@ internal sealed partial class ShipPanel : Canvas
     private static void Put(Canvas parent, FrameworkElement element, Rect bounds)
     { element.Width = bounds.Width; element.Height = bounds.Height; SetLeft(element, bounds.X); SetTop(element, bounds.Y); parent.Children.Add(element); }
     public void Feed(double? cpuTemperature, double? gpuTemperature, double? cpuClock, double? gpuClock)
-    { cpuDial.Update(cpuTemperature); gpuDial.Update(gpuTemperature); cpuGraph.Add(cpuClock); gpuGraph.Add(gpuClock); }
+    {
+        if (openFlightDeck)
+        {
+            if (presentationActive && holotable is null)
+            {
+                cpuGraph.Add(cpuTemperature);
+                gpuGraph.Add(gpuTemperature);
+            }
+        }
+        else
+        {
+            cpuDial.Update(cpuTemperature); gpuDial.Update(gpuTemperature); cpuGraph.Add(cpuClock); gpuGraph.Add(gpuClock);
+        }
+    }
     public void SetMotion(bool enabled)
     {
         motion = enabled;
@@ -408,13 +474,17 @@ internal sealed partial class ShipPanel : Canvas
         readoutPulse=pulse; gaugeTransitions=smoothGauges;
         bool monitorActive=presentationActive && holotable is null;
         foreach (var entry in bound) if (entry.Label is HoloReadout reading) reading.SetPulse(pulse && monitorActive);
-        cpuDial.SetPulse(pulse && monitorActive); gpuDial.SetPulse(pulse && monitorActive);
-        cpuDial.SetMotion(smoothGauges && monitorActive); gpuDial.SetMotion(smoothGauges && monitorActive); holotable?.SetReadoutPulse(pulse && presentationActive);
+        if (!openFlightDeck)
+        {
+            cpuDial.SetPulse(pulse && monitorActive); gpuDial.SetPulse(pulse && monitorActive);
+            cpuDial.SetMotion(smoothGauges && monitorActive); gpuDial.SetMotion(smoothGauges && monitorActive);
+        }
+        holotable?.SetReadoutPulse(pulse && presentationActive);
     }
     internal void OpenHolotable()
     {
         if (holotable is not null || activeTheme is null || !HolotableAvailable) return;
-        shipViewport??=new FleetViewport();
+        shipViewport??=new FleetViewport(openFlightDeck);
         shipViewport.SetGraphicsMode(graphicsMode);
         shipViewport.SetShip(FeaturedShipId!);shipMedia?.Children.Remove(shipViewport);
         holotable = new Holotable(activeTheme with { ShipId=FeaturedShipId }, source, readoutPulse, CloseHolotable,shipViewport);
@@ -456,7 +526,7 @@ internal sealed partial class ShipPanel : Canvas
             throw new InvalidOperationException("A flat blueprint theme exposed a holotable.");
         if (bound.Any(entry => entry.Label.Text != source[entry.Key].Text + entry.Suffix))
             throw new InvalidOperationException("The ship console diverged from the sensor presentation.");
-        cpuDial.CheckBindings(); gpuDial.CheckBindings();
+        if (!openFlightDeck) { cpuDial.CheckBindings(); gpuDial.CheckBindings(); }
         if (!readoutPulse && bound.Any(entry => entry.Label is HoloReadout reading && (reading.Opacity!=1 || reading.HasAnimatedProperties)))
             throw new InvalidOperationException("Disabled readout pulse changed number opacity.");
         holotable?.CheckBindings();
@@ -484,15 +554,16 @@ internal sealed partial class ShipPanel : Canvas
     {
         foreach (var size in new[] { (1920, 1080), (1024, 600), (800, 800), (1920, 480), (1920, 462), (480, 800), (480, 1920), (3840, 2160) })
         foreach (var mode in new[] { "Auto", "Classic", "Wide", "Portrait" })
-        foreach (bool pella in new[] {false,true})
         {
-            var plan = Calculate(size.Item1 / (double)size.Item2, mode);
-            if(pella)plan=PellaPlan(plan);
-            var sections = new[] { plan.Sidebar, plan.Cpu, plan.Gpu, plan.Memory, plan.Network, plan.Board, plan.Navigation };
-            var viewport = new Rect(0, 0, plan.Width, plan.Height);
-            if (sections.Any(r => !viewport.Contains(r) || r.Width <= 0 || r.Height <= 0)) throw new InvalidOperationException("A ship-console section left the canvas.");
-            for (int i = 0; i < sections.Length; i++) for (int j = i + 1; j < sections.Length; j++)
-                if (Rect.Intersect(sections[i], sections[j]) is { IsEmpty: false, Width: > 0, Height: > 0 }) throw new InvalidOperationException("Ship-console sections overlap.");
+            var original = Calculate(size.Item1 / (double)size.Item2, mode);
+            foreach (var plan in new[] { original, PellaPlan(original), OpenDeckPlan(original) })
+            {
+                var sections = new[] { plan.Sidebar, plan.Cpu, plan.Gpu, plan.Memory, plan.Network, plan.Board, plan.Navigation };
+                var viewport = new Rect(0, 0, plan.Width, plan.Height);
+                if (sections.Any(r => !viewport.Contains(r) || r.Width <= 0 || r.Height <= 0)) throw new InvalidOperationException("A ship-console section left the canvas.");
+                for (int i = 0; i < sections.Length; i++) for (int j = i + 1; j < sections.Length; j++)
+                    if (Rect.Intersect(sections[i], sections[j]) is { IsEmpty: false, Width: > 0, Height: > 0 }) throw new InvalidOperationException("Ship-console sections overlap.");
+            }
         }
     }
 }

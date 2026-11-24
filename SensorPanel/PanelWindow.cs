@@ -91,6 +91,11 @@ internal sealed partial class PanelWindow : Window
             fit=false; WindowStyle=WindowStyle.SingleBorderWindow; ResizeMode=ResizeMode.CanResize;
             WindowStartupLocation=WindowStartupLocation.CenterScreen; ShowActivated=true; ShowInTaskbar=true;
             Title += " · " + (previewPath is null ? "LIVE monitor" : "Saved UI preview (not live)") + " · development build";
+            if (theme.ShipConsole && ShipPanel.OpenFlightDeckEnabled)
+            {
+                Title += " · Open flight deck";
+                if (previewPath is not null) ShowActivated = false;
+            }
         }
         viewport.Stretch = ScalingStretch(PanelPreferences.Scaling); viewport.Child = board;
         var surface = new Grid(); surface.Children.Add(viewport); Content = surface;
@@ -653,7 +658,8 @@ internal sealed partial class PanelWindow : Window
         text["status"].Text = previewPath is not null ? $"Saved snapshot · {snapshot.CapturedAt.ToLocalTime():HH:mm:ss}"
             : complete ? $"Live · sensor polling {Volatile.Read(ref pollingIntervalMs)} ms" : !snapshot.Elevated ? "Run as administrator for CPU and motherboard sensors" : "Some sensors are unavailable";
         text["status"].ToolTip = string.Join("\n", snapshot.Sources.Select(s => $"{s.Source}: {s.Status}\n{s.Detail}"));
-        if (capturePath is not null && !captured && (previewPath is not null || ++samples >= 3))
+        int captureSamples = theme.ShipConsole && ShipPanel.OpenFlightDeckEnabled ? 60 : 3;
+        if (capturePath is not null && !captured && (previewPath is not null || ++samples >= captureSamples))
         {
             captured = true;
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => Capture(capturePath)));

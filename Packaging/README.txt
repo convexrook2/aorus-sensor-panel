@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.8.20 | Windows x64
+Version 1.8.21 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -45,6 +45,10 @@ selection. Reconnecting restores a previously visible panel without taking
 focus. Hide to tray cancels automatic restoration.
 
 CONTROLS
+Expanse ship themes use the Open Flight Deck. Switch ships from the Ship menu.
+The solar map zooms to the selected ship's destination. Use Reset to return
+to the whole system.
+
 Click the settings gear or right-click the panel. Appearance contains theme
 and rendering preferences. Display contains screen placement, layout and
 scaling. Sensors contains polling and FPS source. App contains startup, help

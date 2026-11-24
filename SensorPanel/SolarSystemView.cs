@@ -21,13 +21,16 @@ internal sealed class SolarSystemView : Grid, IDisposable
     private readonly TextBlock status;
     private readonly Button scaleMode;
     private readonly ComboBox rate;
+    private readonly Button? solTab, ringTab;
+    private SolidColorBrush? deckAccent, deckMuted;
+    private string lastSolTarget = "Sun";
     private bool selecting;
 
     public event Action<string>? BodySelected;
     public string SelectedBodyId => map.SelectedBodyId;
     public bool MotionActive => map.MotionActive;
 
-    public SolarSystemView()
+    public SolarSystemView(bool openDeck = false)
     {
         ClipToBounds = true;
         Background = new SolidColorBrush(Color.FromArgb(232, 3, 12, 21));
@@ -49,8 +52,8 @@ internal sealed class SolarSystemView : Grid, IDisposable
             selector.Items.Add(new ComboBoxItem { Content = body.Label, Tag = body.Id,
                 Padding = new Thickness(8, 5, 8, 5), HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Foreground = Brushes.White, Background = new SolidColorBrush(Color.FromRgb(12, 36, 49)) });
-        Grid.SetColumn(selector, 1); header.Children.Add(selector); Children.Add(header);
-        map = new MapSurface(); Grid.SetRow(map, 1); Children.Add(map);
+        Children.Add(header);
+        map = new MapSurface(openDeck); Grid.SetRow(map, 1); Children.Add(map);
         var footer = new Grid { Margin = new Thickness(10, 1, 10, 6) };
         footer.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
         footer.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
@@ -58,7 +61,28 @@ internal sealed class SolarSystemView : Grid, IDisposable
         footer.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
         status = new TextBlock { Text = "SCHEMATIC · NOT TO SCALE", FontSize = 9, Foreground = MapSurface.FaintInk,
             FontFamily = new FontFamily("Bahnschrift"), TextTrimming = TextTrimming.CharacterEllipsis };
-        footer.Children.Add(status);
+        if (openDeck)
+        {
+            var headingStack = new StackPanel();
+            headingStack.Children.Add(new TextBlock { Text = "Navigation", Foreground = Brushes.LightSlateGray, FontSize = 11 });
+            header.Children.Remove(heading);
+            headingStack.Children.Add(heading); header.Children.Add(headingStack);
+            var views = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Bottom };
+            solTab = MakeDeckTab("Sol"); ringTab = MakeDeckTab("Ring Space");
+            solTab.Click += (_, _) => FocusBody(lastSolTarget);
+            ringTab.Click += (_, _) => FocusBody("Medina");
+            views.Children.Add(solTab); views.Children.Add(ringTab);
+            Grid.SetColumn(views, 1); header.Children.Add(views);
+            var target = new StackPanel { Orientation = Orientation.Horizontal };
+            target.Children.Add(new TextBlock { Text = "Target", Foreground = Brushes.LightSlateGray,
+                VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 10, 0) });
+            target.Children.Add(selector); footer.Children.Add(target);
+        }
+        else
+        {
+            Grid.SetColumn(selector, 1); header.Children.Add(selector);
+            footer.Children.Add(status);
+        }
         scaleMode = new Button { Content = "SCHEMATIC", FontSize = 9, Padding = new Thickness(5, 1, 5, 1),
             Foreground = MapSurface.Ink, Background = Brushes.Transparent, BorderBrush = MapSurface.FaintInk,
             Margin = new Thickness(3, 0, 3, 0), IsEnabled = map.HasEphemeris,
@@ -94,6 +118,62 @@ internal sealed class SolarSystemView : Grid, IDisposable
     public void SetMotion(bool enabled) => map.SetMotion(enabled);
     public void Dispose() { map.Dispose(); Children.Clear(); }
     internal void SetGraphicsMode(ExpanseGraphicsMode mode)=>map.SetGraphicsMode(mode);
+    internal void ApplyOpenDeck(PanelTheme theme)
+    {
+        Background = Brushes.Transparent;
+        heading.Text = "Solar System";
+        heading.FontFamily = new FontFamily("Segoe UI Variable Display, Segoe UI");
+        heading.FontSize = 22;
+        heading.FontWeight = FontWeights.SemiBold;
+        heading.Foreground = theme.Foreground;
+        status.FontFamily = new FontFamily("Segoe UI Variable Text, Segoe UI");
+        status.Foreground = theme.Muted;
+        deckAccent = theme.Accent;
+        deckMuted = theme.Muted;
+        map.ApplyOpenDeck(theme.Accent);
+        foreach (var picker in new[] { selector, rate })
+        {
+            picker.FontFamily = status.FontFamily;
+            picker.Foreground = theme.Foreground;
+            picker.Background = Brushes.Transparent;
+            picker.BorderBrush = theme.Divider;
+            picker.BorderThickness = new Thickness(0, 0, 0, 1);
+            foreach (var item in picker.Items.OfType<ComboBoxItem>())
+            {
+                item.Foreground = theme.Foreground;
+                item.Background = theme.Surface;
+            }
+        }
+        scaleMode.Foreground = theme.Accent;
+        scaleMode.BorderBrush = theme.Divider;
+        SyncDeckTabs();
+    }
+
+    private static Button MakeDeckTab(string label)
+    {
+        var chrome = new FrameworkElementFactory(typeof(Border));
+        chrome.SetValue(Border.BackgroundProperty, Brushes.Transparent);
+        chrome.SetBinding(Border.BorderBrushProperty, new System.Windows.Data.Binding(nameof(Control.BorderBrush))
+            { RelativeSource = System.Windows.Data.RelativeSource.TemplatedParent });
+        chrome.SetValue(Border.BorderThicknessProperty, new Thickness(0, 0, 0, 2));
+        var content = new FrameworkElementFactory(typeof(ContentPresenter));
+        content.SetValue(FrameworkElement.MarginProperty, new Thickness(6, 4, 6, 4));
+        chrome.AppendChild(content);
+        return new Button { Content = label, FontSize = 13, Cursor = Cursors.Hand,
+            Template = new ControlTemplate(typeof(Button)) { VisualTree = chrome } };
+    }
+
+    private void SyncDeckTabs()
+    {
+        if (solTab is null || ringTab is null) return;
+        bool ring = map.SelectedBodyId == "Medina";
+        if (!ring) lastSolTarget = map.SelectedBodyId;
+        solTab.Foreground = ring ? deckMuted : deckAccent;
+        solTab.BorderBrush = ring ? Brushes.Transparent : deckAccent;
+        ringTab.Foreground = ring ? deckAccent : deckMuted;
+        ringTab.BorderBrush = ring ? deckAccent : Brushes.Transparent;
+        heading.Text = ring ? "Ring Space" : "Solar System";
+    }
     internal void SetContext(string context) => heading.ToolTip = context;
     internal void SetTrueScale(bool enabled) { map.SetTrueScale(enabled); SyncStatus(); }
 
@@ -102,6 +182,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
         selecting = true;
         selector.SelectedIndex = Array.FindIndex(MapSurface.Bodies, b => b.Id == map.SelectedBodyId);
         selecting = false;
+        SyncDeckTabs();
         SyncStatus();
     }
     private void SyncStatus()
@@ -113,6 +194,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             : !map.HasEphemeris ? "SCHEMATIC · NASA DATA UNAVAILABLE"
             : (map.TrueScale ? "AU / KM · " : "NOT TO SCALE · ") + map.UtcLabel;
         status.ToolTip = map.DataDescription;
+        if (solTab is not null) AutomationProperties.SetHelpText(scaleMode, status.Text + ". " + map.DataDescription);
     }
 
     internal void Check() => map.Check();
@@ -174,6 +256,14 @@ internal sealed class SolarSystemView : Grid, IDisposable
         private static readonly Pen RingSpaceBorder = Pen(Color.FromArgb(120, 255, 191, 104), .75);
         private static readonly Pen Link = DashedPen();
         private static readonly Typeface Typeface = new("Bahnschrift");
+        private static readonly string[] DeckLabels = ["Sun", "Earth", "Mars", "Jupiter", "Saturn", "SolGate"];
+        private static readonly SolidColorBrush DeckLabelInk = Frozen(Color.FromRgb(232, 239, 248));
+        private static readonly Brush DeckSolarWash = ShipPanel.OpenDeckWash(Color.FromArgb(51, 94, 146, 226), new(.5, .54), .5, .46);
+        private static readonly Brush DeckRingWash = ShipPanel.OpenDeckWash(Color.FromArgb(43, 69, 231, 211), new(.5, .54), .5, .46);
+        private readonly bool openDeck;
+        private Pen deckOrbit = Orbit, deckHighlight = Highlight;
+        private bool DeckOverview => openDeck && !TrueScale && selected == "Sun";
+        private const double DeckOverviewZoom = 1.07;
         private readonly DispatcherTimer timer = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(100) };
         private readonly Stopwatch clock = new();
         // The containing map already clips its children; avoid a second expensive 3D clip.
@@ -197,7 +287,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
         private readonly record struct OrbitView(Size Size,double Yaw,double Tilt,double Zoom,Vector3D Pan,string Selected,bool TrueScale);
         private OrbitView? lastOrbitView;
         private long starPaints,orbitPaints;
-        private readonly Dictionary<string, FormattedText> text = new();
+        private readonly Dictionary<(string Label, double FontSize, Brush Ink), FormattedText> text = new();
         private readonly Dictionary<string,SolidColorBrush> markerInk=Bodies.ToDictionary(b=>b.Id,b=>Frozen(b.Colour));
         private readonly List<(Body Body, Point Point, double Radius)> hitTargets = new();
         private readonly List<(Body Body, Rect Bounds)> labelTargets = new();
@@ -229,8 +319,9 @@ internal sealed class SolarSystemView : Grid, IDisposable
                 + ". Simulation loops within the bundled range; not a live NASA connection. True scale: physical radii, distances and projected trajectories; dots/labels are markers. Fictional stations are illustrative.";
         internal object? CheckEphemeris() => ephemeris?.Check();
 
-        internal MapSurface()
+        internal MapSurface(bool openDeck)
         {
+            this.openDeck = openDeck;
             Focusable = true; ClipToBounds = true; Cursor = Cursors.Hand; IsManipulationEnabled = true; Background = Brushes.Transparent;
             ephemeris = SolarEphemeris.Load(out ephemerisError);
             jd = ephemeris is null ? SolarEphemeris.JulianDate(DateTimeOffset.UtcNow)
@@ -238,7 +329,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             UpdateEphemeris();
             AutomationProperties.SetHelpText(this, "Hover to identify a body. Select it here or from Navigation destination. Drag to rotate, wheel to zoom, Home to reset.");
             var random = new Random(1977);
-            stars = Enumerable.Range(0, 70).Select(_ => (new Point(random.NextDouble(), random.NextDouble()),
+            stars = Enumerable.Range(0, openDeck ? 150 : 70).Select(_ => (new Point(random.NextDouble(), random.NextDouble()),
                 .35 + random.NextDouble() * .65, .10 + random.NextDouble() * .23)).ToArray();
             scene.Children.Add(new AmbientLight(Color.FromRgb(35, 40, 51)));
             scene.Children.Add(sunlight);
@@ -319,6 +410,14 @@ internal sealed class SolarSystemView : Grid, IDisposable
         {
             if (e.PropertyName == nameof(SystemParameters.ClientAreaAnimation)) UpdateTimer();
         }
+        internal void ApplyOpenDeck(SolidColorBrush accent)
+        {
+            var color = accent.Color;
+            deckOrbit = Pen(Color.FromArgb(0x44, color.R, color.G, color.B), .9);
+            deckHighlight = Pen(color, 1.1);
+            text.Clear();
+            orbitLayer.InvalidateVisual(); overlay.InvalidateVisual();
+        }
         internal void SetMotion(bool enabled) { motion = enabled; UpdateTimer(); }
         internal void SetTimeRate(double seconds) { timeRate = seconds; UpdateTimer();StatusChanged?.Invoke(); }
         internal void SetTrueScale(bool enabled)
@@ -381,7 +480,8 @@ internal sealed class SolarSystemView : Grid, IDisposable
         private void SnapCamera()
         {
             moving = false; zoom = targetZoom;
-            var p = Position(Bodies.First(b => b.Id == selected)); targetPan = -(Vector3D)p; pan = targetPan;
+            targetPan = DeckOverview ? new Vector3D() : -(Vector3D)Position(Bodies.First(b => b.Id == selected));
+            pan = targetPan;
         }
         private void Tick(object? sender, EventArgs e)
         {
@@ -397,7 +497,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             }
             frames++;
             if (time - statusTime > .5) { statusTime = time; StatusChanged?.Invoke(); }
-            if (selected != "Sun")
+            if (selected != "Sun" && !DeckOverview)
             {
                 var focused = Position(Bodies.First(b => b.Id == selected));
                 targetPan = -(Vector3D)focused;
@@ -420,9 +520,10 @@ internal sealed class SolarSystemView : Grid, IDisposable
             var body = Bodies.FirstOrDefault(b => b.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
             if (body is null) throw new ArgumentException("Unknown solar-system body.", nameof(id));
             selected = body.Id;
+            if (openDeck) Background = selected == "Medina" ? DeckRingWash : DeckSolarWash;
             if (body.Id == "Sun") { yaw = -.24; tilt = .35; }
-            if(body.Id=="SolGate"){yaw=Math.PI/2-body.Angle;tilt=.35;}
-            targetZoom = body.Id == "Sun" ? 1 : body.Id == "Medina" ? 2.2 : body.Parent is not null ? 4.8 : body.Planet ? 3.3 : 3.8;
+            if(body.Id=="SolGate"&&!DeckOverview){yaw=Math.PI/2-body.Angle;tilt=.35;}
+            targetZoom = DeckOverview ? DeckOverviewZoom : body.Id == "Sun" ? 1 : body.Id == "Medina" ? 2.2 : body.Parent is not null ? 4.8 : body.Planet ? 3.3 : 3.8;
             if (TrueScale && !body.Station && body.Id != "Sun")
             {
                 double extent = ephemeris!.RadiusKm(body.Id) / SolarEphemeris.AuKm * 8;
@@ -434,7 +535,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             }
             if(TrueScale&&body.Id=="SolGate")
                 targetZoom=Math.Clamp(Math.Min(ActualWidth,ActualHeight)*.32/(500/SolarEphemeris.AuKm*1.15/32*Scale),.65,1e8);
-            var p = Position(body); targetPan = -(Vector3D)p;
+            targetPan = DeckOverview ? new Vector3D() : -(Vector3D)Position(body);
             moving = animate && motion && SystemParameters.ClientAreaAnimation;
             if (!moving) SnapCamera();
             UpdateCadence();
@@ -474,15 +575,18 @@ internal sealed class SolarSystemView : Grid, IDisposable
             }
             return point;
         }
-        private double Flatten => Math.Clamp(ActualHeight / Math.Max(1, ActualWidth) * .92, .20, .49);
+        private double Flatten => DeckOverview
+            ? Math.Clamp(ActualHeight / Math.Max(1, ActualWidth) * .84, .06, .49)
+            : Math.Clamp(ActualHeight / Math.Max(1, ActualWidth) * .92, .20, .49);
         private double ProjectionTilt => Math.Clamp(Flatten * tilt / .35, .02, .98);
-        private double Scale => Math.Max(1, Math.Min(ActualWidth / 2.95, ActualHeight / (2.8 * Flatten + .18)));
+        private double Scale => DeckOverview ? Math.Max(1, ActualWidth * .405 / (1.10 * DeckOverviewZoom))
+            : Math.Max(1, Math.Min(ActualWidth / 2.95, ActualHeight / (2.8 * Flatten + .18)));
         private Point Project(Point3D p)
         {
             var x = p.X + pan.X; var y = p.Y + pan.Y;
             var c = Math.Cos(yaw); var s = Math.Sin(yaw);
-            return new Point(ActualWidth * .47 + (x * c - y * s) * Scale * zoom,
-                ActualHeight * .49 + ((x * s + y * c) * ProjectionTilt
+            return new Point(ActualWidth * (DeckOverview ? .50 : .47) + (x * c - y * s) * Scale * zoom,
+                ActualHeight * (DeckOverview ? .54 : .49) + ((x * s + y * c) * ProjectionTilt
                     - (p.Z + pan.Z) * Math.Sqrt(1 - ProjectionTilt * ProjectionTilt)) * Scale * zoom);
         }
         private double Depth(Point3D p) => ((p.X + pan.X) * Math.Sin(yaw) + (p.Y + pan.Y) * Math.Cos(yaw))
@@ -493,9 +597,9 @@ internal sealed class SolarSystemView : Grid, IDisposable
             if (TrueScale && !body.Station) return ephemeris!.RadiusKm(body.Id) / SolarEphemeris.AuKm / 32 * Scale * zoom;
             // Fictional 1,000 km diameter is illustrative, but uses the same conversion.
             if(TrueScale&&body.Id=="SolGate")return 500/SolarEphemeris.AuKm/32*Scale*zoom;
-            if(body.Id=="SolGate"&&body.Id==selected)return Math.Clamp(Math.Min(ActualWidth,ActualHeight)*.20,28,130);
+            if(body.Id=="SolGate"&&body.Id==selected&&!DeckOverview)return Math.Clamp(Math.Min(ActualWidth,ActualHeight)*.20,28,130);
             double radius = Math.Clamp(body.Size * Math.Pow(zoom, .55), 2, 29);
-            if (body.Id == selected && body.Id != "Sun") radius = Math.Max(radius, Math.Min(32, Math.Min(ActualWidth, ActualHeight) * .16));
+            if (body.Id == selected && body.Id != "Sun" && !DeckOverview) radius = Math.Max(radius, Math.Min(32, Math.Min(ActualWidth, ActualHeight) * .16));
             if (body.Parent is not null && body.Id != selected && body.Parent != selected && zoom < 1.8) radius = Math.Min(radius, 2.5);
             return radius;
         }
@@ -525,7 +629,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             if (ActualWidth < 2 || ActualHeight < 2 || overlay is null) return;
             sceneUpdates++;
             camera.Width = ActualWidth;
-            double skyOpacity=SolarSky.Opacity(zoom);
+            double skyOpacity=openDeck ? 0 : SolarSky.Opacity(zoom);
             if(skyOpacity>0&&galaxy.Source is null)galaxy.Source=SolarSky.Panorama;
             if(galaxy.Opacity!=skyOpacity)galaxy.Opacity=skyOpacity;
             var sun = Project(new()); sunlight.Position = new(sun.X - ActualWidth / 2, ActualHeight / 2 - sun.Y, Depth(new()));
@@ -536,7 +640,8 @@ internal sealed class SolarSystemView : Grid, IDisposable
                 if (body.Id == "Medina") { var area = MedinaArea(p); p = new(area.Left + 28, area.Top + 28); radius = 20; }
                 var matrix = Matrix3D.Identity;
                 double extent = radius * modelExtents[body.Id];
-                bool visible = IntersectsView(p, extent) && (body.Id=="SolGate"?radius>=8:!TrueScale || body.Station || radius >= 1);
+                bool visible = !(DeckOverview && body.Id == "Medina") && IntersectsView(p, extent)
+                    && (body.Id=="SolGate"?radius>=8:!TrueScale || body.Station || radius >= 1);
                 if (!visible)
                 {
                     // A zero-scale model still costs scene traversal. Detach it until its mesh is visible again.
@@ -601,15 +706,22 @@ internal sealed class SolarSystemView : Grid, IDisposable
             hitTargets.Clear(); labelBounds.Clear(); labelTargets.Clear();
             foreach (var body in Bodies.OrderBy(b => Project(Position(b)).Y))
             {
+                if (DeckOverview && body.Id == "Medina") continue;
                 var p = Project(Position(body)); var radius = BodyRadius(body);
                 hitTargets.Add((body, p, Math.Max(body.Id=="SolGate"?5:2, body.Id == "Saturn" ? radius * 2.41 : radius)));
                 if (p.X < -100 || p.Y < -70 || p.X > ActualWidth + 100 || p.Y > ActualHeight + 70) continue;
                 DrawBody(dc, body, p, radius);
             }
-            // The destination list carries the selection name; the map identifies only the body under the pointer.
-            if (hoverPoint is { } pointer && drag is null && HitBody(pointer, 3) is { } hit)
+            if (DeckOverview)
+            {
+                foreach (var target in hitTargets.Where(h => h.Body.Id == selected || DeckLabels.Contains(h.Body.Id))
+                    .OrderByDescending(h => h.Body.Id == selected))
+                    DrawLabel(dc, target.Body, target.Point, BodyRadius(target.Body));
+            }
+            if (hoverPoint is { } pointer && drag is null && HitBody(pointer, 3) is { } hit
+                && (!DeckOverview || hit.Body.Id != selected && !DeckLabels.Contains(hit.Body.Id)))
                 DrawLabel(dc, hit.Body, hit.Point, hit.Radius);
-            DrawDirectionMarker(dc);
+            if (!DeckOverview) DrawDirectionMarker(dc);
         }
         private void PaintOrbits(DrawingContext dc)
         {
@@ -617,9 +729,10 @@ internal sealed class SolarSystemView : Grid, IDisposable
             else
             {
                 foreach (var body in Bodies.Where(b => b.Parent is not null && (b.Id == selected || b.Parent == selected)))
-                    DrawOrbit(dc, OrbitRadius(body), Orbit, Position(Bodies.First(b => b.Id == body.Parent)));
+                    DrawOrbit(dc, OrbitRadius(body), openDeck ? deckOrbit : Orbit, Position(Bodies.First(b => b.Id == body.Parent)));
             }
             DrawLighting(dc);
+            if (DeckOverview) return;
             var ring = Project(Position(Bodies.First(b => b.Id == "SolGate")));
             var medina = Project(Position(Bodies.First(b => b.Id == "Medina")));
             var inset = MedinaArea(medina);
@@ -777,9 +890,12 @@ internal sealed class SolarSystemView : Grid, IDisposable
             }
             if (active && body.Id!="SolGate" && r < Math.Max(ActualWidth, ActualHeight) * 2)
             {
-                dc.DrawEllipse(null, Highlight, p, r + 6, r + 6);
-                dc.DrawLine(Highlight, new Point(p.X - r - 12, p.Y), new Point(p.X - r - 4, p.Y));
-                dc.DrawLine(Highlight, new Point(p.X + r + 4, p.Y), new Point(p.X + r + 12, p.Y));
+                dc.DrawEllipse(null, openDeck ? deckHighlight : Highlight, p, r + 6, r + 6);
+                if (!DeckOverview)
+                {
+                    dc.DrawLine(Highlight, new Point(p.X - r - 12, p.Y), new Point(p.X - r - 4, p.Y));
+                    dc.DrawLine(Highlight, new Point(p.X + r + 4, p.Y), new Point(p.X + r + 12, p.Y));
+                }
             }
             if (TrueScale && !body.Station && r < 1.5) dc.DrawEllipse(body.Id=="Sun"?SunWhite:markerInk[body.Id], null, p,body.Id=="Sun"?2.5:1.8,body.Id=="Sun"?2.5:1.8);
             if (body.Id == "SolGate")
@@ -796,8 +912,10 @@ internal sealed class SolarSystemView : Grid, IDisposable
 
         private void DrawLabel(DrawingContext dc, Body body, Point p, double radius)
         {
-            var label = body.Id == "Tycho" ? "TYCHO · MOBILE" : body.Label.ToUpperInvariant();
-            var formatted = GetText(label, ActualWidth < 420 ? 9 : 11, Ink);
+            var label = DeckOverview ? (body.Id == "Sun" ? "Sun" : body.Label)
+                : body.Id == "Tycho" ? "TYCHO · MOBILE" : body.Label.ToUpperInvariant();
+            var ink = DeckOverview ? body.Id == selected ? deckHighlight.Brush : DeckLabelInk : Ink;
+            var formatted = GetText(label, ActualWidth < 420 ? 9 : 11, ink);
             var labelWidth = formatted.Width + 8; var labelHeight = formatted.Height + 3;
             foreach (var side in new[] { 1, -1, 2, -2 })
             {
@@ -811,9 +929,9 @@ internal sealed class SolarSystemView : Grid, IDisposable
                 if (labelBounds.Any(r => r.IntersectsWith(rect))) continue;
                 if (hitTargets.Any(h => h.Body.Id != body.Id
                     && new Rect(h.Point.X - h.Radius, h.Point.Y - h.Radius, h.Radius * 2, h.Radius * 2).IntersectsWith(rect))) continue;
-                dc.DrawRoundedRectangle(LabelBackground, null, rect, 2, 2);
+                if (!DeckOverview) dc.DrawRoundedRectangle(LabelBackground, null, rect, 2, 2);
                 dc.DrawText(formatted, new Point(x + 4, y + 1));
-                dc.DrawLine(Leader, p, new Point(Math.Clamp(p.X, rect.Left, rect.Right), Math.Clamp(p.Y, rect.Top, rect.Bottom)));
+                if (!DeckOverview) dc.DrawLine(Leader, p, new Point(Math.Clamp(p.X, rect.Left, rect.Right), Math.Clamp(p.Y, rect.Top, rect.Bottom)));
                 labelBounds.Add(rect); labelTargets.Add((body, rect)); return;
             }
         }
@@ -827,7 +945,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
         }
         private FormattedText GetText(string value, double size, Brush ink)
         {
-            var key = value + "|" + size.ToString(CultureInfo.InvariantCulture) + "|" + (ReferenceEquals(ink, Ink) ? "I" : ReferenceEquals(ink, Amber) ? "A" : "F");
+            var key = (value, size, ink);
             if (text.TryGetValue(key, out var cached)) return cached;
             var result = new FormattedText(value, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                 Typeface, size, ink, VisualTreeHelper.GetDpi(this).PixelsPerDip);
@@ -1109,7 +1227,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
                 {
                     owner.orbitPaints++;
                     if(!owner.TrueScale)foreach(var body in Bodies.Where(b=>b.Planet))
-                        owner.DrawOrbit(dc,body.Radius,body.Id==owner.selected?OrbitBright:Orbit);
+                        owner.DrawOrbit(dc,body.Radius,owner.openDeck ? owner.deckOrbit : body.Id==owner.selected?OrbitBright:Orbit);
                 }
             }
         }

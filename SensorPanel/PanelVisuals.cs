@@ -101,7 +101,21 @@ internal sealed class HistoryGraph : FrameworkElement
 {
     private readonly Queue<double?> history = new();
     private PanelTheme theme = PanelTheme.Resolve("Classic");
-    public void ApplyTheme(PanelTheme value) { theme = value; InvalidateVisual(); }
+    private Brush? areaFill;
+    public void ApplyTheme(PanelTheme value, bool fillArea = false)
+    {
+        theme = value;
+        areaFill = null;
+        if (fillArea)
+        {
+            var accent = theme.Accent.Color;
+            var gradient = new LinearGradientBrush(Color.FromArgb(0x45, accent.R, accent.G, accent.B),
+                Color.FromArgb(0, accent.R, accent.G, accent.B), new Point(.5, 0), new Point(.5, 1));
+            gradient.Freeze();
+            areaFill = gradient;
+        }
+        InvalidateVisual();
+    }
     public void Add(double? value)
     {
         history.Enqueue(value);
@@ -111,16 +125,44 @@ internal sealed class HistoryGraph : FrameworkElement
     protected override void OnRender(DrawingContext drawing)
     {
         base.OnRender(drawing);
-        drawing.DrawRectangle(theme.GraphBackground, null, new Rect(0, 0, ActualWidth, ActualHeight));
+        var bounds = new Rect(0, 0, ActualWidth, ActualHeight);
+        drawing.DrawRectangle(theme.GraphBackground, null, bounds);
         var points = history.ToArray();
         double max = Math.Max(1, points.Where(x => x.HasValue).Select(x => x!.Value).DefaultIfEmpty(1).Max() * 1.15);
+        Point PlotPoint(int index) => new(ActualWidth * (60 - points.Length + index) / 59.0,
+            ActualHeight - 3 - Math.Clamp(points[index]!.Value / max, 0, 1) * (ActualHeight - 6));
+        if (areaFill is not null && points.Length > 1)
+        {
+            var area = new StreamGeometry();
+            using (var path = area.Open())
+            {
+                int start = 0;
+                while (start < points.Length)
+                {
+                    if (!points[start].HasValue) { start++; continue; }
+                    int end = start + 1;
+                    while (end < points.Length && points[end].HasValue) end++;
+                    if (end - start > 1)
+                    {
+                        Point first = PlotPoint(start);
+                        path.BeginFigure(new Point(first.X, bounds.Bottom), true, true);
+                        for (int i = start; i < end; i++) path.LineTo(PlotPoint(i), false, false);
+                        path.LineTo(new Point(PlotPoint(end - 1).X, bounds.Bottom), false, false);
+                    }
+                    start = end;
+                }
+            }
+            area.Freeze();
+            drawing.PushClip(area);
+            drawing.DrawRectangle(areaFill, null, bounds);
+            drawing.Pop();
+        }
         var pen = new Pen(theme.Accent, 1.5);
         Point? previous = null;
         for (int i = 0; i < points.Length; i++)
         {
             if (!points[i].HasValue) { previous = null; continue; }
-            var point = new Point(ActualWidth * (60 - points.Length + i) / 59.0,
-                ActualHeight - 3 - Math.Clamp(points[i]!.Value / max, 0, 1) * (ActualHeight - 6));
+            var point = PlotPoint(i);
             if (previous.HasValue)
             {
                 if (theme.Detailed)
