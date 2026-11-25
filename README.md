@@ -241,9 +241,10 @@ artwork are removed. See [Pella console](docs/PELLA-CONSOLE.md).
 Open Flight Deck is the Expanse ship layout. It puts a theme-coloured halo behind
 the native ship viewer and shades the live CPU and GPU temperature traces in the
 ship's colours. Switching ships zooms the solar map to the ship's destination.
-The Ring Space tab opens a separate gate map with the alien Ring Station, Medina,
-and the Sol and Ilus gates. Select a landmark to inspect it. Reset returns to the
-overview of the current scene. A live `--capture` of an Expanse
+The Ring Space tab opens just inside the Sol gate, with the Ring Station at the
+center and the gates on the surrounding shell. Drag to orbit, scroll to zoom,
+or select a destination to fly there. Reset returns to the arrival view.
+A live `--capture` of an Expanse
 theme waits for 60 readings so the temperature history is visible.
 
 The [ship reference library](docs/references/README.md) keeps credits and source

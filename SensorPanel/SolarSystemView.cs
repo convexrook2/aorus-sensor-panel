@@ -28,12 +28,12 @@ internal sealed class SolarSystemView : Grid, IDisposable
     private RingSpaceView? ringView;
     private string? ringTarget;
     private string lastSolTarget = "Sun";
-    private bool selecting, showingRingTargets;
+    private bool selecting, showingRingTargets, motion = true;
 
     public event Action<string>? BodySelected;
     public string SelectedBodyId => ringTarget ?? map.SelectedBodyId;
     internal bool IsInRingSpace => ringTarget is not null;
-    public bool MotionActive => map.MotionActive;
+    public bool MotionActive => IsInRingSpace ? ringView?.MotionActive == true : map.MotionActive;
 
     public SolarSystemView(bool openDeck = false)
     {
@@ -126,18 +126,20 @@ internal sealed class SolarSystemView : Grid, IDisposable
     {
         if (ringTab is not null && RingSpaceView.Contains(id))
         {
+            bool alreadyInRingSpace = IsInRingSpace;
             if (ringView is null)
             {
                 ringView = new RingSpaceView();
+                ringView.SetMotion(motion);
                 ringView.Selected += target => FocusBody(target);
                 Grid.SetRow(ringView, 1);
                 Children.Add(ringView);
-                if (deckAccent is not null && deckMuted is not null) ringView.ApplyTheme(deckAccent, deckMuted);
+                if (deckAccent is not null) ringView.ApplyTheme(deckAccent);
             }
             ringTarget = id;
             map.Visibility = Visibility.Collapsed;
             ringView.Visibility = Visibility.Visible;
-            ringView.FocusTarget(id);
+            ringView.FocusTarget(id, animate && alreadyInRingSpace);
             SyncSelection(); BodySelected?.Invoke(id);
             return;
         }
@@ -147,8 +149,13 @@ internal sealed class SolarSystemView : Grid, IDisposable
         map.Visibility = Visibility.Visible;
         map.FocusBody(id, animate);
     }
-    public void SetMotion(bool enabled) => map.SetMotion(enabled);
-    public void Dispose() { map.Dispose(); Children.Clear(); }
+    public void SetMotion(bool enabled)
+    {
+        motion = enabled;
+        map.SetMotion(enabled);
+        ringView?.SetMotion(enabled);
+    }
+    public void Dispose() { ringView?.SetMotion(false); map.Dispose(); Children.Clear(); }
     internal void SetGraphicsMode(ExpanseGraphicsMode mode)=>map.SetGraphicsMode(mode);
     internal void ApplyOpenDeck(PanelTheme theme)
     {
@@ -165,7 +172,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
         deckMuted = theme.Muted;
         deckSurface = theme.Surface;
         map.ApplyOpenDeck(theme.Accent);
-        ringView?.ApplyTheme(theme.Accent, theme.Muted);
+        ringView?.ApplyTheme(theme.Accent);
         foreach (var picker in new[] { selector, rate })
         {
             picker.FontFamily = status.FontFamily;

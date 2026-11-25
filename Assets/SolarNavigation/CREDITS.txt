@@ -51,5 +51,12 @@ Uranus); its direction is illustrative. Medina, the former Nauvoo/Behemoth,
 is in the separate labelled Ring Space inset, distinct from the alien central
 Ring Station. The dashed portal link is a navigation relationship, not a distance.
 
+Open Flight Deck's Ring Space uses an original procedural shell and gate
+layout. Its parked Medina image, textures/medina-parked.png, is an X890
+Fleet renderer capture of the accepted Medina V4 asset with 20 source lights
+on, zero visible plumes and a transparent background.
+Model SHA-256: 770578ca43f2f8cf72690578b2d595dfb2fe510b505984ac5acfd64003587b6d
+Image SHA-256: e496d0615302068fc4f1a21853ceb4ee2c18c4181b18328d2e3a1c8a3820920a
+
 The Expanse is by James S. A. Corey; the TV series is produced by Alcon.
 Unofficial fan-made presentation; no endorsement is claimed.

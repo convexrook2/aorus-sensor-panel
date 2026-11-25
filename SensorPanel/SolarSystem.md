@@ -93,18 +93,23 @@ Tycho is shown as a mobile Belt station. The stationary Sol gate marker sits
 outside Uranus and inside Neptune, corresponding to roughly 2 AU beyond Uranus;
 its direction is illustrative. In true scale it is fixed at two AU beyond
 Uranus' distance at the dataset's start epoch; it never follows the planet or
-simulation clock. In Open Flight Deck, Ring Space has its own schematic view.
-It shows representative gate apertures on a projected boundary and separates
-Medina from the alien control station at the centre. The target menu and map
-labels focus the station, Medina, the Sol gate or the Ilus gate. Select the local
+simulation clock. In Open Flight Deck, Ring Space opens just inside the Sol gate
+and looks across the spherical chamber toward the central Ring Station. Gate
+circles sit on the shell in every direction. Drag to orbit, scroll to zoom, or
+choose a label or target to fly to the Ring Station, Medina, the Sol gate or the
+Ilus gate. **Reset** returns to the arrival view. Select the local
 Sol gate and use **View in Sol** to focus its other side. The **Sol** tab returns
 to the previous solar destination. Switching to Medina or Tynan opens their
 associated Ring Space destination. Gate positions and marker sizes are illustrative.
 
 The central station is an original native 3D interpretation with separate relief
-panels and emissive traces. The inspection view uses the accepted Sol Ring model,
-a representative Ilus gate, and the prepared Medina V4 portrait. The Ring Space
-scene renders on interaction and pauses the solar view while it is covered. See
+panels and emissive traces. The scene uses the accepted Sol Ring model,
+a representative Ilus gate, and a transparent render of the accepted Medina V4
+near the Sol gate. Parked Medina retains its 20 source lights with the drives
+off. The shell uses a procedural teal haze based on Season 3 exterior frames.
+A thin layer of wisps drifts while Ring Space is visible and map motion is
+enabled. The camera settles after each interaction and the solar view pauses
+while covered. See [the Season 3 Ring Space frames](https://expanse.fandom.com/wiki/Slow_zone_(TV)#Media),
 [the TV episode recap](https://www.syfy.com/the-expanse/season-3/blogs/episode-recap-dandelion-sky),
 [the Ring Space production artist](https://slesaint.artstation.com/projects/DA8BXy),
 and [Green Ronin's licensed setting notes](https://greenronin.com/blog/2021/12/07/beyond-the-ring/).

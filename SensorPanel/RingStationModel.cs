@@ -3,8 +3,7 @@ using System.Windows.Media.Media3D;
 
 namespace SensorPanel;
 
-// Original low-cost inspection model. The gate chart uses exaggerated markers;
-// the geometry here is an illustrative model of the alien control station.
+// Original low-cost model of the alien control station and a representative gate.
 internal static class RingStationModel
 {
     internal static Model3DGroup Build()
