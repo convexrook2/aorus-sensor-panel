@@ -93,15 +93,24 @@ Tycho is shown as a mobile Belt station. The stationary Sol gate marker sits
 outside Uranus and inside Neptune, corresponding to roughly 2 AU beyond Uranus;
 its direction is illustrative. In true scale it is fixed at two AU beyond
 Uranus' distance at the dataset's start epoch; it never follows the planet or
-simulation clock. Medina retains the separate labelled Ring Space
-inset and the dashed portal link when both endpoints are in a system view.
-The inset stays within compact system views; the symbolic link is omitted in
-physical close views. It is the Nauvoo/Behemoth hull, distinct
-from the alien central Ring Station. An inset location is not a heliocentric
-coordinate; the dashed link does not represent a physical distance.
+simulation clock. In Open Flight Deck, Ring Space has its own schematic view.
+It shows representative gate apertures on a projected boundary and separates
+Medina from the alien control station at the centre. The target menu and map
+labels focus the station, Medina, the Sol gate or the Ilus gate. Select the local
+Sol gate and use **View in Sol** to focus its other side. The **Sol** tab returns
+to the previous solar destination. Switching to Medina or Tynan opens their
+associated Ring Space destination. Gate positions and marker sizes are illustrative.
 
-Tycho and Medina reuse the original panel detail geometry from
-`NavigationWeb/src/models.ts`; an offline exporter retains their faces and colours.
+The central station is an original native 3D interpretation with separate relief
+panels and emissive traces. The inspection view uses the accepted Sol Ring model,
+a representative Ilus gate, and the prepared Medina V4 portrait. The Ring Space
+scene renders on interaction and pauses the solar view while it is covered. See
+[the TV episode recap](https://www.syfy.com/the-expanse/season-3/blogs/episode-recap-dandelion-sky),
+[the Ring Space production artist](https://slesaint.artstation.com/projects/DA8BXy),
+and [Green Ronin's licensed setting notes](https://greenronin.com/blog/2021/12/07/beyond-the-ring/).
+
+Tycho and the legacy Medina inset reuse panel detail geometry from
+`NavigationWeb/src/models.ts`. An offline exporter retains their faces and colours.
 The earlier exported gate mesh remains preserved for reference. The active map now
 loads the accepted Sol Ring v3 source from `FleetViewer/models/SolRing.glb.gz`
 only when its projected radius reaches eight pixels. It retains all 282,272

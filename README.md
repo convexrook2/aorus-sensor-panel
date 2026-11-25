@@ -241,7 +241,9 @@ artwork are removed. See [Pella console](docs/PELLA-CONSOLE.md).
 Open Flight Deck is the Expanse ship layout. It puts a theme-coloured halo behind
 the native ship viewer and shades the live CPU and GPU temperature traces in the
 ship's colours. Switching ships zooms the solar map to the ship's destination.
-Use Reset on the map for the whole-system view. A live `--capture` of an Expanse
+The Ring Space tab opens a separate gate map with the alien Ring Station, Medina,
+and the Sol and Ilus gates. Select a landmark to inspect it. Reset returns to the
+overview of the current scene. A live `--capture` of an Expanse
 theme waits for 60 readings so the temperature history is visible.
 
 The [ship reference library](docs/references/README.md) keeps credits and source
@@ -334,8 +336,9 @@ before drawing. Efficient camera movement follows rendering at up to 60 updates/
 Efficient idle orbital animation requests 10 updates/second; Full Fidelity follows
 native composition frames. Both pause when hidden or disabled.
 Tycho's mobile Belt position is approximate; the fixed Sol gate is shown
-outside Uranus. Medina retains its separate Ring Space inset, distinct from
-the alien central station. See [navigation scope and credits](SensorPanel/SolarSystem.md).
+outside Uranus. In Open Flight Deck, Medina appears in the Ring Space view
+alongside the alien central station and the Sol and Ilus gates. See
+[navigation scope and credits](SensorPanel/SolarSystem.md).
 
 All 22 ship/gate themes use one full-quality shared ship viewport. Automatic
 rotation retains elapsed-time speed and normal native capture cadence, with a

@@ -183,6 +183,7 @@ internal static class SolarBodyAssets
     internal static object Check()
     {
         Load("SolGate");
+        Load("Medina"); // The legacy inset still owns this asset even when the deck uses the V4 portrait.
         foreach (var model in cache.Values)
             if (!model.IsFrozen || model.Children.OfType<GeometryModel3D>().Any(p => p.Geometry is not MeshGeometry3D m || !m.IsFrozen || m.Positions.Count > 20000 || m.TriangleIndices.Count > 60000))
                 throw new InvalidOperationException("A solar asset exceeds the native render budget.");

@@ -1115,10 +1115,10 @@ internal sealed partial class PanelWindow : Window
                 view.FocusBody(body, false); await Task.Delay(700); UpdateLayout();
                 var state = view.Diagnose();
                 if (state.GetProperty("selected").GetString() != body) throw new InvalidOperationException("Native diagram focus diverged for " + body);
-                if (body == "Medina" && state.GetProperty("scene").GetString() != "RingSpaceInset")
-                    throw new InvalidOperationException("Medina lost its separate Ring Space inset.");
+                if (body == "Medina" && state.GetProperty("scene").GetString() != (ShipPanel.OpenFlightDeckEnabled ? "RingSpace" : "RingSpaceInset"))
+                    throw new InvalidOperationException("Medina lost its separate Ring Space view.");
                 if (!state.GetProperty("schematic").GetBoolean() || state.GetProperty("toScale").GetBoolean()
-                    || !state.GetProperty("gateOutsideUranusInsideNeptune").GetBoolean())
+                    || !view.IsInRingSpace && !state.GetProperty("gateOutsideUranusInsideNeptune").GetBoolean())
                     throw new InvalidOperationException("Schematic scale or landmark geography is misrepresented.");
                 if (state.GetProperty("labelOverlaps").GetInt32() != 0) throw new InvalidOperationException("Native diagram labels overlap.");
                 SaveVisual((Visual)Content, ActualWidth, ActualHeight, Path.Combine(output, body.ToLowerInvariant() + "-panel.png"));
@@ -1138,6 +1138,16 @@ internal sealed partial class PanelWindow : Window
             {
                 view.FocusBody(body, false); await Task.Delay(400); UpdateLayout();
                 var state = view.Diagnose();
+                if (view.IsInRingSpace)
+                {
+                    if (state.GetProperty("toScale").GetBoolean() || state.GetProperty("renderActive").GetBoolean()
+                        || !state.GetProperty("hasMedinaPortrait").GetBoolean())
+                        throw new InvalidOperationException("Sol true scale or motion leaked into Ring Space.");
+                    SaveVisual(view, view.ActualWidth, view.ActualHeight, Path.Combine(output, "medina-ring-space.png"));
+                    captures.Add(new { Body = body, State = state });
+                    view.FocusBody("Sun", false);
+                    continue;
+                }
                 if (!state.GetProperty("toScale").GetBoolean() || state.GetProperty("schematic").GetBoolean()
                     || !state.GetProperty("nasaDataAvailable").GetBoolean() || state.GetProperty("labelOverlaps").GetInt32() != 0)
                     throw new InvalidOperationException("True-scale native projection failed: " + body);
@@ -1198,7 +1208,7 @@ internal sealed partial class PanelWindow : Window
                 HolotablePortraitAccessChecked = true, HolotableShips = holotableShips,
                 SchematicAndTrueScaleModes = true, NasaVectorUnitsAndMoonParentsChecked = true, MoonMotionAdvanced = true,
                 OffscreenAndSubpixelMeshesDetached = true, PhysicalTrailsClippedBeforeDrawing = true,
-                EarthNightLights = true, SolarPointLightAndCorona = true, GateOutsideUranus = true, MedinaInSeparateRingSpaceInset = true,
+                EarthNightLights = true, SolarPointLightAndCorona = true, GateOutsideUranus = true, MedinaInSeparateRingSpace = true,
                 JupiterFrontTransitAndBackOccultationChecked = true, JupiterMoonPasses = moonPasses,
                 MotionDisabledStopsAnimation = true, HiddenAnimationStops = true, SensorValuesPreserved = true, MaximaPreserved = true,
                 Assets = assetChecks, RenderedFramesIn2300ms = rendered, Captures = captures

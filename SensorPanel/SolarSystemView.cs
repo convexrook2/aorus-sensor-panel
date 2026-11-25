@@ -19,15 +19,20 @@ internal sealed class SolarSystemView : Grid, IDisposable
     private readonly TextBlock heading;
     private readonly ComboBox selector;
     private readonly TextBlock status;
+    private readonly TextBlock ringScaleNote = new() { Text = "Not to scale", FontSize = 10, Margin = new Thickness(4, 0, 9, 0),
+        VerticalAlignment = VerticalAlignment.Center, Visibility = Visibility.Collapsed };
     private readonly Button scaleMode;
     private readonly ComboBox rate;
     private readonly Button? solTab, ringTab;
-    private SolidColorBrush? deckAccent, deckMuted;
+    private SolidColorBrush? deckAccent, deckMuted, deckSurface;
+    private RingSpaceView? ringView;
+    private string? ringTarget;
     private string lastSolTarget = "Sun";
-    private bool selecting;
+    private bool selecting, showingRingTargets;
 
     public event Action<string>? BodySelected;
-    public string SelectedBodyId => map.SelectedBodyId;
+    public string SelectedBodyId => ringTarget ?? map.SelectedBodyId;
+    internal bool IsInRingSpace => ringTarget is not null;
     public bool MotionActive => map.MotionActive;
 
     public SolarSystemView(bool openDeck = false)
@@ -48,10 +53,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             BorderBrush = MapSurface.FaintInk, ToolTip = "Focus a planet, moon or station", MaxDropDownHeight = 270 };
         NavigationControls.Apply(selector);
         AutomationProperties.SetName(selector, "Navigation destination");
-        foreach (var body in MapSurface.Bodies)
-            selector.Items.Add(new ComboBoxItem { Content = body.Label, Tag = body.Id,
-                Padding = new Thickness(8, 5, 8, 5), HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Foreground = Brushes.White, Background = new SolidColorBrush(Color.FromRgb(12, 36, 49)) });
+        PopulateTargets(false);
         Children.Add(header);
         map = new MapSurface(openDeck); Grid.SetRow(map, 1); Children.Add(map);
         var footer = new Grid { Margin = new Thickness(10, 1, 10, 6) };
@@ -70,7 +72,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             var views = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Bottom };
             solTab = MakeDeckTab("Sol"); ringTab = MakeDeckTab("Ring Space");
             solTab.Click += (_, _) => FocusBody(lastSolTarget);
-            ringTab.Click += (_, _) => FocusBody("Medina");
+            ringTab.Click += (_, _) => FocusBody(RingSpaceView.OverviewId);
             views.Children.Add(solTab); views.Children.Add(ringTab);
             Grid.SetColumn(views, 1); header.Children.Add(views);
             var target = new StackPanel { Orientation = Orientation.Horizontal };
@@ -88,8 +90,13 @@ internal sealed class SolarSystemView : Grid, IDisposable
             Margin = new Thickness(3, 0, 3, 0), IsEnabled = map.HasEphemeris,
             ToolTip = "Switch schematic / true scale. True scale uses physical radii and NASA/JPL positions; dots are selection markers." };
         AutomationProperties.SetName(scaleMode, "Navigation scale mode");
-        scaleMode.Click += (_, _) => SetTrueScale(!map.TrueScale);
+        scaleMode.Click += (_, _) =>
+        {
+            if (ringTarget == RingSpaceView.SolGateId) FocusBody("SolGate");
+            else if (!IsInRingSpace) SetTrueScale(!map.TrueScale);
+        };
         Grid.SetColumn(scaleMode, 1); footer.Children.Add(scaleMode);
+        Grid.SetColumn(ringScaleNote, 1); footer.Children.Add(ringScaleNote);
         rate = new ComboBox { Width = 67, FontSize = 9, Margin = new Thickness(0, 0, 3, 0),
             Foreground = Brushes.White, Background = new SolidColorBrush(Color.FromRgb(12, 36, 49)),
             ToolTip = "Simulation speed. 6 H/S = six simulated hours each second. Does not affect monitoring." };
@@ -103,18 +110,43 @@ internal sealed class SolarSystemView : Grid, IDisposable
         var reset = new Button { Content = "RESET", Foreground = MapSurface.Ink, Background = Brushes.Transparent,
             BorderBrush = MapSurface.FaintInk, BorderThickness = new Thickness(.5), Padding = new Thickness(7, 1, 7, 1),
             FontSize = 9, ToolTip = "Whole system · Home key" };
-        reset.Click += (_, _) => FocusBody("Sun"); Grid.SetColumn(reset, 3); footer.Children.Add(reset);
+        reset.Click += (_, _) => FocusBody(IsInRingSpace ? RingSpaceView.OverviewId : "Sun");
+        Grid.SetColumn(reset, 3); footer.Children.Add(reset);
         Grid.SetRow(footer, 2); Children.Add(footer);
         map.Selected += id => { SyncSelection(); BodySelected?.Invoke(id); };
         map.StatusChanged += SyncStatus;
         selector.SelectionChanged += (_, _) =>
         {
-            if (!selecting && selector.SelectedItem is ComboBoxItem { Tag: string id }) map.FocusBody(id, true);
+            if (!selecting && selector.SelectedItem is ComboBoxItem { Tag: string id }) FocusBody(id);
         };
         SyncSelection();
     }
 
-    public void FocusBody(string id, bool animate = true) => map.FocusBody(id, animate);
+    public void FocusBody(string id, bool animate = true)
+    {
+        if (ringTab is not null && RingSpaceView.Contains(id))
+        {
+            if (ringView is null)
+            {
+                ringView = new RingSpaceView();
+                ringView.Selected += target => FocusBody(target);
+                Grid.SetRow(ringView, 1);
+                Children.Add(ringView);
+                if (deckAccent is not null && deckMuted is not null) ringView.ApplyTheme(deckAccent, deckMuted);
+            }
+            ringTarget = id;
+            map.Visibility = Visibility.Collapsed;
+            ringView.Visibility = Visibility.Visible;
+            ringView.FocusTarget(id);
+            SyncSelection(); BodySelected?.Invoke(id);
+            return;
+        }
+
+        ringTarget = null;
+        if (ringView is not null) ringView.Visibility = Visibility.Collapsed;
+        map.Visibility = Visibility.Visible;
+        map.FocusBody(id, animate);
+    }
     public void SetMotion(bool enabled) => map.SetMotion(enabled);
     public void Dispose() { map.Dispose(); Children.Clear(); }
     internal void SetGraphicsMode(ExpanseGraphicsMode mode)=>map.SetGraphicsMode(mode);
@@ -128,9 +160,12 @@ internal sealed class SolarSystemView : Grid, IDisposable
         heading.Foreground = theme.Foreground;
         status.FontFamily = new FontFamily("Segoe UI Variable Text, Segoe UI");
         status.Foreground = theme.Muted;
+        ringScaleNote.Foreground = theme.Muted;
         deckAccent = theme.Accent;
         deckMuted = theme.Muted;
+        deckSurface = theme.Surface;
         map.ApplyOpenDeck(theme.Accent);
+        ringView?.ApplyTheme(theme.Accent, theme.Muted);
         foreach (var picker in new[] { selector, rate })
         {
             picker.FontFamily = status.FontFamily;
@@ -166,7 +201,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
     private void SyncDeckTabs()
     {
         if (solTab is null || ringTab is null) return;
-        bool ring = map.SelectedBodyId == "Medina";
+        bool ring = IsInRingSpace;
         if (!ring) lastSolTarget = map.SelectedBodyId;
         solTab.Foreground = ring ? deckMuted : deckAccent;
         solTab.BorderBrush = ring ? Brushes.Transparent : deckAccent;
@@ -180,13 +215,44 @@ internal sealed class SolarSystemView : Grid, IDisposable
     private void SyncSelection()
     {
         selecting = true;
-        selector.SelectedIndex = Array.FindIndex(MapSurface.Bodies, b => b.Id == map.SelectedBodyId);
+        if (showingRingTargets != IsInRingSpace) PopulateTargets(IsInRingSpace);
+        selector.SelectedItem = selector.Items.OfType<ComboBoxItem>().FirstOrDefault(item => (string)item.Tag == SelectedBodyId);
         selecting = false;
         SyncDeckTabs();
         SyncStatus();
     }
+
+    private void PopulateTargets(bool ring)
+    {
+        showingRingTargets = ring;
+        selector.Items.Clear();
+        var targets = ring ? RingSpaceView.Targets : MapSurface.Bodies.Select(body => (body.Id, body.Label));
+        foreach (var (id, label) in targets)
+            selector.Items.Add(new ComboBoxItem { Content = label, Tag = id, Padding = new Thickness(8, 5, 8, 5),
+                HorizontalContentAlignment = HorizontalAlignment.Stretch, Foreground = selector.Foreground,
+                Background = deckSurface ?? selector.Background });
+    }
+
     private void SyncStatus()
     {
+        if (IsInRingSpace)
+        {
+            bool atSolGate = ringTarget == RingSpaceView.SolGateId;
+            scaleMode.Content = "VIEW IN SOL";
+            scaleMode.IsEnabled = true;
+            scaleMode.Visibility = atSolGate ? Visibility.Visible : Visibility.Collapsed;
+            scaleMode.ToolTip = "Focus the other side of this gate in the Sol system.";
+            AutomationProperties.SetHelpText(scaleMode, (string)scaleMode.ToolTip);
+            ringScaleNote.Visibility = atSolGate ? Visibility.Collapsed : Visibility.Visible;
+            ringScaleNote.ToolTip = "Illustrative Ring Space layout with representative gates and enlarged markers.";
+            rate.Visibility = Visibility.Collapsed;
+            return;
+        }
+        scaleMode.IsEnabled = map.HasEphemeris;
+        scaleMode.Visibility = Visibility.Visible;
+        ringScaleNote.Visibility = Visibility.Collapsed;
+        scaleMode.ToolTip = "Switch schematic / true scale. True scale uses physical radii and NASA/JPL positions; dots are selection markers.";
+        rate.Visibility = Visibility.Visible;
         scaleMode.Content = map.TrueScale ? "TRUE SCALE" : "SCHEMATIC";
         status.Text = map.SelectedBodyId == "Medina" ? "RING SPACE · SEPARATE FROM SOL"
             : map.SelectedBodyId == "Tycho" ? "TYCHO · MOBILE BELT STATION · SCHEMATIC"
@@ -198,8 +264,12 @@ internal sealed class SolarSystemView : Grid, IDisposable
     }
 
     internal void Check() => map.Check();
-    internal object ShowJupiterPass(bool nearSide) => map.ShowJupiterPass(nearSide);
-    internal JsonElement Diagnose() => JsonSerializer.SerializeToElement(map.Diagnose());
+    internal object ShowJupiterPass(bool nearSide)
+    {
+        if (IsInRingSpace) FocusBody("Jupiter", false);
+        return map.ShowJupiterPass(nearSide);
+    }
+    internal JsonElement Diagnose() => JsonSerializer.SerializeToElement(IsInRingSpace ? ringView!.Diagnose() : map.Diagnose());
     internal void SetTimeRateForReview(double seconds){rate.SelectedItem=rate.Items.OfType<ComboBoxItem>().First(item=>item.Tag is double value&&value==seconds);map.SetTimeRate(seconds);}
     internal void PrepareEfficiencyFrame(string body,bool trueScale){SetTimeRateForReview(0);map.PrepareEfficiencyFrame(body,trueScale);}
     internal void PrepareTrueScaleReview(string body,double magnification=1){SetTimeRateForReview(0);map.PrepareTrueScaleReview(body,magnification);}
@@ -259,7 +329,6 @@ internal sealed class SolarSystemView : Grid, IDisposable
         private static readonly string[] DeckLabels = ["Sun", "Earth", "Mars", "Jupiter", "Saturn", "SolGate"];
         private static readonly SolidColorBrush DeckLabelInk = Frozen(Color.FromRgb(232, 239, 248));
         private static readonly Brush DeckSolarWash = ShipPanel.OpenDeckWash(Color.FromArgb(51, 94, 146, 226), new(.5, .54), .5, .46);
-        private static readonly Brush DeckRingWash = ShipPanel.OpenDeckWash(Color.FromArgb(43, 69, 231, 211), new(.5, .54), .5, .46);
         private readonly bool openDeck;
         private Pen deckOrbit = Orbit, deckHighlight = Highlight;
         private bool DeckOverview => openDeck && !TrueScale && selected == "Sun";
@@ -338,7 +407,8 @@ internal sealed class SolarSystemView : Grid, IDisposable
                 var transform = new MatrixTransform3D(); transforms.Add(body.Id, transform);
                 var instance = new Model3DGroup { Transform = transform };
                 // Do not decode or attach the detailed ring for a distant map marker.
-                if(body.Id=="SolGate"){models.Add(body.Id,instance);modelExtents.Add(body.Id,1.01);continue;}
+                if(body.Id=="SolGate" || openDeck && body.Id=="Medina")
+                {models.Add(body.Id,instance);modelExtents.Add(body.Id,1.01);continue;}
                 var detail = SolarBodyAssets.Load(body.Id);
                 if (body.Id == "Earth")
                 {
@@ -520,7 +590,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             var body = Bodies.FirstOrDefault(b => b.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
             if (body is null) throw new ArgumentException("Unknown solar-system body.", nameof(id));
             selected = body.Id;
-            if (openDeck) Background = selected == "Medina" ? DeckRingWash : DeckSolarWash;
+            if (openDeck) Background = DeckSolarWash;
             if (body.Id == "Sun") { yaw = -.24; tilt = .35; }
             if(body.Id=="SolGate"&&!DeckOverview){yaw=Math.PI/2-body.Angle;tilt=.35;}
             targetZoom = DeckOverview ? DeckOverviewZoom : body.Id == "Sun" ? 1 : body.Id == "Medina" ? 2.2 : body.Parent is not null ? 4.8 : body.Planet ? 3.3 : 3.8;
@@ -636,12 +706,12 @@ internal sealed class SolarSystemView : Grid, IDisposable
             double front = 0, back = 0;
             foreach (var body in Bodies)
             {
+                if (openDeck && body.Id == "Medina") continue;
                 var p = Project(Position(body)); double radius = BodyRadius(body);
                 if (body.Id == "Medina") { var area = MedinaArea(p); p = new(area.Left + 28, area.Top + 28); radius = 20; }
                 var matrix = Matrix3D.Identity;
                 double extent = radius * modelExtents[body.Id];
-                bool visible = !(DeckOverview && body.Id == "Medina") && IntersectsView(p, extent)
-                    && (body.Id=="SolGate"?radius>=8:!TrueScale || body.Station || radius >= 1);
+                bool visible = IntersectsView(p, extent) && (body.Id=="SolGate"?radius>=8:!TrueScale || body.Station || radius >= 1);
                 if (!visible)
                 {
                     // A zero-scale model still costs scene traversal. Detach it until its mesh is visible again.
@@ -706,7 +776,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
             hitTargets.Clear(); labelBounds.Clear(); labelTargets.Clear();
             foreach (var body in Bodies.OrderBy(b => Project(Position(b)).Y))
             {
-                if (DeckOverview && body.Id == "Medina") continue;
+                if (openDeck && body.Id == "Medina") continue;
                 var p = Project(Position(body)); var radius = BodyRadius(body);
                 hitTargets.Add((body, p, Math.Max(body.Id=="SolGate"?5:2, body.Id == "Saturn" ? radius * 2.41 : radius)));
                 if (p.X < -100 || p.Y < -70 || p.X > ActualWidth + 100 || p.Y > ActualHeight + 70) continue;
@@ -732,7 +802,7 @@ internal sealed class SolarSystemView : Grid, IDisposable
                     DrawOrbit(dc, OrbitRadius(body), openDeck ? deckOrbit : Orbit, Position(Bodies.First(b => b.Id == body.Parent)));
             }
             DrawLighting(dc);
-            if (DeckOverview) return;
+            if (openDeck) return;
             var ring = Project(Position(Bodies.First(b => b.Id == "SolGate")));
             var medina = Project(Position(Bodies.First(b => b.Id == "Medina")));
             var inset = MedinaArea(medina);
@@ -1059,14 +1129,15 @@ internal sealed class SolarSystemView : Grid, IDisposable
                 ChangeZoom(1e-6, false);
                 if (zoom != .65) throw new InvalidOperationException("Solar-system zoom exceeded its lower bound.");
                 FocusBody("Sun", false);
+                double wholeSystemZoom = zoom;
                 motion = true;
                 FocusBody("Mars", true);
                 if (SystemParameters.ClientAreaAnimation)
                 {
-                    if (!moving || zoom != 1 || pan != default)
+                    if (!moving || zoom != wholeSystemZoom || pan != default)
                         throw new InvalidOperationException("Solar-system focus did not preserve its initial camera for transition.");
                     PauseTimer();
-                    if (MotionActive || !moving || zoom != 1 || pan != default)
+                    if (MotionActive || !moving || zoom != wholeSystemZoom || pan != default)
                         throw new InvalidOperationException("Pausing the solar-system view altered its pending camera transition.");
                 }
                 SetMotion(false);

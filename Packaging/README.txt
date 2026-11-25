@@ -1,5 +1,5 @@
 AORUS SENSOR PANEL — FAN MADE
-Version 1.8.21 | Windows x64
+Version 1.8.22 | Windows x64
 
 An independent sensor dashboard for dedicated Windows displays, with AORUS-
 inspired themes, Expanse-inspired ship consoles and schematic Sol navigation.
@@ -106,9 +106,11 @@ It loops within that range; there is no live NASA connection. PAUSED stops the
 orbital clock. Body spin is decorative. Earth day/night lighting, atmosphere
 rims and a brighter two-layer Sun corona run locally, independently of sensors.
 Tycho is a mobile Belt station. The fixed Sol gate is outside Uranus, about
-2 AU beyond its orbit. Medina is in the separately labelled Ring Space inset,
-distinct from the alien central station. Animation pauses when hidden or motion
-is disabled. Body names appear only on hover; the destination list keeps the
+2 AU beyond its orbit. In Open Flight Deck, select Ring Space to explore the
+rotatable central station, Medina, and the Sol and Ilus gates. Gate positions
+are schematic. Use the Sol tab to return to your solar destination.
+Animation pauses when hidden or motion is disabled. Body names in the Sol view
+appear only on hover. The destination list keeps the
 selected name. True-scale zoom skips off-screen and sub-pixel meshes and clips
 orbit trails before drawing. See SolarNavigation/CREDITS.txt.
 Decorative animation is not sensor data.
